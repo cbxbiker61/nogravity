@@ -355,85 +355,31 @@ void V3XMaterial_Release(V3XMATERIAL *Mat, V3XMESH *Obj)
 *
 * DESCRIPTION : Charge un GXSPRITE, resize, en Surfaces etc...
 *
-*/
-static void V3XMaterial_UploadTexture(GXSPRITE *pDst, const GXSPRITE *pSrc, V3XMATERIAL *Mat, int bpp, int nTMU)
+*/static void V3XMaterial_UploadTexture(GXSPRITE *pDst, const GXSPRITE *pSrc, V3XMATERIAL *Mat, int bpp, int nTMU)
 {
-    int x = MM_heap.active;
-    // Compute reduction factor
-    unsigned option = 0;
-    // Is bpp in raw format?
-	
-    if (bpp<128)
-    {
-        Mat->shift_size = 0;
-        if ((Mat->Properties&V3XMAT_NORESIZE)
-        &&((V3X.Client->Capabilities&GXSPEC_RESIZABLEMAP))&&(Mat->shift_size))
-        {
-            Mat->shift_size--;
-        }    
-		if (V3X.Client->texMaxSize)
-		{	
-			while((pSrc->LX>>Mat->shift_size)>(1UL<<V3X.Client->texMaxSize))
-			{
-				Mat->shift_size++;
-			}	
-		}
-        if ((V3X.Client->Capabilities&GXSPEC_HARDWARE)||(Mat->info.Sprite))
-        {
-            pDst->LX = pSrc->LX>>Mat->shift_size;
-            pDst->LY = pSrc->LY>>Mat->shift_size;
-        }
-        else
-        {
-            pDst->LX = 256>>Mat->shift_size;
-            pDst->LY = 256>>Mat->shift_size;
-        }
-        // Fit in a 2^n box
-        option = 1;  while ((1UL<<option)<pDst->LX) option++;
-        pDst->LX = 1<<option;
-        option = 1;  while ((1UL<<option)<pDst->LY) option++;
-        pDst->LY = 1<<option;
-        // copy texture to 3D Ram
-        if  ((pDst->LY == pSrc->LY)&&(pDst->LX == pSrc->LX))
-        {
-            *pDst = *pSrc;
-        }
-        else // Resize texture
-        {
-            int bp=(bpp+1)>>3;
-            MM_heap.active = 0;
-            if ((Mat->shift_size>1)&&((bp==1)||(bp==2)))
-				IMG_StretchBilinear(pDst, (GXSPRITE*)pSrc, bp, 0);
-            else
-				IMG_StretchPoint(pDst, (GXSPRITE*)pSrc, bp, 0);
-            if (!Mat->fli) 
-				MM_heap.free(pSrc->data);
-        }
-    }
-    MM_heap.active = x;
-    option = 0;
-    if (nTMU)           
-		option|=V3XTEXDWNOPTION_TMU2;
-    else
-    if (Mat->Render == V3XRCLASS_bump_mapping) 
-		option|=V3XTEXDWNOPTION_BUMP;
-    
-	if (Mat->info.Opacity)        
-		option|=V3XTEXDWNOPTION_COLORKEY;
-    
-	if (Mat->info.Dynamic)           
-		option|=V3XTEXDWNOPTION_DYNAMIC;    
-	
-	pDst->handle = V3X.Client->TextureDownload(pSrc, GX.ColorTable, bpp, option);
-	SYS_ASSERT(pDst->handle);
+    int option = 0;
 
-	if (V3X.Client->Capabilities&GXSPEC_HARDWARE)
-		pDst->data = (u_int8_t*)pDst->handle;
-    
-	if (!pDst->handle)  
-		V3X.Setup.warnings|=V3XWARN_NOENOUGHSurfaces; 
+    *pDst = *pSrc;
+
+    if (Mat->info.Dynamic)
+        option|=V3XTEXDWNOPTION_DYNAMIC;
+
+    pDst->handle = V3X.Client->TextureDownload(pSrc, GX.ColorTable, bpp, option);
+    SYS_ASSERT(pDst->handle);
+
+    if (V3X.Client->Capabilities&GXSPEC_HARDWARE)
+    {
+        pDst->data = (u_int8_t*)pDst->handle;
+    }
+
+    if (!pDst->handle)
+    {
+    V3X.Setup.warnings|=V3XWARN_NOENOUGHSurfaces;
+    }
+
     return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void V3XMaterial_LoadTexturesFn(V3XMATERIAL *Mat, char *szFullPathName, GXSPRITE *dst_tex, char *mode)
