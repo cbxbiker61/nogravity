@@ -58,7 +58,7 @@ STUB_Registry RLX={
    RLXAUDIO_UseSTEREO,
    0, 0, 8, 0,
    0,
-   2, 32,
+   4, 32,
    {11025, 16537, 22050, 33075, 44100}
  }, 
  // Video
@@ -81,8 +81,7 @@ STUB_Registry RLX={
  {
    RLXCTRL_Enable+
    RLXCTRL_IntKeyboard,
-   RLXCTRL_JoyAnalog+
-   RLXCTRL_Mouse,
+   RLXCTRL_JoyAnalog,
  }, 
  // Joy
  {

@@ -109,6 +109,9 @@ static void JoystickRelease()
     // Close it.
     SDL_JoystickClose(joy);
 
+    // Forget about the joystick device.
+    sJOY->device = NULL;
+
     // Terminate SDL's joystick subsystem.
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
   }
@@ -151,9 +154,9 @@ static unsigned long JoystickUpdate(void *dev)
 
     // For each axis, record its new state.
     // TODO: Support configuration of which axis is which.
-    sJOY->lX = (int)SDL_JoystickGetAxis(joy, 0);
-    sJOY->lY = (int)SDL_JoystickGetAxis(joy, 1);
-    sJOY->lZ = (int)SDL_JoystickGetAxis(joy, 2);
+    sJOY->lX = (int)SDL_JoystickGetAxis(joy, 0) + 32768;
+    sJOY->lY = (int)SDL_JoystickGetAxis(joy, 1) + 32768;
+    sJOY->lZ = (int)SDL_JoystickGetAxis(joy, 2) + 32768;
 
     // We've succeeded.
     ok = TRUE;
