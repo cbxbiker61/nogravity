@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
   STUB_MainCode();
   STUB_Down();
   STUB_QuitRequested();
-  STUB_Down();
 
   return 0;
 }
