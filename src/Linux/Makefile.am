@@ -1,4 +1,6 @@
-bin_PROGRAMS = nogravity
+nogravitydir = $(prefix)/games/nogravity
+nogravity_PROGRAMS = nogravity
+nogravity_DATA = ../../GNU.TXT ../../README.TXT
 nogravity_SOURCES = ../../rlx32/src/systools.c \
                     ../../rlx32/src/gx_csp.c \
                     ../../rlx32/src/v3xscene.c \
