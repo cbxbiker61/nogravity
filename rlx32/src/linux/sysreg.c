@@ -34,6 +34,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 STUB_Registry RLX={
  // System
  {
+   // TODO: Understand what all these options mean and if the right ones are chosen.
    RLXSYSTEM_Enable, 
    RLXOS_LINUX,
    FALSE,
@@ -52,11 +53,13 @@ STUB_Registry RLX={
  }, 
  // Audio
  {
+   RLXAUDIO_Enable+
+   RLXAUDIO_Use16BIT+
+   RLXAUDIO_UseSTEREO,
+   0, 0, 8, 0,
    0,
-   0, 0, 0, 0,
-   0, 
-   0, 0, 
-   {0}
+   2, 32,
+   {11025, 16537, 22050, 33075, 44100}
  }, 
  // Video
  {

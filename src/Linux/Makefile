@@ -1,6 +1,6 @@
 CFLAGS = -c -g -D__LINUX__
 INCLUDES = -I .. -I ../../rlx32/include -I ../../rlx32/src -I ../../rlx32/src/linux -I ../../rlx32/src/renderers/opengl -I ../../rlx32/src/renderers/opengl/linux
-LIBS = -lpthread -lpng -lSDL -lGL -logg -lvorbis
+LIBS = -lpthread -lpng -lSDL -lopenal -lGL -logg -lvorbis
 OBJS = ../../rlx32/src/systools.o \
        ../../rlx32/src/gx_csp.o \
        ../../rlx32/src/v3xscene.o \
@@ -34,7 +34,7 @@ OBJS = ../../rlx32/src/systools.o \
        ../../rlx32/src/gx_png.o \
        ../../rlx32/src/linux/systools.o \
        ../../rlx32/src/linux/systime.o \
-       ../../rlx32/src/linux/snd_none.o \
+       ../../rlx32/src/linux/snd_openal.o \
        ../../rlx32/src/linux/sysdbg.o \
        ../../rlx32/src/linux/_stublinux.o \
        ../../rlx32/src/linux/sysnet.o \
