@@ -794,7 +794,6 @@ static void NG_ExecSubMenu(char *name, SGMenu *pMenu,  PFRWCALLBACK  pf)
 					if (sJOY)
 					{
 						int b;
-						sJOY->Update(0);
 						b = NG_SampleButtonJoystick();
 						if (b)
 						{
