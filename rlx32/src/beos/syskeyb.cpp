@@ -40,20 +40,19 @@ static int Open(void *hwnd)
 static unsigned long Update(void *pdevice)
 {
 	key_info TheKey;
-
 	if (get_key_info(&TheKey)==B_OK)
     {
 		sysMemCpy(sKEY->steButtons, sKEY->rgbButtons, 16);
         sysMemCpy(sKEY->rgbButtons, TheKey.key_states, 16);
-
-		int i;
-
-		for (i=0;i<16*8;i++)
+    	int i;
+    	for (i=0;i<16*8;i++)
 		{
 			if (sKEY_IsHeld(i))
-      			sKEY->scanCode = i;
-		}
-    }
+			{
+				sKEY->scanCode = i;
+			}
+	   	}
+    }       
     return 1;
 }
 

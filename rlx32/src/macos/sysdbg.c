@@ -33,12 +33,18 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 void SYS_Msg(char *fmt, ...)
 {
-    char buffer[4096];
-    va_list argptr;
-    va_start(argptr, fmt);
-    vsprintf(buffer, fmt, argptr);
-    printf("%s\n", buffer);
-    va_end(argptr);
+   	char buffer[8192];
+	va_list argptr;
+	va_start(argptr, fmt);
+	vsprintf(buffer, fmt, argptr);
+	printf("%s", buffer);
+	va_end(argptr);
+	
+	unsigned char _buffer[8192];
+	CopyCStringToPascal(buffer, _buffer);
+
+	SInt16 itemHit;
+	StandardAlert(kAlertStopAlert, _buffer, NULL, NULL, &itemHit);
     return;
 }
 
@@ -55,12 +61,16 @@ void SYS_Debug(char *fmt, ...)
 
  void SYS_Error(char *fmt, ...)
 {
-    char buffer[2048];
+
+	char buffer[2048];
     va_list argptr;
-    va_start(argptr, fmt);
-    vsprintf(buffer, fmt, argptr);
-    printf("%s\n", buffer);
-    va_end(argptr);
-    exit(-1);
+	va_start(argptr, fmt);
+	vsprintf(buffer, fmt, argptr);
+	va_end(argptr);
+
+	SYS_Msg(buffer);
+
+	exit(-1);
+	ExitToShell();
 }
 

@@ -171,7 +171,8 @@ typedef struct {
 }GXCLIENTDRIVER;
 
 // Graphic driver
-typedef struct {
+typedef struct _gx_graphic_interface
+{
     void  (* CALLING_C drawAnyLine)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
 	void  (* CALLING_C drawAliasedLine)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
     void  (* CALLING_C drawHorizontalLine)(int32_t x1, int32_t y1, int32_t lx, u_int32_t colour);

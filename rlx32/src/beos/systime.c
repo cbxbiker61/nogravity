@@ -29,6 +29,8 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "systools.h"
 #include "systime.h"
 
+#define USE_YIELD
+
 u_int32_t timer_ms(void)
 {
     return (u_int32_t)(system_time() / (int64)1000);

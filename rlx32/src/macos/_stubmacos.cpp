@@ -28,8 +28,6 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#include "_stubini.h"
 #include "_rlx32.h"
 #include "_rlx.h"
 #include "_stub.h"

@@ -829,7 +829,3 @@ NET_ClientDriver *NET_GetDirectPlayInterface(void *hwnd, const void *cGuid)
     return &net_dplay;    
 }
 
-NET_ClientDriver *NET_GetNULLInterface(void)
-{
-     return NULL;
-}

@@ -132,18 +132,19 @@ static unsigned long Update(void *device)
 	return 0;
 }
 
-static MSE_ClientDriver MsMouse = {
-	Open, 
-	Release,
-	Show,
-	Hide, 
-	SetPosition,
-	Update
-};
 
 _RLXEXPORTFUNC MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
 {
-    return &MsMouse;
+	static MSE_ClientDriver driver = {
+		Open, 
+		Release,
+		Show,
+		Hide, 
+		SetPosition,
+		Update
+	};
+	sMOU = &driver;
+    return &driver;
 }
 
 

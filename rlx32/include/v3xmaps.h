@@ -91,12 +91,8 @@ _RLXEXPORTFUNC    int	         RLXAPI    V3XCache_Material(V3XMATERIAL *Mat, int
 _RLXEXPORTFUNC    void           RLXAPI    V3XCache_Mesh(V3XMESH *Obj);
 
 // Material upload mechanism
-_RLXEXPORTFUNC    V3XMATERIAL    RLXAPI   *V3XMaterials_GetFn(char *filename, int *maxtexture, unsigned flags);
 _RLXEXPORTFUNC    V3XMATERIAL    RLXAPI   *V3XMaterials_GetFp(SYS_FILEHANDLE in, int mt);
 _RLXEXPORTFUNC    void           RLXAPI    V3XMaterials_LoadFromMesh(V3XMESH *Obj);
-
-// Low level operators
-_RLXEXPORTFUNC    V3XMATERIAL    RLXAPI   *V3XMaterials_SearchByName(V3XMATERIAL *mat, char *name, int maxmaterial);
 
 _RLXEXPORTFUNC    void           RLXAPI    V3XMaterial_LoadTextures(V3XMATERIAL *Mat);
 _RLXEXPORTFUNC    void           RLXAPI    V3XMaterial_Release(V3XMATERIAL *map, V3XMESH *Obj);

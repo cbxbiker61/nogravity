@@ -54,7 +54,6 @@ GX_BDirectWindow::GX_BDirectWindow(BRect window_rect, const char *pTitle)
 	if (view)
 	{
 	   AddChild(view);
-	   view->MakeFocus();
 	}
 	AddShortcut('\n', B_COMMAND_KEY, new BMessage(MSG_SYSAPPLICATION_SWITCHFS));
 	AddShortcut('x', B_COMMAND_KEY, new BMessage(MSG_SYSAPPLICATION_CLOSE));
@@ -94,15 +93,17 @@ void GX_BDirectWindow::Create()
 
 void GX_BDirectWindow::MessageReceived(BMessage *msg)
 {
-	switch(msg->what) {
+	switch(msg->what)
+	{
 		case MSG_SYSAPPLICATION_CLOSE:
 			printf("Close thread BDirectWindow\n");
 			g_pApp->Kill();
 		break;
+	
 		case MSG_SYSAPPLICATION_OPEN:
 			printf("Resume thread BDirectWindow\n");
 			resume_thread(m_DrawThread);
-			g_pApp->StartDrawing();
+			
 		break;
 		case MSG_SYSAPPLICATION_SWITCHFS:
 			printf("Toggle fullscreen BDirectWindow\n");
@@ -136,7 +137,9 @@ void GX_BDirectWindow::Quit(void)
 	m_SemID = 0;
 	g_pApp->StopDrawing();
 	g_pApp->Kill();
+	BDirectWindow::Lock();
 	BDirectWindow::Quit();
+
 }
 
 bool GX_BDirectWindow::QuitRequested()
@@ -155,6 +158,7 @@ void GX_BDirectWindow::DirectConnected(direct_buffer_info *info)
 		case B_DIRECT_START:
 		{
 			m_bConnected = true;
+			g_pApp->StartDrawing();
 		}
 		case B_DIRECT_MODIFY:
 		{
@@ -171,6 +175,7 @@ void GX_BDirectWindow::DirectConnected(direct_buffer_info *info)
 		case B_DIRECT_STOP:
 		{
 			m_bConnected = false;
+			g_pApp->StopDrawing();
 		}
 		break;
 	}

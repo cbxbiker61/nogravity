@@ -112,7 +112,7 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 	// Read hash table
     fdata = FIO_std.fopen(pWad->s_FileName, "rb");
 	if (fdata==(SYS_FILEHANDLE )NULL)
-		return pWad;
+		return NULL;
 
 	pWad->mode   |=  SYS_WAD_STATUS_ENABLED;
 

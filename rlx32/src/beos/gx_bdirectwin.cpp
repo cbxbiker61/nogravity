@@ -323,7 +323,7 @@ static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t
 * DESCRIPTION :
 *
 */
-GXCLIENTDRIVER GX_BDWin = {
+GXCLIENTDRIVER GX_BDirectWin = {
     Lock, 
     Unlock, 
     EnumDisplayList, 
@@ -341,6 +341,8 @@ GXCLIENTDRIVER GX_BDWin = {
     NotifyEvent,
 	"BDirectWindow"
 };
+
+extern GXCLIENTDRIVER GX_BWinScrn;
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void GET_GX()->ClientEntryPoint(void)
@@ -352,7 +354,9 @@ void GX_EntryPoint(struct RLXSYSTEM *p)
 {
 	g_pRLX = p; 
 	g_pApp = (sysApplication*)g_pRLX->pApplication;
-	GET_GX()->Client = &GX_BDWin;
+	// TODO: Change here to use BDirectWindow or BWindowscreen
+	bool bFs = true;
+	GET_GX()->Client = bFs ? &GX_BWinScrn : &GX_BDirectWin;
     return;
 }
 

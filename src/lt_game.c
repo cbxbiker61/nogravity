@@ -92,7 +92,7 @@ static void NG_UpdateCamera(void)
     
 	if (g_SGObjects.NavCam)  
 		mySHIP->state|=V3XSTATE_MATRIXUPDATE;
-    
+
 	mySHIP->state&=~V3XSTATE_HIDDENDISPLAY;
 
 	g_SGObjects.Cam->state|=V3XSTATE_MATRIXUPDATE;
@@ -158,7 +158,7 @@ static void NG_UpdateCamera(void)
 				for (i=0;i<3;i++, t1++, t2++)
 				{
 					int32_t p =(int32_t)(*t1);
-					int32_t p0=p&  (GRID-1L), 
+					int32_t p0=p&  (GRID-1L),
 					p1=p&(~(GRID-1L));
 					if (p0>(GRID>>1)) p1+=GRID;
 					*t2 = ((g_SGGame.Count&511)==0) ? (int32_t)p1 : t3[i];
@@ -981,7 +981,7 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
 							sJOY->Update(0);
 							SGJOY_MapKeyboard();
 							sKEY->scanCode = 255;
-							if (sKEY_IsHeld(LK_LEFT )) 
+							if (sKEY_IsHeld(LK_LEFT ))
 								*dx=-1;
 							if (sKEY_IsHeld(LK_RIGHT))
 								*dx= 1;
@@ -1082,7 +1082,7 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
                 if (sKEY_IsHeld(LK_THROTTLE))  
 					g_pPlayer->Mx.but|=2;
 
-                if (sKEY_IsClicked(LK_ITEM))         
+                if (sKEY_IsClicked(LK_ITEM))
 					g_pPlayer->Mx.but|=8;
 
                 if (sKEY_IsClicked(LK_NEXTWEAPON)||(sMOU->lZ))
@@ -2103,7 +2103,7 @@ void NG_InitAnimateStage(void)
 
             J->OVItarget = NULL;
             pInf = &J->pInf;
-            if ((pInf->Wait)||(pInf->Appear)) 
+            if ((pInf->Wait)||(pInf->Appear))
 				OVI->state |= V3XSTATE_HIDDEN;
 
             if (pInf->Stealth) 
@@ -2138,7 +2138,7 @@ void NG_InitAnimateStage(void)
 
 			if ((J->pInf.Type != t_ACCESSOIRE) && (OVI->matrix_Method == V3XMATRIX_Vector2))
 			{
-				J->Mv.k = -1; 
+				J->Mv.k = -1;
 				J->Mv.Ang = i*128;
 
 				if (pInf->Tactic == t_TAC_TRACK)
@@ -2434,13 +2434,13 @@ static void Display_HUD(void)
             g_SGLockMode.dmode&=~3;
             CSP_Color(g_SGLockMode.color);
             CSP_WriteText(g_SGLockMode.szText, g_SGLockMode.x, g_SGLockMode.y-g_pspCat->item[0].LY-1, g_pspCat);
-            sprintf(tex, "%d m", g_SGLockMode.dist/10);
+            sprintf(tex, "%d m", (int)(g_SGLockMode.dist / 10));
             CSP_WriteText(tex, g_SGLockMode.x0+2, g_SGLockMode.y0, g_pspCat);
             // Bar energy
             if (g_pCurrentGame->ship==0)
             {
                 CSP_Color(g_SGLockMode.shield<25 ? g_SGGame.CI_RED : g_SGGame.CI_GREEN);
-                sprintf(tex, "%d %%", g_SGLockMode.shield);
+                sprintf(tex, "%d %%", (int)g_SGLockMode.shield);
                 CSP_WriteText(tex, g_SGLockMode.x0+2, g_SGLockMode.y0+g_pspCat->item[0].LY+1, g_pspCat);
             }
         }
@@ -2466,11 +2466,11 @@ static void Display_HUD(void)
                 GX.csp.put(xxx, but->Y, sp);
                 sprintf(tex, "%02d", g_SGGame.MaxAim[g_SGObjects.NAV]);
                 CSP_WriteText(tex, g_pGameBoard->item[24].X, g_pGameBoard->item[24].Y, g_pspCat);
-                sprintf(tex, "%06d", (int32_t)(V3XVector_Length(&dx)));
+                sprintf(tex, "%06d", (int)(V3XVector_Length(&dx)));
                 CSP_WriteText(tex, g_pGameBoard->item[25].X, g_pGameBoard->item[25].Y, g_pspCat);
-                sprintf(tex, "%03d", (int32_t)g_pPlayer->Mv.x);
+                sprintf(tex, "%03d", (int)g_pPlayer->Mv.x);
                 CSP_WriteText(tex, g_pGameBoard->item[26].X, g_pGameBoard->item[26].Y, g_pspCat);
-                sprintf(tex, "%03d", (int32_t)g_pPlayer->Mv.y);
+                sprintf(tex, "%03d", (int)g_pPlayer->Mv.y);
                 CSP_WriteText(tex, g_pGameBoard->item[27].X, g_pGameBoard->item[27].Y, g_pspCat);
             }
             break;
@@ -2481,16 +2481,16 @@ static void Display_HUD(void)
             GX.csp.pset(xxx, but->Y, g_pspHud2->item + 5 + g_pPlayer->CurArt);
             break;
             case 11: // Shield
-            sprintf(tex, "%03d", (pInf->Shield*100)/pInf->ShieldMax);
+            sprintf(tex, "%03d", (int)(pInf->Shield*100/pInf->ShieldMax));
             CSP_WriteText(tex, xxx, but->Y, g_pspCat);
             break;
             case 9: //  Speed
-            sprintf(tex, "%03d", (int32_t)((pInf->fSpeed*100)/pInf->fSpeedMax));
+            sprintf(tex, "%03d", (int)(pInf->fSpeed*100/pInf->fSpeedMax));
             CSP_WriteText(tex, xxx, but->Y, g_pspCat);
             break;
             case 12: //  Time Game
-			sprintf(tex, "%d%c%02d", g_SGObjects.Time/60, 
-				V3X.Time.ms%1000<500 ? ':' : ' ', g_SGObjects.Time%60);
+			sprintf(tex, "%d%c%02d", (int)g_SGObjects.Time/60, 
+				V3X.Time.ms%1000<500 ? ':' : ' ', (int)g_SGObjects.Time%60);
             if (g_SGObjects.IsTimed)
             {
                 GXSPRITEGROUP *Pig = g_pspMsg;
@@ -2697,7 +2697,7 @@ static void NG_DrawHUD()
     {
         if (g_SGObjects.FinCode==GAMESTATE_FAIL)
 			g_SGObjects.FinCode=GAMESTATE_FAILED;
-		
+
 		if (g_pComFunction)
 			sysConPrint("%s: %s", g_pComFunction->szTitle, g_pComFunction->Val[*(g_pComFunction->ptr)]);
     }
@@ -2788,7 +2788,30 @@ static void NG_DrawHUD()
     }
 }
 
-static void NG_DrawOverlay(void)
+void NG_DrawFlash()
+{
+    if (g_SGGame.FlashAlpha)
+    {
+        if (g_SGGame.FlashAlpha>0)
+            g_SGGame.FlashAlpha--;
+
+        if (g_SGGame.FlashAlpha<0)
+            g_SGGame.FlashAlpha++;
+
+        GX.csp_cfg.alpha = min(255, abs(g_SGGame.FlashAlpha*8));
+       	CSP_Color(RGB_PixelFormat(g_SGGame.FlashColor.r, g_SGGame.FlashColor.g, g_SGGame.FlashColor.b));
+		if (V3X.Client->Capabilities&GXSPEC_HARDWARE)
+		{
+      		GX.gi.drawShadedRect(0, 0, GX.View.lWidth-1, GX.View.lHeight-1, NULL);
+  		}
+  		else
+  		{
+  			// TODO ?
+  		}
+    }
+}
+
+void NG_DrawOverlay(void)
 {
    	NG_FXDraw();
 
@@ -2807,19 +2830,8 @@ static void NG_DrawOverlay(void)
         g_SGGame.Shock=(-g_SGGame.Shock)>>1;
     }
 
-    if (g_SGGame.FlashAlpha)
-    {
-        if (g_SGGame.FlashAlpha>0)
-            g_SGGame.FlashAlpha--;
+    NG_DrawFlash();
 
-        if (g_SGGame.FlashAlpha<0)
-            g_SGGame.FlashAlpha++;
-
-        GX.csp_cfg.alpha = min(255, abs(g_SGGame.FlashAlpha*8));
-       	CSP_Color(RGB_PixelFormat(g_SGGame.FlashColor.r, g_SGGame.FlashColor.g, g_SGGame.FlashColor.b));
-		if (V3X.Client->Capabilities&GXSPEC_HARDWARE)
-      		GX.gi.drawShadedRect(0, 0, GX.View.lWidth-1, GX.View.lHeight-1, NULL);
-    }
     return;
 }
 

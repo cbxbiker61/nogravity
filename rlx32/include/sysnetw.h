@@ -111,7 +111,6 @@ typedef struct _sysnet_driver {
 
 __extern_c 
 	_RLXEXPORTFUNC NET_ClientDriver RLXAPI *NET_GetDirectPlayInterface(void *, const void *);
-	_RLXEXPORTFUNC NET_ClientDriver RLXAPI *NET_GetNULLInterface(void);
 	extern NET_ClientDriver *sNET;
 	
 __end_extern_c

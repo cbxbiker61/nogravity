@@ -111,9 +111,7 @@ typedef struct
 	int32_t					m_nWriteBytes,
 							m_nTotalBytes,
 							m_nUploadedBytes;
-	int32_t					m_nSegmentSize;
-
-	u_int32_t			    	m_nStreamState;
+	u_int32_t		    	m_nStreamState;
 }auStreamBuffer;
 
 static auStreamBuffer       g_pStream[MAX_V3XA_AUDIO_STREAM];
@@ -190,7 +188,7 @@ static void FillBufferF32Mono(const float *lpSrc,
 		return;
     }
 
-    for (i=0;i<sz;i++) 
+    for (i=0;i<sz;i++)
 	{
         f=*lpSrc++;
         *lpDst++=f*fVolLeft;
@@ -211,7 +209,7 @@ static OSStatus snd_input_callback(void *inRefCon,
     auSoundBuffer		*chan;
 
     chan = &g_pHandle[(int)inRefCon];
- 
+
     // get the proper channel for this audio unit
 	chan->Lock();
 	
@@ -894,7 +892,7 @@ static void ChannelSetPanning(int channel, float pan)
 	chan->Lock();
 
 	chan->SetPanValues(2, f);
-	
+
 	chan->Unlock();
 
 	return;
@@ -1129,7 +1127,7 @@ static void StreamRelease(V3XA_STREAM handle)
 	return;
 }
 
-static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t nSize, int precache)
+static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t size)
 {
     V3XA_STREAM handle = GetFreeStreamHandle();
 	if (handle == -1)
@@ -1143,13 +1141,13 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t nSi
 	pStr->nState = 1;
 	sysMemZero(&pStr->sample, sizeof(V3XA_HANDLE));
 	
-	pStr->sample.length = nSize;
+	pStr->sample.length = size;
 	pStr->sample.sampleFormat = sampleFormat;
 	pStr->sample.samplingRate = sampleRate;
-	pStr->m_nStreamState = (u_int16_t)precache;
+	pStr->m_nStreamState = 2;
 
 	auSoundBuffer   *pSrc = g_pHandle + pStr->nChannel;
-    pSrc->Create(sampleFormat, sampleRate, nSize, true);
+    pSrc->Create(sampleFormat, sampleRate, size, true);
     pSrc->m_nFlags |= DSH_RESERVED;
 	pSrc->m_pSample = &pStr->sample;
 	return handle;
@@ -1162,7 +1160,7 @@ static int StreamPoll(V3XA_STREAM handle)
 		return 0;
 
 	int ret = -1;
-		
+
 	if (pStr->m_nStreamState)
 	{
 		ret = 1;
@@ -1173,7 +1171,7 @@ static int StreamPoll(V3XA_STREAM handle)
         int32_t lPlay;
 
         pSrc->GetPlayPosition(&lPlay);
-	
+
 		int32_t elapsed = (pStr->m_nPreviousPosition<=lPlay)
 				? lPlay - pStr->m_nPreviousPosition
 				: lPlay + (int32_t)pStr->sample.length - pStr->m_nPreviousPosition;
@@ -1182,7 +1180,7 @@ static int StreamPoll(V3XA_STREAM handle)
 		pStr->m_nWriteBytes += elapsed;
 		pStr->m_nTotalBytes += elapsed;
 		pStr->m_nPreviousPosition = lPlay;
-		
+
 		if (pStr->m_nWriteBytes + elapsed >= pStr->m_nUploadedBytes)
 		{
 			pStr->m_nWriteBytes-=pStr->m_nUploadedBytes;
@@ -1193,7 +1191,7 @@ static int StreamPoll(V3XA_STREAM handle)
 	return ret;
 }
 
-static int StreamLoad(V3XA_STREAM handle, void *data, size_t size, int smode)
+static int StreamLoad(V3XA_STREAM handle, void *data, size_t size)
 {
     auStreamBuffer *pStr = g_pStream + handle;
 	if (!pStr->nState)
@@ -1219,7 +1217,6 @@ static int StreamLoad(V3XA_STREAM handle, void *data, size_t size, int smode)
 		pStr->m_nStreamState--;
 		if (!pStr->m_nStreamState)
 		{
-			// Normal
 			pSrc->Rewind();
 			pSrc->Play( DSH_LOOPED );
 			pStr->m_nPreviousPosition = 0;
@@ -1341,10 +1338,10 @@ static V3XA_WaveClientDriver CoreAudio_Client = {
 
 	ChannelOpen,
 	ChannelPlay, 
-	ChannelStop, 
+	ChannelStop,
 
 	ChannelSetVolume, 
-	ChannelSetPanning, 
+	ChannelSetPanning,
 	ChannelSetSamplingRate,
 
 	ChannelGetStatus,

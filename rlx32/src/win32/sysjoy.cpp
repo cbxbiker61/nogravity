@@ -209,14 +209,14 @@ static unsigned long Update(void *device)
 
 }
 
-static JOY_ClientDriver MsJoy = {
-    Open,
-    Release,
-    Update
-};
-
 
 JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
 {
-    return &MsJoy;
+	static JOY_ClientDriver driver = {
+		Open,
+		Release,
+		Update
+	};
+
+    return &driver;
 }

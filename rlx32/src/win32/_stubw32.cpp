@@ -30,7 +30,6 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include <setjmp.h>
 #include <stdarg.h>
 
-#include "_stubini.h"
 #include "_rlx32.h"
 #include "_rlx.h"
 #include "_stub.h"
@@ -38,6 +37,8 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "systools.h"
 #include "resource.h"
 #include "win32/sys_di.h"
+
+#define STUB_SIG "application/x-vnd.Realtech-nogravity"
 
 static char szActualFolder[_MAX_PATH];
 

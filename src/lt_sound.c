@@ -110,7 +110,7 @@ void NG_AudioBeep(int code)
 void NG_AudioLoadList(void)
 {
     SYS_FILEHANDLE in;
-    int32_t i, k;
+    int i, k;
     char *v;
     char fil[256];
 	char tex[256];
@@ -254,7 +254,7 @@ u_int32_t CALLING_STD Thread(void *context)
 		if (m_Status == 0)
 			break;
 		V3XAStream_Poll(g_pWavStream);
-		timer_snooze(50); 
+		timer_snooze(50);
 	}	
 	thread_exit(0);
 	return 0;
@@ -266,6 +266,9 @@ void NG_AudioPlayTrack(int i)
 	char tex[256];
 	if (!(V3XA.State & 1))
 		return;
+#ifdef __BEOS__
+     return;
+#endif
 
 	SYS_ASSERT(*g_pMusicInfo[i].filename);
 	SYS_ASSERT(g_pWavStream == 0);
@@ -456,7 +459,7 @@ void NG_AudioSetMusicVolume(void)
 		return;
     
 	if (g_pWavStream)
-		V3XAStream_SetVolume(g_pWavStream, 0, ((float)g_SGSettings.VolMusic) / 100.f); 
+		V3XAStream_SetVolume(g_pWavStream, 0, ((float)g_SGSettings.VolMusic) / 100.f);
 
 	V3XA.Client->SetVolume(((float)g_SGSettings.VolDIG) / 100.f);
     return;
@@ -484,7 +487,7 @@ void NG_AudioStopMusic(void)
 	int i;
 	if (!(V3XA.State & 1)) 
 		return;
-    
+
 	if (g_pWavStream)
 	{
 		for(i=g_SGSettings.VolMusic;i!=0;i--)
@@ -582,11 +585,12 @@ void NG_AudioPlayWarp(void)
         
 		GX.Client->Lock();
         NG_RenderView();
+        NG_DrawFlash();
         GX.Client->Unlock();
         if ((V3XA.State & 1)) 
 			V3XAStream_PollAll();
         GX.View.Flip();
-        g_SGGame.FlashAlpha+=8;
+        g_SGGame.FlashAlpha+=4;
 		if (g_SGGame.FlashAlpha>255)
 			g_SGGame.FlashAlpha=255;
 

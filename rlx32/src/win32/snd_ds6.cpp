@@ -44,12 +44,12 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 typedef struct 
 {
-    int32_t       m_nWritePosition, m_nPreviousPosition;
-    int32_t       m_nWriteBytes, m_nTotalBytes, m_nUploadedBytes;
-    u_int16_t     nState, m_nStreamState;
-	float	   m_nPlayVolume;
-    short      channel;
-    V3XA_HANDLE sample;
+    int32_t     m_nWritePosition, m_nPreviousPosition;
+    int32_t     m_nWriteBytes, m_nTotalBytes, m_nUploadedBytes;
+    u_int16_t   nState, m_nStreamState;
+	float		m_nPlayVolume;
+    short		channel;
+    V3XA_HANDLE	sample;
 }DS_stream;
 
 LPDIRECTSOUND           g_lpDSDevice;                      //  Objet principal direct sound
@@ -946,13 +946,14 @@ void StreamRelease(V3XA_STREAM handle)
 }
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void StreamInitialize(int smode, int freq, int size, int precache)
+* PROTOTYPE  :  void StreamInitialize(int smode, int freq, int size)
 *
 * DESCRIPTION : Create a stream buffer.
 *
 */
-V3XA_STREAM StreamInitialize(int smode, int freq, size_t size, int precache)
+V3XA_STREAM StreamInitialize(int sampleFormat, int freq, size_t size)
 {
+	int precache = 2;
     DS_stream *pHandle;
     int b;
     V3XA_STREAM handle = -1;
@@ -970,8 +971,8 @@ V3XA_STREAM StreamInitialize(int smode, int freq, size_t size, int precache)
     pHandle->sample.length  = size;
     pHandle->sample.priority = 255;
 	pHandle->sample.samplingRate = freq;
-    pHandle->sample.sampleFormat = (u_int16_t)smode;
-	pHandle->m_nPlayVolume = 63;
+    pHandle->sample.sampleFormat = (u_int16_t)sampleFormat;
+	pHandle->m_nPlayVolume = 1.f;
     DSS_KillChannel(pHandle->channel);
     g_pDSHandles[pHandle->channel].flags |= DSH_RESERVED;
 
@@ -981,9 +982,10 @@ V3XA_STREAM StreamInitialize(int smode, int freq, size_t size, int precache)
     pHandle->sample.sampleFormat & V3XA_FMT16BIT  ? 16 : 8, 
     pHandle->sample.sampleFormat & V3XA_FMTSTEREO ? 2  : 1, 
     pHandle->channel,  DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPAN |  DSBCAPS_GETCURRENTPOSITION2 );
+
     if (pHandle->sample.sampleID)
     {
-        pHandle->nState   |= 1;
+        pHandle->nState |= 1;
         pHandle->m_nStreamState = (u_int16_t)precache;
         DS_Register3D(&pHandle->sample, g_pDSHandles + pHandle->channel, 0);
         return handle;
@@ -1113,16 +1115,15 @@ void StreamStop(V3XA_STREAM handle)
 	SYS_DXTRACE(pSrc->Stop());
 }
 
-static int StreamLoad(V3XA_STREAM handle, void *data, size_t size, int smode)
+static int StreamLoad(V3XA_STREAM handle, void *data, size_t size)
 {
     DS_stream       *pHandle = g_pDSStreams + handle;
     LPDIRECTSOUNDBUFFER pDS = g_pDSHandles[pHandle->channel].pbuffer;
     if (((pHandle->nState&1)==0)||(!pDS)) 
 		return -1;
 
-    pHandle->sample.sampleFormat = (u_int16_t)smode;
-    pHandle->sample.sample = data;
-	
+     pHandle->sample.sample = data; 
+
     if (DS_UploadSample(pHandle->channel, pHandle->m_nWritePosition, pHandle->sample.sample, size))
     {
 		pHandle->m_nUploadedBytes += size;

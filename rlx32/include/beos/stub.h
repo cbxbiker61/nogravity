@@ -54,6 +54,7 @@ public:
 		virtual void		SetWindowHandle(BWindow *h);
 
 		BWindow	*	m_hWnd;
+		BView	*	m_hView;
 		bool		m_bActive;
 		bool		m_bStopped;
 };

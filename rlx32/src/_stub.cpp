@@ -23,15 +23,20 @@ Original Source: 1996 - Stephane Denis
 Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 */
 //-------------------------------------------------------------------------
-#define STUB_VERSION "1.8"
-#define INITGUID
+#define STUB_VERSION "1.98"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WINDOWS
+#define INITGUID
+#include <dplay.h>
+DEFINE_GUID(STUB_GUID, 0xdbd83641, 0xe44, 0x11d1, 0xa3, 0x9, 0x0, 0xa0, 0x24, 0x5a, 0x36, 0x78);
+
+#endif
 #include "_rlx32.h"
 #include "_rlx.h"
-#include "_stubini.h"
+
 #include "_stub.h"
 
 #include "systools.h"

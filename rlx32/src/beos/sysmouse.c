@@ -28,12 +28,13 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "_rlx32.h"
 #include "sysctrl.h"
 #include "systools.h"
+#include "beos/stub.h"
 
 static int Open(void *hwnd)			// Return non-zero if error
 {
 	sMOU->numControllers = 1;
 	sMOU->numButtons = 2;
-	sMOU->numAxis = 2;
+	sMOU->numAxes = 2;
 	return 0;
 }
 
@@ -61,7 +62,26 @@ static void SetPosition(u_int32_t x, u_int32_t y)
 
 static unsigned long CALLING_STD Update(void *device)
 {
-
+   BWindow *w = sysApplication::GetInstance()->m_hWnd;
+   BView *v = sysApplication::GetInstance()->m_hView;
+   if (w->Lock())
+   {
+       if (w->IsActive())
+       {
+            BPoint point;
+            uint32 button;
+	 		v->GetMouse(&point, &button);
+  		    sMOU->lX = (int)point.x - sMOU->x;
+		    sMOU->lY = (int)point.y - sMOU->y;
+	  	 	sMOU->x = (int)point.x;
+	   		sMOU->y = (int)point.y;
+	   		sysMemCpy(sMOU->steButtons, sMOU->rgbButtons, sizeof(sMOU->steButtons));
+	 	 	sMOU->rgbButtons[0] =  button&1;
+	 	    sMOU->rgbButtons[1] = (button>>1)&1;
+	  	    sMOU->rgbButtons[2] = (button>>2)&1;
+       }
+   }
+   
    return 0;
 }
 

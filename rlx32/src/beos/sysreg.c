@@ -191,24 +191,24 @@ int STUB_RegistryWrite(STUB_Registry *regs)
     {
          fprintf(in, "// RLX Interface settings v3.11\n");
          fprintf(in, "\n[System]\n");
-         fprintf(in, "Processor=%d\n", regs->System.Processor);
-         fprintf(in, "Config=%x\n",    regs->System.Config);
+         fprintf(in, "Processor=%d\n", (int)regs->System.Processor);
+         fprintf(in, "Config=%x\n", (int)regs->System.Config);
          fprintf(in, "\n[Audio]\n");
-         fprintf(in, "Config=%x\n",    regs->Audio.Config);
-         fprintf(in, "WaveDeviceId=%d\n", regs->Audio.WaveDeviceId);
-         fprintf(in, "MidiDeviceId=%d\n", regs->Audio.MidiDeviceId);
-         fprintf(in, "SamplingRate=%d\n", regs->Audio.SamplingRate);
-         fprintf(in, "ChannelToMix=%d\n", regs->Audio.ChannelToMix);
+         fprintf(in, "Config=%x\n", (int)regs->Audio.Config);
+         fprintf(in, "WaveDeviceId=%d\n", (int)regs->Audio.WaveDeviceId);
+         fprintf(in, "MidiDeviceId=%d\n", (int)regs->Audio.MidiDeviceId);
+         fprintf(in, "SamplingRate=%d\n", (int)regs->Audio.SamplingRate);
+         fprintf(in, "ChannelToMix=%d\n", (int)regs->Audio.ChannelToMix);
          fprintf(in, "\n[Video]\n");
-         fprintf(in, "Config=%x\n",    regs->Video.Config);
-         fprintf(in, "Id=%d\n",        regs->Video.Id);
+         fprintf(in, "Config=%x\n", (int)regs->Video.Config);
+         fprintf(in, "Id=%d\n", (int)regs->Video.Id);
          fprintf(in, "\n[3D]\n");
-         fprintf(in, "Config=%x\n",     regs->V3X.Config);
-         fprintf(in, "Id=%d\n",        regs->V3X.Id);
-         fprintf(in, "TextureQuality=%d\n", regs->V3X.DefaultResize);
+         fprintf(in, "Config=%x\n", (int)regs->V3X.Config);
+         fprintf(in, "Id=%d\n", (int)regs->V3X.Id);
+         fprintf(in, "TextureQuality=%d\n", (int)regs->V3X.DefaultResize);
          fprintf(in, "\n[Controller]\n");
-         fprintf(in, "Config=%x\n",    regs->Control.Config);
-         fprintf(in, "Id=%d\n",        regs->Control.Id);
+         fprintf(in, "Config=%x\n",  (int)regs->Control.Config);
+         fprintf(in, "Id=%d\n", (int)regs->Control.Id);
 
          fclose(in);
          return 1;

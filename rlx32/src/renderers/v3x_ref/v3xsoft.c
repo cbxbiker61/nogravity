@@ -146,17 +146,18 @@ static void V3XAPI *V3XRef_TextureAlloc(const GXSPRITE *sp, const rgb24_t *color
 	int i;
  	V3XTEXTURESW * p = (V3XTEXTURESW*)g_pRLX->mm_heap->malloc(sizeof(V3XTEXTURESW));    
     p->texture = (u_int8_t*)g_pRLX->mm_heap->malloc(size);
-	
-	p->bpp = bpp >> 3;
 
-    if ((bpp > 8) && (g_pRLX->V3X.Id==1))
+    if (bpp > 8)
     {
 		g_pRLX->pfSmartConverter(p->texture, NULL, 1, sp->data, NULL, (bpp+1)>>3, size);
+		bpp = 8;
     }
     else
 	{
 		sysMemCpy(p->texture, sp->data, size);
 	}
+
+	p->bpp = bpp >> 3;
 
 	for (i=0;i<256;i++)
 		p->palette[i] = g_pRLX->pfSetPixelFormat(colorTable[i].r, colorTable[i].g, colorTable[i].b);	
@@ -191,6 +192,7 @@ static int V3XAPI V3XRef_TextureModify(GXSPRITE *ptr, u_int8_t *data, const rgb2
 	int i;
 
 	sysMemCpy(p->texture, data, sz);
+	SYS_ASSERT(p->bpp == 1);
 	
 	for (i=0;i<256;i++)
 		p->palette[i] = g_pRLX->pfSetPixelFormat(colorTable[i].r, colorTable[i].g, colorTable[i].b);	

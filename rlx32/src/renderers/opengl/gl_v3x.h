@@ -41,6 +41,17 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 #include <AGL/agl.h>
+
+#elif (defined __LINUX__)
+#include <GL/gl.h>
+#include <GL/glext.h>
+
+// TODO: Fix this properly.
+#ifndef GL_TEXTURE_RECTANGLE_EXT
+#define GL_TEXTURE_RECTANGLE_EXT 0x84F5
+#endif
+#define glColorTableEXT glColorTable
+
 #endif
 
 #include "gx_struc.h"

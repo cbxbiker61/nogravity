@@ -300,7 +300,7 @@
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
-			name = ng;
+			name = nogravity;
 			productInstallPath = "$(HOME)/Applications";
 			productName = ng;
 			productReference = 8D0C4E970486CD37000505A6;
@@ -361,6 +361,15 @@
 				F4B3C1AE07BF677E00EB3D65,
 				F4B3C1AF07BF677E00EB3D65,
 				F4B3C1B007BF677E00EB3D65,
+				F4D808C407CFAEB00031F08A,
+				F4D808C507CFAEB00031F08A,
+				F4D808C607CFAEB00031F08A,
+				F4D808C707CFAEB00031F08A,
+				F4D808C807CFAEB00031F08A,
+				F4D808CC07CFAEBF0031F08A,
+				F4D808D107CFAECA0031F08A,
+				F4D808D207CFAECA0031F08A,
+				F4D808D607CFAEE80031F08A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2217,10 +2226,13 @@
 		};
 		F4B3C15007BF673900EB3D65 = {
 			children = (
+				F4D808CF07CFAECA0031F08A,
 				F4B3C1AB07BF677E00EB3D65,
 				F4B3C1AC07BF677E00EB3D65,
 				F4B3C1AD07BF677E00EB3D65,
+				F4D808D007CFAECA0031F08A,
 				F4B3C15507BF676700EB3D65,
+				F4D808CB07CFAEBF0031F08A,
 				F4B3C15707BF676700EB3D65,
 				F4B3C15807BF676700EB3D65,
 				F4B3C15907BF676700EB3D65,
@@ -2234,7 +2246,13 @@
 				F4B3C16207BF676700EB3D65,
 				F4B3C16307BF676700EB3D65,
 				F4B3C16407BF676700EB3D65,
+				F4D808BF07CFAEAF0031F08A,
+				F4D808C007CFAEAF0031F08A,
+				F4D808C107CFAEAF0031F08A,
+				F4D808C207CFAEAF0031F08A,
+				F4D808C307CFAEB00031F08A,
 				F4B3C16507BF676700EB3D65,
+				F4D808D507CFAEE80031F08A,
 				F4B3C16707BF676700EB3D65,
 				F4B3C16807BF676700EB3D65,
 				F4B3C16907BF676700EB3D65,
@@ -2843,6 +2861,141 @@
 		};
 		F4B3C1B007BF677E00EB3D65 = {
 			fileRef = F4B3C1AD07BF677E00EB3D65;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808BF07CFAEAF0031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = lt_cmx.h;
+			path = ../lt_cmx.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808C007CFAEAF0031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = lt_conf.h;
+			path = ../lt_conf.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808C107CFAEAF0031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = lt_data.h;
+			path = ../lt_data.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808C207CFAEAF0031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = lt_func.h;
+			path = ../lt_func.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808C307CFAEB00031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = lt_struc.h;
+			path = ../lt_struc.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808C407CFAEB00031F08A = {
+			fileRef = F4D808BF07CFAEAF0031F08A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808C507CFAEB00031F08A = {
+			fileRef = F4D808C007CFAEAF0031F08A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808C607CFAEB00031F08A = {
+			fileRef = F4D808C107CFAEAF0031F08A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808C707CFAEB00031F08A = {
+			fileRef = F4D808C207CFAEAF0031F08A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808C807CFAEB00031F08A = {
+			fileRef = F4D808C307CFAEB00031F08A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808CB07CFAEBF0031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = console.h;
+			path = ../console.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808CC07CFAEBF0031F08A = {
+			fileRef = F4D808CB07CFAEBF0031F08A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808CF07CFAECA0031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = _nginfo.h;
+			path = ../_nginfo.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808D007CFAECA0031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = _stubini.h;
+			path = ../_stubini.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808D107CFAECA0031F08A = {
+			fileRef = F4D808CF07CFAECA0031F08A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808D207CFAECA0031F08A = {
+			fileRef = F4D808D007CFAECA0031F08A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D808D507CFAEE80031F08A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = stub.h;
+			path = ../../rlx32/include/beos/stub.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4D808D607CFAEE80031F08A = {
+			fileRef = F4D808D507CFAEE80031F08A;
 			isa = PBXBuildFile;
 			settings = {
 			};

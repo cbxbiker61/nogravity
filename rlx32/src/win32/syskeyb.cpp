@@ -121,15 +121,17 @@ static char *NameScanCode(int scan)
     return d;
 }
 
-static KEY_ClientDriver MsKeyb = {
-    Open,
-    Release,
-    NameScanCode,
-    Update
-};
 
 _RLXEXPORTFUNC KEY_ClientDriver *KEY_SystemGetInterface_STD(void)
 {
-    return &MsKeyb;
+	static KEY_ClientDriver driver = {
+		Open,
+		Release,
+		NameScanCode,
+		Update
+	};
+	sKEY = &driver;
+
+    return &driver;
 }
 

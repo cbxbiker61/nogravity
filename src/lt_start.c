@@ -181,12 +181,12 @@ void NG_ResizeInterface(RW_Interface *Interf)
 
 char **g_szLanguageList;
 
-void NG_SetLanguage()
+void NG_SetLanguage(int l)
 {
     int i = 1;
 	char tex[256];
 	FILE *in;
-	sprintf(tex, ".\\voix\\%s.msg", g_szLanguageList[g_SGSettings.Language]);
+	sprintf(tex, ".\\voix\\%s.msg", g_szLanguageList[l]);
 	in = FIO_cur->fopen(tex, "rt");
 	SYS_ASSERT(in);
 
@@ -215,12 +215,10 @@ void NG_SetLanguage()
 void NG_ReadLanguagePack(void)
 {
    
-	char tex[256];
     SYS_FILEHANDLE in;
     FIO_cur = g_pGameIO;
-
-    sprintf(tex, "%s\\voix\\language.msg", ".");
-    in = FIO_cur->fopen(tex, "rt");
+ 
+    in = FIO_cur->fopen(".\\voix\\language.msg", "rt");
 	SYS_ASSERT(in);
     g_szLanguageList = array_loadtext(in, 16, -1);
     FIO_cur->fclose(in);
@@ -660,7 +658,7 @@ static void NG_InitGameScene(void)
     }
     sysStrExtChg(g_SGObjects.World.scene_name, g_SGObjects.World.scene_name, "vmx");
     g_SGGame.Scene = V3XScene_GetFromFile(g_SGObjects.World.scene_name);
-    NG_DrawLoadingBar(40);
+    
     if (g_SGSettings.AddOn)
     {
         if (g_SGSettings.AddOn) filewad_close(g_SGGame.AddOnResource);
@@ -684,7 +682,7 @@ static void NG_InitGameScene(void)
 		V3X.Setup.flags|=V3XOPTION_AMBIANT;
     
 	V3X.Light.ambiant = V3X.Light.ambiantMaterial = AmbientLevel[g_pCurrentGame->episode>4 ? 0 : g_pCurrentGame->episode];
-    NG_DrawLoadingBar(50);
+    
     V3XScene_LoadTextures(g_SGGame.Scene, NULL);
 	sysMemCpy(GX.ColorTable, g_SGGame.Scene->Layer.lt.palette.lut, 768);
 
@@ -707,7 +705,7 @@ static void NG_InitGameScene(void)
 
     V3XScene_Verify(g_SGGame.Scene);
 	NG_FXSetSceneShading(g_SGGame.Scene, 2);
-    NG_DrawLoadingBar(55);
+    
     NG_FixTrackAnim(g_SGGame.Scene);
     return;
 }
@@ -1356,7 +1354,7 @@ static int NG_NetWaiter(int mode)
     GX.gi.drawFilledRect(0, 0, GX.View.xmax, GX.View.ymax, cl);
     sprintf(tex, "%s", g_szGmT[193]);
     CSP_WriteCenterText(tex, y+=ly, g_pspDispFont);
-    sprintf(tex, "%d secs.", time_maxi-t);
+    sprintf(tex, "%d secs.", (int)(time_maxi-t));
     CSP_WriteCenterText(tex, y+=ly, g_pFont);
     sprintf(tex, "%d %%", mode*50);
     CSP_WriteCenterText(tex, y+=ly, g_pFont);

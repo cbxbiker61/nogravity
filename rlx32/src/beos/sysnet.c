@@ -27,8 +27,8 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "_rlx32.h"
 #include "sysnetw.h"
 
-NET_ClientDriver *NET_GetNULLInterface(void)
+NET_ClientDriver *NET_SystemGetInterface_STD(void)
 {
-     return NULL;
+  // TODO: Implement network driver.
+  return NULL;
 }
-

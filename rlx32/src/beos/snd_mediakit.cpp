@@ -24,6 +24,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 */
 //-------------------------------------------------------------------------
 
+#include <MediaDefs.h>
 #include <SimpleGameSound.h>
 #include <StreamingGameSound.h>
 
@@ -34,6 +35,9 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "_rlx32.h"
 #include "systools.h"
 #include "iss_defs.h"
+
+// Couldn't test the audio on my BeOS (no sound support).
+// #define SUPPORT_STREAMING
 
 // Stream functions
 struct GS_steam
@@ -60,6 +64,7 @@ struct GS_handle
 
 static GS_handle g_pVoiceHandles[MAX_V3XA_AUDIO_MIX];
 static GS_steam	g_StreamHandles[MAX_V3XA_AUDIO_STREAM];
+static float g_fGain = 0.9f;
 
 static int32_t CALLING_C Poll(int32_t param)
 {
@@ -99,6 +104,7 @@ static void Release(void)
 
 static void SetVolume(float volume)
 {
+    g_fGain = volume;
 	return;
 }
 /*------------------------------------------------------------------------
@@ -113,7 +119,7 @@ static void ChannelSetVolume(int channel, float volume)
 	BSimpleGameSound *pDS = g_pVoiceHandles[channel].pbuffer;
 	if (!pDS)
 		return;
-	pDS->SetGain((float)volume, (bigtime_t)0);
+	pDS->SetGain((float)volume * g_fGain);
 	return;
 }
 /*------------------------------------------------------------------------
@@ -128,8 +134,6 @@ static void ChannelSetPanning(int channel, float pan)
 	BSimpleGameSound *pDS = g_pVoiceHandles[channel].pbuffer;
 	if (!pDS)
 		return;
-	if (pan==100)
-		pan=0;
 	pDS->SetPan((float)pan, 0);
 	return;
 }
@@ -248,11 +252,14 @@ static int ChannelGetFree(V3XA_HANDLE *pSample)
 	/*if (prefSamStoppedMatch>=0) newChannel = prefSamStoppedMatch; // use a non-playing channel with a matching sample
 	else
 	*/
-	if (prefSamready>=0)	newChannel = prefSamready; // use a channel without playing sound
+	if (prefSamready>=0)	
+	   newChannel = prefSamready; // use a channel without playing sound
 	else
-	if (prefSamPriority>=0) 	newChannel = prefSamPriority; // use a channel with less priority than the requested
+	if (prefSamPriority>=0) 	
+	   newChannel = prefSamPriority; // use a channel with less priority than the requested
 	else
-	if (prefSecure>=0)		newChannel = prefSecure; // use a blank channel without sample already allocated
+	if (prefSecure>=0)		
+	   newChannel = prefSecure; // use a blank channel without sample already allocated
 	return newChannel>=32 ? -1 : newChannel;
 }
 /*------------------------------------------------------------------------
@@ -291,7 +298,7 @@ static unsigned SetFormat(struct gs_audio_format *format, int frequency, unsigne
 	else
 		format->channel_count = 1;
 
-	format->byte_order = 1; //sampleFormat & V3XA_BIGENDIAN ? 2 : 1;
+	format->byte_order = 1;
 	format->frame_rate = (float)frequency;
 	format->buffer_size = size;
 	return frame;
@@ -313,7 +320,7 @@ static int ChannelPlay(int channel, int frequency, float volume, float pan, V3XA
 	{
 		hnd->pbuffer->StartPlaying();
 		hnd->pbuffer->SetPan((float)pan, 0);
-		hnd->pbuffer->SetGain((float)volume, 0);
+		hnd->pbuffer->SetGain((float)volume * g_fGain);
 		return 1;
 	}
 	// A different buffer. Kill it
@@ -335,7 +342,7 @@ static int ChannelPlay(int channel, int frequency, float volume, float pan, V3XA
 	if (!hnd->pbuffer)
 	{
 		unsigned frameSize = SetFormat(&format, frequency, pSample->sampleFormat, pSample->length);
-		hnd->pbuffer = new BSimpleGameSound(pSample->sample, pSample->length * frameSize, &format, NULL);
+		hnd->pbuffer = new BSimpleGameSound(pSample->sample, pSample->length / frameSize, &format, NULL);
 		if (pSample->loopend)
 		{
 		   hnd->pbuffer->SetIsLooping(TRUE);
@@ -346,7 +353,7 @@ static int ChannelPlay(int channel, int frequency, float volume, float pan, V3XA
 	{
 		hnd->sample = pSample;
 		hnd->pbuffer->SetPan((float)pan, 0);
-		hnd->pbuffer->SetGain((float)volume, 0);
+		hnd->pbuffer->SetGain((float)volume * g_fGain);
 		hnd->pbuffer->StartPlaying();
 	}
 
@@ -391,12 +398,12 @@ static int ChannelGetStatus(int channel)
 static void StreamRelease(V3XA_STREAM handle)
 {
 	GS_steam *pHandle = g_StreamHandles + handle;
-	if (pHandle->flags & 1)
+	if (pHandle->flags)
 	{
 		delete pHandle->handle;
 		free(pHandle->sample.sample);
 	}
-	pHandle->flags&=~1;
+	pHandle->flags=0;
 	return;
 }
 
@@ -409,21 +416,30 @@ static size_t StreamGetPosition(V3XA_STREAM handle)
 static int StreamStart(V3XA_STREAM handle)
 {
 	GS_steam *pHandle = (GS_steam*)handle;
-	UNUSED(pHandle);
+	if (pHandle->flags)
+	{
+		pHandle->handle->StartPlaying();
+	}
 	return -1;
 }
 
 static void StreamStop(V3XA_STREAM handle)
 {
 	GS_steam *pHandle = (GS_steam*)handle;
-	UNUSED(pHandle);
+	if (pHandle->flags)
+	{
+		pHandle->handle->StopPlaying();
+	}
 	return ;
 }
 
 static void StreamSetVolume(V3XA_STREAM handle, float volume)
 {
 	GS_steam *pHandle = g_StreamHandles + handle;
-	UNUSED(pHandle);
+	if (pHandle->flags)
+	{
+		pHandle->handle->SetGain(volume * g_fGain);
+	}
 	return;
 }
 static int StreamGetChannel(V3XA_STREAM handle)
@@ -433,29 +449,36 @@ static int StreamGetChannel(V3XA_STREAM handle)
 	return 0;
 }
 
-static void hook(void *cookie, void *inBuffer, size_t byteCount, BStreamingGameSound *object)
+// WARNING: This streaming code doesn't work at all.
+
+static void SoundRenderer(void *cookie, void *inBuffer, size_t byteCount, BStreamingGameSound *object)
 {
 	GS_steam *pHandle = (GS_steam*)cookie;
-	if (!pHandle->sample.sample) return;
+	if (!inBuffer || !byteCount)
+	   return;
+
+	if (!pHandle->sample.sample) 
+	   return;
+
+
+	if ((signed)(pHandle->PlayPosition + byteCount) < (signed)pHandle->sample.length )
 	{
-		if ((signed)(pHandle->PlayPosition + byteCount) < (signed)pHandle->sample.length )
-		{
-			sysMemCpy((u_int8_t*)inBuffer, (char*)pHandle->sample.sample + pHandle->PlayPosition, byteCount);
-			pHandle->PlayPosition+=byteCount;
-		}
-		else
-		{
-			int32_t left  = pHandle->sample.length - pHandle->PlayPosition;
-			int32_t right = byteCount-left;
-			if (left)  sysMemCpy((u_int8_t*)inBuffer	   , (char*)pHandle->sample.sample + pHandle->PlayPosition, left);
-			if (right) sysMemCpy((u_int8_t*)inBuffer+left, (char*)pHandle->sample.sample			, right);
-			pHandle->PlayPosition = right;
-		}
+		sysMemCpy((u_int8_t*)inBuffer, (char*)pHandle->sample.sample + pHandle->PlayPosition, byteCount);
+		pHandle->PlayPosition+=byteCount;
 	}
+	else
+	{
+		int32_t left  = pHandle->sample.length - pHandle->PlayPosition;
+		int32_t right = byteCount-left;
+		if (left)  sysMemCpy((u_int8_t*)inBuffer, (char*)pHandle->sample.sample + pHandle->PlayPosition, left);
+		if (right) sysMemCpy((u_int8_t*)inBuffer+left, (char*)pHandle->sample.sample, right);
+		pHandle->PlayPosition = right;
+	}
+
 	return;
 }
 
-static V3XA_STREAM StreamInitialize(int smode, int frequency, size_t size, int precache)
+static V3XA_STREAM StreamInitialize(int sampleFormat, int frequency, size_t size)
 {
 	GS_steam	*pHandle;
 	V3XA_STREAM handle = -1;
@@ -463,7 +486,7 @@ static V3XA_STREAM StreamInitialize(int smode, int frequency, size_t size, int p
 	int b;
 	for (b=0;b<MAX_V3XA_AUDIO_STREAM;b++)
 	{
-		if ((g_StreamHandles[b].flags&1)==0)
+		if (g_StreamHandles[b].flags==0)
             handle = b;
 	}
 	if (handle==-1)
@@ -471,19 +494,24 @@ static V3XA_STREAM StreamInitialize(int smode, int frequency, size_t size, int p
 	pHandle = g_StreamHandles + handle;
 	sysMemZero(pHandle, sizeof(GS_steam));
 	pHandle->sample.length = size;
-	pHandle->m_nStreamState	= precache;
-	pHandle->sample.sample = new u_int8_t[pHandle->sample.length];
-	pHandle->flags	|= 1;
-	SetFormat(&format, frequency, smode, size);
-	pHandle->handle = new BStreamingGameSound(precache, &format, 2, NULL);
+	pHandle->m_nStreamState	= 2;
+	pHandle->sample.sampleFormat = sampleFormat;
+	pHandle->sample.sample = malloc(pHandle->sample.length);
+	memset(pHandle->sample.sample, 0, pHandle->sample.length);
+	pHandle->flags = 1;
+	int sampleSize = SetFormat(&format, frequency, sampleFormat, size);
+	int sampleCount = size / sampleSize; // precache ??
+	pHandle->handle = new BStreamingGameSound(sampleCount, &format, 2, NULL);
 	if ( pHandle->handle)
 	{
 		if ( pHandle->handle->InitCheck() != B_OK)
 		{
-			pHandle->flags&=~1;
+			pHandle->flags = 0;
 			delete pHandle->handle;
+			return 0;
 		}
 	}
+	pHandle->handle->SetStreamHook(SoundRenderer, pHandle);
 	return handle;
 }
 
@@ -509,12 +537,12 @@ static int StreamPoll(V3XA_STREAM handle)
 	return ret;
 }
 
-static int StreamLoad(V3XA_STREAM handle, void *data, size_t size, int smode)
+static int StreamLoad(V3XA_STREAM handle, void *data, size_t size)
 {
 	u_int8_t *buffer = (u_int8_t*)data;
 	GS_steam   *pHandle = g_StreamHandles + handle;
 	pHandle->SegmentSize = size;
-	
+
 	if (pHandle->m_nWritePosition + (int32_t)pHandle->SegmentSize < (int32_t) pHandle->sample.length)
 	{
 		sysMemCpy((char*)pHandle->sample.sample + pHandle->m_nWritePosition, buffer , pHandle->SegmentSize);
@@ -524,7 +552,7 @@ static int StreamLoad(V3XA_STREAM handle, void *data, size_t size, int smode)
 	{
 		int32_t left  = pHandle->sample.length - pHandle->m_nWritePosition;
 		int32_t right = pHandle->SegmentSize-left;
-		if (left)  
+		if (left)
             sysMemCpy((char*)pHandle->sample.sample + pHandle->m_nWritePosition, buffer, left);
 		if (right)
             sysMemCpy((char*)pHandle->sample.sample, buffer + left, right);
@@ -536,7 +564,6 @@ static int StreamLoad(V3XA_STREAM handle, void *data, size_t size, int smode)
 		if (!pHandle->m_nStreamState)
 		{
 			pHandle->handle->StartPlaying();
-			pHandle->handle->SetStreamHook(hook, pHandle);
 		}
 	}
 	return pHandle->m_nStreamState;
@@ -552,7 +579,7 @@ static void ChannelFlushAll(int mode)
 {
 	GS_handle *p = g_pVoiceHandles;
 	int i;
-	for (i=0;i<32;i++, p++)
+	for (i=0;i<MAX_V3XA_AUDIO_MIX;i++, p++)
 	{
 		if (p->pbuffer)
 		{
@@ -600,19 +627,12 @@ static V3XA_HANDLE *ChannelGetSample(int channel)
 	return p->sample;
 }
 
-static void ChannelSetParms(int channel,  V3XVECTOR *pos, 
-										  V3XVECTOR *velocity,
-										  V3XRANGE *fRange
-											   )
+static void ChannelSetParms(int channel, V3XVECTOR *pos, V3XVECTOR *velocity, V3XRANGE *fRange)
 {
 	return;
 }
 
-static void UserSetParms( V3XMATRIX *lpMAT,
-						  V3XVECTOR *velocity,
-						  float *lpDistanceF, 
-						  float *lpDopplerF,
-						  float *lpRolloff)
+static void UserSetParms( V3XMATRIX *lpMAT, V3XVECTOR *velocity, float *lpDistanceF, float *lpDopplerF, float *lpRolloff)
 {
 	return;
 }
@@ -627,56 +647,56 @@ static int ChannelSetEnvironment(int channel,V3XA_REVERBPROPERTIES *cfg)
    return 0;
 }
 
-static V3XA_WaveClientDriver MediaKit_Client = {
-
-	Enum,
-	Detect,
-	Initialize,
-	Release,
-	SetVolume,
-	Start,
-	Stop,
-	Poll,
-	Render,
-	UserSetParms,
-
-	ChannelOpen,
-	ChannelPlay,
-	ChannelStop,
-
-	ChannelSetVolume,
-	ChannelSetPanning,
-	ChannelSetSamplingRate,
-
-	ChannelGetStatus,
-
-	ChannelSetParms,
-	ChannelSetEnvironment,
-
-	ChannelGetFree,
-	ChannelFlushAll,
-	ChannelInvalidate,
-	ChannelGetSample,
-
-	StreamRelease,
-	StreamInitialize,
-	StreamGetChannel,
-	StreamGetPosition,
-	StreamPoll,
-	StreamSetVolume,
-
-	StreamLoad,
-	StreamStart,
-	StreamStop,
-
-	SmpLoad,
-	SmpRelease,
-
-	"Mediakit"
-};
 
 void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *p)
 {
-	V3XA.Client = &MediaKit_Client;
+	 static V3XA_WaveClientDriver driver = {
+	
+		Enum,
+		Detect,
+		Initialize,
+		Release,
+		SetVolume,
+		Start,
+		Stop,
+		Poll,
+		Render,
+		UserSetParms,
+	
+		ChannelOpen,
+		ChannelPlay,
+		ChannelStop,
+	
+		ChannelSetVolume,
+		ChannelSetPanning,
+		ChannelSetSamplingRate,
+	
+		ChannelGetStatus,
+	
+		ChannelSetParms,
+		ChannelSetEnvironment,
+	
+		ChannelGetFree,
+		ChannelFlushAll,
+		ChannelInvalidate,
+		ChannelGetSample,
+	
+		StreamRelease,
+		StreamInitialize,
+		StreamGetChannel,
+		StreamGetPosition,
+		StreamPoll,
+		StreamSetVolume,
+	
+		StreamLoad,
+		StreamStart,
+		StreamStop,
+	
+		SmpLoad,
+		SmpRelease,
+	
+		"Mediakit"
+	};
+	V3XA.Client = &driver;
 	return;
 }

@@ -103,7 +103,7 @@ _RLXEXPORTFUNC    char     RLXAPI *file_name(char *a);
 _RLXEXPORTFUNC    void     RLXAPI  file_path(char *t);
 _RLXEXPORTFUNC    char     RLXAPI *file_extension(char *t);
 
-_RLXEXPORTDATA    extern    SYS_MEMORYMANAGER MM_std, MM_heap, MM_video, MM_audio;
+_RLXEXPORTDATA    extern    SYS_MEMORYMANAGER MM_std, MM_heap, MM_audio;
 
 
 __end_extern_c

@@ -244,7 +244,7 @@ int V3XCache_Material(V3XMATERIAL *Mat, int option)
 			{
 				FLI_Unpack(a);   
 				if (a->decompBuffer)
-					V3X.Client->TextureModify(&a->bitmap, a->decompBuffer, a->ColorTable);
+					V3X.Client->TextureModify(Mat->texture+0, a->decompBuffer, a->ColorTable);
 			}
 
             if (option&1) 
@@ -423,11 +423,12 @@ static void V3XMaterial_UploadTexture(GXSPRITE *pDst, const GXSPRITE *pSrc, V3XM
     
 	if (Mat->info.Dynamic)           
 		option|=V3XTEXDWNOPTION_DYNAMIC;    
-
 	
 	pDst->handle = V3X.Client->TextureDownload(pSrc, GX.ColorTable, bpp, option);
-	pDst->data = (u_int8_t*)pDst->handle;
+	SYS_ASSERT(pDst->handle);
 
+	if (V3X.Client->Capabilities&GXSPEC_HARDWARE)
+		pDst->data = (u_int8_t*)pDst->handle;
     
 	if (!pDst->handle)  
 		V3X.Setup.warnings|=V3XWARN_NOENOUGHSurfaces; 
@@ -466,10 +467,11 @@ static void V3XMaterial_LoadTexturesFn(V3XMATERIAL *Mat, char *szFilename, GXSPR
             fli = (FLI_STRUCT*) V3XResources_Get(&V3X.Cache, szFullPathName, texMode);
             if (fli==NULL)
             {
-                int Caps = FLI_USEMEMORY;
-                
                 fp = FIO_cur->fopen(szFullPathName, "rb");
-                if (fp) fli = FLI_Open(fp, Caps);
+                if (fp)
+				   fli = FLI_Open(fp, FLI_USEMEMORY);
+				   
+				SYS_ASSERT(fli);
                 if (!fli)
                 {
                     Mat->Render = V3XRCLASS_flat;
@@ -585,7 +587,6 @@ void V3XMaterial_LoadTextures(V3XMATERIAL *Mat)
     if ((Mat->info.Texturized)||(Mat->info.Sprite))
     {
         V3XMaterial_LoadTexturesFn(Mat, Mat->tex_name, &Mat->texture[0], 0);
-        V3XMaterial_LoadTexturesFn(Mat, Mat->ref_name, &Mat->texture[1], 1);
     }
     return;
 }
@@ -604,49 +605,4 @@ void V3XMaterials_LoadFromMesh(V3XMESH *Obj)
     for (i=Obj->numMaterial;i!=0;Mat++, i--) 
 		V3XMaterial_LoadTextures( Mat );
     return;
-}
-
-/*------------------------------------------------------------------------
-*
-* PROTOTYPE  :  V3XMATERIAL *V3XMaterials_FindByName(V3XMATERIAL *mat, char *name, int ->numMaterial)
-*
-* DESCRIPTION :
-*
-*/
-V3XMATERIAL *V3XMaterials_SearchByName(V3XMATERIAL *mat, char *name, int numMaterial)
-{
-    for (;numMaterial!=0;numMaterial--, mat++)
-    {
-        if (sysStriCmp(mat->mat_name, name)==0) 
-			return mat;
-    }
-    return NULL;
-}
-/*------------------------------------------------------------------------
-*
-* PROTOTYPE  :  V3XMATERIAL *V3XMaterials_GetFn(char *name, int *maxtexture, unsigned flags)
-*
-* DESCRIPTION :
-*
-*/
-V3XMATERIAL *V3XMaterials_GetFn(char *name, int *maxtexture, unsigned flags)
-{
-    SYS_FILEHANDLE in = FIO_gzip.fopen(name, "rb");
-    V3XMATERIAL *mat;
-    FIO_gzip.fread(maxtexture, sizeof(int), 1, in);
-#ifdef LSB_FIRST
-    BSWAP32((u_int32_t*)maxtexture, 1);
-#endif
-    mat = V3XMaterials_GetFp(in, *maxtexture);
-    {
-        V3XMATERIAL *m = mat;
-        int i;
-        for (i=*maxtexture;i!=0;i--, m++)
-        {
-            if (flags&V3XMAT_LOADIMAGE)
-            IMG_LoadFn(m->tex_name, &m->texture[0]);
-        }
-    }
-    UNUSED(flags);
-    return mat;
 }

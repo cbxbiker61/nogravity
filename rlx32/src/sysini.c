@@ -345,7 +345,7 @@ ConfigItemData *GetConfigItem(char const *itemName, enum ConfigDataType type, Co
         C_DATA.i_long = strtol(i->data, NULL, 0);
         break;
         case T_HEX :
-        sscanf(i->data, "%x", &C_DATA.i_long);
+        sscanf(i->data, "%x", (int*)&C_DATA.i_long);
         break;
         default:
         return NULL;

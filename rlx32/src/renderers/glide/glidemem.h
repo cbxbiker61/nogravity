@@ -16,8 +16,8 @@
 **
 ** $Header$
 ** $Log$
-** Revision 1.1  2005/02/24 20:16:06  maffy
-** Initial revision
+** Revision 1.2  2005/02/26 00:15:39  realtech
+** Release 6. BeOS bug fixes
 **
 ** 
 */

@@ -224,12 +224,12 @@ typedef struct _v3xa_wave_client_driver
 
 // Streaming
 	void			(RLXAPI *StreamRelease)(V3XA_STREAM handle); // release streaming handle
-	V3XA_STREAM		(RLXAPI *StreamInitialize)(int sampleFormat, int samplingRate, size_t size, int precache); // initialise stream channel with sample format, sampling rate, buffer size
+	V3XA_STREAM		(RLXAPI *StreamInitialize)(int sampleFormat, int samplingRate, size_t size); // initialise stream channel with sample format, sampling rate, buffer size
 	V3XA_CHANNEL 	(RLXAPI *StreamGetChannel)(V3XA_STREAM handle); // get play channel from steam handle
 	size_t			(RLXAPI *StreamGetPosition)(V3XA_STREAM handle); // 
 	int				(RLXAPI *StreamPoll)(V3XA_STREAM handle); // Should be threaded if possible
 	void			(RLXAPI *StreamSetVolume)(V3XA_STREAM handle, float volume);
-	int				(RLXAPI *StreamLoad)(V3XA_STREAM handle, void *data, size_t size, int smode);
+	int				(RLXAPI *StreamLoad)(V3XA_STREAM handle, void *data, size_t size);
 	int 			(RLXAPI *StreamStart)(V3XA_STREAM handle);
 	void			(RLXAPI *StreamStop)(V3XA_STREAM handle);
 

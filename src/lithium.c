@@ -56,7 +56,9 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "lt_struc.h"
 #include "lt_data.h"
 #include "lt_func.h"
-#include "_stubini.h"
+
+#define APP_NAME "No Gravity"
+#define STUB_SIG "application/x-vnd.Realtech-nogravity"
 
 static char *Pname=APP_NAME, *Psig=STUB_SIG;
 static u_int8_t *g_HeapBuffer;
@@ -458,9 +460,6 @@ void STUB_Default(void)
 * DESCRIPTION :
 *
 */
-__extern_c
-extern SYS_MEMORYMANAGER MM_videoDefault;
-__end_extern_c
 
 void STUB_ReadyToRun(void)
 {
@@ -473,7 +472,7 @@ void STUB_ReadyToRun(void)
 	if (!FIO_wad)
 	{
 		SYS_Error("Couldn't find NOGRAVITY.RMX.\n\nGo to http://www.realtech-vr.com/nogravity/ \nand get the No Gravity Game Data package.");
-		return;
+		return ;
 	}
 	SYS_ASSERT(FIO_wad);
 
@@ -485,8 +484,7 @@ void STUB_ReadyToRun(void)
 
     g_pGameIO = &FIO_res;
     FIO_cur = g_pGameIO;
-	MM_video = MM_videoDefault;
-    NG_SetGameInfo();
+	NG_SetGameInfo();
 	
     V3X.Setup.flags|=V3XOPTION_COLLISION;
     V3X.Setup.MaxExtentableObjet = 200;
@@ -530,10 +528,10 @@ static int EnumDisplayMode(char **ModeList)
 			current ++;
 			n++;		
 		}
-
+		
 		if (n)	
 		{
-			struct _gx_display_mode_info *filtered = (struct _gx_display_mode_info*) MM_heap.malloc(n * sizeof(struct _gx_display_mode_info));
+			struct _gx_display_mode_info *filtered = (struct _gx_display_mode_info*) MM_heap.malloc((n+1) * sizeof(struct _gx_display_mode_info));
 			struct _gx_display_mode_info *filter = filtered;			
 
 			int pref = -1;
@@ -579,10 +577,12 @@ static int EnumDisplayMode(char **ModeList)
 			int i = 0;
 			while(g_pDisplayMode[i].BitsPerPixel)
 			{
-				ModeList[i] = (char*)malloc(16);
-				sprintf(ModeList[i], "%d x %d", 
+				ModeList[i] = (char*)malloc(32);
+				sprintf(ModeList[i], "%d x %d (%d)",
 					g_pDisplayMode[i].lWidth,
-					g_pDisplayMode[i].lHeight
+					g_pDisplayMode[i].lHeight,
+					g_pDisplayMode[i].BitsPerPixel
+
 				);
 				i++;
 			}		
@@ -635,13 +635,11 @@ void NG_ChangeScreenMode(int mode)
 			GX.Client->ReleaseSurfaces();
         GX.Client->RegisterMode(mode);
         GX.Client->CreateSurface(2);
-        MM_video.push();
+
     }
     else
     {
         GX.Client->GetDisplayInfo(mode);
-        MM_video.pop(-1);
-        MM_video.push();
     }
 	
 	if (GX.View.BitsPerPixel<=8) 

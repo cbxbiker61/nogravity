@@ -146,7 +146,7 @@ void NG_DrawTicker(void)
         pf->poly = pf->frame = 0;
         pf->time = timer_ms();
     }
-    sprintf(tex, "%d fps %d pps", pf->fps, pf->pps);
+    sprintf(tex, "%d fps %d pps",(int) pf->fps, (int)pf->pps);
 	CSP_Color(g_SGGame.CI_WHITE);
     CSP_WriteCenterText(tex, GX.View.ymax-20, g_pSmallFont);
     return;

@@ -682,7 +682,7 @@ static int NG_RenderingMainMenu(RW_Interface *p, int mode)
 					}	
 
 					sprintf(tex, "Score: ~%d~ Level: ~%s~ %s", 
-						g_pSaveGames[j].score,						
+						(int)g_pSaveGames[j].score,						
 						g_pEpisodeMenu[g_pSaveGames[j].episode==7 ? 1 : g_pSaveGames[j].episode+2],
 										
 						asctime(localtime(&g_pSaveGames[j].last_time))
@@ -1661,7 +1661,7 @@ static int RenderHallOfFame(RW_Interface *pInterface, int mode)
         MedalTotal(tex, g_pBestGames[i].rank);
 		CSP_WriteText(tex, 120*2, y, g_pRewards);
         CSP_WriteText(g_pGameItem->EI[g_pBestGames[i].episode].LI[g_pBestGames[i].level[g_pBestGames[i].episode]].name, 155*2, y, g_SGMenuPos.Font);
-        sprintf(tex, "%d", g_pBestGames[i].score);
+        sprintf(tex, "%d", (int)g_pBestGames[i].score);
         CSP_WriteText(tex, 230*2, y, g_pFontMenuSml);
     }
 
@@ -1708,7 +1708,7 @@ static void ChangeLanguage()
 	if (g_szLanguageList[g_SGSettings.Language] == 0)
 		g_SGSettings.Language = 0;
 
-	NG_SetLanguage();
+	NG_SetLanguage(g_SGSettings.Language);
 	
 }
 static void NG_OptionsMenu(void)

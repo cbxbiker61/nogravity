@@ -33,9 +33,6 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "iss_defs.h"
 #include "iss_fx.h"
 #include "iss_av.h"
-// Increase this value for larger streaming buffer
-
-#define MAX_PRECACHE_COUNT		8
 
 //  #define _TRACE
 
@@ -169,7 +166,7 @@ static void V3XA_STREAM_Rewind(V3XA_STREAMEX *pHandle)
 	return;
 }
 
-static int V3XA_STREAM_Load(V3XA_STREAMEX *pHandle, size_t size, int n)
+static int V3XA_STREAM_Load(V3XA_STREAMEX *pHandle, size_t size)
 {
 	int ret = 0;
 	int i;
@@ -220,9 +217,9 @@ static int V3XA_STREAM_Load(V3XA_STREAMEX *pHandle, size_t size, int n)
 
 			}while (!ptr);
 
-			ret = V3XA.Client->StreamLoad(pHandle->handle[i], ptr , sizeWrite , n);
+			ret = V3XA.Client->StreamLoad(pHandle->handle[i], ptr, sizeWrite);
 #ifdef _PROFILE
-			SYS_Debug("State=%d\n",ret);
+			SYS_Debug("!State=%d\n",ret);
 #endif
 
 			pHandle->dwPositionWrite += sizeWrite;
@@ -237,7 +234,7 @@ static int V3XA_STREAM_Update(V3XA_STREAMEX *pHandle)
 	int i;
 
 #ifdef _TRACE
-	SYS_Debug("Update stream\n");
+	SYS_Debug("!Update stream\n");
 #endif
 
 	pHandle->dwState&=~V3XA_STREAM_STATE_REWIND;
@@ -249,7 +246,7 @@ static int V3XA_STREAM_Update(V3XA_STREAMEX *pHandle)
 			n = status;
 
 #ifdef _TRACE
-		SYS_Debug("Poll status = %d\n", status);
+		SYS_Debug("!Poll status = %d\n", status);
 #endif
 
 	}
@@ -260,9 +257,9 @@ static int V3XA_STREAM_Update(V3XA_STREAMEX *pHandle)
 			((pHandle->dwState&V3XA_STREAM_STATE_STANDBY)==0))
 		{
 #ifdef _TRACE
-			SYS_Debug("Load new chunk of data %d\n", pHandle->chunkLength);
+			SYS_Debug("!Load new chunk of data %d\n", pHandle->chunkLength);
 #endif
-			if (V3XA_STREAM_Load(pHandle, pHandle->chunkLength, n)==-1)
+			if (V3XA_STREAM_Load(pHandle, pHandle->chunkLength)==-1)
 			{
 				pHandle->dwState|=V3XA_STREAM_STATE_STANDBY;
 				return 2;
@@ -271,14 +268,14 @@ static int V3XA_STREAM_Update(V3XA_STREAMEX *pHandle)
 		else
 		{
 #ifdef _TRACE
-			SYS_Debug("Wait");
+			SYS_Debug("!Wait");
 #endif
 		}
 	}
 	else
 	{
 #ifdef _TRACE
-			SYS_Debug("Error n");
+			SYS_Debug("!Return :%d\n", n);
 #endif
 	}
 
@@ -286,7 +283,7 @@ static int V3XA_STREAM_Update(V3XA_STREAMEX *pHandle)
 	{
 		size_t l = V3XA.Client->StreamGetPosition(pHandle->handle[0]);
 #ifdef _TRACE
-		SYS_Debug("Get position %d\n", l);
+		SYS_Debug("!Get position %d\n", l);
 #endif
 
 		if ( n!=-1 )
@@ -294,7 +291,7 @@ static int V3XA_STREAM_Update(V3XA_STREAMEX *pHandle)
 			if (l>=pHandle->info.length)
 			{
 #ifdef _TRACE
-				SYS_Debug("End of track\n");
+				SYS_Debug("!End of track\n");
 #endif
 
 				if (pHandle->dwState&V3XA_STREAM_STATE_LOOP)
@@ -320,20 +317,20 @@ int V3XAStream_Poll(V3XA_STREAM handle)
 	V3XA_STREAMEX *pHandle = g_pStreams + handle;
 
 #ifdef _TRACE
-	SYS_Debug("Poll stream\n");
+	SYS_Debug("!Poll stream\n");
 #endif
 
 	if ((pHandle->dwState&V3XA_STREAM_STATE_OK)&&(pHandle->dwState&V3XA_STREAM_STATE_PLAY))
 	{
 #ifdef _TRACE
-		SYS_Debug("Update\n");
+		SYS_Debug("!Update\n");
 #endif
 	   return V3XA_STREAM_Update(pHandle);
 	}
 	else
 	{
 #ifdef _TRACE
-		SYS_Debug("Wait\n");
+		SYS_Debug("!Wait\n");
 #endif
 		return 0;
 	}
@@ -446,7 +443,6 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 	unsigned bestCache;
 	V3XA_FILECODEC * codec = V3XA_CodecFind((char*)szFilename);	
 
-	unsigned preCacheCount;
 	int i;
 	size_t chunkLength = 0;
 	int ret;
@@ -513,8 +509,8 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 
 	SYS_ASSERT(pHandle->chunkLength);	
 
-	preCacheCount = MAX_PRECACHE_COUNT; 
-	chunkLength = pHandle->chunkLength * preCacheCount;
+	
+	chunkLength = pHandle->chunkLength * 2;
 	pHandle->dwLength = pHandle->info.length;	
 
 	SYS_ASSERT(pHandle->dwLength);
@@ -524,7 +520,7 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 	{
 		pHandle->sample[i] = MM_std.malloc(pHandle->chunkLength);
 		pHandle->handle[i] = V3XA.Client->StreamInitialize(pHandle->info.sampleFormat, 
-			pHandle->info.samplingRate, chunkLength, preCacheCount);
+			pHandle->info.samplingRate, chunkLength);
 	}
 
 	SYS_ASSERT(pHandle!=g_pStreams);

@@ -27,15 +27,16 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include <Be.h>
 #include "_rlx32.h"
 #include "_rlx.h"
-#include "_stubini.h"
 #include "_stub.h"
 #include "beos/stub.h"
 #include "sysctrl.h"
 #include "systools.h"
 
+#define STUB_SIG "application/x-vnd.Realtech-nogravity"
+
 static status_t POSTMESSAGE(BLooper *p, BMessage *m)
 {
-#ifndef ZETA
+#if B_BEOS_VERSION < 0x0520
     return p->PostMessage(m);
 #else
 	BMessenger messenger(p);
@@ -47,103 +48,13 @@ class sysView : public BView
 {
 public :
 	sysView();
-	void		KeyDown(const char *bytes, int32 num);
-	void		KeyUp(const char *bytes, int32 num);
-	void		MouseDown(BPoint pos);
-	void		MouseUp(BPoint pos);
-	void		MouseMoved(BPoint point, uint32, const BMessage *);
+	
 };
 
 sysView::sysView()
 	 :BView(BRect(0, 0, 640, 480),(const char*) "subview", B_FOLLOW_ALL_SIDES, 0)
 {
 
-}
-
-void
-sysView::MouseUp(BPoint point)
-{
-	if (point.x < 0)
-		point.x = 0;
-
-	if (point.y < 0)
-		point.y = 0;
-
-	SYS_ASSERT(sMOU);
-	if (sMOU)
-	{
-	   sMOU->lX = (int)point.x - sMOU->x;
-	   sMOU->lY = (int)point.y - sMOU->y;	   
-	   sMOU->x = (int)point.x;
-	   sMOU->y = (int)point.y;
-	   sysMemCpy(sMOU->steButtons, sMOU->rgbButtons, sizeof(sMOU->steButtons));
-	   sMOU->rgbButtons[0] = 0;
-	}
-	return;
-}
-
-void
-sysView::MouseDown(BPoint point)
-{
-    uint32 button;
-	if (point.x<0)
-		point.x = 0;
-
-	if (point.y<0)
-		point.y = 0;
-
-
-	SYS_ASSERT(sMOU);
-	if (sMOU)
-	{
-	   sMOU->lX = (int)point.x - sMOU->x;
-	   sMOU->lY = (int)point.y - sMOU->y;
-	   sMOU->x = (int)point.x;
-	   sMOU->y = (int)point.y;
-
-	   this->GetMouse(&point, &button);
-	   
-	   sysMemCpy(sMOU->steButtons, sMOU->rgbButtons, sizeof(sMOU->steButtons));
-	   sMOU->rgbButtons[0] =  button&1;
-	   sMOU->rgbButtons[1] = (button>>1)&1;
-	   sMOU->rgbButtons[2] = (button>>2)&1;
-	}
-	return;
-}
-
-void
-sysView::MouseMoved(BPoint point, uint32 transit, const BMessage *)
-{
-	if (point.x<0)
-		point.x = 0;
-	if (point.y <0)
-		point.y = 0;
-
-	SYS_ASSERT(sMOU);
-    if (sMOU && transit == B_INSIDE_VIEW)
-	{
-	   sMOU->lX = (int)point.x - sMOU->x;
-	   sMOU->lY = (int)point.y - sMOU->y;	   
-	   sMOU->x = (int)point.x;
-	   sMOU->y = (int)point.y;
-	}
-	return;
-}
-
-void
-sysView::KeyDown(const char *bytes, int32 numBytes)
-{
-    if ( numBytes == 1 )
-    {
-		sKEY->charCode = bytes[0];
-    }
-	return;
-}
-
-void
-sysView::KeyUp(const char *bytes, int32 numBytes)
-{
-	sKEY->charCode = 0;
 }
 
 
@@ -193,7 +104,9 @@ long sysApplication::RunApplication(void *param)
 		BMessage msg(MSG_SYSAPPLICATION_CLOSE);
 		POSTMESSAGE(m_hWnd, &msg);	
 	}
+	be_app->Lock();
 	be_app->Quit();
+	be_app->Unlock();
     return 0;
 }
 
@@ -249,7 +162,8 @@ BView * sysApplication::CreateSubview(BWindow *h)
 #ifdef _DEBUG
 	SYS_Debug("Create view\n");
 #endif
-	return new sysView();
+	m_hView = new sysView();
+	return m_hView;
 }
 
 void 
@@ -270,7 +184,7 @@ sysApplication::StopDrawing()
 	SetActive(false);
 }
 
-void 
+void
 sysApplication::Stop()
 {
 #ifdef _DEBUG
@@ -297,7 +211,7 @@ sysApplication::SetWindowHandle(BWindow *h)
 	return;
 }
 
-bool 
+bool
 sysApplication::IsStopped()
 {
 	return m_bStopped;
@@ -309,7 +223,7 @@ sysApplication::IsFocused()
 	return m_bActive;
 }
 
-void 
+void
 sysApplication::Kill()
 {
 #ifdef _DEBUG
@@ -328,9 +242,61 @@ sysApplication::WindowMessage(BMessage *msg)
 	{
 	    case B_MOUSE_WHEEL_CHANGED:
      	{
-         	float32_t dy;
+     	 	float32_t dy;
 	        msg->FindFloat("be:wheel_delta_y", &dy);
 	        sMOU->lZ = (int)dy;
+		}
+		break;
+ 	    case B_KEY_UP:
+		{
+			sKEY->charCode = 0;
+			sKEY->scanCode = 0;
+		}
+		break;
+		case B_KEY_DOWN:
+		{
+			int32 raw_char, modifiers;
+			msg->FindInt32("modifiers", &modifiers);
+			msg->FindInt32("raw_char", &raw_char);
+			const char *bytes = msg->FindString("bytes");
+			size_t byteslen = strlen(bytes);
+			switch (raw_char) 
+			{
+				case B_ESCAPE: sKEY->charCode  = '\033'; break;
+				case B_RETURN: sKEY->charCode  = '\r'; break; // CR sux, LF rulz
+				case B_SPACE: sKEY->charCode  = ' '; break;
+				case B_HOME: sKEY->scanCode = s_home; break;
+				case B_END: sKEY->scanCode = s_end; break;
+				case B_LEFT_ARROW: sKEY->scanCode = s_left; break;
+				case B_RIGHT_ARROW: sKEY->scanCode = s_right; break;
+				case B_UP_ARROW: sKEY->scanCode = s_up; break;
+				case B_DOWN_ARROW: sKEY->scanCode = s_down; break;
+				case B_PAGE_UP: sKEY->scanCode = s_pageup; break;
+				case B_PAGE_DOWN: sKEY->scanCode = s_pagedown; break;
+				case B_INSERT: sKEY->scanCode = s_insert; break;
+				case B_DELETE: sKEY->scanCode = s_delete; break;
+				default:
+				if (byteslen == 1) 
+				{
+					sKEY->charCode  = bytes[0];
+					//sKEY->scanCode = raw_char;
+				} 
+				else if (byteslen == 2 && bytes[0] == B_FUNCTION_KEY) 
+				{
+					if (bytes[1] >= B_F1_KEY && bytes[1] < B_PRINT_KEY) 
+					{
+						//sKEY->scanCode = s_f1 + bytes[1] - B_F1_KEY;
+					} 
+					else 
+					if (bytes[1] < B_PAUSE_KEY) 
+					{
+						//sKEY->scanCode = s_pause;
+					}
+				}
+				break;
+			}
+			// printf("charCode=%c scanCode:0x%x\n", (int)sKEY->charCode, (int)sKEY->scanCode);
+		
 		}
 		break;
 
@@ -352,8 +318,9 @@ sysApplication::MessageReceived(BMessage *msg)
 				SYS_Debug("Window quit requested\n");
 				m_hWnd->Lock();
 				m_hWnd->Quit();
+				m_hWnd->Unlock();
 			}
-			
+
 			while (IsFocused())
 			{
 				snooze(10000);
@@ -364,6 +331,7 @@ sysApplication::MessageReceived(BMessage *msg)
 		break;
 
 		default:
+			WindowMessage(msg);
 			BApplication::MessageReceived(msg);
 		break;
 	}

@@ -73,7 +73,7 @@ extern GXSPRITE g_csPicture;
 void NG_FadeInBackground()
 {
 	int i;
-	int s = 4;
+	int s = (V3X.Client->Capabilities&GXSPEC_HARDWARE) ? 4 : 8;
 	for (i=0;i<255;i+=s)
 	{
 		int k = i == 256-s? 255 : i;
@@ -129,7 +129,7 @@ void NG_SetGamma(float gamma)
 void NG_FadeOutBackground()
 {
 	int i;
-	int s = 4;
+	int s = (V3X.Client->Capabilities&GXSPEC_HARDWARE) ? 4 : 8;
 	for (i=0;i<255;i+=s)
 	{
 		int k = i == 256-s? 0 : 255 - i;
@@ -210,7 +210,7 @@ void NG_PlayGameOver(void)
 		char tex[256];
         sKEY->Update(0);
 		sJOY->Update(0);
-        sprintf(tex, "%02d", 19-delta);
+        sprintf(tex, "%02d", (int)(19-delta));
         
 		GX.Client->Lock();
 			CSP_Color(RGB_PixelFormat(255,255,255));

@@ -13,7 +13,13 @@
 #include "iss_defs.h"
 
 #define OGG_BUFFER_SIZE 	(4096)*16
-#pragma pack(8) // See http://www.xiph.org/archives/vorbis/200204/0218.html
+
+#ifndef __BEOS__
+// See http://www.xiph.org/archives/vorbis/200204/0218.html
+// Structure must be 8-byte packed
+#pragma pack(8) 
+#endif //
+
 #include <vorbis/codec.h>
 
 
