@@ -368,7 +368,6 @@
 				F4D808C807CFAEB00031F08A,
 				F4D808CC07CFAEBF0031F08A,
 				F4D808D107CFAECA0031F08A,
-				F4D808D207CFAECA0031F08A,
 				F4D808D607CFAEE80031F08A,
 			);
 			isa = PBXHeadersBuildPhase;
@@ -2230,7 +2229,6 @@
 				F4B3C1AB07BF677E00EB3D65,
 				F4B3C1AC07BF677E00EB3D65,
 				F4B3C1AD07BF677E00EB3D65,
-				F4D808D007CFAECA0031F08A,
 				F4B3C15507BF676700EB3D65,
 				F4D808CB07CFAEBF0031F08A,
 				F4B3C15707BF676700EB3D65,
@@ -2964,23 +2962,8 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4D808D007CFAECA0031F08A = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = _stubini.h;
-			path = ../_stubini.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		F4D808D107CFAECA0031F08A = {
 			fileRef = F4D808CF07CFAECA0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808D207CFAECA0031F08A = {
-			fileRef = F4D808D007CFAECA0031F08A;
 			isa = PBXBuildFile;
 			settings = {
 			};
