@@ -70,6 +70,13 @@ static void RLXAPI Unlock(void)
 
 static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 {
+  static const SDL_Rect hardcoded_mode_640_by_480 = {0, 0, 640, 480};
+  static const SDL_Rect hardcoded_mode_800_by_600 = {0, 0, 800, 600};
+  static const SDL_Rect *hardcoded_modes[] =
+  {
+    &hardcoded_mode_640_by_480,
+    &hardcoded_mode_800_by_600
+  };
   const SDL_VideoInfo *vid_info;
   SDL_PixelFormat fmts[3];
   int num_fmts;
@@ -106,6 +113,11 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
     {
       modes = SDL_ListModes(&fmts[fmt_idx], SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
 
+      if (modes == (SDL_Rect **)-1)
+      {
+	modes = (SDL_Rect **)hardcoded_modes;
+      }
+
       if (modes != NULL)
       {
         for (mode_idx = 0; modes[mode_idx] != NULL ; mode_idx ++)
@@ -122,6 +134,11 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
     for (fmt_idx = 0; fmt_idx < num_fmts; fmt_idx ++)
     {
       modes = SDL_ListModes(&fmts[fmt_idx], SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
+
+      if (modes == (SDL_Rect **)-1)
+      {
+	modes = (SDL_Rect **)hardcoded_modes;
+      }
 
       if (modes != NULL)
       {
@@ -171,6 +188,15 @@ static void RLXAPI SetPrimitive()
 static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 {
   SYS_ASSERT(g_pDisplays != NULL);
+
+  // If we've been given a negative (invalid) mode and we have a valid mode...
+  if ((mode < 0) &&
+      (g_pDisplays[0].BitsPerPixel != 0))
+  {
+    // Use it.
+    mode = 0;
+  }
+
   g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, g_pDisplays[mode].lWidth, g_pDisplays[mode].lHeight, g_pDisplays[mode].BitsPerPixel);
   if (g_pDisplays[mode].BitsPerPixel == 16)
   {
@@ -211,6 +237,14 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 
 static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
 {
+  // If we've been given a negative (invalid) mode and we have a valid mode...
+  if ((mode < 0) &&
+      (g_pDisplays[0].BitsPerPixel != 0))
+  {
+    // Use it.
+    mode = 0;
+  }
+
   g_Mode = mode;
   return 0;
 }
@@ -231,18 +265,19 @@ static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
     }
   }
 
-  // If the mode is out of range...
+  // If the mode is out of range, i.e. we did not find the requested mode...
   if (g_pDisplays[mode].BitsPerPixel == 0)
   {
-    // If we have a valid mode, use it.
-    if (g_pDisplays[mode].BitsPerPixel != 0)
+    // If we have at least one valid mode....
+    if (g_pDisplays[0].BitsPerPixel != 0)
     {
+      // Use it.
       mode = 0;
     }
-    // Alternatively, if there is no valid mode, return -1.
     else
     {
-      mode = -1;
+      // Return -1.  This may cause the program to crash.
+      mode = - 1;
     }
   }
 
@@ -278,6 +313,13 @@ static void RLXAPI ReleaseSurfaces(void)
 
 static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
 {
+  // If we've been given a negative (invalid) mode and we have a valid mode...
+  if ((mode < 0) &&
+      (g_pDisplays[0].BitsPerPixel != 0))
+  {
+    // Use it.
+    mode = 0;
+  }
   g_pRLX->pGX->View.DisplayMode = (u_int16_t)mode;
   g_pRLX->pGX->Client->GetDisplayInfo(mode);
   return g_pRLX->pGX->Client->SetDisplayMode(mode);
