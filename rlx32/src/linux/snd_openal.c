@@ -33,18 +33,12 @@ Linux/SDL Port: 2005 - Matt Williams
 #include "systools.h"
 #include "iss_defs.h"
 
-struct sample
-{
-  ALuint buf;
-  V3XA_HANDLE *sam;
-};
-
 struct channel
 {
   ALuint src;
   int play;
   int stream;
-  struct sample *sam;
+  V3XA_HANDLE *sam;
 };
 
 struct stream
@@ -60,9 +54,6 @@ struct stream
   ALuint bufs[100];
 };
 
-// TODO: Allocate this in a better way.
-static struct sample g_psamples[100];
-static int g_nsamples = 100;
 static struct channel *g_pchannels;
 static int g_nchannels = 0;
 static struct stream *g_pstreams;
@@ -98,17 +89,8 @@ static int Initialize(void *hnd)
 
 static void Release(void)
 {
-  int sample;
   ALCcontext *ctxt;
   ALCdevice *dev;
-  for (sample = 0; sample < g_nsamples; sample ++)
-  {
-    if (g_psamples[sample].sam != NULL)
-    {
-      alDeleteBuffers(1, &g_psamples[sample].buf);
-      g_psamples[sample].sam = NULL;      
-    }
-  }
   ctxt = alcGetCurrentContext();
   if (ctxt != NULL)
   {
@@ -249,22 +231,11 @@ static void ChannelSetParms(int channel, V3XVECTOR *pos, V3XVECTOR *velocity, V3
 
 static int ChannelPlay(int channel, int sampleRate, float volume, float pan, V3XA_HANDLE *sam)
 {
-  int sample;
   static const V3XVECTOR vector = {0.0, 0.0, 0.0};
   static const V3XRANGE range = {0.0, 10000.0};
-  SYS_ASSERT(!g_pchannels[channel].play);
-  // Find the specified sample.
-  for (sample = 0; sample < g_nsamples; sample ++)
-  {
-    if (g_psamples[sample].sam == sam)
-    {
-      break;
-    }
-  }
-  SYS_ASSERT(sample < g_nsamples);
-  g_pchannels[channel].sam = &g_psamples[sample];
+  g_pchannels[channel].sam = sam;
   g_pchannels[channel].play = TRUE;
-  alSourcei(g_pchannels[channel].src, AL_BUFFER, g_pchannels[channel].sam->buf);
+  alSourcei(g_pchannels[channel].src, AL_BUFFER, (ALuint)sam->sampleID);
   ChannelSetParms(channel, (V3XVECTOR *)&vector, (V3XVECTOR *)&vector, (V3XRANGE *)&range);
   ChannelSetSamplingRate(channel, sampleRate);
   ChannelSetVolume(channel, volume);
@@ -330,12 +301,20 @@ static void ChannelFlushAll(int mode)
 
 static void ChannelInvalidate(V3XA_HANDLE *sam)
 {
-  // TODO: Implement.
+  int channel;
+  for (channel = 0; channel < g_nchannels; channel ++)
+  {
+    if ((g_pchannels[channel].sam == sam) &&
+	(ChannelGetStatus(channel)))
+    {
+      ChannelStop(channel);
+    }
+  }
 }
 
 static V3XA_HANDLE *ChannelGetSample(int channel)
 {
-  return g_pchannels[channel].sam->sam;
+  return g_pchannels[channel].sam;
 }
 
 static void StreamRelease(V3XA_STREAM handle)
@@ -494,36 +473,14 @@ static void StreamStop(V3XA_STREAM handle)
 
 static int SmpLoad(V3XA_HANDLE *sam)
 {
-  int sample;
-  int ret_code = -1;
-  for (sample = 0; sample < g_nsamples; sample ++)
-  {
-    if (g_psamples[sample].sam == NULL)
-    {
-      break;
-    }
-  }
-  if (sample < g_nsamples)
-  {
-    alGenBuffers(1, &g_psamples[sample].buf);
-    alBufferData(g_psamples[sample].buf, (sam->sampleFormat & V3XA_FMTSTEREO) ?  ((sam->sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8) : ((sam->sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8), sam->sample, sam->length, sam->samplingRate);
-    g_psamples[sample].sam = sam;
-    ret_code = 0;
-  }
-  return ret_code;
+  alGenBuffers(1, (ALuint *)&sam->sampleID);
+  alBufferData((ALuint)sam->sampleID, (sam->sampleFormat & V3XA_FMTSTEREO) ?  ((sam->sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO16 : AL_FORMAT_STEREO8) : ((sam->sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_MONO16 : AL_FORMAT_MONO8), sam->sample, sam->length, sam->samplingRate);
+  return 0;
 }
 
 static void SmpRelease(V3XA_HANDLE *sam)
 {
-  int sample;
-  for (sample = 0; sample < g_nsamples; sample ++)
-  {
-    if (g_psamples[sample].sam == sam)
-    {
-      alDeleteBuffers(1, &g_psamples[sample].buf);
-      g_psamples[sample].sam = NULL;
-    }
-  }
+  alDeleteBuffers(1, (ALuint *)&sam->sampleID);
 }
 
 void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)

@@ -40,6 +40,7 @@ void V3XA_Handle_Release(V3XA_HANDLE *pHandle)
 {
 	if (pHandle->sample)
 	{
+		V3XA.Client->SmpRelease(pHandle);
 		MM_std.free(pHandle->sample);
 		pHandle->sample = 0;
 	}
