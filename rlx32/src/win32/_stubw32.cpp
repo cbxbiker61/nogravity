@@ -38,6 +38,16 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "resource.h"
 #include "win32/sys_di.h"
 
+#ifdef _DEBUG
+#define _DEBUG_EXCEPTION
+#endif
+
+#if defined  _DEBUG_EXCEPTION// Exception manager by Konstantin Boukreev
+#include "../exception/se_translator.h"
+#include "../exception/debug_stream.h"
+#include "../exception/exception2.h"
+#endif
+
 #define STUB_SIG "application/x-vnd.Realtech-nogravity"
 
 static char szActualFolder[_MAX_PATH];
@@ -239,6 +249,12 @@ static HWND CreateAppWindow(HINSTANCE hInstance)
 
 int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+#ifdef _DEBUG_EXCEPTION
+	se_translator	translator;
+	std::ostringstream	os;
+	try
+	{
+#endif	
     g_hInstance = hInstance;
 	g_bQuit = 0;
 
@@ -274,6 +290,41 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
         g_lpDI->Release();
         g_lpDI = NULL;
     }
+
+
+#ifdef _DEBUG_EXCEPTION	
+	}
+	catch(se_translator::access_violation& ex)
+	{			
+		os	<< "*" << ex.name() << " at 0x" << std::hex << ex.address() 				
+			<< ", thread attempts to " << (ex.is_read_op() ? "read" : "write")
+			<< " at 0x" << std::right << (int) ex.inaccessible_address() << std::endl
+			<< std::endl
+			<< "Stack : " << std::endl;
+		sym_engine::stack_trace(os, ex.info()->ContextRecord);		
+		::MessageBox(::GetActiveWindow(), (os.str().c_str()), ("Generic exception"), MB_ABORTRETRYIGNORE|MB_ICONERROR);
+	}
+	catch(se_translator::no_memory& ex)
+	{
+		
+		os  << "*" << ex.name() << " at 0x" << std::hex << ex.address() 				
+			<< ", unable to allocate " << std::dec << (int)ex.mem_size() << " bytes" << std::endl
+			<< std::endl
+			<< "Stack : " << std::endl;
+		sym_engine::stack_trace(os, ex.info()->ContextRecord);					
+		::MessageBox(::GetActiveWindow(), (os.str().c_str()), ("Generic exception"), MB_ABORTRETRYIGNORE|MB_ICONERROR);
+	}
+	catch(exception2& ex)
+	{
+		os  << "*" << ex.what() << std::endl
+			<< std::endl
+			<< "Stack :" << std::endl
+			<< ex.stack_trace() << std::endl;
+		::MessageBox(::GetActiveWindow(), (os.str().c_str()), ("Generic exception"), MB_ABORTRETRYIGNORE|MB_ICONERROR);
+	}
+
+	
+#endif	// _DEBUG_EXCEPTION
 
     return 0;
 }

@@ -9,7 +9,7 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
 
@@ -29,7 +29,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "_rlx32.h"
 #include "_rlx.h"
 #include "systools.h"
-#include "gx_struc.h"            
+#include "gx_struc.h"
 #include "gx_init.h"
 #include "gx_csp.h"
 #include "gx_rgb.h"
@@ -43,13 +43,19 @@ static HDC g_hDC;
 static HGLRC g_hGLRC;
 static HWND g_hWnd;
 
+// Function helper
+#define ISFULLSCREEN() (!(g_pRLX->Video.Config&RLXVIDEO_Windowed))
+int GL_IsSupported(const char *extension);
+GLboolean glewGetExtension (const char* name, GLubyte *p);
+void SetPrimitiveSprites();
+
 extern GXGRAPHICINTERFACE GI_OpenGL;
 extern GXCLIENTDRIVER GX_OpenGL;
 extern GXSPRITEINTERFACE CSP_OpenGL;
 extern V3X_GXSystem V3X_OpenGL;
 
 // Display mode
-static int						gl_CurrentPixelFmt;
+
 static DEVMODE			*		gl_pDisplayModes,
 						*		gl_pCurrentDisplayMode;
 static int32_t					gl_lx,
@@ -58,10 +64,62 @@ static int						gl_bpp,
 								gl_nDisplayModeCount;
 static GXDISPLAYMODEHANDLE		gl_nCurrentDisplayModeGL;
 
+// Error management
+
+void SYS_Debug(char *fmt, ...)
+{
+    FILE *in;
+    in = fopen("debug.txt", "a+t");
+    if (in)
+    {
+        char buffer[8192];
+        va_list argptr;
+        va_start(argptr, fmt);
+        vsprintf(buffer, fmt, argptr);
+        fprintf(in, "%s\n", buffer);
+		strcat(buffer, "\n");
+		OutputDebugString(buffer);
+        va_end(argptr);
+        fclose(in);
+    }
+    return;
+}
+
+/*
+char *SYS_GetLastError()
+{
+	LPVOID lpMsgBuf;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		GetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+		(LPTSTR) &lpMsgBuf,
+		0,
+		NULL
+	);
+	return (char*)lpMsgBuf;
+}
+*/
+
+// Window management
+
 #define GetWindowStyle(h) GetWindowLong(h, GWL_STYLE)
 #define GetWindowExStyle(h) GetWindowLong(h, GWL_EXSTYLE)
 
 static DWORD old_Style;
+
+static int GL_GetDesktopColorDepth(HWND hwnd)
+{
+	HDC hDC = ::GetDC(hwnd);
+	SYS_ASSERT(hDC!=0);
+	int bpp = ::GetDeviceCaps(hDC, BITSPIXEL);
+	::ReleaseDC(hwnd, hDC);
+	return bpp;
+}
+
 void W32_WindowLayoutSetStyle(HWND hWnd, bool bWindowed)
 {
 	if (!bWindowed)
@@ -83,11 +141,13 @@ void W32_WindowLayoutSetStyle(HWND hWnd, bool bWindowed)
 			SetWindowLong(hWnd, GWL_STYLE, WS_POPUP|WS_CAPTION);
 	}
 }
+
+
 static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwHeight, bool bFullScrn, bool bResizable) // Must be in called at D3Dx window creation
-{	
+{
 	DWORD dwStyle = GetWindowStyle(hWnd);
 	DWORD dwExStyle = GetWindowExStyle( hWnd);
-	RECT  rc;				
+	RECT  rc;
 	// If we are still a WS_POPUP window we should convert to a normal app
 	// window so we look like a windows app.
 	if (!bFullScrn)
@@ -113,7 +173,7 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 	if (!bFullScrn)
 	{
 		RECT  rcWork;
-		
+
 		// Center Window
 		SetRect( &rc, 0, 0, dwWidth, dwHeight );
 		SystemParametersInfo( SPI_GETWORKAREA, 0, &rcWork, 0 );
@@ -131,7 +191,7 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 		if( rc.top  < rcWork.top )  rc.top  = rcWork.top;
 
 		AdjustWindowRectEx( &rc,
-							GetWindowStyle(hWnd), 
+							GetWindowStyle(hWnd),
 #if _WIN32_WCE
 							0,
 #else
@@ -153,9 +213,7 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 	else
 	{		
 		SetRect( &rc, 0, 0, dwWidth, dwHeight );
-		SetWindowPos( hWnd, HWND_TOPMOST, rc.left, rc.top, 
-					 rc.right - rc.left, 
-					 rc.bottom - rc.top, NULL);
+		SetWindowPos( hWnd, HWND_TOPMOST, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, NULL);
 	}
 
 	if (pRect)
@@ -163,96 +221,44 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 	return;
 }
 
+// Page flip
 static void CALLING_C Flip(void)
-{	
-	g_hDC = GetDC(g_hWnd);
-    wglMakeCurrent(g_hDC, g_hGLRC);
+{
+    glFinish();
     SwapBuffers(g_hDC);
-	ReleaseDC(g_hWnd, g_hDC);
     return;
 }
 
-extern void SetPrimitiveSprites();
-
+// lock framebuffer
 static u_int8_t RLXAPI *Lock(void)
 {
-	if (!g_hDC)
-	{
-		g_hDC = GetDC(g_hWnd);
-		wglMakeCurrent(g_hDC, g_hGLRC);
-	}
     return NULL;
 }
 
+// unlock frame buffer
 static void RLXAPI Unlock(void)
 {
-	if (g_hDC)
-	{
-		ReleaseDC(g_hWnd, g_hDC);
-		g_hDC = 0;
-	}
     return;
-}
-
-void SYS_Debug(char *fmt, ...)
-{
-    FILE *in;
-    in = fopen("debug.txt", "a+t");
-    if (in)
-    {
-        char buffer[8192];
-        va_list argptr;
-        va_start(argptr, fmt);
-        vsprintf(buffer, fmt, argptr);
-        fprintf(in, "%s\n", buffer);
-		strcat(buffer, "\n");
-		OutputDebugString(buffer);
-        va_end(argptr);
-        fclose(in);
-    }
-    return;
-}
-
-char *SYS_GetLastError()
-{
-
-	LPVOID lpMsgBuf;
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM |
-		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
-		GetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		(LPTSTR) &lpMsgBuf,
-		0,
-		NULL
-	);
-	return (char*)lpMsgBuf;
 }
 
 // set gamma ramp
-static void setGammaRamp(const rgb24_t *ramp) 
-{	
+static void setGammaRamp(const rgb24_t *ramp)
+{
     WORD RamdacTable[256*3];
-    for( int i=0; i<256; i++ ) 
+    for( int i=0; i<256; i++ )
 	{
 		RamdacTable[i*3+0] = ((WORD)ramp[i].r)<<8;
         RamdacTable[i*3+1] = ((WORD)ramp[i].g)<<8;
 		RamdacTable[i*3+2] = ((WORD)ramp[i].b)<<8;
     }
-
-	g_hDC = GetDC(NULL);
-    BOOL ret = SetDeviceGammaRamp( g_hDC, RamdacTable );
-	ReleaseDC(NULL, g_hDC);
+    BOOL ret = SetDeviceGammaRamp(g_hDC, RamdacTable );
+	return;
 }
-
-int GL_IsSupported(const char *extension);
-GLboolean glewGetExtension (const char* name, GLubyte *p);
 
 static int GL_SetupPixelFormat(HWND hWnd)
 {
     PIXELFORMATDESCRIPTOR pfd;
+    int pixfmt = -1;
 	int retVal = 0;
 	int colorIndexMode	= 0;
 	int stereo          = 0;
@@ -262,165 +268,217 @@ static int GL_SetupPixelFormat(HWND hWnd)
 	int stencil			= 0;
 	int dbl				= 1;
 	int acc				= 1;
-	int fs              = !(g_pRLX->Video.Config&RLXVIDEO_Windowed);
+	int fs              = ISFULLSCREEN();
 	int multisample     = g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING ? g_pRLX->pGX->View.Multisampling : 0;
     HDC hDCFront;
-    gl_CurrentPixelFmt = -1;
 
-	if (multisample)
+	// Create dummy windows and class. Access to WGL extensions. Painful.
+	WNDCLASS wcTemp;
+	HWND hWndTemp = 0;
+	HDC hDCTemp = 0;
+
+	wcTemp.style         = 0;
+	wcTemp.hInstance     = GetModuleHandle(NULL);
+	wcTemp.hIcon         = NULL;
+	wcTemp.hCursor       = LoadCursor(NULL, IDC_ARROW);
+	wcTemp.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wcTemp.lpszMenuName  = NULL;
+	wcTemp.cbClsExtra    = 0;
+	wcTemp.cbWndExtra    = 0;
+	wcTemp.lpfnWndProc   = DefWindowProc;
+	wcTemp.lpszClassName = "fakewindow";
+
+	if (!RegisterClass(&wcTemp))
 	{
-	   // Create dummy windows and class. Access to WGL extensions. Painful.
-		WNDCLASS wcTemp;
-		HWND hWndTemp = 0;
-		HDC hDCTemp = 0;
+		return -1;
+	}
 
-		wcTemp.style         = 0;
-	    wcTemp.hInstance     = GetModuleHandle(NULL);
-	    wcTemp.hIcon         = NULL;
-	    wcTemp.hCursor       = LoadCursor(NULL, IDC_ARROW);
-		wcTemp.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
-	    wcTemp.lpszMenuName  = NULL;
-	    wcTemp.cbClsExtra    = 0;
-	    wcTemp.cbWndExtra    = 0;
-		wcTemp.lpfnWndProc   = DefWindowProc;
-	    wcTemp.lpszClassName = "Dummy";
-	   	RegisterClass(&wcTemp);
-    
-		hWndTemp = CreateWindowEx(0, wcTemp.lpszClassName, wcTemp.lpszClassName, WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 1, 1,
-										0, 0, wcTemp.hInstance, NULL);
-		hDCTemp = GetDC(hWndTemp);
-		gl_CurrentPixelFmt = ChoosePixelFormat( hDCTemp, &pfd );
-		SetPixelFormat(hDCTemp, gl_CurrentPixelFmt, &pfd);
-		g_hGLRC = wglCreateContext(hDCTemp);
+#ifdef _DEBUG
+	SYS_Debug("...registered fake window class");
+#endif
 
-		wglMakeCurrent(hDCTemp, g_hGLRC);
-		wglGetProcAddresses();
-		wglGetProcAddressesARB(hDCTemp);
-		if (wglGetExtensionsStringARB
-			&& wglIsExtensionSupportedARB(hDCTemp, "WGL_ARB_pixel_format"))
+	hWndTemp = CreateWindowEx(0, 
+                              wcTemp.lpszClassName,
+							  wcTemp.lpszClassName, 
+							  WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 1, 1,
+							  0, 0, wcTemp.hInstance, NULL);
+	
+	if (!hWndTemp)
+	{
+		return -1;
+	}
+	
+	hDCTemp = GetDC(hWndTemp);
+
+	if (!hDCTemp)
+	{
+		return -1;
+	}
+
+	pixfmt = ChoosePixelFormat( hDCTemp, &pfd );
+	if (!pixfmt)
+	{
+       return -1;
+	}
+
+	SetPixelFormat(hDCTemp, pixfmt, &pfd);
+	g_hGLRC = wglCreateContext(hDCTemp);
+	if (!g_hGLRC)
+	{
+		return -1;
+	}
+
+	if (!wglMakeCurrent(hDCTemp, g_hGLRC))
+	{
+		return -1;
+	}
+
+	wglGetProcAddresses();
+	wglGetProcAddressesARB(hDCTemp);
+
+	// "WGL_ARB_extensions_string"
+	if (wglGetExtensionsStringARB && wglIsExtensionSupportedARB(hDCTemp, "WGL_ARB_pixel_format"))
+	{
+		while(1)
 		{
-			while(1)
+			GLfloat		 fattrib[32] = {0,0};
+			GLint        iattrib[32];
+			GLint		* piAttrib = iattrib;
+
+			int numFormat = 0;
+			GLint values[2];
+
+			iattrib[0] = WGL_NUMBER_PIXEL_FORMATS_ARB;
+			wglGetPixelFormatAttribivARB(hDCTemp, 0, 0, 1, iattrib, values);
+			numFormat = values[0];
+
+			if (acc)
 			{
-				// Get max multisample
-				GLfloat		 fattrib[32] = {0,0};
-				GLint        iattrib[32];
-				GLint		* piAttrib = iattrib;
-				
-				int numFormat = 0;
-				GLint values[2];
+		   		*piAttrib = WGL_SUPPORT_OPENGL_ARB; piAttrib++;
+				*piAttrib = GL_TRUE; piAttrib++;
+				*piAttrib = WGL_ACCELERATION_ARB; piAttrib++;
+				*piAttrib = WGL_FULL_ACCELERATION_ARB; piAttrib++;
+			}
 
-				iattrib[0] = WGL_NUMBER_PIXEL_FORMATS_ARB;
-				wglGetPixelFormatAttribivARB(hDCTemp, 0, 0, 1, iattrib, values);
-				numFormat = values[0];
+			if (bpp)
+			{
+				*piAttrib = WGL_COLOR_BITS_ARB; piAttrib++;
+				*piAttrib = bpp == 32 ? 24 : bpp; piAttrib++;
+			}
 
-				if (acc)
-				{
-		    		*piAttrib = WGL_SUPPORT_OPENGL_ARB; piAttrib++;
-		   			*piAttrib = GL_TRUE; piAttrib++;
-					*piAttrib = WGL_ACCELERATION_ARB; piAttrib++;
-					*piAttrib = WGL_FULL_ACCELERATION_ARB; piAttrib++;
-				}
+			if (depth)
+			{
+				*piAttrib = WGL_DEPTH_BITS_ARB; piAttrib++;
+				*piAttrib = stencil ? 24 : depth; piAttrib++;
+			}
 
-				if (bpp)
-				{
-					*piAttrib = WGL_COLOR_BITS_ARB; piAttrib++;
-					*piAttrib = bpp == 32 ? 24 : bpp; piAttrib++;
-				}
+			if (bpp)
+			{
+				*piAttrib = WGL_ALPHA_BITS_ARB; piAttrib++;
+				*piAttrib = bpp == 32 ? 8 : 0; piAttrib++;
+			}
 
-				if (depth)
-				{
-					*piAttrib = WGL_DEPTH_BITS_ARB; piAttrib++;
-					*piAttrib = stencil ? 24 : depth; piAttrib++;
-				}
+			if (stencil)
+			{
+				*piAttrib = WGL_STENCIL_BITS_ARB; piAttrib++;
+				*piAttrib = stencil; piAttrib++;
+			}
 
-				if (bpp)
-				{
-					*piAttrib = WGL_ALPHA_BITS_ARB; piAttrib++;
-					*piAttrib = bpp == 32 ? 8 : 0; piAttrib++;
-				}
+			if (dbl)
+			{
+				*piAttrib = WGL_DOUBLE_BUFFER_ARB; piAttrib++;
+				*piAttrib = GL_TRUE; piAttrib++;
+			}
 
-				if (stencil)
-				{
-					*piAttrib = WGL_STENCIL_BITS_ARB; piAttrib++;
-					*piAttrib = stencil; piAttrib++;
-				}
+			if (stereo)
+			{
+				*piAttrib = WGL_STEREO_ARB; piAttrib++;
+				*piAttrib = GL_TRUE; piAttrib++;
+			}
 
-				if (dbl)
-				{
-					*piAttrib = WGL_DOUBLE_BUFFER_ARB; piAttrib++;
-					*piAttrib = GL_TRUE; piAttrib++;
-				}
+			if (!fs)
+			{
+				*piAttrib = WGL_DRAW_TO_WINDOW_ARB; piAttrib++;
+				*piAttrib = GL_TRUE; piAttrib++;
+			}
 
-				if (stereo)
-				{
-					*piAttrib = WGL_STEREO_ARB; piAttrib++;
-					*piAttrib = GL_TRUE; piAttrib++;
-				}
+			if (dib)
+			{
+				*piAttrib = WGL_DRAW_TO_BITMAP_ARB; piAttrib++;
+				*piAttrib = 1; piAttrib++;
+			}
 
-				if (!fs)
-				{
-					*piAttrib = WGL_DRAW_TO_WINDOW_ARB; piAttrib++;
-					*piAttrib = GL_TRUE; piAttrib++;
-				}
+			if (multisample && wglIsExtensionSupportedARB(hDCTemp, "WGL_ARB_multisample"))
+			{
+				*piAttrib = WGL_SAMPLE_BUFFERS_ARB; piAttrib++;
+				*piAttrib = GL_TRUE; piAttrib++;
+				*piAttrib = WGL_SAMPLES_ARB; piAttrib++;
+				*piAttrib = multisample; piAttrib++;
+			}
+			else
+			{
+				multisample = 0;
+				g_pRLX->pGX->View.Flags &=~ GX_CAPS_MULTISAMPLING;
+			}
 
-				if (dib)
-				{
-					*piAttrib = WGL_DRAW_TO_BITMAP_ARB; piAttrib++;
-					*piAttrib = 1; piAttrib++;
-				}
+			*piAttrib = 0; piAttrib++;
+			*piAttrib = 0; piAttrib++;
 
-				if (multisample)
-				{
-					*piAttrib = WGL_SAMPLE_BUFFERS_ARB; piAttrib++;
-					*piAttrib = GL_TRUE; piAttrib++;
-					*piAttrib = WGL_SAMPLES_ARB; piAttrib++;
-					*piAttrib = multisample; piAttrib++;
-				}
+			GLuint numFormats = 0;
 
-				*piAttrib = 0; piAttrib++;
-				*piAttrib = 0; piAttrib++;
-
-				GLuint numFormats = 0;
-
-				if ((wglChoosePixelFormatARB(hDCTemp,
+			if ((wglChoosePixelFormatARB(hDCTemp,
 											iattrib,
 											fattrib,
 											1,
-											&gl_CurrentPixelFmt,
+											&pixfmt,
 											&numFormats) == GL_TRUE) && (numFormats>=1))
+			{
+				break;
+			}
+			else
+			{
+#ifdef _DEBUG
+	   		 	SYS_Debug("...failed to set multisampling to %d\n", multisample);
+#endif
+				pixfmt = -1;
+				if (multisample)
 				{
-					break;
-				}
+			    	multisample/=2;
+			    }
 				else
-				{
-			   		gl_CurrentPixelFmt = -1;
-					if (multisample)
-			       		multisample/=2;
-					else
-						break;
-				}
+					break;
 			}
 		}
-
-		wglMakeCurrent(NULL, NULL);
-		ReleaseDC(hWndTemp, hDCTemp);
-		wglDeleteContext(g_hGLRC);
-		UnregisterClass(wcTemp.lpszClassName, wcTemp.hInstance);
-		DestroyWindow(hWndTemp);
 	}
+
+	wglMakeCurrent(NULL, NULL);
+	ReleaseDC(hWndTemp, hDCTemp);
+	wglDeleteContext(g_hGLRC);
+	UnregisterClass(wcTemp.lpszClassName, wcTemp.hInstance);
+	DestroyWindow(hWndTemp);
 
 	g_hDC = hDCFront = GetDC(hWnd);
 
-	if (gl_CurrentPixelFmt == -1)
+	if (!g_hDC)
 	{
-		gl_CurrentPixelFmt = ChoosePixelFormatEx(hDCFront, &bpp, &depth, &stencil, &dbl, &acc, &dib);
+		return -1;
 	}
 
-	retVal = SetPixelFormat(g_hDC, gl_CurrentPixelFmt, &pfd);
-	SYS_ASSERT(retVal == TRUE);
-	DescribePixelFormat(g_hDC, gl_CurrentPixelFmt, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+	if (pixfmt == -1)
+	{
+		// Using old method
+		pixfmt = ChoosePixelFormatEx(hDCFront, &bpp, &depth, &stencil, &dbl, &acc, &dib);
+	}
 
-	g_pRLX->pGX->View.Flip = Flip;
+	retVal = SetPixelFormat(g_hDC, pixfmt, &pfd);
+	if (retVal == FALSE)
+	{
+		return -2;
+	}
+
+	SYS_ASSERT(retVal == TRUE);
+	DescribePixelFormat(g_hDC, pixfmt, sizeof(PIXELFORMATDESCRIPTOR), &pfd);
+
 	g_pRLX->pGX->View.ColorMask.RedMaskSize	= pfd.cRedBits;
 	g_pRLX->pGX->View.ColorMask.GreenMaskSize = pfd.cGreenBits;
 	g_pRLX->pGX->View.ColorMask.BlueMaskSize = pfd.cBlueBits;
@@ -430,19 +488,16 @@ static int GL_SetupPixelFormat(HWND hWnd)
 	g_pRLX->pGX->View.ColorMask.BlueFieldPosition = pfd.cBlueShift;
 	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = pfd.cAlphaShift;
 	g_pRLX->pV3X->ViewPort.zDepth = pfd.cDepthBits;
-	if (multisample)
-	{
-		glEnable(GL_MULTISAMPLE_ARB);
-	}
 
-	return 0;
+	return pixfmt;
 }
 
+// Enumerate display modes
 static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 {
    	DEVMODE *drv;
 	int j=0, i;
-	GXDISPLAYMODEINFO *drv1, *drv0;
+	GXDISPLAYMODEINFO *pRes, *p;
 	SYS_ASSERT(gl_pDisplayModes);
 	SYS_ASSERT(gl_nDisplayModeCount);
 
@@ -452,31 +507,24 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 			j++;
 	}
 
-	drv1 = (GXDISPLAYMODEINFO*)g_pRLX->mm_heap->malloc(sizeof(GXDISPLAYMODEINFO)*(j+1));
-	for (drv0=drv1, drv=gl_pDisplayModes, i=0;i<gl_nDisplayModeCount;i++, drv++)
+	pRes = (GXDISPLAYMODEINFO*)g_pRLX->mm_heap->malloc(sizeof(GXDISPLAYMODEINFO)*(j+1));
+	for (p=pRes, drv=gl_pDisplayModes, i=0;i<gl_nDisplayModeCount;i++, drv++)
 	{
 		if ((drv->dmBitsPerPel==(unsigned)bpp)||(bpp == -1))
 		{
-			drv0->lWidth = (u_int16_t)drv->dmPelsWidth;
-			drv0->lHeight = (u_int16_t)drv->dmPelsHeight;
-			drv0->BitsPerPixel = (u_int8_t)drv->dmBitsPerPel;
-			drv0->mode = i;
-			drv0++;
+			p->lWidth = (u_int16_t)drv->dmPelsWidth;
+			p->lHeight = (u_int16_t)drv->dmPelsHeight;
+			p->BitsPerPixel = (u_int8_t)drv->dmBitsPerPel;
+			p->mode = i;
+			p++;
 		}
 	}
-	drv0->BitsPerPixel = 0;
-	return drv1;
+	p->BitsPerPixel = 0;
+	return pRes;
 }
 
-static int GL_GetDesktopColorDepth(HWND hwnd)
-{
-	HDC hDC = ::GetDC(hwnd);
-	SYS_ASSERT(hDC!=0);
-	int bpp = ::GetDeviceCaps(hDC, BITSPIXEL);
-	::ReleaseDC(hwnd, hDC);
-	return bpp;
-}
 
+// Search display modes
 static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 {
     int i;
@@ -484,7 +532,7 @@ static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 	gl_bpp = GL_GetDesktopColorDepth(g_hWnd);
 	int safeMode1 = 0, safeMode2 = 0;
 
-	if (!(g_pRLX->Video.Config&RLXVIDEO_Windowed))
+	if (ISFULLSCREEN())
 	{
 		int ret = 0;
 		DEVMODE *drv = gl_pDisplayModes;
@@ -528,9 +576,10 @@ static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 	}
 }
 
+// Get display mode info
 static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 {
-	if (g_pRLX->Video.Config&RLXVIDEO_Windowed)
+	if (!ISFULLSCREEN())
 	{
 		g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, gl_lx, gl_ly, gl_bpp);
 	}
@@ -540,7 +589,7 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 		if (mode<0 || mode>=gl_nDisplayModeCount)
 		{
 			g_pRLX->Video.Config|=RLXVIDEO_Windowed;
-			return GetDisplayInfo(SearchDisplayMode(640, 480, 16));
+			return GetDisplayInfo(SearchDisplayMode(640, 480, GL_GetDesktopColorDepth(g_hWnd)));
 		}
 		g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, drv->dmPelsWidth, drv->dmPelsHeight, drv->dmBitsPerPel);
 		gl_pCurrentDisplayMode = drv;
@@ -548,23 +597,27 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 		gl_ly = drv->dmPelsHeight;
 		gl_bpp = drv->dmBitsPerPel;
 	}
+
 	g_pRLX->pGX->gi = GI_OpenGL;
-	
 	SetPrimitiveSprites();
-    g_pRLX->pGX->View.Flip = Flip;
+
     g_pRLX->pGX->gi = GI_OpenGL;
     g_pRLX->pGX->csp = CSP_OpenGL;
+    g_pRLX->pGX->View.Flip = Flip;
+
 	GI_OpenGL.setGammaRamp = setGammaRamp;
     g_pRLX->pGX->csp_cfg.put.fonct = g_pRLX->pGX->csp.put;
     g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
     g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
     g_pRLX->pGX->csp_cfg.op = g_pRLX->pGX->csp.put;
+
     return;
 }
 
+// Set display mode
 static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
 {
-	bool bWindowed = !!(g_pRLX->Video.Config&RLXVIDEO_Windowed);
+	bool bWindowed = !ISFULLSCREEN();
 	W32_WindowLayoutSetStyle(g_hWnd, bWindowed);
 	if (!bWindowed)
 	{
@@ -582,44 +635,89 @@ static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
     return 0;
 }
 
-static int RLXAPI CreateSurface(int numberOfSparePages)
+// Create surface
+static int RLXAPI CreateSurface(int BackBufferCount)
 {    
-	int ret = GL_SetupPixelFormat(g_hWnd);
-	if (ret)
-		return ret;
+	int pixfmt = GL_SetupPixelFormat(g_hWnd);
+	if (pixfmt < 0)
+	{
+		return -1;
+	}
+
+#ifdef _DEBUG
+	SYS_Debug("...PIXELFORMAT %d selected\n", pixfmt);
+#endif
 
 	g_hGLRC = wglCreateContext(g_hDC);
 	if (!g_hGLRC)
+	{
 		return -4;
+	}
+
+#ifdef _DEBUG
+	SYS_Debug("...creating GL context: succeeded");
+#endif
 
 	if (!wglMakeCurrent(g_hDC, g_hGLRC))
+	{
 		return -5;
+	}	
+
+#ifdef _DEBUG
+	SYS_Debug("...making context current: succeeded");
+#endif
 
 	// Set window size
 	RECT rect;
-	W32_WindowLayoutSetSize(g_hWnd, &rect, gl_lx, gl_ly, !(g_pRLX->Video.Config&RLXVIDEO_Windowed), 0);
+	W32_WindowLayoutSetSize(g_hWnd, &rect, gl_lx, gl_ly, ISFULLSCREEN(), 0);
 	ShowWindow(g_hWnd, SW_SHOW);
 	SetForegroundWindow(g_hWnd);
 	SetFocus(g_hWnd);
 
+	// Reset engine
 	wglGetProcAddresses();
 	wglGetProcAddressesARB(g_hDC);
 	GL_InstallExtensions();
 	GL_ResetViewport();
 	
-	glClear(GL_COLOR_BUFFER_BIT);
-	Flip();
+#ifdef _DEBUG
+	SYS_Debug("...%s", glGetString(GL_VENDOR));
+	SYS_Debug("...%s", glGetString(GL_VERSION));
+	SYS_Debug("...%s", glGetString(GL_RENDERER));
+#endif
+	
+	// Enable multisampling
+	if (g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING)
+	{
+		if (GL_IsSupported("GL_NV_multisample_filter_hint"))
+		{
+			glHint(GL_MULTISAMPLE_FILTER_HINT_NV, GL_FASTEST);
+		}
+		glEnable(GL_MULTISAMPLE_ARB);
+	}
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	Flip();
+	// Clear buffers
+	for (int i=0;i<2;i++)
+	{
+ 	    glClearColor(0.5,0.5,0.5,0.5);
+		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+		Flip();
+	}
+    glClearColor(0,0,0,0);
 
-	g_pRLX->pGX->Surfaces.maxSurface = numberOfSparePages;
+	g_pRLX->pGX->Surfaces.maxSurface = BackBufferCount;
+
     return 0; 
 }
 
+// Release surfaces
 static void RLXAPI ReleaseSurfaces(void)
 {
-	wglMakeCurrent(g_hDC, g_hGLRC);
+    if (g_hDC)
+    {
+	    ReleaseDC(g_hWnd, g_hDC);
+	    g_hDC = 0;
+    }
 
 	if (g_hGLRC)
 	{
@@ -632,27 +730,32 @@ static void RLXAPI ReleaseSurfaces(void)
     return;
 }
 
+// Register display mode
 static int RLXAPI RegisterMode(int mode)
 {
 	g_pRLX->pGX->View.DisplayMode = (u_int16_t)mode;
 	g_pRLX->pGX->Client->GetDisplayInfo(mode);
 	return g_pRLX->pGX->Client->SetDisplayMode(mode);
-
 }
 
+// Shutdown
 static void RLXAPI Shutdown(void)
 {
-	if (!(g_pRLX->Video.Config&RLXVIDEO_Windowed))
+	if (ISFULLSCREEN())
+	{
 		ChangeDisplaySettings(NULL, 0);
+	}
 
 	if (gl_pDisplayModes)
 	{
 		delete[] gl_pDisplayModes;
 		gl_pDisplayModes = 0;
 	}
+
     return;
 }
 
+// Open engine
 static int Open(void *hWnd)
 {
 	g_hWnd = (HWND) hWnd;
@@ -661,6 +764,7 @@ static int Open(void *hWnd)
     return 1;
 }
 
+// Unused
 static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)
 {
     UNUSED(mode);
@@ -674,10 +778,10 @@ GXCLIENTDRIVER GX_OpenGL = {
     Unlock, 
     EnumDisplayList, 
     GetDisplayInfo, 
-    SetDisplayMode, 
+    SetDisplayMode,
     SearchDisplayMode, 
     CreateSurface, 
-    ReleaseSurfaces, 
+    ReleaseSurfaces,
     NULL, 
     NULL, 
     NULL, 	
@@ -700,4 +804,5 @@ _RLXEXPORTFUNC void RLXAPI V3X_EntryPoint(struct RLXSYSTEM *p)
 	GX_EntryPoint(p);
     g_pRLX->pV3X->Client = &V3X_OpenGL;
     return;
+
 }

@@ -223,7 +223,7 @@ void STUB_MainCode(void)
 	V3XPlugIn_Add(1, V3XPlug_CollisionMove);
 
     // Game Data
-#if defined  _DEBUG || defined __BEOS__
+#if defined __BEOS__
 	RLX.Video.Config|=RLXVIDEO_Windowed;
 #else
  	RLX.Video.Config&=~RLXVIDEO_Windowed;
@@ -316,11 +316,9 @@ void STUB_MainCode(void)
 #endif
     NG_NetInitialize();
     
-#ifndef _DEBUG
 	NG_PlayPresentsGame();
-#endif
-    
-    MM_heap.reset();    
+
+	MM_heap.reset();    
 
 #ifdef _DEBUG
     SYS_Debug("Run game loop...\n");

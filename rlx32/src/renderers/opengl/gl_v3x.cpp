@@ -85,9 +85,9 @@ int GL_IsSupported(const char *extension)
 	{
 #ifdef _DEBUG
     	if (ret)
-    		SYS_Debug("...using %s\n", extension);
+    		SYS_Debug("...using %s", extension);
         else
-            SYS_Debug("X..%s not found\n", extension);
+            SYS_Debug("X..%s not found", extension);
 #endif
     }
     return ret;

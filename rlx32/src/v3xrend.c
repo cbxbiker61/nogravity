@@ -380,8 +380,7 @@ void V3XMaterial_Register(V3XMATERIAL *mat)
     int k = mat->info.Shade & 3; 
     mat->render_clip = mat->render_near = mat->render_far = V3XRENDER_Wired;
     mat->RenderID = V3XID_LINE; 
-    SYS_ASSERT(V3X.Client->primitive);
-    
+        
     if (V3X.Client->primitive)
     {
         Gs = V3X.Client->primitive->std;

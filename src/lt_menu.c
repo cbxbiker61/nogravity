@@ -1366,7 +1366,8 @@ static int NG_SelectEpisode(void)
 #if (SGTARGET ==NG_DEMO_VERSION)
     g_pCurrentGame->episode=0;
 #else
-    if (j==0) 
+	
+    if (j==0)  
 		g_pCurrentGame->episode=7; 
 	else 
 		g_pCurrentGame->episode=j-1;
