@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------
 /*
-Copyright (C) 1996, 2005 - realtech VR
+Copyright (C) 2005 - Matt Williams
 
 This file is part of No Gravity 1.9
 
@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -19,30 +19,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-Original Source: 1996 - Stephane Denis
-Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
+Linux/SDL Port: 2005 - Matt Williams
 */
 //-------------------------------------------------------------------------
-#ifndef __RLXPARAMETERS
-#define __RLXPARAMETERS
 
-#define __RLXVERSION__ 0x170
+#include "_rlx32.h"
 
-#if defined __BEOS__
-    #include <byteorder.h>
-    #if B_HOST_IS_BENDIAN
-        #define LSB_FIRST
-    #endif
-    
-#elif defined __APPLE__ && defined __MACH__
-	#define __MACOS__
-	#define LSB_FIRST
-    #define __C32__
-
-#endif
-
-#ifdef HAVE_CONFIG_H
-    #include "autoconfig.h"
-#endif
-
+/* Determine the right sound driver based on the available libraries. */
+#if defined(HAVE_AL_ALC_H) && defined(HAVE_AL_AL_H) && defined(HAVE_LIBOPENAL)
+    #include "snd_openal.c"
+#elif defined(HAVE_SDL_SDL_MIXER_H) && defined(HAVE_LIBSDL_MIXER)
+    #include "snd_sdlmixer.c"
+#else
+    #include "snd_none.c"
 #endif

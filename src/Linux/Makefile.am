@@ -32,7 +32,7 @@ nogravity_SOURCES = ../../rlx32/src/systools.c \
                     ../../rlx32/src/gx_png.c \
                     ../../rlx32/src/linux/systool2.c \
                     ../../rlx32/src/linux/systime.c \
-                    ../../rlx32/src/linux/snd_openal.c \
+                    ../../rlx32/src/linux/snd.c \
                     ../../rlx32/src/linux/sysdbg.c \
                     ../../rlx32/src/linux/_stublinux.cpp \
                     ../../rlx32/src/linux/sysnet.c \
@@ -61,4 +61,5 @@ nogravity_SOURCES = ../../rlx32/src/systools.c \
                     ../../src/lithium.c \
                     ../../src/lt_st2.c \
                     ../../src/Linux/preferences.c
-AM_CPPFLAGS = -I ../../rlx32/include -I ../../rlx32/src -I ../../rlx32/src/linux -I ../../rlx32/src/renderers/opengl -I ../../rlx32/src/renderers/opengl/linux -D__LINUX__
+AM_CPPFLAGS = @SDL_CFLAGS@ -I ../../rlx32/include -I ../../rlx32/src -I ../../rlx32/src/linux -I ../../rlx32/src/renderers/opengl -I ../../rlx32/src/renderers/opengl/linux -D__LINUX__
+AM_LDFLAGS = @SDL_LIBS@
