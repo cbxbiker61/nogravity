@@ -1,0 +1,44 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+AC_INIT(nogravity, 1.98, http://sourceforge.net/projects/nogravity)
+AM_INIT_AUTOMAKE(nogravity, 1.98)
+AC_CONFIG_SRCDIR(preferences.c)
+AC_CONFIG_HEADER(config.h)
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+
+# Checks for libraries.
+AC_CHECK_LIB([pthread], [pthread_create], , AC_MSG_ERROR([Can't find pthread library which is required.]))
+AC_CHECK_LIB([SDL], [SDL_Init], , AC_MSG_ERROR([Can't find SDL library which is required.]))
+AC_CHECK_LIB([GL], [glBegin], , AC_MSG_ERROR([Can't find OpenGL library which is required.]))
+AC_CHECK_LIB([openal], [alGenSources], , AC_MSG_ERROR([Can't find OpenAL library which is required.]))
+AC_CHECK_LIB([png], [png_decompress_chunk], , AC_MSG_ERROR([Can't find libpng library which is required.]))
+AC_CHECK_LIB([ogg], [ogg_stream_init], , AC_MSG_ERROR([Can't find Ogg library which is required.]))
+AC_CHECK_LIB([vorbis], [vorbis_synthesis_init], , AC_MSG_ERROR([Can't find Vorbis library which is required.]))
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h unistd.h])
+AC_CHECK_HEADERS([pthread.h], , AC_MSG_ERROR([Can't find pthread header which is required.]))
+AC_CHECK_HEADERS([SDL/SDL.h], , AC_MSG_ERROR([Can't find SDL headers which are required.]))
+AC_CHECK_HEADERS([GL/gl.h], , AC_MSG_ERROR([Can't find OpenGL headers which are required.]))
+AC_CHECK_HEADERS([AL/al.h AL/alc.h], , AC_MSG_ERROR([Can't find OpenAL headers which are required.]))
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_FUNC_MEMCMP
+AC_FUNC_REALLOC
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS([atexit getcwd memmove memset mkdir pow strchr strstr strtol])
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
