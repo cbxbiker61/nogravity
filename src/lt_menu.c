@@ -83,7 +83,7 @@ static char *g_pRootMain[]={g_szGmT[45], g_szGmT[46], g_szGmT[48], g_szGmT[49], 
 #if (SGTARGET ==NG_DEMO_VERSION)
 static char *g_pEpisodeMenu[]={g_szGmT[53], g_szGmT[175], g_szGmT[118], NULL};
 #elif (SGTARGET ==NG_FULL_VERSION)
-static char *g_pEpisodeMenu[]={g_szGmT[53], g_szGmT[61], g_szGmT[54], g_szGmT[55], g_szGmT[56], g_szGmT[57], g_szGmT[58], g_szGmT[169], g_szGmT[118], NULL};
+static char *g_pEpisodeMenu[]={g_szGmT[53], g_szGmT[61], g_szGmT[54], g_szGmT[55], g_szGmT[56], g_szGmT[57], g_szGmT[58], g_szGmT[118], NULL};
 #endif
 
 #if (SGTARGET !=NG_FULL_VERSION)
@@ -1373,8 +1373,8 @@ static int NG_SelectEpisode(void)
 
     if (g_pCurrentGame->episode>=MAX_EPISODE)
     {
-        NG_MenuMessage(g_szGmT[176]);
-        g_pCurrentGame->episode=MAX_EPISODE-1;
+        //NG_MenuMessage(g_szGmT[176]);
+        //g_pCurrentGame->episode=MAX_EPISODE-1;
         return 0;
     }
 #endif
