@@ -75,7 +75,8 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
   static const SDL_Rect *hardcoded_modes[] =
   {
     &hardcoded_mode_640_by_480,
-    &hardcoded_mode_800_by_600
+    &hardcoded_mode_800_by_600,
+    NULL
   };
   const SDL_VideoInfo *vid_info;
   SDL_PixelFormat fmts[3];
