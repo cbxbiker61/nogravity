@@ -91,6 +91,18 @@ static void Release(void)
 {
   ALCcontext *ctxt;
   ALCdevice *dev;
+  if (g_pchannels != NULL)
+  {
+    MM_std.free(g_pchannels);
+    g_pchannels = NULL;
+    g_nchannels = 0;
+  }
+  if (g_pstreams != NULL)
+  {
+    MM_std.free(g_pstreams);
+    g_pstreams= NULL;
+    g_nstreams = 0;
+  }
   ctxt = alcGetCurrentContext();
   if (ctxt != NULL)
   {
@@ -359,6 +371,7 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t siz
       g_pstreams[stream].chan = channel;
       g_pstreams[stream].fmt = (sampleFormat & V3XA_FMTSTEREO) ?  ((sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16) : ((sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO8 : AL_FORMAT_MONO8);
       g_pstreams[stream].rate = sampleRate;
+      g_pstreams[stream].pos = 0;
       g_pstreams[stream].first = 0;
       g_pstreams[stream].last = 0;
       g_pchannels[g_pstreams[stream].chan].stream = TRUE;
@@ -485,7 +498,7 @@ static void SmpRelease(V3XA_HANDLE *sam)
 
 void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
 {
-  static V3XA_WaveClientDriver CoreAudio_Client =
+  static V3XA_WaveClientDriver OpenAL_Client =
   {
     Enum,
     Detect,
@@ -532,7 +545,7 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
     "OpenAL"
   };
 
-  V3XA.Client = &CoreAudio_Client;
+  V3XA.Client = &OpenAL_Client;
 
   return;
 }
