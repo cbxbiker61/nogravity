@@ -496,7 +496,7 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 	}
 	else
 	{
-		pHandle->numTrack =  pHandle->info.numTracks ? (u_int8_t)pHandle->info.numTracks : (u_int8_t)1;
+		pHandle->numTrack = 1;
 		SYS_ASSERT(pHandle->numTrack < MAX_V3XA_TRACKS_PER_STREAM);
 		for (i=0;i<pHandle->numTrack;i++)
 			pHandle->context[i] = pHandle->info.codec->initialize(pHandle->chunkLength, pHandle->pStream, &MM_std);

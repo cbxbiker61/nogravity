@@ -227,7 +227,6 @@ static int Open(void *context, SYS_FILEHANDLE file, V3XA_HANDLE *info)
 		info->length = playLength * ctx->vi.rate << 1;
 		info->loopend = 0;
 		info->loopstart = 0;
-		info->numTracks = 0;
 		info->codec = &V3XA_Codec_OGG;
 	}
 	return 1;
