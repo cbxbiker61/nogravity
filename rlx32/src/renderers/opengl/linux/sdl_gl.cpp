@@ -48,7 +48,8 @@ struct RLXSYSTEM *g_pRLX;
 
 // GL Driver Specific
 static SDL_Surface *g_pSurface = NULL;
-static int gl_lx, gl_ly, gl_bpp;
+static GXDISPLAYMODEINFO *g_pDisplays = NULL;
+static int g_Mode = -1;
 
 static void RLXAPI Flip(void)
 {
@@ -58,7 +59,7 @@ static void RLXAPI Flip(void)
 }
 
 static u_int8_t RLXAPI *Lock(void)
-{	
+{
     return NULL;
 }
 
@@ -69,93 +70,199 @@ static void RLXAPI Unlock(void)
 
 static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 {
-  GXDISPLAYMODEINFO *drv = (GXDISPLAYMODEINFO *)g_pRLX->mm_heap->malloc(sizeof(GXDISPLAYMODEINFO) * 2);
-  const SDL_VideoInfo *vid;
+  const SDL_VideoInfo *vid_info;
+  SDL_PixelFormat fmts[3];
+  int num_fmts;
+  int fmt_idx;
+  SDL_Rect **modes;
+  int mode_idx;
+  GXDISPLAYMODEINFO *displays;
+  int display_idx = 0;
 
-  vid = SDL_GetVideoInfo();
-  if (vid == NULL)
+  if (g_pDisplays == NULL)
   {
-    drv[0].BitsPerPixel = 0;
-    return drv;
+    memset(&fmts, 0, sizeof(SDL_PixelFormat));
+
+    // If we're operating in windowed mode, only allow the current pixel format.
+    if (g_pRLX->Video.Config & RLXVIDEO_Windowed)
+    {
+      num_fmts = 1;
+      vid_info = SDL_GetVideoInfo();
+      memcpy(&fmts[0], vid_info->vfmt, sizeof(SDL_PixelFormat));
+    }
+    // Alternatively, in full-screen mode, allow any pixel format.
+    else
+    {
+      num_fmts = 3;
+      fmts[0].BitsPerPixel = 16;
+      fmts[0].BytesPerPixel = 2;
+      fmts[1].BitsPerPixel = 24;
+      fmts[1].BytesPerPixel = 3;
+      fmts[2].BitsPerPixel = 32;
+      fmts[2].BytesPerPixel = 4;
+    }
+  
+    for (fmt_idx = 0; fmt_idx < num_fmts; fmt_idx ++)
+    {
+      modes = SDL_ListModes(&fmts[fmt_idx], SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
+
+      if (modes != NULL)
+      {
+        for (mode_idx = 0; modes[mode_idx] != NULL ; mode_idx ++)
+        {
+          display_idx ++;
+        }
+      }
+    }
+
+    g_pDisplays = (GXDISPLAYMODEINFO *)g_pRLX->mm_heap->malloc((display_idx + 1) * sizeof(GXDISPLAYMODEINFO));
+
+    display_idx = 0;
+
+    for (fmt_idx = 0; fmt_idx < num_fmts; fmt_idx ++)
+    {
+      modes = SDL_ListModes(&fmts[fmt_idx], SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
+
+      if (modes != NULL)
+      {
+        for (mode_idx = 0; modes[mode_idx] != NULL ; mode_idx ++)
+        {
+          g_pDisplays[display_idx].lWidth = modes[mode_idx]->w;
+          g_pDisplays[display_idx].lHeight = modes[mode_idx]->h;
+          g_pDisplays[display_idx].BitsPerPixel = fmts[fmt_idx].BitsPerPixel;
+          g_pDisplays[display_idx].mode = display_idx;
+          display_idx ++;
+        }
+      }
+    }
+
+    g_pDisplays[display_idx].lWidth = 0;
+    g_pDisplays[display_idx].lHeight = 0;
+    g_pDisplays[display_idx].BitsPerPixel = 0;
+    g_pDisplays[display_idx].mode = 0;
   }
 
-  drv->lHeight = 1024;
-  drv->lWidth = 768;
-  drv->BitsPerPixel = vid->vfmt->BitsPerPixel;
-  drv->mode = 0;
+  for (display_idx = 0; g_pDisplays[display_idx].BitsPerPixel != 0; display_idx ++)
+  {
+    // Do nothing.
+  }
 
-  drv[1].BitsPerPixel = 0;
+  displays = (GXDISPLAYMODEINFO *)g_pRLX->mm_heap->malloc((display_idx + 1) * sizeof(GXDISPLAYMODEINFO));
 
-  return drv;
+  memcpy(displays, g_pDisplays, (display_idx + 1) * sizeof(GXDISPLAYMODEINFO));
+
+  return displays;
 }
 
 extern GXGRAPHICINTERFACE GI_OpenGL;
 extern GXSPRITEINTERFACE CSP_OpenGL;
 static void RLXAPI SetPrimitive()
 {
-	g_pRLX->pGX->View.Flip = Flip;
-	g_pRLX->pGX->gi = GI_OpenGL;
-	g_pRLX->pGX->csp = CSP_OpenGL;
+  g_pRLX->pGX->View.Flip = Flip;
+  g_pRLX->pGX->gi = GI_OpenGL;
+  g_pRLX->pGX->csp = CSP_OpenGL;
 	
-	g_pRLX->pGX->csp_cfg.put.fonct = g_pRLX->pGX->csp.put;
-    g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
-    g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
-    g_pRLX->pGX->csp_cfg.op = g_pRLX->pGX->csp.put;
- 
-	
-
+  g_pRLX->pGX->csp_cfg.put.fonct = g_pRLX->pGX->csp.put;
+  g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
+  g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
+  g_pRLX->pGX->csp_cfg.op = g_pRLX->pGX->csp.put;
 }
+
 static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 {
-    	g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, gl_lx, gl_ly, gl_bpp);
-	g_pRLX->pGX->View.ColorMask.RedMaskSize		= 8;
-	g_pRLX->pGX->View.ColorMask.GreenMaskSize 	= 8;
-	g_pRLX->pGX->View.ColorMask.BlueMaskSize		= 8;
-	g_pRLX->pGX->View.ColorMask.RsvdMaskSize		= 8;
-	g_pRLX->pGX->View.ColorMask.RedFieldPosition	= 0;
-	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
-	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
-	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
-	SetPrimitive();
-	UNUSED(mode);
-    return;
+  SYS_ASSERT(g_pDisplays != NULL);
+  g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, g_pDisplays[mode].lWidth, g_pDisplays[mode].lHeight, g_pDisplays[mode].BitsPerPixel);
+  if (g_pDisplays[mode].BitsPerPixel == 16)
+  {
+    g_pRLX->pGX->View.ColorMask.RedMaskSize = 5;
+    g_pRLX->pGX->View.ColorMask.GreenMaskSize = 6;
+    g_pRLX->pGX->View.ColorMask.BlueMaskSize = 5;
+    g_pRLX->pGX->View.ColorMask.RsvdMaskSize = 0;
+    g_pRLX->pGX->View.ColorMask.RedFieldPosition = 0;
+    g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 5;
+    g_pRLX->pGX->View.ColorMask.BlueFieldPosition = 11;
+    g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = 16;
+  }
+  else if (g_pDisplays[mode].BitsPerPixel == 24)
+  {
+    g_pRLX->pGX->View.ColorMask.RedMaskSize = 8;
+    g_pRLX->pGX->View.ColorMask.GreenMaskSize = 8;
+    g_pRLX->pGX->View.ColorMask.BlueMaskSize = 8;
+    g_pRLX->pGX->View.ColorMask.RsvdMaskSize = 0;
+    g_pRLX->pGX->View.ColorMask.RedFieldPosition = 0;
+    g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
+    g_pRLX->pGX->View.ColorMask.BlueFieldPosition = 16;
+    g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = 24;
+  }
+  else if (g_pDisplays[mode].BitsPerPixel == 32)
+  {
+    g_pRLX->pGX->View.ColorMask.RedMaskSize = 8;
+    g_pRLX->pGX->View.ColorMask.GreenMaskSize = 8;
+    g_pRLX->pGX->View.ColorMask.BlueMaskSize = 8;
+    g_pRLX->pGX->View.ColorMask.RsvdMaskSize = 8;
+    g_pRLX->pGX->View.ColorMask.RedFieldPosition = 0;
+    g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
+    g_pRLX->pGX->View.ColorMask.BlueFieldPosition = 16;
+    g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = 24;
+  }
+  SetPrimitive();
+  return;
 }
 
 static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
-{	
-	return 0;
+{
+  g_Mode = mode;
+  return 0;
 }
 
 static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 {
-    gl_lx  = lx;
-    gl_ly  = ly;
-    gl_bpp = bpp;
+  GXDISPLAYMODEHANDLE mode;
+  SYS_ASSERT(g_pDisplays != NULL);
 
-	if ((g_pRLX->Video.Config & RLXVIDEO_Windowed)==0)
-	{
-		return 0;
-	}
-    return 1;
+  // Search through the displays, looking for one that matches the criteria.
+  for (mode = 0; g_pDisplays[mode].BitsPerPixel != 0; mode ++)
+  {
+    if ((g_pDisplays[mode].lWidth == lx) &&
+        (g_pDisplays[mode].lHeight == ly) &&
+	(g_pDisplays[mode].BitsPerPixel == bpp))
+    {
+      break;
+    }
+  }
+
+  // If the mode is out of range...
+  if (g_pDisplays[mode].BitsPerPixel == 0)
+  {
+    // If we have a valid mode, use it.
+    if (g_pDisplays[mode].BitsPerPixel != 0)
+    {
+      mode = 0;
+    }
+    // Alternatively, if there is no valid mode, return -1.
+    else
+    {
+      mode = -1;
+    }
+  }
+
+  return mode;
 }
 
 static int RLXAPI CreateSurface(int numberOfSparePages)
 {
-    g_pRLX->pGX->View.lpBackBuffer   = NULL;
-
-
-
-
+  SYS_ASSERT(g_pDisplays != NULL);
+  SYS_ASSERT(g_Mode != -1);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  g_pSurface = SDL_SetVideoMode(640, 480, 0, SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
+  g_pSurface = SDL_SetVideoMode(g_pDisplays[g_Mode].lWidth, g_pDisplays[g_Mode].lHeight, g_pDisplays[g_Mode].BitsPerPixel, SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
   if (g_pSurface == NULL)
   {
     return -1;
   }
 
-    // Reset engine
-    GL_InstallExtensions();
-	GL_ResetViewport();
+  // Reset engine
+  GL_InstallExtensions();
+  GL_ResetViewport();
 
   g_pRLX->pGX->Surfaces.maxSurface = numberOfSparePages;
 
@@ -172,12 +279,17 @@ static void RLXAPI ReleaseSurfaces(void)
 static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
 {
   g_pRLX->pGX->View.DisplayMode = (u_int16_t)mode;
-  g_pRLX->pGX->Client->GetDisplayInfo(mode);	
+  g_pRLX->pGX->Client->GetDisplayInfo(mode);
   return g_pRLX->pGX->Client->SetDisplayMode(mode);
 }
 
 static void RLXAPI Shutdown(void)
 {
+  if (g_pDisplays != NULL)
+  {
+    g_pRLX->mm_heap->free(g_pDisplays);
+  }
+
   SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
