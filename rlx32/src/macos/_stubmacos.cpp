@@ -373,7 +373,7 @@ int main(int argc, char *argv[])
     STUB_ReadyToRun();
     RLX.System.Running = true;
     STUB_MainCode();
-    STUB_Down();
+
     STUB_QuitRequested();
     STUB_Down();
     OnClose();
