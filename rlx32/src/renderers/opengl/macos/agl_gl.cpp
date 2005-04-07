@@ -101,7 +101,6 @@ static void CenterWindow(WindowRef ref)
 
 static void RLXAPI Flip(void)
 {
-    glFinish();
    	aglSwapBuffers(g_pAGLC);
     return;
 }

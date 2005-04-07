@@ -41,12 +41,6 @@ u_int32_t timer_sec(void)
 	return (u_int32_t)(system_time() / (int64)1000000);
 }
 
-u_int32_t timer_delay(u_int32_t t)
-{
-   snooze((int64)t * (int64)1000);
-   return 0;
-}
-
 void timer_snooze(u_int32_t t)
 {
     snooze((int64)t * (int64)1000);
@@ -166,3 +160,23 @@ void thread_exit(int return_value)
 	return;
 }
 
+// BeOS : TODO
+int mutex_init(SYS_MUTEX *mutex)
+{
+	return mutex ? 0 : -1;
+}
+
+int mutex_destroy(SYS_MUTEX *mutex)
+{
+   return -1;
+}
+
+int mutex_lock(SYS_MUTEX *mutex)
+{
+	return 0;
+}
+
+int mutex_unlock(SYS_MUTEX *mutex)
+{
+	return 0;
+}

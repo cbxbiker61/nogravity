@@ -126,8 +126,34 @@ static float                g_fGain = 1.f;
 
 static int 					theNumberDevices;
 static AudioDeviceID 	*	theDeviceList;
+#include <sys/sysctl.h>
+#include <ppc_intrinsics.h>
 
 // File buffer with 32bit float
+static bool HasAltivec;
+
+static bool OSX_HasAltivec (void)
+{
+    int result = 0;
+    int selectors[2] = { CTL_HW, HW_VECTORUNIT };
+    size_t length = sizeof(result);
+    sysctl(selectors, 2, &result, &length, NULL, 0);
+	return !!result;
+}
+
+// Set single float across the four values
+static inline vector float vec_load_ps1(const float *pF )
+{
+    vector float data = vec_lde(0, pF);
+    return vec_splat(vec_perm(data, data, vec_lvsl(0, pF)), 0);
+}
+// Set vector to 0
+static inline const vector float vec_setzero()
+{
+    return (const vector float) (0.);
+}
+
+
 static void FillBufferF32Stereo(const float *lpSrc,
                                 float *lpDst,
                                 float fVolLeft,
@@ -137,10 +163,10 @@ static void FillBufferF32Stereo(const float *lpSrc,
 								int n
                                 )
 {
-    register int			i;
-    register float		f;
+    int			i;
 	lpSrc+=offset;
-  	if ((fVolLeft==1) && (fVolRight==1)) {
+  	if ((fVolLeft==1) && (fVolRight==1)) 
+    {
 		sysMemCpy(lpDst, lpSrc, sz * sizeof(float));
 		return;
 	}
@@ -150,14 +176,41 @@ static void FillBufferF32Stereo(const float *lpSrc,
 		sysMemZero(lpDst, sz * sizeof(float));
 		return;
     }
-	
-    for (i=0;i<sz;i+=2) 
-	{
-        f=*lpSrc++;
-        *lpDst++=f*fVolLeft;
-        f=*lpSrc++;
-        *lpDst++=f*fVolRight;
+
+    int remain = sz;
+
+    if (HasAltivec)
+    {
+        const vector float gain_l = vec_load_ps1(&fVolLeft);
+        const vector float gain_r = vec_load_ps1(&fVolRight);
+        const vector float gain = vec_mergeh(gain_l, gain_r);
+        const vector float mix = vec_setzero();
+        remain = sz & 15;
+       	for (i=0;i<sz;i+=16)
+    	{
+    		vector float v0 = vec_ld(0x0, lpSrc + i);
+    		vector float v1 = vec_ld(0x10, lpSrc + i);
+    		vector float v2 = vec_ld(0x20, lpSrc + i);
+    		vector float v3 = vec_ld(0x30, lpSrc + i);
+
+    		vector float v4 = vec_madd(v0, gain, mix);
+    		vector float v5 = vec_madd(v1, gain, mix);
+    		vector float v6 = vec_madd(v2, gain, mix);
+    		vector float v7 = vec_madd(v3, gain, mix);
+
+    		vec_st(v4, 0x0, lpDst + i);
+    		vec_st(v5, 0x10, lpDst + i);
+    		vec_st(v6, 0x20, lpDst + i);
+    		vec_st(v7, 0x30, lpDst + i);
+        }
     }
+
+	for (;remain;i+=2,remain--)
+	{
+		lpDst[i  ]=lpSrc[i  ]*fVolLeft;
+		lpDst[i+1]=lpSrc[i+1]*fVolRight;
+	}
+
 }
 
 static void FillBufferF32Mono(const float *lpSrc,
@@ -168,34 +221,68 @@ static void FillBufferF32Mono(const float *lpSrc,
 								int offset,
                                 int n)
 {
-    register int			i;
-    register float		f;
    	lpSrc+=offset;
-	if ((fVolLeft==1) && (fVolRight==1)) {
-
-        for (i=0;i<sz;i++) 
-		{
-            f=*lpSrc++;
-            *lpDst++=f;
-            *lpDst++=f;
-        }
-        return;
-	}
-
     if ((fVolLeft==0) && (fVolRight==0)) {
 
 		sysMemZero(lpDst, sz * sizeof(float) << 1);
 		return;
     }
+	int remain = sz;
+	int i = 0, j = 0;
 
-    for (i=0;i<sz;i++)
+	if ((fVolLeft==1) && (fVolRight==1))
 	{
-        f=*lpSrc++;
-        *lpDst++=f*fVolLeft;
-        *lpDst++=f*fVolRight;
+	    if (HasAltivec)
+	    {
+     	    remain = sz & 3;
+    	    for (;i<sz;i+=4,j+=8)
+    		{
+    			vector float v0 = vec_ld(0, lpSrc + i); // v0(s0,s1,s2,s3)
+    			vector float v2 = vec_mergeh(v0, v0);
+    			vector float v3 = vec_mergel(v0, v0);
+    			vec_st(v2, 0, lpDst + j);
+    			vec_st(v3, 0x10, lpDst + j);
+    	    }
+    	    sz = remain;
+    	}
+
+        for (i=0;i<remain;i++,j+=2)
+		{
+            lpDst[j+0]=*lpSrc;
+            lpDst[j+1]=*lpSrc;
+            lpSrc++;
+        }
+        return;
+    }
+
+    if (HasAltivec)
+    {
+      const vector float gain_l = vec_load_ps1(&fVolLeft);
+      const vector float gain_r = vec_load_ps1(&fVolRight);
+      const vector float gain = vec_mergeh(gain_l, gain_r);
+      const vector float mix = vec_setzero();
+
+
+       for (;i<sz;i+=4,j+=8)
+       {
+    		vector float v0 = vec_ld(0, lpSrc + i); // v0(s0,s1,s2,s3)
+    		vector float v1 = vec_madd(v0, gain, mix);
+    		vector float v2 = vec_mergeh(v1, v1);
+    		vector float v3 = vec_mergel(v1, v1);
+    		vec_st(v2, 0, lpDst + j);
+    		vec_st(v3, 0x10, lpDst + j);
+       }
+       sz = remain;
+    }
+
+    for (i=0;i<sz;i++,j+=2)
+	{
+        lpDst[j]=(*lpSrc)*fVolLeft;
+        lpDst[j]=(*lpSrc)*fVolRight;
+        lpSrc++;
     }
 }
-// Callback
+
 static OSStatus snd_input_callback(void *inRefCon,
                                    AudioUnitRenderActionFlags inActionFlags,
                                    const AudioTimeStamp *inTimeStamp,
@@ -408,6 +495,7 @@ static int Initialize(void *hwnd)
 	ComponentDescription		compdesc;
     Component					compid;
 
+	HasAltivec = OSX_HasAltivec();
     // Clear the sound channels
 
     chan = g_pHandle;
@@ -716,12 +804,10 @@ int auSoundBuffer::Create(int sampleFormat, int sampleRate, int length, bool bSt
        m_nNumFrame>>=1;
 
 	size_t l = sizeof(float) * m_nNumFrame;
-    m_pData = (float*)malloc(l);
+    m_pData = (float*)calloc(m_nNumFrame, sizeof(float));
     m_nInstance = 1;
 	m_nPlayPosition = 0;
 	m_nSampleRate = sampleRate;
-    sysMemZero(m_pData, l);
-
     austream.mSampleRate = 44100;
     austream.mFormatID = kAudioFormatLinearPCM;
     austream.mFormatFlags = kLinearPCMFormatFlagIsFloat     // kAudioFormatFlagIsSignedInteger for 8/16 bits
@@ -752,12 +838,14 @@ int auSoundBuffer::Release()
     if (m_pData)
     {
         m_nInstance--;
-        if (m_nInstance == 0)
+        if (m_nInstance <= 0)
         {
             free(m_pData);
             m_pData = 0;
+			m_nInstance = 0;
         }
     }
+	m_pSample = 0;
     m_nFlags = 0;
     return 0;
 }
@@ -1137,7 +1225,8 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t siz
 	if (!pStr)
 		return -1;
 
-    pStr->nChannel = ChannelGetFree(NULL);
+    pStr->nChannel = 0;
+	
 	pStr->nState = 1;
 	sysMemZero(&pStr->sample, sizeof(V3XA_HANDLE));
 	
@@ -1147,7 +1236,8 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t siz
 	pStr->m_nStreamState = 2;
 
 	auSoundBuffer   *pSrc = g_pHandle + pStr->nChannel;
-    pSrc->Create(sampleFormat, sampleRate, size, true);
+    pSrc->Release();
+	pSrc->Create(sampleFormat, sampleRate, size, true);
     pSrc->m_nFlags |= DSH_RESERVED;
 	pSrc->m_pSample = &pStr->sample;
 	return handle;

@@ -223,7 +223,7 @@ void STUB_MainCode(void)
 	V3XPlugIn_Add(1, V3XPlug_CollisionMove);
 
     // Game Data
-#if defined __BEOS__
+#if defined __BEOS__ || defined _DEBUG
 	RLX.Video.Config|=RLXVIDEO_Windowed;
 #else
  	RLX.Video.Config&=~RLXVIDEO_Windowed;

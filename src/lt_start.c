@@ -1378,7 +1378,7 @@ static int TX_Warn(void)
     CSP_WriteCenterText("No enough video memory for textures!", GX.View.ymax/2, g_pspDispFont);
     GX.Client->Unlock();
     GX.View.Flip();
-    timer_delay(2000);
+    timer_snooze(2000);
     return 1;
 }
 /*------------------------------------------------------------------------

@@ -468,7 +468,7 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 		return -21;	// file not found
 
 	// default stream buffer size
-	bestCache = 64 * 1024;
+	bestCache = 100 * 1024;
 	pHandle->dwFileOffset = pHandle->pStream->ftell(pHandle->pFile);
 	pHandle->info.chunkLength = pHandle->chunkLength = bestCache;	 
 

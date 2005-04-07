@@ -39,7 +39,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "win32/sys_di.h"
 
 #ifdef _DEBUG
-#define _DEBUG_EXCEPTION
+// #define _DEBUG_EXCEPTION
 #endif
 
 #if defined  _DEBUG_EXCEPTION// Exception manager by Konstantin Boukreev

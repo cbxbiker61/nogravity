@@ -25,6 +25,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 //-------------------------------------------------------------------------
 #define NG_EXPORT extern
 #define USE_THREAD
+#define USE_MUTEX
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -56,13 +57,13 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "lt_func.h"
 
 static SND_DWHANDLE g_pSoundList[MAX_SAMPLE];
-
-static V3XA_STREAM	g_pWavStream;
-static int			m_Status;
-static SYS_THREAD	m_Thread;
-
+static void (* CALLING_C ScreenPageFlip)(void);
 static V3XA_HANDLE *g_pFXTable;
 static int			g_nSample;
+static V3XA_STREAM	g_pWavStream;
+static volatile int	m_Status;
+static SYS_THREAD	m_Thread;
+static SYS_MUTEX	m_Mutex;
 
 typedef struct
 {
@@ -246,15 +247,20 @@ void NG_AudioLoadWave(void)
     return;
 }
 
-u_int32_t CALLING_STD Thread(void *context)
+static u_int32_t CALLING_STD Thread(void *context)
 {
 	UNUSED(context);
-	while(g_pWavStream)
-	{		
-		if (m_Status == 0)
-			break;
+	
+	while (m_Status)
+	{	
+#ifdef USE_MUTEX
+		mutex_lock(&m_Mutex);
+#endif
 		V3XAStream_Poll(g_pWavStream);
-		timer_snooze(50);
+#ifdef USE_MUTEX
+		mutex_unlock(&m_Mutex);		
+#endif
+		timer_snooze(75);
 	}	
 	thread_exit(0);
 	return 0;
@@ -289,6 +295,9 @@ void NG_AudioPlayTrack(int i)
 	m_Thread.pFunc = Thread;
 	m_Status = 1;
 	thread_begin(&m_Thread, SYS_THREAD_PRIORITY_NORMAL);
+#ifdef USE_MUTEX
+	mutex_init(&m_Mutex);	
+#endif
 #endif
 
     return;
@@ -495,12 +504,23 @@ void NG_AudioStopMusic(void)
 			V3XAStream_SetVolume(g_pWavStream, 0, (float)i/100);
 			V3XAStream_Poll(g_pWavStream);
 			V3XA.Client->Poll(0);
-			timer_delay((64L*12L)/((g_SGSettings.VolMusic*4)+1));
+			timer_snooze((64L*12L)/((g_SGSettings.VolMusic*4)+1));
 		}
 		
+#ifdef USE_MUTEX		
+		mutex_lock(&m_Mutex);
 		m_Status = 0;
-		thread_end(&m_Thread);
+#endif
 		V3XAStream_Release(g_pWavStream);
+		
+#ifdef USE_MUTEX
+		mutex_unlock(&m_Mutex);	
+#endif
+		
+		thread_end(&m_Thread);	
+#ifdef USE_MUTEX
+		mutex_destroy(&m_Mutex);
+#endif		
 		g_pWavStream = 0;
 	}
     
@@ -555,7 +575,7 @@ void NG_AudioUpdate()
     V3XA.Client->Poll(0);
 
 #ifndef USE_THREAD	
-    if (g_pWavStream) 
+  	if (g_pWavStream) 
 		V3XAStream_Poll(g_pWavStream);
 #endif
 }
@@ -603,14 +623,15 @@ void NG_AudioPlayWarp(void)
     return;
 }
 
-void (* CALLING_C oldFlip)(void);
+
 
 extern SYS_TIMER g_cTimer;
 
 static void CALLING_C TaskFlip(void)
 {
 	NG_AudioUpdate();
-    oldFlip();
+	SYS_ASSERT(ScreenPageFlip);
+	ScreenPageFlip();
 	timer_Update(&g_cTimer);
     return;
 }
@@ -620,7 +641,7 @@ void NG_InstallHandlers(void)
 	timer_Start(&g_cTimer, 70, 1);
     if (GX.View.Flip!=TaskFlip)
     {
-        oldFlip = GX.View.Flip;
+        ScreenPageFlip = GX.View.Flip;
         GX.View.Flip = TaskFlip;
     }
     return;

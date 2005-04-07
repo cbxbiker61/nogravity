@@ -175,19 +175,6 @@ u_int32_t timer_sec(void)
 	return GET_MILLISEC() / 1000;
 }
 
-// Timer delay
-u_int32_t timer_delay(u_int32_t ms)
-{
-    u_int32_t tmax=timer_ms()+ms;
-    while (timer_ms()<tmax)
-    {
-#ifdef USE_YIELD
-       	Sleep(0);
-#endif
-    }
-    return ms + timer_ms() - tmax;
-}
-
 // Snooze (yield)
 void timer_snooze(u_int32_t n)
 {
@@ -199,7 +186,6 @@ void timer_snooze(u_int32_t n)
 // Start thread
 int32_t thread_begin(SYS_THREAD *pFunc, enum SYS_THREAD_PRIORITY_ENUM priority)
 {
-#ifdef USE_THREAD	
 	HANDLE hThread = CreateThread(
 		NULL, 					// no security attributes
 		0, 						// use default stack size
@@ -223,28 +209,75 @@ int32_t thread_begin(SYS_THREAD *pFunc, enum SYS_THREAD_PRIORITY_ENUM priority)
 	SetThreadPriority(hThread, p);
 	pFunc->hThread = hThread;
 	return 0;
-#else
-	return pFunc->pFunc(pFunc->pArgument);
-#endif	
+
 }
 
 // End thread
 void thread_end(SYS_THREAD *pFunc)
 {
-#ifdef USE_THREAD
 	HANDLE handle = (HANDLE)pFunc->hThread;	
 	WaitForSingleObject(handle, INFINITE);
 	CloseHandle(handle);
 	pFunc->hThread = 0;
-#endif
 	return;
 }
 
 // Exit thread
 void thread_exit(int code)
 {
-#ifdef USE_THREAD
 	ExitThread(code);
-#endif
 	return;
 }
+
+// Win32
+int mutex_init(SYS_MUTEX *mutex)
+{
+	/* Allocate mutex memory */
+	if ( mutex )
+    {
+		/* Create the mutex, with initial value signaled */
+		mutex->hMutex = CreateMutex(NULL, FALSE, NULL);
+		if ( ! mutex->hMutex )
+        {
+			mutex = NULL;
+		}
+	}
+	return mutex ? 0 : -1;
+}
+
+int mutex_destroy(SYS_MUTEX *mutex)
+{
+   if ( mutex ) 
+   {
+		if ( mutex->hMutex ) 
+		{
+			CloseHandle((HANDLE)mutex->hMutex);
+			mutex->hMutex = 0;
+		}
+		return 0;
+   }
+   return -1;
+}
+
+int mutex_lock(SYS_MUTEX *mutex)
+{
+	if ( mutex == NULL )
+		return -1;
+
+	if ( WAIT_FAILED == WaitForSingleObject((HANDLE)mutex->hMutex, INFINITE) ) 
+		return -1;
+
+	return 0;
+}
+
+int mutex_unlock(SYS_MUTEX *mutex)
+{
+	if ( mutex == NULL )
+		return -1;
+
+	if ( FALSE == ReleaseMutex((HANDLE)mutex->hMutex)) 
+		return -1;
+
+	return 0;
+}
+

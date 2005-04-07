@@ -42,9 +42,13 @@ Linux/SDL Port: 2005 - Matt Williams
 #include "v3xrend.h"
 #include "../gl_v3x.h"
 
-
+// Define this in order to enable multisampling
+// #define HAS_MULTISAMPLING
 
 struct RLXSYSTEM *g_pRLX;
+
+#define ISFULLSCREEN() (!(g_pRLX->Video.Config&RLXVIDEO_Windowed))
+int GL_IsSupported(const char *extension);
 
 // GL Driver Specific
 static SDL_Surface *g_pSurface = NULL;
@@ -116,7 +120,7 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 
       if (modes == (SDL_Rect **)-1)
       {
-	modes = (SDL_Rect **)hardcoded_modes;
+		modes = (SDL_Rect **)hardcoded_modes;
       }
 
       if (modes != NULL)
@@ -285,24 +289,54 @@ static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
   return mode;
 }
 
-static int RLXAPI CreateSurface(int numberOfSparePages)
+static int RLXAPI CreateSurface(int BackBufferCount)
 {
-  SYS_ASSERT(g_pDisplays != NULL);
-  SYS_ASSERT(g_Mode != -1);
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-  g_pSurface = SDL_SetVideoMode(g_pDisplays[g_Mode].lWidth, g_pDisplays[g_Mode].lHeight, g_pDisplays[g_Mode].BitsPerPixel, SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
-  if (g_pSurface == NULL)
-  {
-    return -1;
-  }
+	int sdl_flags = SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN);
 
-  // Reset engine
-  GL_InstallExtensions();
-  GL_ResetViewport();
+#ifdef HAS_MULTISAMPLING
+	int multisample = GL_IsSupported("GL_ARB_multisample") && (g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING ? g_pRLX->pGX->View.Multisampling) : 0;
+#endif
 
-  g_pRLX->pGX->Surfaces.maxSurface = numberOfSparePages;
+  	SYS_ASSERT(g_pDisplays != NULL);
+	SYS_ASSERT(g_Mode != -1);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	
+	
+#ifdef HAS_MULTISAMPLING
+	if (multisample)
+	{
+		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, multisample);
+	}
+#endif
 
-  return 0;
+	g_pSurface = SDL_SetVideoMode(g_pDisplays[g_Mode].lWidth, g_pDisplays[g_Mode].lHeight, g_pDisplays[g_Mode].BitsPerPixel, sdl_flags);
+	
+	if (g_pSurface == NULL)
+	{
+		return -1;
+	}
+
+	// Reset engine
+	GL_InstallExtensions();
+	GL_ResetViewport();
+
+#ifdef _DEBUG
+	SYS_Debug("...%s\n", glGetString(GL_VENDOR));
+	SYS_Debug("...%s\n", glGetString(GL_VERSION));
+	SYS_Debug("...%s\n", glGetString(GL_RENDERER));
+#endif
+	
+
+#ifdef HAS_MULTISAMPLING
+	if (multisample)
+	{
+		glEnable(GL_MULTISAMPLE_ARB);
+	}
+#endif
+
+	g_pRLX->pGX->Surfaces.maxSurface = BackBufferCount;
+
+	return 0;
 }
 
 static void RLXAPI ReleaseSurfaces(void)
@@ -328,18 +362,18 @@ static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
 
 static void RLXAPI Shutdown(void)
 {
-  if (g_pDisplays != NULL)
-  {
-    g_pRLX->mm_heap->free(g_pDisplays);
-  }
+	if (g_pDisplays != NULL)
+	{
+		g_pRLX->mm_heap->free(g_pDisplays);
+	}
 
-  SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 static int Open(void *hnd)
 {
-  SDL_InitSubSystem(SDL_INIT_VIDEO);
-  return 0;
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
+	return 0;
 }
 
 static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)

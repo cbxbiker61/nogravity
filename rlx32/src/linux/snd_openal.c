@@ -25,9 +25,14 @@ Linux/SDL Port: 2005 - Matt Williams
 */
 //-------------------------------------------------------------------------
 
+#ifdef __MACH__
+#include "al.h"
+#include "alc.h"
+
+#else
 #include <AL/al.h>
 #include <AL/alc.h>
-
+#endif
 #include "_rlx32.h"
 #include "_rlx.h"
 #include "systools.h"

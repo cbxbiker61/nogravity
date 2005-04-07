@@ -130,7 +130,6 @@
 			children = (
 				F45E30D2063A9AB400985E8A,
 				F45E30BD063A9A9700985E8A,
-				F42FF1FC0608E70A00C97909,
 				F41C907505EEC1A000709073,
 				F41C907405EEC18D00709073,
 				F41C907305EEC18000709073,
@@ -213,6 +212,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
+				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -230,9 +230,11 @@
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEPLOYMENT_POSTPROCESSING = YES;
+				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_CPU = "";
 				HEADER_SEARCH_PATHS = ";../..;/../SDK";
+				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				ZERO_LINK = NO;
 			};
@@ -314,15 +316,6 @@
 				F41C94EF05EECF5E00709073,
 				F41C950705EECF8E00709073,
 				F41C950805EECF8E00709073,
-				F42FF2030608E72B00C97909,
-				F42FF2050608E72B00C97909,
-				F42FF20F0608E73D00C97909,
-				F42FF21E0608E75600C97909,
-				F42FF2200608E75600C97909,
-				F42FF2220608E75600C97909,
-				F42FF2230608E75600C97909,
-				F42FF2340608E76900C97909,
-				F42FF2360608E76900C97909,
 				F4B3C17F07BF676700EB3D65,
 				F4B3C18107BF676700EB3D65,
 				F4B3C18207BF676700EB3D65,
@@ -482,17 +475,6 @@
 				F4F336A305FB4216003626B9,
 				F4F336A405FB4216003626B9,
 				F4ABFB3905FB516600FAA545,
-				F42FF2040608E72B00C97909,
-				F42FF20E0608E73D00C97909,
-				F42FF2100608E73D00C97909,
-				F42FF21F0608E75600C97909,
-				F42FF2210608E75600C97909,
-				F42FF2240608E75600C97909,
-				F42FF2250608E75600C97909,
-				F42FF2350608E76900C97909,
-				F42FF2370608E76900C97909,
-				F42FF23F0608E77D00C97909,
-				F42FF2440608E78F00C97909,
 				F45E3123063A9C1A00985E8A,
 				F45E3124063A9C1A00985E8A,
 				F45E3155063A9C9400985E8A,
@@ -1481,334 +1463,6 @@
 		};
 		F42FF1920608DF5900C97909 = {
 			fileRef = F42FF1910608DF5900C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF1FC0608E70A00C97909 = {
-			children = (
-				F42FF2430608E78F00C97909,
-				F42FF23E0608E77D00C97909,
-				F42FF2300608E76900C97909,
-				F42FF2310608E76900C97909,
-				F42FF2320608E76900C97909,
-				F42FF2330608E76900C97909,
-				F42FF2160608E75600C97909,
-				F42FF2170608E75600C97909,
-				F42FF2180608E75600C97909,
-				F42FF2190608E75600C97909,
-				F42FF21A0608E75600C97909,
-				F42FF21B0608E75600C97909,
-				F42FF21C0608E75600C97909,
-				F42FF21D0608E75600C97909,
-				F42FF20B0608E73D00C97909,
-				F42FF20C0608E73D00C97909,
-				F42FF20D0608E73D00C97909,
-				F42FF2000608E72B00C97909,
-				F42FF2010608E72B00C97909,
-				F42FF2020608E72B00C97909,
-			);
-			isa = PBXGroup;
-			name = zlib;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		F42FF2000608E72B00C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = zutil.h;
-			path = "../../SDK/zlib-1.2.1/zutil.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2010608E72B00C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = zutil.c;
-			path = "../../SDK/zlib-1.2.1/zutil.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2020608E72B00C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = zlib.h;
-			path = "../../SDK/zlib-1.2.1/zlib.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2030608E72B00C97909 = {
-			fileRef = F42FF2000608E72B00C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2040608E72B00C97909 = {
-			fileRef = F42FF2010608E72B00C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2050608E72B00C97909 = {
-			fileRef = F42FF2020608E72B00C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF20B0608E73D00C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = uncompr.c;
-			path = "../../SDK/zlib-1.2.1/uncompr.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF20C0608E73D00C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = trees.h;
-			path = "../../SDK/zlib-1.2.1/trees.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF20D0608E73D00C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = trees.c;
-			path = "../../SDK/zlib-1.2.1/trees.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF20E0608E73D00C97909 = {
-			fileRef = F42FF20B0608E73D00C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF20F0608E73D00C97909 = {
-			fileRef = F42FF20C0608E73D00C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2100608E73D00C97909 = {
-			fileRef = F42FF20D0608E73D00C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2160608E75600C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = inftrees.h;
-			path = "../../SDK/zlib-1.2.1/inftrees.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2170608E75600C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = inftrees.c;
-			path = "../../SDK/zlib-1.2.1/inftrees.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2180608E75600C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = inflate.h;
-			path = "../../SDK/zlib-1.2.1/inflate.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2190608E75600C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = inflate.c;
-			path = "../../SDK/zlib-1.2.1/inflate.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF21A0608E75600C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = inffixed.h;
-			path = "../../SDK/zlib-1.2.1/inffixed.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF21B0608E75600C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = inffast.h;
-			path = "../../SDK/zlib-1.2.1/inffast.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF21C0608E75600C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = inffast.c;
-			path = "../../SDK/zlib-1.2.1/inffast.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF21D0608E75600C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = infback.c;
-			path = "../../SDK/zlib-1.2.1/infback.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF21E0608E75600C97909 = {
-			fileRef = F42FF2160608E75600C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF21F0608E75600C97909 = {
-			fileRef = F42FF2170608E75600C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2200608E75600C97909 = {
-			fileRef = F42FF2180608E75600C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2210608E75600C97909 = {
-			fileRef = F42FF2190608E75600C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2220608E75600C97909 = {
-			fileRef = F42FF21A0608E75600C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2230608E75600C97909 = {
-			fileRef = F42FF21B0608E75600C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2240608E75600C97909 = {
-			fileRef = F42FF21C0608E75600C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2250608E75600C97909 = {
-			fileRef = F42FF21D0608E75600C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2300608E76900C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = deflate.h;
-			path = "../../SDK/zlib-1.2.1/deflate.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2310608E76900C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = deflate.c;
-			path = "../../SDK/zlib-1.2.1/deflate.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2320608E76900C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = crc32.h;
-			path = "../../SDK/zlib-1.2.1/crc32.h";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2330608E76900C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = crc32.c;
-			path = "../../SDK/zlib-1.2.1/crc32.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2340608E76900C97909 = {
-			fileRef = F42FF2300608E76900C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2350608E76900C97909 = {
-			fileRef = F42FF2310608E76900C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2360608E76900C97909 = {
-			fileRef = F42FF2320608E76900C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2370608E76900C97909 = {
-			fileRef = F42FF2330608E76900C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF23E0608E77D00C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = compress.c;
-			path = "../../SDK/zlib-1.2.1/compress.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF23F0608E77D00C97909 = {
-			fileRef = F42FF23E0608E77D00C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF2430608E78F00C97909 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			name = adler32.c;
-			path = "../../SDK/zlib-1.2.1/adler32.c";
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F42FF2440608E78F00C97909 = {
-			fileRef = F42FF2430608E78F00C97909;
 			isa = PBXBuildFile;
 			settings = {
 			};

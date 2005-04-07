@@ -54,12 +54,6 @@ void timer_snooze(u_int32_t t)
 	return;
 }
 
-// Wait
-u_int32_t timer_delay(u_int32_t t)
-{
-    usleep(t * 1000);
-	return 0;
-}
 
 // 1 microsecond = 0.001 millisecond
 
@@ -151,3 +145,38 @@ void thread_exit(int code)
     return;
 }
 
+// Unix
+int mutex_init(SYS_MUTEX *mutex)
+{
+	/* Allocate mutex memory */
+	if ( mutex )
+ 		 pthread_mutex_init((pthread_mutex_t*)&mutex->hMutex, NULL);
+	return mutex ? 0 : -1;
+}
+
+int mutex_destroy(SYS_MUTEX *mutex)
+{
+   if ( mutex ) 
+   {
+		pthread_mutex_destroy((pthread_mutex_t*)&mutex->hMutex);
+		return 0;
+   }
+   return -1;
+}
+
+int mutex_lock(SYS_MUTEX *mutex)
+{
+	if ( mutex == NULL )
+		return -1;
+	pthread_mutex_lock((pthread_mutex_t*)&mutex->hMutex);
+
+	return 0;
+}
+
+int mutex_unlock(SYS_MUTEX *mutex)
+{
+	if ( mutex == NULL )
+		return -1;
+	pthread_mutex_unlock((pthread_mutex_t*)&mutex->hMutex);
+	return 0;
+}
