@@ -42,9 +42,6 @@ Linux/SDL Port: 2005 - Matt Williams
 #include "v3xrend.h"
 #include "../gl_v3x.h"
 
-// Define this in order to enable multisampling
-// #define HAS_MULTISAMPLING
-
 struct RLXSYSTEM *g_pRLX;
 
 #define ISFULLSCREEN() (!(g_pRLX->Video.Config&RLXVIDEO_Windowed))
@@ -292,24 +289,31 @@ static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 static int RLXAPI CreateSurface(int BackBufferCount)
 {
 	int sdl_flags = SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN);
+	int multisampling = FALSE;
 
-#ifdef HAS_MULTISAMPLING
-	int multisample = (GL_IsSupported("GL_ARB_multisample") && (g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING)) ? g_pRLX->pGX->View.Multisampling : 0;
-#endif
-
+  	SYS_ASSERT(g_pSurface == NULL);
   	SYS_ASSERT(g_pDisplays != NULL);
 	SYS_ASSERT(g_Mode != -1);
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-#ifdef HAS_MULTISAMPLING
-	if (multisample)
+	// If we've been told to enable multisampling, try to create a surface with it.
+	if ((g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING) &&
+	    (g_pRLX->pGX->View.Multisampling != 0))
 	{
-		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLEBUFFERS, 1);
-		SDL_GL_SetAttribute( SDL_GL_MULTISAMPLESAMPLES, multisample);
+	  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, g_pRLX->pGX->View.Multisampling);
+	  g_pSurface = SDL_SetVideoMode(g_pDisplays[g_Mode].lWidth, g_pDisplays[g_Mode].lHeight, g_pDisplays[g_Mode].BitsPerPixel, sdl_flags);
+	  multisampling = TRUE;
 	}
-#endif
 
-	g_pSurface = SDL_SetVideoMode(g_pDisplays[g_Mode].lWidth, g_pDisplays[g_Mode].lHeight, g_pDisplays[g_Mode].BitsPerPixel, sdl_flags);
+	// If we haven't tried (or tried and failed), create a surface without multisampling.
+	if (g_pSurface == NULL)
+	{
+	  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
+	  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+	  g_pSurface = SDL_SetVideoMode(g_pDisplays[g_Mode].lWidth, g_pDisplays[g_Mode].lHeight, g_pDisplays[g_Mode].BitsPerPixel, sdl_flags);
+	}
 	
 	if (g_pSurface == NULL)
 	{
@@ -326,12 +330,10 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	SYS_Debug("...%s\n", glGetString(GL_RENDERER));
 #endif
 
-#ifdef HAS_MULTISAMPLING
-	if (multisample)
+	if (multisampling)
 	{
-		glEnable(GL_MULTISAMPLE_ARB);
+	  glEnable(GL_MULTISAMPLE_ARB);
 	}
-#endif
 
 	g_pRLX->pGX->Surfaces.maxSurface = BackBufferCount;
 
@@ -342,6 +344,7 @@ static void RLXAPI ReleaseSurfaces(void)
 {
   SDL_FreeSurface(g_pSurface);
   g_pRLX->pGX->Surfaces.maxSurface = 0;
+  g_pSurface = NULL;
   return;
 }
 
