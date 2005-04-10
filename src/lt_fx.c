@@ -738,7 +738,7 @@ SGEffect *NG_FXNew(V3XVECTOR *pos, int type, int lop, SGScript *pInf, int kp, V3
 						p->Dispo = 1;
 						EJ = NULL;
 						transpa = 0;
-      					p->FadeStart = p->Sprite->maxItem;
+      					p->FadeStart = 0;
 					}
 					else
 					{

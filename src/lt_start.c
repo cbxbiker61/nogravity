@@ -743,7 +743,11 @@ static void NG_CMXToObject(void)
 		OVI->mesh->scale = 1.f;
         if ((ORI->name[0])&&(ORI->type==V3XOBJ_MESH))
         {
-            sysStrnCpy(name, ORI->name, 31);  s = strstr(name, "_");
+            sysStrnCpy(name, ORI->name, 31);  
+			s = strstr(name, "_");
+#ifdef _DEBUG
+//			SYS_Debug("%s\n", name);
+#endif
             if (s)
             {
                 f=0;
@@ -752,6 +756,10 @@ static void NG_CMXToObject(void)
                 Coliable=0;
                 for (Sif=g_pPlayerInfo, j=0;(j<g_SGSettings.maxCase)&&(!Sf);j++, Sif++)
                 {
+#ifdef _DEBUG
+//					SYS_Debug("Compare with %s vs %s\n", name, Sif->Basename);
+#endif
+					
                     if (sysStriCmp(name, Sif->Basename)==0)
                     {
                         f = 1;
@@ -771,6 +779,9 @@ static void NG_CMXToObject(void)
 						SYS_ASSERT(g_SGGame.numWeapons<MAX_WEAPONS);
 						SYS_ASSERT(g_SGGame.numEnemies<MAX_ENEMYS);
 
+#ifdef _DEBUG
+//						SYS_Debug("Type = %d\n", Sif->Type);
+#endif
                         switch(Sif->Type) 
 						{
                             case t_SPECIAL:
@@ -818,6 +829,9 @@ static void NG_CMXToObject(void)
                             break;
                             case t_PLAYER:
                             OVI->state |= V3XSTATE_HIDDEN;
+#ifdef _DEBUG
+//							SYS_Debug("Cmp with %s\n", g_pShip[g_pCurrentGame->ship].name);
+#endif
                             f = 2;
                             if (((g_SGSettings.SerialGame)&&(numPlayer<g_SGGame.numPlayer))
                             ||(!numPlayer))
@@ -909,7 +923,7 @@ static void NG_CMXToObject(void)
                 }
                 else
                 {
-					SYS_ASSERT(f!=0);
+				//	SYS_ASSERT(f!=0);
                 }
             }
         }

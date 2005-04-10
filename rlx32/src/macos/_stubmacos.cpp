@@ -212,13 +212,17 @@ static int32_t MessageHandler(EventRecord *msg)
     
         case mouseUp:
 		if (sMOU->u_id)
+		{
 			sMOU->rgbButtons[0] = 0;
+		}
 		break;
      	case mouseDown:
      	{
      		WindowPtr whichWindow;
 			if (sMOU->u_id)
+			{
 				sMOU->rgbButtons[0] = 1;
+			}
 			whatPart = FindWindow(msg->where, &whichWindow);
     
 			switch(whatPart)
@@ -326,8 +330,9 @@ int STUB_TaskControl(void)
     EventRecord msg;
 
 	if (sMOU->u_id)
-		sMOU->steButtons[0] = sMOU->rgbButtons[0];
-
+	{
+		memcpy(sMOU->steButtons, sMOU->rgbButtons, sizeof(sMOU->steButtons));
+	}
 	do
 	{
         if (WaitNextEvent(everyEvent, &msg, 0, nil))

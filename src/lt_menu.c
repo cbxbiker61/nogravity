@@ -2091,10 +2091,10 @@ static void DrawValue(char *tx, int val, int val2, int mode, int l)
     }    
 
 	CSP_Color(COLOR_GRAY);
-	CSP_WriteText(tx, 20*2, y, g_pFontMenuLrg);
+	CSP_WriteText(tx, 40 * GX.View.lWidth / 640, y, g_pFontMenuLrg);
 
 	CSP_Color(COLOR_WHITE);
-	CSP_WriteText(tex, 230*2, y, g_pFontMenuLrg);
+	CSP_WriteText(tex, 460 * GX.View.lWidth / 640, y, g_pFontMenuLrg);
     return;
 }
 
@@ -2128,7 +2128,7 @@ static int NG_RenderEndLevelBackground(RW_Interface *p, int mode)
 	DrawValue(g_szGmT[115], g_cGameStat.bonus, g_cGameStat.total_bonus, 0, l); l++;
 
 	RW_Zone_CreateWithText(p, g_szGmT[107], g_SGMenuPos.captionX, g_SGMenuPos.captionY, mode);
-    RW_Zone_CreateWithText(p, g_szGmT[146], 150*2, g_SGMenuPos.captionY, mode);
+	RW_Zone_CreateWithText(p, g_szGmT[146], 300 * GX.View.lWidth / 640, g_SGMenuPos.captionY, mode);
 
 	RW_RenderSelection(p);
 

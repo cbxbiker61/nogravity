@@ -313,9 +313,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D0C4E8B0486CD37000505A6,
-				F41C94EF05EECF5E00709073,
-				F41C950705EECF8E00709073,
-				F41C950805EECF8E00709073,
 				F4B3C17F07BF676700EB3D65,
 				F4B3C18107BF676700EB3D65,
 				F4B3C18207BF676700EB3D65,
@@ -601,9 +598,6 @@
 		F41C907505EEC1A000709073 = {
 			children = (
 				F41C950605EECF8E00709073,
-				F41C950505EECF8E00709073,
-				F41C950405EECF8E00709073,
-				F41C94DD05EECF5E00709073,
 				F41C94DC05EECF5E00709073,
 				F41C94DB05EECF5E00709073,
 				F41C94DA05EECF5E00709073,
@@ -1270,15 +1264,6 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F41C94DD05EECF5E00709073 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = pngconf.h;
-			path = ../../SDK/lpng125/pngconf.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		F41C94DE05EECF5E00709073 = {
 			fileRef = F41C94CC05EECF5E00709073;
 			isa = PBXBuildFile;
@@ -1375,30 +1360,6 @@
 			settings = {
 			};
 		};
-		F41C94EF05EECF5E00709073 = {
-			fileRef = F41C94DD05EECF5E00709073;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F41C950405EECF8E00709073 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = pngasmrd.h;
-			path = ../../SDK/lpng125/pngasmrd.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F41C950505EECF8E00709073 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = png.h;
-			path = ../../SDK/lpng125/png.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
 		F41C950605EECF8E00709073 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1407,18 +1368,6 @@
 			path = ../../SDK/lpng125/png.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
-		};
-		F41C950705EECF8E00709073 = {
-			fileRef = F41C950405EECF8E00709073;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F41C950805EECF8E00709073 = {
-			fileRef = F41C950505EECF8E00709073;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F41C950905EECF8E00709073 = {
 			fileRef = F41C950605EECF8E00709073;

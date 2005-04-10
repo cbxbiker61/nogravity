@@ -105,6 +105,8 @@ void NG_StageReadFile(char *fin, int extrn)
 		char tex[256];
 		char tmp[1024];
 		FIO_cur->fgets(tmp, 1025, in);
+		if (strlen(tmp)<4)
+			continue;
 
         sscanf(tmp, "%s %s", tex, tex2);
         if (strcmp(tex, "include")==0) 
