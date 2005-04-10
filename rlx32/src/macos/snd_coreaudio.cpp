@@ -163,7 +163,7 @@ static void FillBufferF32Stereo(const float *lpSrc,
 								int n
                                 )
 {
-    int			i = 0;
+    int			i;
 	lpSrc+=offset;
   	if ((fVolLeft==1) && (fVolRight==1)) 
     {
@@ -389,6 +389,9 @@ static OSStatus snd_input_callback(void *inRefCon,
 
      chan->m_nPlayPosition = writesz;
 
+    writesz = bufsz - writesz;
+    if (writesz <= 0)
+	   goto end;
 end:
     
 	chan->Unlock();
@@ -800,6 +803,7 @@ int auSoundBuffer::Create(int sampleFormat, int sampleRate, int length, bool bSt
     if (sampleFormat & V3XA_FMT16BIT)
        m_nNumFrame>>=1;
 
+	size_t l = sizeof(float) * m_nNumFrame;
     m_pData = (float*)calloc(m_nNumFrame, sizeof(float));
     m_nInstance = 1;
 	m_nPlayPosition = 0;
@@ -834,14 +838,12 @@ int auSoundBuffer::Release()
     if (m_pData)
     {
         m_nInstance--;
-        if (m_nInstance <= 0)
+        if (m_nInstance == 0)
         {
             free(m_pData);
             m_pData = 0;
-			m_nInstance = 0;
         }
     }
-	m_pSample = 0;
     m_nFlags = 0;
     return 0;
 }
@@ -1229,23 +1231,12 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t siz
 	pStr->sample.length = size;
 	pStr->sample.sampleFormat = sampleFormat;
 	pStr->sample.samplingRate = sampleRate;
-	
-	auSoundBuffer   *pSrc = g_pHandle + pStr->nChannel;
-    pSrc->Stop();
-	pSrc->Release();
-	pSrc->Create(sampleFormat, sampleRate, size, true);
-    pSrc->m_nFlags |= DSH_RESERVED;
-	pSrc->m_pSample = &pStr->sample;
-	pSrc->Rewind();
-	pStr->m_nPreviousPosition = 0;
-	pStr->m_nWritePosition = 0;
-	pStr->m_nTotalBytes = 0;
-	pStr->m_nUploadedBytes = 0;
-	pStr->m_nWriteBytes = 0;
 	pStr->m_nStreamState = 2;
 
-	pSrc->Play( DSH_LOOPED );
-	
+	auSoundBuffer   *pSrc = g_pHandle + pStr->nChannel;
+    pSrc->Create(sampleFormat, sampleRate, size, true);
+    pSrc->m_nFlags |= DSH_RESERVED;
+	pSrc->m_pSample = &pStr->sample;
 	return handle;
 }
 
@@ -1314,6 +1305,7 @@ static int StreamLoad(V3XA_STREAM handle, void *data, size_t size)
 		if (!pStr->m_nStreamState)
 		{
 			pSrc->Rewind();
+			pSrc->Play( DSH_LOOPED );
 			pStr->m_nPreviousPosition = 0;
 		}
 	}

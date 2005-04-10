@@ -1,11 +1,11 @@
 #if (defined _WIN32 || defined _WIN64) && !defined _XBOX
 #include <windows.h>
 #elif defined __BEOS__
-#include <KernelKit.h>
+#include <KernelKit.h> 
 #define SUPPORT_IEEE_AUDIO
-#elif defined __APPLE__ && defined __MACH__
+#elif (defined __APPLE__ && defined __MACH__) && !defined HAVE_OPENAL
 #define SUPPORT_IEEE_AUDIO
-#endif
+#endif 
 
 #include "_rlx32.h"
 #include "systools.h"
@@ -255,12 +255,14 @@ static void DeinterleaveAudio(void *outdata,
 
 /* convert floats to 16 bit signed ints (host order) and
    interleave */
-#define FIST_MAGIC ((((65536.0 * 65536.0 * 16)+(65536.0 * 0.5))* 65536.0))
-
-__inline int Round(float inval)
+   
+__inline ogg_int16_t FloatToShort(float v)
 {
-	double dtemp = FIST_MAGIC + inval;
-	return ((*(int *)&dtemp) - 0x80000000);
+	if (v>1)
+		return 32767;
+	if (v<-1)
+		return -32768;
+	return (ogg_int16_t)(v*32768.f);
 }
 
 static void ConvertFloatToInteger(void *outdata, 
@@ -277,14 +279,7 @@ static void ConvertFloatToInteger(void *outdata,
 		ogg_int16_t *ptr = (ogg_int16_t *)outdata + i;
 		for(j=0;j<n;j++,ptr+=channels,mono++)
 		{
-			int v = Round((*mono)*32767.f);
-#if 1
-			if (v> 32767)
-				v= 32767;
-			if (v<-32768)
-				v=-32768;
-#endif
-			*ptr = (int)v;
+			*ptr = FloatToShort(*mono);
 		}
 	}
 }

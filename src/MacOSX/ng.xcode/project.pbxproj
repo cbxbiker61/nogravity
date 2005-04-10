@@ -233,9 +233,11 @@
 				GCC_ALTIVEC_EXTENSIONS = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_CPU = "";
+				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENAL;
 				HEADER_SEARCH_PATHS = ";../..;/../SDK";
 				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
+				REZ_PREPROCESSOR_DEFINITIONS = "";
 				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
@@ -360,6 +362,11 @@
 				F4D808CC07CFAEBF0031F08A,
 				F4D808D107CFAECA0031F08A,
 				F4D808D607CFAEE80031F08A,
+				F4253ABD08099ED400924134,
+				F4253ABE08099ED400924134,
+				F4253ABF08099ED400924134,
+				F4253AC008099ED400924134,
+				F4253AC108099ED400924134,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -462,7 +469,6 @@
 				F4F3367C05FB41C0003626B9,
 				F4F3367D05FB41C0003626B9,
 				F4F3368805FB41E3003626B9,
-				F4F3369005FB41FB003626B9,
 				F4F3369D05FB4216003626B9,
 				F4F3369E05FB4216003626B9,
 				F4F3369F05FB4216003626B9,
@@ -495,6 +501,7 @@
 				F46D8164063AA2B2007CDBFB,
 				F4B3C14007BF668E00EB3D65,
 				F4B3C14107BF668E00EB3D65,
+				F4253AB508099EB800924134,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -509,6 +516,7 @@
 				F42FF0EE0608DF3900C97909,
 				F42FF1920608DF5900C97909,
 				F42FF25F0608F72400C97909,
+				F4253AC508099EEA00924134,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -694,8 +702,14 @@
 		};
 		F41C907B05EEC1EA00709073 = {
 			children = (
+				F4253AC408099EEA00924134,
+				F4253AB808099ED400924134,
+				F4253AB908099ED400924134,
+				F4253ABA08099ED400924134,
+				F4253ABB08099ED400924134,
+				F4253ABC08099ED400924134,
+				F4253AB408099EB800924134,
 				F4ABFB3805FB516600FAA545,
-				F4F3368F05FB41FB003626B9,
 				F41C90BC05EEC25A00709073,
 				F41C90BD05EEC25A00709073,
 				F41C90BE05EEC25A00709073,
@@ -1384,6 +1398,110 @@
 		};
 		F41C956D05EED06D00709073 = {
 			fileRef = F41C956C05EED06D00709073;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4253AB408099EB800924134 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			name = snd_openal.c;
+			path = /Users/stephane/Dev/nogravity/rlx32/src/linux/snd_openal.c;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F4253AB508099EB800924134 = {
+			fileRef = F4253AB408099EB800924134;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4253AB808099ED400924134 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = al.h;
+			path = ../../SDK/AL/al.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4253AB908099ED400924134 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = alc.h;
+			path = ../../SDK/AL/alc.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4253ABA08099ED400924134 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = alctypes.h;
+			path = ../../SDK/AL/alctypes.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4253ABB08099ED400924134 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = altypes.h;
+			path = ../../SDK/AL/altypes.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4253ABC08099ED400924134 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = alut.h;
+			path = ../../SDK/AL/alut.h;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4253ABD08099ED400924134 = {
+			fileRef = F4253AB808099ED400924134;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4253ABE08099ED400924134 = {
+			fileRef = F4253AB908099ED400924134;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4253ABF08099ED400924134 = {
+			fileRef = F4253ABA08099ED400924134;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4253AC008099ED400924134 = {
+			fileRef = F4253ABB08099ED400924134;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4253AC108099ED400924134 = {
+			fileRef = F4253ABC08099ED400924134;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4253AC408099EEA00924134 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = OpenAL.framework;
+			path = ../../../../../../Library/Frameworks/OpenAL.framework;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4253AC508099EEA00924134 = {
+			fileRef = F4253AC408099EEA00924134;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2950,21 +3068,6 @@
 		};
 		F4F3368805FB41E3003626B9 = {
 			fileRef = F4F3368705FB41E3003626B9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4F3368F05FB41FB003626B9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = iss_coreaudio.cpp;
-			path = ../../rlx32/src/macos/snd_coreaudio.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4F3369005FB41FB003626B9 = {
-			fileRef = F4F3368F05FB41FB003626B9;
 			isa = PBXBuildFile;
 			settings = {
 			};

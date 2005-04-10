@@ -46,6 +46,8 @@ struct channel
   V3XA_HANDLE *sam;
 };
 
+#define MAX_AL_BUFFERS 256
+
 struct stream
 {
   int used;
@@ -56,14 +58,14 @@ struct stream
   size_t pos;
   int first;
   int last;
-  ALuint bufs[100];
+  ALuint bufs[MAX_AL_BUFFERS];
 };
 
 static struct channel *g_pchannels;
 static int g_nchannels = 0;
 static struct stream *g_pstreams;
 static int g_nstreams = 0;
-static int g_nbufsperstream = 100;
+static int g_nbufsperstream = MAX_AL_BUFFERS;
 
 static int Enum(void)
 {
@@ -89,6 +91,7 @@ static int Initialize(void *hnd)
   alcMakeContextCurrent(ctxt);
   alDistanceModel(AL_INVERSE_DISTANCE);
 
+  RLX.Audio.Config|=RLXAUDIO_Use3D;
   return 0;
 }
 
@@ -159,6 +162,7 @@ void RLXAPI Render(void)
   // Do nothing.
 }
 
+V3XVECTOR g_ListenerPos;
 static void RLXAPI UserSetParms(V3XMATRIX *lpMAT,
 				V3XVECTOR *lpVEL,
 				float *lpDistanceF,
@@ -170,6 +174,7 @@ static void RLXAPI UserSetParms(V3XMATRIX *lpMAT,
   {
     alListenerfv(AL_ORIENTATION, (ALfloat *)&lpMAT->v.I);
     alListenerfv(AL_POSITION, (ALfloat *)&lpMAT->v.Pos);
+	g_ListenerPos = lpMAT->v.Pos;
   }
   if (lpVEL != NULL)
   {
@@ -221,12 +226,8 @@ static void ChannelSetVolume(int channel, float volume)
 
 static void ChannelSetPanning(int channel, float pan)
 {
-  ALfloat pos[3];
-  pos[0] = pan;
-  pos[1] = 0.0;
-  pos[2] = 0.0;
-  // TODO: Get this working.
-  //alSourcefv(g_pchannels[channel].src, AL_POSITION, (ALfloat *)&pos);
+
+  alSourcefv(g_pchannels[channel].src, AL_POSITION, (ALfloat *)&g_ListenerPos);
 }
 
 static void ChannelSetSamplingRate(int channel, int sampleRate)
@@ -237,8 +238,10 @@ static void ChannelSetSamplingRate(int channel, int sampleRate)
 static void ChannelSetParms(int channel, V3XVECTOR *pos, V3XVECTOR *velocity, V3XRANGE *fRange)
 {
   // TODO: Get this working.
-  //alSourcefv(g_pchannels[channel].src, AL_POSITION, (ALfloat *)pos);
-  //alSourcefv(g_pchannels[channel].src, AL_VELOCITY, (ALfloat *)velocity);
+  if (pos)
+  alSourcefv(g_pchannels[channel].src, AL_POSITION, (ALfloat *)pos);
+  if (velocity)
+  alSourcefv(g_pchannels[channel].src, AL_VELOCITY, (ALfloat *)velocity);
   if (fRange != NULL)
   {
     // TODO: Pass minimum distance into OpenAL.
@@ -353,39 +356,47 @@ static void StreamRelease(V3XA_STREAM handle)
   g_pstreams[handle].used = FALSE;
 }
 
+static void StreamReset(int stream)
+{
+    static const V3XVECTOR vector = {0.0, 0.0, 0.0};
+    static const V3XRANGE range = {0.0, 10000.0};
+ 
+	g_pstreams[stream].used = TRUE;
+	g_pstreams[stream].play = TRUE;
+	g_pstreams[stream].pos = 0;
+	g_pstreams[stream].first = 0;
+	g_pstreams[stream].last = 0;
+	g_pchannels[g_pstreams[stream].chan].stream = TRUE;
+	ChannelSetSamplingRate(g_pstreams[stream].chan, g_pstreams[stream].rate);
+	ChannelSetVolume(g_pstreams[stream].chan, 1.0);
+	ChannelSetPanning(g_pstreams[stream].chan, 0.0);
+	ChannelSetParms(g_pstreams[stream].chan, (V3XVECTOR *)&vector, (V3XVECTOR *)&vector, (V3XRANGE *)&range);
+	alSourcei(g_pchannels[g_pstreams[stream].chan].src, AL_LOOPING, AL_FALSE);
+ 
+}
+
 static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t size)
 {
   int stream;
   int channel;
-  static const V3XVECTOR vector = {0.0, 0.0, 0.0};
-  static const V3XRANGE range = {0.0, 10000.0};
   for (stream = 0; stream < g_nstreams ; stream ++)
   {
     if (!g_pstreams[stream].used)
     {
-      break;
+        break;
     }
   }
   if (stream < g_nstreams)
   {
-    channel = ChannelGetFree(NULL);
+    channel = 31;
     if (channel != -1)
     {
-      g_pstreams[stream].used = TRUE;
-      g_pstreams[stream].play = TRUE;
-      g_pstreams[stream].chan = channel;
-      g_pstreams[stream].fmt = (sampleFormat & V3XA_FMTSTEREO) ?  ((sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16) : ((sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO8 : AL_FORMAT_MONO8);
-      g_pstreams[stream].rate = sampleRate;
-      g_pstreams[stream].pos = 0;
-      g_pstreams[stream].first = 0;
-      g_pstreams[stream].last = 0;
-      g_pchannels[g_pstreams[stream].chan].stream = TRUE;
-      ChannelSetSamplingRate(g_pstreams[stream].chan, g_pstreams[stream].rate);
-      ChannelSetVolume(g_pstreams[stream].chan, 1.0);
-      ChannelSetPanning(g_pstreams[stream].chan, 0.0);
-      ChannelSetParms(g_pstreams[stream].chan, (V3XVECTOR *)&vector, (V3XVECTOR *)&vector, (V3XRANGE *)&range);
-      alSourcei(g_pchannels[channel].src, AL_LOOPING, AL_FALSE);
-    }
+	   g_pstreams[stream].chan = channel;
+	   g_pstreams[stream].fmt = (sampleFormat & V3XA_FMTSTEREO) ?  ((sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16) : ((sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO8 : AL_FORMAT_MONO8);
+   	   g_pstreams[stream].rate = sampleRate;
+
+   	   StreamReset(stream);
+	}
     else
     {
       stream = -1;
@@ -413,10 +424,18 @@ static int StreamPoll(V3XA_STREAM handle)
   ALint processed;
   ALint queued;
   ALint size;
+  ALint status;
   int ret_code = -1;
-  alGetSourcei(g_pchannels[g_pstreams[handle].chan].src, AL_BUFFERS_PROCESSED, &processed);
-  while (processed > 0)
+  if (!g_pstreams[handle].used)
   {
+      return -1;
+  }
+
+   ChannelSetParms(g_pstreams[handle].chan, &g_ListenerPos, NULL, NULL);
+  
+   alGetSourcei(g_pchannels[g_pstreams[handle].chan].src, AL_BUFFERS_PROCESSED, &processed);
+   while (processed > 0)
+   {
     alSourceUnqueueBuffers(g_pchannels[g_pstreams[handle].chan].src, 1, &g_pstreams[handle].bufs[g_pstreams[handle].first]);
     alGetBufferi(g_pstreams[handle].bufs[g_pstreams[handle].first], AL_SIZE, &size);
     g_pstreams[handle].pos += size;
@@ -427,7 +446,7 @@ static int StreamPoll(V3XA_STREAM handle)
       g_pstreams[handle].first = 0;
     }
     processed --;
-  }
+   }
   if (((g_pstreams[handle].last >= g_pstreams[handle].first) &&
        (g_pstreams[handle].last - g_pstreams[handle].first <= 20)) ||
       ((g_pstreams[handle].last < g_pstreams[handle].first) &&
@@ -518,7 +537,7 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
 
     ChannelOpen,
     ChannelPlay, 
-    ChannelStop, 
+    ChannelStop,
 
     ChannelSetVolume, 
     ChannelSetPanning, 
