@@ -294,13 +294,13 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	int sdl_flags = SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN);
 
 #ifdef HAS_MULTISAMPLING
-	int multisample = GL_IsSupported("GL_ARB_multisample") && (g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING ? g_pRLX->pGX->View.Multisampling) : 0;
+	int multisample = (GL_IsSupported("GL_ARB_multisample") && (g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING)) ? g_pRLX->pGX->View.Multisampling : 0;
 #endif
 
   	SYS_ASSERT(g_pDisplays != NULL);
 	SYS_ASSERT(g_Mode != -1);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	
-	
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
 #ifdef HAS_MULTISAMPLING
 	if (multisample)
 	{
@@ -325,7 +325,6 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	SYS_Debug("...%s\n", glGetString(GL_VERSION));
 	SYS_Debug("...%s\n", glGetString(GL_RENDERER));
 #endif
-	
 
 #ifdef HAS_MULTISAMPLING
 	if (multisample)
