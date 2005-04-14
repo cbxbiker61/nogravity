@@ -28,6 +28,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "_rlx.h"
 #include "v3xdefs.h"
 #include "v3xrend.h"
+#include "fixops.h"
 
 static void  CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
 {
@@ -37,7 +38,7 @@ static void  CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y
     glBegin( GL_LINES );
     glVertex2i( x1, y1 );
     glVertex2i( x2, y2 );
-    glEnd();	
+    glEnd();
     return;
 }
 
@@ -83,7 +84,7 @@ static void  CALLING_C drawWiredRect(int32_t x1, int32_t y1, int32_t x2, int32_t
 static void  CALLING_C drawShadedRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, void *palette)
 {
     rgb32_t cl; 
-	g_pRLX->pfGetPixelFormat((rgb24_t*)&cl, g_pRLX->pGX->csp_cfg.color); 
+	g_pRLX->pfGetPixelFormat((rgb24_t*)&cl, g_pRLX->pGX->csp_cfg.color);
 	cl.a = (u_int8_t)g_pRLX->pGX->csp_cfg.alpha;
     glEnable(GL_BLEND);    
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -197,7 +198,7 @@ static void CALLING_C waitDrawing(void)
 *
 * PROTOTYPE  :  static void CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static void CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
@@ -249,43 +250,31 @@ static void SetPolyRenderState(GXSPRITE *sp, unsigned mode, rgb32_t &cl)
     g_pRLX->pfGetPixelFormat((rgb24_t*)&cl, g_pRLX->pGX->csp_cfg.color);    
 	
 	glEnable(pSprite->target);
-	glBindTexture(pSprite->target, pSprite->handle);	
-    glTexParameteri( pSprite->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri( pSprite->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( pSprite->target, GL_TEXTURE_WRAP_S, GL_CLAMP );
-    glTexParameteri( pSprite->target, GL_TEXTURE_WRAP_T, GL_CLAMP );
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-    glShadeModel(GL_FLAT);
+	glBindTexture(pSprite->target, pSprite->handle);
 
 	switch(mode) {
-        case 1: // Opacity
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-			glDisable(GL_BLEND);
-			glEnable(GL_ALPHA_TEST);
+        case 1: // Opacity	
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			cl.a = 255; 
         break;
         case 2:  // Opaque
 			glDisable(GL_BLEND);
-			glDisable(GL_ALPHA_TEST);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			cl.a = 255; 
         break;
         case 3:  // Additive
-			glEnable(GL_BLEND);
+			glEnable(GL_BLEND);			
 			glBlendFunc(GL_ONE, GL_ONE);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			cl.a = 255; 
         break;
-        case 4:  // 50
-			cl.a = (u_int8_t)g_pRLX->pGX->csp_cfg.alpha;
+        case 4:  // Alpha			
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+			cl.a = (u_int8_t)g_pRLX->pGX->csp_cfg.alpha;
         break;
 		case 5:  // Sub
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_ONE, GL_ONE);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			cl.a = 255; 
         break;
     }    
@@ -312,9 +301,13 @@ static void DrawSpritePoly(int32_t x, int32_t y, GXSPRITE *sp, int mode)
 		glTexCoord2f(pSprite->u, 0.f);     
 		glVertex2i(lx, y);
     glEnd();
-
-	glDisable(GL_BLEND);
+	
 	glDisable(pSprite->target);
+	if (mode>=3)
+	{
+		glDisable(GL_BLEND);
+	}
+	
     return;
 }
 
@@ -400,7 +393,6 @@ static void CALLING_C gl_cspalpha_zoom(GXSPRITE *sp, int32_t x, int32_t y, int32
     DrawSpritePolyZoom(sp, x,y, lx, ly, 4);
 }
 
-
 static int isPowerOfTwo(int w, int *j)
 {
 	int n = 0;
@@ -415,7 +407,6 @@ static int isPowerOfTwo(int w, int *j)
 	
 	return 0;
 }
-#include "fixops.h"
 
 // Stretch an image
 static u_int8_t * StretchPoint(const u_int8_t *src_buf, int src_lx, int src_ly, int dst_lx, int dst_ly, int bytesPerPixel)
@@ -471,7 +462,7 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	int t1 = isPowerOfTwo(sp->LX, &lx);
 	int t2 = isPowerOfTwo(sp->LY, &ly);
 	
-	if (t1+t2 == 2)
+	if ((t1+t2 == 2) || gl_ARB_texture_non_power_of_two)
 	{
 		pSprite->u = 1.f;
 		pSprite->v = 1.f;
@@ -494,48 +485,46 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 		src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * 4);
 		g_pRLX->pfSmartConverter(src_buf, NULL, 4, 
 								 sp->data, colorTable, 1, sp->LX*sp->LY);
-
-		fmt = 
-#ifdef LSB_FIRST
-		GL_RGBA
-#else
- 		GL_BGRA_EXT
-#endif
-		;
 		bpp = 4;
 	}
 
 	src_lx = sp->LX;
 	src_ly = sp->LY;
 
-	if (!gl_EXT_texture_rectangle)
+	if ((!gl_EXT_texture_rectangle) && (pSprite->target == GL_TEXTURE_RECTANGLE_EXT))
 	{
-		if (pSprite->target == GL_TEXTURE_RECTANGLE_EXT)
-		{
-			u_int8_t *dst_buf;
-			if (sp->data!=src_buf)
-				dst_buf = src_buf;
-			else
-				dst_buf = 0;
-			src_buf = StretchPoint(src_buf, sp->LX, sp->LY, 1<<lx, 1<<ly, bpp);
-			pSprite->u = 1.f;
-			pSprite->v = 1.f;
-			pSprite->target = GL_TEXTURE_2D;
-			if (dst_buf)
-				g_pRLX->mm_std->free(dst_buf);
-
-			src_lx = 1<<lx;
-			src_ly = 1<<ly;
-
-		}
+		u_int8_t *dst_buf;
+		if (sp->data!=src_buf)
+			dst_buf = src_buf;
+		else
+			dst_buf = 0;
+		src_buf = StretchPoint(src_buf, sp->LX, sp->LY, 1<<lx, 1<<ly, bpp);
+		pSprite->u = 1.f;
+		pSprite->v = 1.f;
+		pSprite->target = GL_TEXTURE_2D;
+		if (dst_buf)
+			g_pRLX->mm_std->free(dst_buf);
+		src_lx = 1<<lx;
+		src_ly = 1<<ly;
 	}
-		
+
 	glGenTextures(1, &pSprite->handle);
 	glBindTexture(pSprite->target, pSprite->handle);
-	
-	if (GL_SGIS_generate_mipmap)
+	if (gl_APPLE_client_storage && (sp->data==src_buf))
+	{
+		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, TRUE);
+	}
+
+	if (gl_SGIS_generate_mipmap)
+	{
 		glTexParameteri(pSprite->target, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
-	
+	}
+
+    glTexParameteri( pSprite->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri( pSprite->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+    glTexParameteri( pSprite->target, GL_TEXTURE_WRAP_S, GL_CLAMP );
+    glTexParameteri( pSprite->target, GL_TEXTURE_WRAP_T, GL_CLAMP );
+
 	if (src_buf)
 	{
 		glTexImage2D(pSprite->target, 0, bpp, src_lx, src_ly, 0, fmt, GL_UNSIGNED_BYTE, src_buf);
@@ -545,6 +534,12 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	}
 
 	sp->handle = pSprite;
+
+	glBindTexture(pSprite->target, 0);
+	if (gl_APPLE_client_storage)
+	{
+		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, FALSE);
+	}
     return;
 }
 
@@ -560,7 +555,9 @@ static void RLXAPI GL_ReleaseSprite(GXSPRITE *sp)
     if (pSprite)
     {        
         if (pSprite->handle)
+		{
             glDeleteTextures (1, (const GLuint *)&pSprite->handle );
+		}
         g_pRLX->mm_std->free(sp->handle);
         sp->handle = NULL;
     }

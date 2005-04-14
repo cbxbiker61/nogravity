@@ -196,6 +196,7 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
 	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
 	SetPrimitive();
+	GL_FakeViewPort();
 	UNUSED(mode);
     return;
 }

@@ -51,7 +51,10 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define GL_TEXTURE_RECTANGLE_EXT 0x84F5
 #endif
 #define glColorTableEXT glColorTable
+#endif
 
+#ifndef GL_UNPACK_CLIENT_STORAGE_APPLE
+#define GL_UNPACK_CLIENT_STORAGE_APPLE 0x85B2
 #endif
 
 #include "gx_struc.h"
@@ -71,16 +74,20 @@ typedef struct
 {
 	GLint	 handle;
 	rgb24_t *palette;
+	void    *tmpbuf;
 }GL_TexHandle;
 
 __extern_c
 	    void						GL_ResetViewport(void);
 	    void						GL_InstallExtensions();
+		void						GL_FakeViewPort();
 		extern struct RLXSYSTEM *	g_pRLX;
 
 		extern GLbyte				gl_EXT_paletted_texture, 
 									gl_SGIS_generate_mipmap, 
-									gl_EXT_texture_rectangle;
+									gl_EXT_texture_rectangle,
+									gl_ARB_texture_non_power_of_two,
+									gl_APPLE_client_storage;
 __end_extern_c
 
 #endif // __V3XGL_HH

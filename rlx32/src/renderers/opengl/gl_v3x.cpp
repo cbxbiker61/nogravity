@@ -31,11 +31,15 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define PIPE_OPEN 1
 
 static float g_fInvZFar;
-static int g_nTextureMaxSize;
 static GLint pipe_pTex[2];
-static unsigned pipe_iRender, pipe_prm;
+static GLuint pipe_iRender, pipe_prm;
+static GLint gl_lx, gl_ly;
 
-GLbyte gl_EXT_paletted_texture, gl_SGIS_generate_mipmap, gl_EXT_texture_rectangle;
+GLbyte gl_EXT_paletted_texture,
+	   gl_SGIS_generate_mipmap, 
+	   gl_EXT_texture_rectangle, 
+	   gl_ARB_texture_non_power_of_two,
+	   gl_APPLE_client_storage;
 
 static GLuint _glewStrLen (const GLubyte* s)
 {
@@ -96,6 +100,10 @@ int GL_IsSupported(const char *extension)
 void GL_InstallExtensions()
 {
     GLint n;
+    GLint g_nTextureMaxSize = 0;
+	const char *v = (const char *)glGetString(GL_VERSION);
+	int gl_major_version = v[0]-'0';
+	// int gl_minor_version = v[2]-'0';
 	if (GL_IsSupported("GL_ARB_multitexture"))
     {
         glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &n);  
@@ -103,7 +111,7 @@ void GL_InstallExtensions()
 			g_pRLX->pV3X->Client->Capabilities|= GXSPEC_MULTITEXTURING; 
     }
 
-	if (GL_IsSupported("GL_ARB_texture_rectangle") || 
+	if (GL_IsSupported("GL_ARB_texture_rectangle") ||
 		GL_IsSupported("GL_EXT_texture_rectangle") ||
 		GL_IsSupported("GL_NV_texture_rectangle"))
 	{
@@ -116,14 +124,41 @@ void GL_InstallExtensions()
 
 	gl_EXT_paletted_texture = 0; // GL_IsSupported("GL_EXT_paletted_texture");
 	gl_SGIS_generate_mipmap = GL_IsSupported("GL_SGIS_generate_mipmap");
+	gl_ARB_texture_non_power_of_two = 0; //GL_IsSupported("GL_ARB_texture_non_power_of_two") || (gl_major_version>=2);
+	gl_APPLE_client_storage = GL_IsSupported("GL_APPLE_client_storage");
 
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &n); 
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &n);
     while (n!=0)  {g_nTextureMaxSize++;n>>=1;}
 	g_pRLX->pV3X->Client->texMaxSize = g_nTextureMaxSize;
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glShadeModel(GL_FLAT);
+	glDisable(GL_LIGHTING);
+	
+}   
+
+
+void GL_FakeViewPort()
+{
+	gl_lx = g_pRLX->pGX->View.lWidth;
+	gl_ly = g_pRLX->pGX->View.lHeight;
+
+	g_pRLX->pGX->View.lWidth = 640;
+	g_pRLX->pGX->View.lHeight = 480;
+
+	// Slightly scale for wide screen
+	if ((float)g_pRLX->pGX->View.lWidth/ (float)g_pRLX->pGX->View.lHeight >= 1.6f)
+	{
+		g_pRLX->pGX->View.lWidth = 768;
+	}
+
+	g_pRLX->pGX->View.xmax = g_pRLX->pGX->View.lWidth-1;
+	g_pRLX->pGX->View.ymax = g_pRLX->pGX->View.lHeight-1;
 }
 
+
 static int V3XAPI HardwareSetup(void)
-{	 
+{
     return 0;
 }
 
@@ -173,27 +208,38 @@ static int V3XAPI TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *c
 {
 	GL_TexHandle *pSprite = (GL_TexHandle *)sp->handle;
     
-	u_int8_t *src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*4);
-		g_pRLX->pfSmartConverter(src_buf, NULL, 4, (void*)bitmap, (rgb24_t*)colorTable, 1, sp->LX*sp->LY);
+	u_int8_t *src_buf = (u_int8_t *)pSprite->tmpbuf;
 
-	glBindTexture(GL_TEXTURE_2D, pSprite->handle);
+	if (!src_buf)
+	{
+		return -1;
+	}
+
+	g_pRLX->pfSmartConverter(src_buf, NULL, 4, (void*)bitmap, (rgb24_t*)colorTable, 1, sp->LX*sp->LY);
+
+	glBindTexture(GL_TEXTURE_2D, pSprite->handle);	   
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, sp->LX, sp->LY, 
 #ifdef LSB_FIRST
 		GL_RGBA
 #else
  		GL_BGRA_EXT
-#endif		 
+#endif
 		, GL_UNSIGNED_BYTE, src_buf);
-	g_pRLX->mm_std->free(src_buf);
-	
+
+
     return 1;
 }
 
 static void V3XAPI FreeTexture(void *sp)
 {
 	GL_TexHandle *hnd = (GL_TexHandle *)sp;
-    GLuint handle = hnd->handle;    
+    GLuint handle = hnd->handle;
     glDeleteTextures (1, (const GLuint *)&handle );
+	if (hnd->tmpbuf)
+	{
+		free(hnd->tmpbuf);
+		hnd->tmpbuf = 0;
+	}
 	g_pRLX->mm_std->free(hnd);
     return;
 }
@@ -215,7 +261,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 
     if ((!gl_EXT_paletted_texture) && (bpp<=8))
     {
-        bpp = 24;
+        bpp = options & V3XTEXDWNOPTION_COLORKEY ? 32 : 24;
         bp = (bpp+1)>>3;
         src_buf = g_pRLX->pfSmartConverter(
 			NULL, (rgb24_t*)colorTable, bp, 
@@ -230,63 +276,52 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 #endif
     }
     else
-
-    switch (bpp ) 
 	{
-        case 4:
-			internal_fmt = GL_COLOR_INDEX4_EXT;
-			texture_fmt = GL_COLOR_INDEX;
-			num_colors = 16;
-        break;
-        case 8:
-			internal_fmt = GL_COLOR_INDEX8_EXT;
-			texture_fmt = GL_COLOR_INDEX;
-			num_colors = 256;
-        break;
-        case 12:
-			internal_fmt = GL_RGB4;
-			texture_fmt = GL_RGBA;
-        break;
-        case 15:
-			internal_fmt = GL_RGB5_A1;
-			texture_fmt = GL_RGBA;
-        break;
-        case 16:
-			internal_fmt = GL_RGB5; 
-			texture_fmt = GL_RGB;
-        break;
-        case 24:
-			internal_fmt = 3;
-#ifdef LSB_FIRST
-			texture_fmt = GL_RGB;
-#else
-			texture_fmt = GL_BGR_EXT;
-#endif
-			
-        break;
-        case 32:
-			internal_fmt = 4;
-#ifdef LSB_FIRST
-			texture_fmt = GL_RGBA;
-#else
-			texture_fmt = GL_BGRA_EXT;
-#endif
-        break;
-    }
+		switch (bpp )
+		{
+			case 8:
+				internal_fmt = GL_COLOR_INDEX8_EXT;
+				texture_fmt = GL_COLOR_INDEX;
+				num_colors = 256;
+			break;
+	
+			case 24:
+				internal_fmt = 3;
+	#ifdef LSB_FIRST
+				texture_fmt = GL_RGB;
+	#else
+				texture_fmt = GL_BGR_EXT;
+	#endif
+				
+			break;
+			case 32:
+				internal_fmt = 4;
+	#ifdef LSB_FIRST
+				texture_fmt = GL_RGBA;
+	#else
+				texture_fmt = GL_BGRA_EXT;
+	#endif
+			break;
+		}
+	}
 
-	g_pRLX->pGX->Client->Lock();
     glGenTextures(1, &handle); 
     glBindTexture(GL_TEXTURE_2D, handle );    
-	if (GL_SGIS_generate_mipmap)
+	if (gl_SGIS_generate_mipmap)
 	{
 		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
 	}
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+	   gl_SGIS_generate_mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+          gl_SGIS_generate_mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-	glPixelStorei( GL_PACK_ROW_LENGTH, 0);
-    glPixelStorei( GL_PACK_SKIP_PIXELS, 0);
 
-	if ((options & 0x1000)==0)
+	if ((options & V3XTEXDWNOPTION_DYNAMIC)==0)
 	{
 		if (g_pRLX->pV3X->Client->Capabilities & GXSPEC_ENABLECOMPRESSION)
 		{
@@ -296,6 +331,16 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 			if (texture_fmt == GL_RGBA)
 				internal_fmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 		}
+		hnd->tmpbuf = 0;		
+	}
+	else
+	{
+		hnd->tmpbuf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*4);
+		if (gl_APPLE_client_storage)
+		{
+			glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, TRUE);
+		}
+		memcpy(hnd->tmpbuf, src_buf, sp->LX*sp->LY*4);
 	}
 
     if (num_colors)
@@ -306,27 +351,34 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 			sysMemCpy(hnd->palette, colorTable, 768);
 			glColorTableEXT(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB,GL_UNSIGNED_BYTE, hnd->palette);
 		}
-    } 
-    glTexImage2D( GL_TEXTURE_2D, 0, internal_fmt, sp->LX, sp->LY, 0, texture_fmt, GL_UNSIGNED_BYTE,	src_buf);	
-	hnd->handle = handle;	 
-	if (src_buf!=sp->data)
-		g_pRLX->mm_heap->free(src_buf);
+	} 
 
-	g_pRLX->pGX->Client->Unlock();
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_fmt, sp->LX, sp->LY, 0, texture_fmt, GL_UNSIGNED_BYTE,	(options & V3XTEXDWNOPTION_DYNAMIC) && hnd->tmpbuf ? hnd->tmpbuf : src_buf);	
+	hnd->handle = handle;	 
+
+	if (src_buf!=sp->data)
+	{
+		g_pRLX->mm_heap->free(src_buf);
+	}
+
+	if ((gl_APPLE_client_storage) && (options & V3XTEXDWNOPTION_DYNAMIC))
+	{
+		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, FALSE);
+	}
+
     return (void*)hnd;
 }
 
 static void ChangeRender(const V3XMATERIAL *pMat)
 {
 	pipe_iRender = pMat->lod;
-    if (pipe_prm&PIPE_OPEN)  
+    if (pipe_prm&PIPE_OPEN)
 	{
 		glEnd();
 		pipe_prm&=~PIPE_OPEN;                
 	}
-	glDisable(GL_ALPHA_TEST);
-                    
-    switch(pMat->info.Transparency) 
+
+    switch(pMat->info.Transparency)
 	{
         case V3XBLENDMODE_SUB: 
 			glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
@@ -340,25 +392,21 @@ static void ChangeRender(const V3XMATERIAL *pMat)
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
         break;
-        case V3XBLENDMODE_STIPPLE:
-			glEnable(GL_POLYGON_STIPPLE);
-        break;
-        case V3XBLENDMODE_NONE:
+        default:
 			glDisable(GL_BLEND);
         break;
-    }				
+    }
 
 	if (g_pRLX->pV3X->Client->Capabilities&(GXSPEC_ENABLEZBUFFER|GXSPEC_ENABLEWBUFFER))
 	{			
 		if (pMat->info.Transparency)
 			glDepthMask(GL_FALSE);
 		else
-			glDepthMask(GL_TRUE);							
+			glDepthMask(GL_TRUE);
 	}	
 
 	glShadeModel(pMat->info.Shade>1 ? GL_SMOOTH : GL_FLAT );
-    if (pMat->info.Texturized)
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT, (pMat->info.Perspective) ? GL_NICEST : GL_FASTEST);
+
 }
 
 static void SetTexture(GL_TexHandle *hnd, int tmu)
@@ -371,16 +419,10 @@ static void SetTexture(GL_TexHandle *hnd, int tmu)
 			glEnd();
 			pipe_prm&=~PIPE_OPEN;                
 		}
-		glActiveTextureARB(GL_TEXTURE0_ARB + tmu);
-		glEnable(GL_TEXTURE_2D);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		
+		glEnable(GL_TEXTURE_2D);		
 		glBindTexture(GL_TEXTURE_2D, handle );
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-					   GL_SGIS_generate_mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-		
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-			           GL_SGIS_generate_mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
-		
+
 		if (hnd->palette)
 			glColorTableEXT(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, hnd->palette);
 
@@ -392,24 +434,16 @@ static void SetTexture(GL_TexHandle *hnd, int tmu)
 
 static const V3XMATERIAL *pipe_pMat;
 
-
 #define SET_VTX() glVertex3f( fce->dispTab[i].x, fce->dispTab[i].y, 1.f - (fce->dispTab[i].z * g_fInvZFar));
 
 #define SET_DIFFUSE(i) glColor4ub(min(255, (pipe_pMat->ambient.r>>2) + xMUL8(fce->rgb[i].r, pipe_pMat->diffuse.r)), min(255, (pipe_pMat->ambient.g>>2) + xMUL8(fce->rgb[i].g, pipe_pMat->diffuse.g)), min(255, (pipe_pMat->ambient.b>>2) + xMUL8(fce->rgb[i].b, pipe_pMat->diffuse.b)), fce->rgb[i].a);
 
 #define SET_CONSTANT() glColor4ub(pipe_pMat->diffuse.r, pipe_pMat->diffuse.b, pipe_pMat->diffuse.g, pipe_pMat->alpha);
 
-
-#ifndef USE_MULTITEXTURE
 #define SET_UV(tmu) glTexCoord2f(fce->uvTab[tmu][i].u, fce->uvTab[tmu][i].v);
 
 #define SET_UVC(tmu)  glTexCoord4f(fce->ZTab[i].uow, fce->ZTab[i].vow, fce->ZTab[i].oow, fce->ZTab[i].oow);
-#else
 
-#define SET_UV(tmu) glMultiTexCoord2fARB(GL_TEXTURE0_ARB + tmu,	fce->uvTab[tmu][i].u, fce->uvTab[tmu][i].v);
-
-#define SET_UVC(tmu)  glMultiTexCoord4fARB(GL_TEXTURE0_ARB + tmu, fce->ZTab[i].uow, fce->ZTab[i].vow, fce->ZTab[i].oow, fce->ZTab[i].oow);
-#endif
 
 static void render(const V3XPOLY *fce, int i)
 {
@@ -448,20 +482,6 @@ static void render_1tcs(const V3XPOLY *fce, int i)
 	SET_VTX();	
 }
 
-#ifdef USE_MULTITEXTURE
-static void render_2t(const V3XPOLY *fce, int i)
-{	
-	SET_UV(0);
-	SET_VTX();	
-}
-
-static void render_2tc(const V3XPOLY *fce, int i)
-{	
-	SET_UVC(0);
-	SET_VTX();	
-}
-#endif
-
 typedef void (*PFRENDERFUNC)(const V3XPOLY *fce, int i);
 static PFRENDERFUNC func;
 
@@ -480,16 +500,6 @@ static void ChangeMaterial(const V3XMATERIAL *pMat)
 		else
 			pipe_pTex[0] = 0;
 				
-#ifdef USE_MULTITEXTURE
-		hnd = (GL_TexHandle*)pMat->texture[1].handle;
-		if (hnd)
-		{
-			if (hnd->handle != pipe_pTex[1])
-				SetTexture(hnd, 1);
-		}    
-		else
-			pipe_pTex[1] = 0;
-#endif
 	}
 	else
 	{
@@ -501,54 +511,22 @@ static void ChangeMaterial(const V3XMATERIAL *pMat)
 				pipe_prm&=~PIPE_OPEN;                
 			}
 
-			glActiveTextureARB(GL_TEXTURE0_ARB);                        
 			glDisable( GL_TEXTURE_2D );
 			pipe_pTex[0] = 0;
 		}
-#ifdef USE_MULTITEXTURE
-		if (pipe_pTex[1])
-		{		
-			if (pipe_prm&PIPE_OPEN)  
-			{
-				glEnd();
-				pipe_prm&=~PIPE_OPEN;                
-			}
-			glActiveTextureARB(GL_TEXTURE1_ARB);
-			glDisable( GL_TEXTURE_2D );
-			pipe_pTex[1] = 0;
-			
-		}				
-#endif
 	}
 	
 	if (pMat->info.Texturized)
     {
-#ifdef USE_MULTITEXTURE
-		if ((g_pRLX->pV3X->Client->Capabilities&GXSPEC_MULTITEXTURING)
-			&&(pMat->info.Environment&V3XENVMAPTYPE_DOUBLE))
-		{			
-			if (pMat->info.Perspective)
-			{			
-				func = pMat->info.Shade>1 ? render_2tc : render_2tc;
-			}
-			else
-			{
-				func = pMat->info.Shade>1 ? render_2t : render_2t;
-			}
+		if (pMat->info.Perspective)
+		{								
+			func = pMat->info.Shade>1 ? render_1tcs : render_1tc;
 		}
-		else
-#endif
-		{			
-			if (pMat->info.Perspective)
-			{								
-				func = pMat->info.Shade>1 ? render_1tcs : render_1tc;
-			}
-			else							
-			{
-				func = pMat->info.Shade>1 ? render_1ts : render_1t;
-			}
+		else							
+		{
+			func = pMat->info.Shade>1 ? render_1ts : render_1t;
 		}
-	}            
+	}
 	else
 	{
 		func = pMat->info.Shade ? render_s : render;
@@ -561,7 +539,8 @@ static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
 	pipe_pMat = 0; 
     pipe_prm = 0;
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
-	
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
     for (;count!=0;fe++, count--)
     {
         V3XPOLY *fce = *fe;
@@ -578,7 +557,7 @@ static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
         }
         else
         {		
-			// Prepare shade value			
+			// Prepare shade value
 			if (pipe_pMat != pMat)
 			{
 				pipe_pMat = pMat;
@@ -618,7 +597,7 @@ static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
 				func(fce, a);
 				func(fce, b);
 				a = b;
-				b++;				
+				b++;
 			}
         }
     }
@@ -627,6 +606,7 @@ static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
 
 	glDisable(GL_DEPTH_TEST);	
 	glDepthMask(GL_FALSE);
+	glShadeModel(GL_FLAT);
     return;
 }
 /*------------------------------------------------------------------------
@@ -705,8 +685,8 @@ static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsi
     {
         glBlendFunc(GL_ONE, GL_ONE);
         glEnable(GL_BLEND);
-    }         		
-	glDisable( GL_TEXTURE_2D );          
+    }
+	glDisable( GL_TEXTURE_2D );
 	glShadeModel( GL_SMOOTH );
     if (g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEZBUFFER)
 	{
@@ -740,16 +720,18 @@ static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsi
         }
     }
     glEnd();
+    glDisable(GL_BLEND);
+    glShadeModel(GL_FLAT);
     return;
 }
 V3X_GXSystem V3X_OpenGL=
 {
     NULL, 
     RenderDisplay, 
-    UploadTexture, 
+    UploadTexture,
     FreeTexture, 
     TextureModify, 
-    HardwareSetup, 
+    HardwareSetup,
     HardwareShutdown, 
     SetState, 
     ZbufferClear, 
@@ -761,7 +743,7 @@ V3X_GXSystem V3X_OpenGL=
     256+10, 
     GXSPEC_ZBUFFER|
     GXSPEC_OPACITYTRANSPARENT|
-    GXSPEC_SPRITEAREPOLY|	
+    GXSPEC_SPRITEAREPOLY|
     GXSPEC_UVNORMALIZED|
 	GXSPEC_FULLHWSPRITE|
     GXSPEC_RESIZABLEMAP|
@@ -779,14 +761,11 @@ V3X_GXSystem V3X_OpenGL=
 
 void GL_ResetViewport(void)
 {
-    glDisable(GL_LIGHTING);
-	glViewport(0, 0, g_pRLX->pGX->View.lWidth, g_pRLX->pGX->View.lHeight);
+	glViewport(0, 0, gl_lx, gl_ly);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, g_pRLX->pGX->View.lWidth, g_pRLX->pGX->View.lHeight, 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glAlphaFunc(GL_GEQUAL, 0.5f);
     return;
 }

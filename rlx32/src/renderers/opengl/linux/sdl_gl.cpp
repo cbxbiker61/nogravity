@@ -234,6 +234,7 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
     g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = 24;
   }
   SetPrimitive();
+  GL_FakeViewPort();
   return;
 }
 

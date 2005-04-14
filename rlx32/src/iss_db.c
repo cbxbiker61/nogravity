@@ -34,6 +34,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "iss_fx.h"
 #include "iss_av.h"
 
+#define SOUND_BUFFER_CACHE_SIZE 32
 //  #define _TRACE
 
 enum V3XA_STREAM_STATE
@@ -468,7 +469,7 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 		return -21;	// file not found
 
 	// default stream buffer size
-	bestCache = 100 * 1024;
+	bestCache = SOUND_BUFFER_CACHE_SIZE * 1024;
 	pHandle->dwFileOffset = pHandle->pStream->ftell(pHandle->pFile);
 	pHandle->info.chunkLength = pHandle->chunkLength = bestCache;	 
 

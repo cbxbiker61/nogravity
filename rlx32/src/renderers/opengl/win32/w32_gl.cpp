@@ -599,6 +599,8 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 	}
 
 	g_pRLX->pGX->gi = GI_OpenGL;
+	
+	GL_FakeViewPort();
 	SetPrimitiveSprites();
 
     g_pRLX->pGX->gi = GI_OpenGL;

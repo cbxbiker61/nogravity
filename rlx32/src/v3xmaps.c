@@ -351,20 +351,15 @@ void V3XMaterial_Release(V3XMATERIAL *Mat, V3XMESH *Obj)
 
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  : void V3XMaterial_UploadTexture(GXSPRITE *texture[0], GXSPRITE *surface, V3XMATERIAL *Mat)
+* PROTOTYPE  : void V3XMaterial_UploadTexture(GXSPRITE *texture[0], GXSPRITE *surface, int bpp, int option)
 *
-* DESCRIPTION : Charge un GXSPRITE, resize, en Surfaces etc...
+* DESCRIPTION : 
 *
-*/static void V3XMaterial_UploadTexture(GXSPRITE *pDst, const GXSPRITE *pSrc, V3XMATERIAL *Mat, int bpp, int nTMU)
+*/static void V3XMaterial_UploadTexture(GXSPRITE *pDst, const GXSPRITE *pSrc, int bpp, int option)
 {
-    int option = 0;
-
     *pDst = *pSrc;
-
-    if (Mat->info.Dynamic)
-        option|=V3XTEXDWNOPTION_DYNAMIC;
-
     pDst->handle = V3X.Client->TextureDownload(pSrc, GX.ColorTable, bpp, option);
+
     SYS_ASSERT(pDst->handle);
 
     if (V3X.Client->Capabilities&GXSPEC_HARDWARE)
@@ -374,7 +369,7 @@ void V3XMaterial_Release(V3XMATERIAL *Mat, V3XMESH *Obj)
 
     if (!pDst->handle)
     {
-    V3X.Setup.warnings|=V3XWARN_NOENOUGHSurfaces;
+		V3X.Setup.warnings|=V3XWARN_NOENOUGHSurfaces;
     }
 
     return;
@@ -438,8 +433,9 @@ static void V3XMaterial_LoadTexturesFn(V3XMATERIAL *Mat, char *szFilename, GXSPR
                         for (sp=fli->frames, i=fli->MaximumFrame;i!=0;sp++, i--)
                         {
                             FLI_Unpack(fli);
-                            surface = *sp;							
-                            V3XMaterial_UploadTexture(sp, &surface, Mat, 8, nTMU|0x1000);
+                            surface = *sp;				
+							
+							V3XMaterial_UploadTexture(sp, &surface, 8, V3XTEXDWNOPTION_DYNAMIC | (Mat->info.Opacity ? V3XTEXDWNOPTION_COLORKEY : 0) );
                         }
                         *tex = fli->bitmap;
                         FIO_cur->fclose(fli->fli_stream);
@@ -449,7 +445,7 @@ static void V3XMaterial_LoadTexturesFn(V3XMATERIAL *Mat, char *szFilename, GXSPR
                     {
                         FLI_Unpack(fli);
                         surface = fli->bitmap;
-                        V3XMaterial_UploadTexture(tex, &surface, Mat, 8, nTMU|0x1000);
+                        V3XMaterial_UploadTexture(tex, &surface, 8, V3XTEXDWNOPTION_DYNAMIC | (Mat->info.Opacity ? V3XTEXDWNOPTION_COLORKEY : 0));
 						fli->bitmap.handle = tex->handle;
                     }
 					SYS_ASSERT(tex->handle);
@@ -485,7 +481,7 @@ static void V3XMaterial_LoadTexturesFn(V3XMATERIAL *Mat, char *szFilename, GXSPR
                     }
 
 					MM_heap.active = x;
-					V3XMaterial_UploadTexture(tex, &surface, Mat, bpp, nTMU);				
+					V3XMaterial_UploadTexture(tex, &surface, bpp, (Mat->info.Opacity ? V3XTEXDWNOPTION_COLORKEY : 0));				
 					MM_heap.active = 0;
 					MM_heap.free(surface.data);
                     MM_heap.active = x;

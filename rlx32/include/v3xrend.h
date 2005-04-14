@@ -44,13 +44,12 @@ enum {
 // Rasterizer caps
 
 enum {
-      V3XTEXDWNOPTION_STATIC = 0x1, // Download a static texture
-      V3XTEXDWNOPTION_DYNAMIC = 0x2, // Download a dynamic texture
+      V3XTEXDWNOPTION_STATIC = 0x1, // Download a static texture      
       V3XTEXDWNOPTION_COLORKEY = 0x4, // Apply colorkeying
       V3XTEXDWNOPTION_TMU2 = 0x8, // Load in the second TMU
       V3XTEXDWNOPTION_3DSURFACE = 0x10, 
       V3XTEXDWNOPTION_REFRESH = 0x20, 
-	  V3XTEXDWNOPTION_BUMP		= 0x40
+	  V3XTEXDWNOPTION_DYNAMIC = 0x1000, // Download a dynamic texture
 };
 
 enum {
