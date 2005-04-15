@@ -237,7 +237,7 @@ static void V3XAPI FreeTexture(void *sp)
     glDeleteTextures (1, (const GLuint *)&handle );
 	if (hnd->tmpbuf)
 	{
-		free(hnd->tmpbuf);
+		g_pRLX->mm_std->free(hnd->tmpbuf);
 		hnd->tmpbuf = 0;
 	}
 	g_pRLX->mm_std->free(hnd);
