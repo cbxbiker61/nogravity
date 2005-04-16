@@ -148,14 +148,25 @@ enum {
     RLXCTRL_IntKeyboard = 0x2
 };
 
+struct _RClientDriver_Mouse;
+struct _RClientDriver_Joystick;
+struct _RClientDriver_Keybrd;
+
 typedef struct {
     u_int32_t Config;
     u_int8_t Id;
 	u_int8_t Device;
     u_int8_t filler[2];
+
+	struct _RClientDriver_Mouse *mouse;
+	struct _RClientDriver_Joystick *joystick;
+	struct _RClientDriver_Keybrd *keyboard;
+
 }RLX_RegisterController;
 
-typedef struct {
+
+
+typedef struct {	
     int32_t MinX, MinY;
     int32_t MaxX, MaxY;
     int32_t CenterX, CenterY;

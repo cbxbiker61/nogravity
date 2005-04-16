@@ -27,6 +27,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "_rlx.h"
 #include "v3xdefs.h"
 #include "v3xrend.h"
+#include "sysctrl.h"
 
 #define PIPE_OPEN 1
 
@@ -139,8 +140,24 @@ void GL_InstallExtensions()
 }   
 
 
+typedef unsigned long (*PFMOUSECALLBACK)(void *);
+static PFMOUSECALLBACK pMouseCallback;
+
+static unsigned long Update(void *device)
+{
+	MSE_ClientDriver *m = g_pRLX->Control.mouse;
+	unsigned long ret;
+	ret = pMouseCallback(device);
+	m->x = m->x * g_pRLX->pGX->View.lWidth / gl_lx;
+	m->y = m->y * g_pRLX->pGX->View.lHeight / gl_ly; 	
+	return ret;
+}
+
+
 void GL_FakeViewPort()
 {
+	MSE_ClientDriver *m = g_pRLX->Control.mouse;
+
 	gl_lx = g_pRLX->pGX->View.lWidth;
 	gl_ly = g_pRLX->pGX->View.lHeight;
 
@@ -155,6 +172,13 @@ void GL_FakeViewPort()
 
 	g_pRLX->pGX->View.xmax = g_pRLX->pGX->View.lWidth-1;
 	g_pRLX->pGX->View.ymax = g_pRLX->pGX->View.lHeight-1;
+
+	
+	if (m->Update!=Update)
+	{
+		pMouseCallback= m->Update;
+		m->Update = Update;
+	}
 }
 
 

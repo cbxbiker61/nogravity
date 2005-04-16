@@ -130,6 +130,10 @@ static void STUB_CheckControl(void *hwnd)
     sJOY = JOY_SystemGetInterface_STD();
     sJOY->Open(hwnd, 0);
 
+	RLX.Control.mouse = sMOU;
+	RLX.Control.joystick = sJOY;
+	RLX.Control.keyboard = sKEY;
+
 	return;
 }
 
