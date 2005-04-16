@@ -143,6 +143,7 @@ void NG_SaveGameInfo(void)
         fprintf(in, "\n[Video]\n");        
         fprintf(in, "Dithering=%s\n", YesNo[ g_SGSettings.Dithering ]);
         fprintf(in, "TexFiltering=%s\n", YesNo[ g_SGSettings.TexFiltering ]);
+		fprintf(in, "TexPOT=%s\n", YesNo[ g_SGSettings.TexPOT ]);
 		fprintf(in, "TexCompression=%s\n", YesNo[ g_SGSettings.TexCompression ]);
         fprintf(in, "Sky=%d\n", (int)g_SGSettings.Sky );
         fprintf(in, "Shading=%d\n", (int)2 );
@@ -210,6 +211,7 @@ void NG_ReadGameConfig(void)
 
             g_SGSettings.Dithering = (u_int8_t)GetCF_bool("Dithering", &iniFile);
             g_SGSettings.TexFiltering = (u_int8_t)GetCF_bool("TexFiltering", &iniFile);
+			g_SGSettings.TexPOT = (u_int8_t)GetCF_bool("TexPOT", &iniFile);
             g_SGSettings.VisualsFx = (u_int8_t)GetCF_long("VisualsFx", &iniFile);
             g_SGSettings.LensFX = (u_int8_t)GetCF_bool("LensFX", &iniFile);
             g_SGSettings.Sky = (u_int8_t)GetCF_long("Sky", &iniFile);

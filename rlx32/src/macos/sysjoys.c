@@ -308,7 +308,7 @@ static void HIDAddElement (CFTypeRef refElement, recDevice* pDevice)
 								case kHIDUsage_GD_DPadUp: 
 								case kHIDUsage_GD_DPadDown:
 								case kHIDUsage_GD_DPadRight:
-								case kHIDUsage_GD_DPadLeft: 
+								case kHIDUsage_GD_DPadLeft:
 								break;
 							
 							}							
@@ -588,7 +588,7 @@ static int HIDOpen(io_iterator_t *pHIDObjectIterator)
 	}
 
 	if (NULL == *pHIDObjectIterator) /* there are no device */
-	{		
+	{
 		return -5;
 	}
 	return 0;
@@ -695,7 +695,8 @@ static int JoystickOpen(void * hwnd, int bForceFeedback)
 				sJOY->device = device;
 	    		sJOY->numButtons = device->buttons;
 				sJOY->numAxes = device->axes;
-				sJOY->numPOVs = device->hats;    			
+				sJOY->numPOVs = device->hats;
+				printf("Found joystick %d buttons, %d axis\n", sJOY->numButtons, sJOY->numAxes);    			
 			}
 			sJOY->numControllers++;
 		}
@@ -743,6 +744,8 @@ static int MouseOpen(void * hwnd)
 				sMOU->device = device;
 				sMOU->numButtons = device->buttons;
 				sMOU->numAxes = device->axes;
+				printf("Found mouse %d buttons, %d axes\n", sMOU->numButtons, sMOU->numAxes);    			
+	
 			}
 			sMOU->numControllers++;
 		}
@@ -767,9 +770,17 @@ static unsigned long MouseUpdate(void *d)
 	int32_t	*Axis = &sMOU->lX;
 	u_int8_t *Buttons = sMOU->rgbButtons;
 
+
+	// Get absolute position
+	Point pos;
+    GetGlobalMouse(&pos);
+    ConvertToLocal(&pos);
+    sMOU->x = pos.h;
+    sMOU->y = pos.v;
+   
 	if (!device)
         return 1;
-
+		
 	sysMemCpy(sMOU->steButtons, sMOU->rgbButtons, sMOU->numButtons);
 
 	// Get axis
@@ -789,14 +800,7 @@ static unsigned long MouseUpdate(void *d)
 		Buttons++;
 		element = element->pNext;
 	}
-
-	// Get absolute position
-	Point pos;
-    GetGlobalMouse(&pos);
-    ConvertToLocal(&pos);
-    sMOU->x = pos.h;
-    sMOU->y = pos.v;
-    return 0;
+	return 0;
 }
 
 static unsigned long JoystickUpdate(void *p)
@@ -866,28 +870,45 @@ static unsigned long JoystickUpdate(void *p)
     return 0;
 }
 
-static JOY_ClientDriver HIDJoystick = {
-    JoystickOpen,
-    HIDRelease,
-    JoystickUpdate
-};
 
 JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
 {
+	static JOY_ClientDriver HIDJoystick = {
+	    JoystickOpen,
+	    HIDRelease,
+	    JoystickUpdate
+	};
     sJOY = &HIDJoystick;
     return sJOY;
 }
 
-static MSE_ClientDriver HIDMouse;
-
-MSE_ClientDriver *MSE_SystemGetInterface_DI(void)
+static void SetPosition(u_int32_t x, u_int32_t y)
 {
-	sMOU = MSE_SystemGetInterface_STD();
-	HIDMouse = *sMOU;
-	HIDMouse.Open = MouseOpen;
-	HIDMouse.Release = HIDRelease;
-	HIDMouse.Update = MouseUpdate;
-	HIDMouse.u_id = 0;
+    return;
+}
+
+static void Show(void)
+{
+	ShowCursor();
+    return;
+}
+
+static void Hide(void)
+{
+	HideCursor();
+    return;
+}
+
+MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
+{
+	static MSE_ClientDriver HIDMouse = {
+		MouseOpen,
+		HIDRelease,
+		Show,
+		Hide,
+		SetPosition,
+		MouseUpdate
+	};
 	sMOU = &HIDMouse;
-    return sMOU;
+    return sMOU; 
 }

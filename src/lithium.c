@@ -93,11 +93,10 @@ void NG_SetGameInfo(void)
     g_SGSettings.WorldUnit = 1;
     g_SGSettings.showInf = 1;
 
-	SETBITFIELD(g_SGSettings.TexFiltering, V3X.Client->Capabilities, GXSPEC_ENABLEFILTERING);
-
 	V3X.Client->Capabilities|=GXSPEC_RGBLIGHTING;
 	V3X.Client->Capabilities|=GXSPEC_ENABLEDITHERING;
 	V3X.Setup.flags|=V3XOPTION_TRUECOLOR;
+	
     return;
 }
 /*------------------------------------------------------------------------
@@ -240,6 +239,9 @@ void STUB_MainCode(void)
 		NG_ChangeScreenMode(mode);	
 	}
 
+	if (g_SGSettings.TexPOT)
+		V3X.Client->Capabilities&=~GXSPEC_NONPOWOF2;
+
 	g_HeapBuffer = (u_int8_t*) malloc(g_HeapSize);
 	if (!g_HeapBuffer)
 		return;
@@ -274,6 +276,15 @@ void STUB_MainCode(void)
 		sysConPrint("Sound driver : ~%s~.", V3XA.Client->s_DrvName);
     else
 		sysConPrint("No sound.");
+
+	if (sJOY && sJOY->numControllers)
+	{
+		sysConPrint("Found joystick %d axis, %d buttons", sJOY->numAxes, sJOY->numButtons);
+	}
+	if (sMOU && sMOU->numControllers)
+	{
+		sysConPrint("Found mouse %d axis, %d buttons", sMOU->numAxes, sMOU->numButtons);
+	}
 
 #ifdef _DEBUG
     SYS_Debug("Load preferences, languages and save games ...\n");

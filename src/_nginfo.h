@@ -47,6 +47,7 @@ typedef struct
     u_int8_t 	ZBuffer;
 	u_int8_t 	Flip;
 	u_int8_t 	TexFiltering;
+	u_int8_t	TexPOT;
 	u_int8_t 	VerticalSync;
 	u_int8_t    Multisampling;
 	u_int8_t 	Stereo;

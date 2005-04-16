@@ -157,6 +157,7 @@ static SGMenu g_pMenuControl[]={
 	{"Multisampling", &g_SGSettings.Multisampling, 0, 2, {"OFF","2X","4X"}}, 
     {"Limit FPS", &g_SGSettings.FrameSkip, 0, 2, {"70fps", "35fps", "24fps"}}, 
 	{"Tex. filtering", &g_SGSettings.TexFiltering, 0, 1, {"Bilinear", "Trilinear"}},
+	{"NPOT", &g_SGSettings.TexPOT, 0, 1, {g_szGmT[68], g_szGmT[69]}},
 	{"Tex. compression", &g_SGSettings.TexCompression, 0, 1, {g_szGmT[69], g_szGmT[68]}},
     {"3D effects", &g_SGSettings.VisualsFx, 1, 4, {NULL, NULL} },
     {g_szGmT[147], &g_SGSettings.LensFX, 0, 1, {g_szGmT[69], g_szGmT[68]}}, 

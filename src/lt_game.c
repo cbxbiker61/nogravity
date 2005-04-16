@@ -1087,16 +1087,23 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
 
                 if (sKEY_IsClicked(LK_NEXTWEAPON)||(sMOU->lZ))
                 {
-                    int s = sMOU->lZ ? sMOU->lZ/abs(sMOU->lZ) : 1;
-                    g_pPlayer->J.pInf.Attack+=s;
+					static int old_t;
+					int t = timer_ms();
+					if (t-old_t>100)
+					{
+						int s = sMOU->lZ ? sMOU->lZ/abs(sMOU->lZ) : 1;
+						old_t = t;
+						
+						g_pPlayer->J.pInf.Attack+=s;
+					
+						if(g_pPlayer->J.pInf.Attack>6) 
+							g_pPlayer->J.pInf.Attack=1;
 
-                    if(g_pPlayer->J.pInf.Attack>6) 
-						g_pPlayer->J.pInf.Attack=1;
+						if(g_pPlayer->J.pInf.Attack<1)
+							g_pPlayer->J.pInf.Attack=6;
 
-                    if(g_pPlayer->J.pInf.Attack<1)
-						g_pPlayer->J.pInf.Attack=6;
-
-                    g_pPlayer->Mx.but|=1L<<(g_pPlayer->J.pInf.Attack+5);
+						g_pPlayer->Mx.but|=1L<<(g_pPlayer->J.pInf.Attack+5);
+					}
                 }
                 // Rotation
 				if (sKEY_IsHeld(LK_ANTITHRUST)) 

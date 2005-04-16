@@ -1309,6 +1309,9 @@ static void NG_InitGameDisplay(void)
 		V3X.Client->Capabilities|=GXSPEC_ENABLEFILTERING;
     else
 		V3X.Client->Capabilities&=~GXSPEC_ENABLEFILTERING;
+
+	if (g_SGSettings.TexPOT)
+		V3X.Client->Capabilities&=~GXSPEC_NONPOWOF2;
 		
 	if (g_SGSettings.Dithering)
 		V3X.Client->Capabilities|=GXSPEC_ENABLEDITHERING;

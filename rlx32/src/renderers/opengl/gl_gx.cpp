@@ -491,7 +491,9 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	src_lx = sp->LX;
 	src_ly = sp->LY;
 
-	if ((!gl_EXT_texture_rectangle) && (pSprite->target == GL_TEXTURE_RECTANGLE_EXT))
+	
+
+	if ((!(g_pRLX->pV3X->Client->Capabilities&GXSPEC_NONPOWOF2)) && (pSprite->target == GL_TEXTURE_RECTANGLE_EXT))
 	{
 		u_int8_t *dst_buf;
 		if (sp->data!=src_buf)

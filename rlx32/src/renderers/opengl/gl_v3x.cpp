@@ -116,6 +116,7 @@ void GL_InstallExtensions()
 		GL_IsSupported("GL_NV_texture_rectangle"))
 	{
 		gl_EXT_texture_rectangle = 1;
+		g_pRLX->pV3X->Client->Capabilities|= GXSPEC_NONPOWOF2;
 	}
 	else
 	{
@@ -313,10 +314,10 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 	}
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-	   gl_SGIS_generate_mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+	   gl_SGIS_generate_mipmap && g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEFILTERING ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-          gl_SGIS_generate_mipmap ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
+	  GL_LINEAR);
 
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
