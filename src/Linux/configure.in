@@ -47,6 +47,21 @@ AM_PATH_SDL(1.2.0, , AC_MSG_ERROR([Can't find SDL 1.2 or later.]))
 AC_CHECK_HEADERS([GL/gl.h], , AC_MSG_ERROR([Can't find OpenGL headers.]))
 AC_CHECK_LIB([GL], [glBegin], , AC_MSG_ERROR([Can't find OpenGL library.]))
 
+# Check for OpenGL 1.2 support.
+AC_CACHE_CHECK([for OpenGL 1.2 support], ac_cv_opengl_1_2_support, AC_TRY_RUN([
+#include <GL/gl.h>"
+#include <GL/glext.h>"
+int main (int argc, char *argv[])
+{
+#ifdef GL_VERSION_1_2
+  return 0;
+#else
+  return 1;
+#endif
+}
+], [AS_VAR_SET(ac_cv_opengl_1_2_support, yes)], [AS_VAR_SET(ac_cv_opengl_1_2_support, no)]))
+AS_IF([test "AS_VAR_GET(ac_cv_opengl_1_2_support)" = "yes"], , AC_MSG_ERROR([Need support for OpenGL 1.2.]))
+
 # Checks for OpenAL (optional).
 if test "$sound" = "openal"
 then
