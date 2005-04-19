@@ -42,10 +42,11 @@ Before compiling you need the following packages
 
 The projects depends of it.
 
-There is three projects available for
+There are four projects available for
 - Visual Studio 2003 
 - XCode 1.5 
 - BeIDE
+- autoconf/automake
 
 The source code 
 is in three parts:
