@@ -104,12 +104,15 @@ void GL_InstallExtensions()
     GLint g_nTextureMaxSize = 0;
 	const char *v = (const char *)glGetString(GL_VERSION);
 	int gl_major_version = v[0]-'0';
-	// int gl_minor_version = v[2]-'0';
+	int gl_minor_version = v[2]-'0';
+	
 	if (GL_IsSupported("GL_ARB_multitexture"))
     {
-        glGetIntegerv( GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &n);  
+#ifdef GL_VERSION_1_3
+        glGetIntegerv( GL_MAX_TEXTURE_UNITS, &n);  
 		if (n>1)  
-			g_pRLX->pV3X->Client->Capabilities|= GXSPEC_MULTITEXTURING; 
+			g_pRLX->pV3X->Client->Capabilities|= GXSPEC_MULTITEXTURING;
+#endif
     }
 
 	if (GL_IsSupported("GL_ARB_texture_rectangle") ||
@@ -124,10 +127,13 @@ void GL_InstallExtensions()
 		gl_EXT_texture_rectangle = 0;
 	}
 
+	// Disable extensions
 	gl_EXT_paletted_texture = 0; // GL_IsSupported("GL_EXT_paletted_texture");
-	gl_SGIS_generate_mipmap = GL_IsSupported("GL_SGIS_generate_mipmap");
-	gl_ARB_texture_non_power_of_two = 0; //GL_IsSupported("GL_ARB_texture_non_power_of_two") || (gl_major_version>=2);
+	gl_ARB_texture_non_power_of_two = 0; // GL_IsSupported("GL_ARB_texture_non_power_of_two") || (gl_major_version>=2);
+
+	// Enable extensions
 	gl_APPLE_client_storage = GL_IsSupported("GL_APPLE_client_storage");
+	gl_SGIS_generate_mipmap = GL_IsSupported("GL_SGIS_generate_mipmap"); // or OpenGL 1.4
 
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &n);
     while (n!=0)  {g_nTextureMaxSize++;n>>=1;}
@@ -332,10 +338,13 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 
     glGenTextures(1, &handle); 
     glBindTexture(GL_TEXTURE_2D, handle );    
+	
+#ifdef GL_VERSION_1_4
 	if (gl_SGIS_generate_mipmap)
 	{
-		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+		glTexParameteri( GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 	}
+#endif
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 	   gl_SGIS_generate_mipmap && g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEFILTERING ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR);
@@ -368,15 +377,17 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 		memcpy(hnd->tmpbuf, src_buf, sp->LX*sp->LY*4);
 	}
 
+#ifdef GL_VERSION_1_2
     if (num_colors)
     {      
 		hnd->palette = (rgb24_t*)g_pRLX->mm_std->malloc(1024);		
 		if (hnd->palette)
 		{
 			sysMemCpy(hnd->palette, colorTable, 768);
-			glColorTableEXT(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB,GL_UNSIGNED_BYTE, hnd->palette);
+			glColorTable(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB,GL_UNSIGNED_BYTE, hnd->palette);
 		}
 	} 
+#endif
 
 	glTexImage2D( GL_TEXTURE_2D, 0, internal_fmt, sp->LX, sp->LY, 0, texture_fmt, GL_UNSIGNED_BYTE,	(options & V3XTEXDWNOPTION_DYNAMIC) && hnd->tmpbuf ? hnd->tmpbuf : src_buf);	
 	hnd->handle = handle;	 

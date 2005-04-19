@@ -472,7 +472,7 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	{	
 		pSprite->u = (float)sp->LX;
 		pSprite->v = (float)sp->LY;
-		pSprite->target = GL_TEXTURE_RECTANGLE_EXT;
+		pSprite->target = GL_TEXTURE_RECTANGLE_ARB;
 	}
 
 	if ((bpp == 3) && src_buf)
@@ -493,7 +493,7 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 
 	
 
-	if ((!(g_pRLX->pV3X->Client->Capabilities&GXSPEC_NONPOWOF2)) && (pSprite->target == GL_TEXTURE_RECTANGLE_EXT))
+	if ((!(g_pRLX->pV3X->Client->Capabilities&GXSPEC_NONPOWOF2)) && (pSprite->target == GL_TEXTURE_RECTANGLE_ARB))
 	{
 		u_int8_t *dst_buf;
 		if (sp->data!=src_buf)
@@ -516,11 +516,13 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	{
 		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, TRUE);
 	}
-
+	
+#ifdef GL_VERSION_1_4
 	if (gl_SGIS_generate_mipmap)
 	{
-		glTexParameteri(pSprite->target, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
+		glTexParameteri(pSprite->target, GL_GENERATE_MIPMAP, GL_FALSE);
 	}
+#endif
 
     glTexParameteri( pSprite->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri( pSprite->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR );

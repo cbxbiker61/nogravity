@@ -36,25 +36,36 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include <windows.h>
 #include <gl/glaux.h>
 #include "win32/wglext.h"
+#define GL_VERSION_1_2
+#define GL_VERSION_1_3
+#define GL_VERSION_1_4
+#define GL_GENERATE_MIPMAP GL_GENERATE_MIPMAP_SGIS
+#define GL_UNPACK_CLIENT_STORAGE_APPLE 0x85B2
+#define GL_MAX_TEXTURE_UNITS GL_MAX_TEXTURE_UNITS_ARB
+#define GL_TEXTURE_RECTANGLE_ARB GL_TEXTURE_RECTANGLE_EXT
+#define glColorTable glColorTableEXT
 
 #elif (defined __APPLE__ && defined __MACH__) // MacOS X
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 #include <AGL/agl.h>
 
+#ifndef GL_ARB_texture_rectangle
+#define GL_TEXTURE_RECTANGLE_ARB 0x84F5
+#endif
+
 #elif (defined __LINUX__)
 #include <GL/gl.h>
 #include <GL/glext.h>
 
-// TODO: Fix this properly.
-#ifndef GL_TEXTURE_RECTANGLE_EXT
-#define GL_TEXTURE_RECTANGLE_EXT 0x84F5
-#endif
-#define glColorTableEXT glColorTable
+#ifndef GL_ARB_texture_rectangle
+#define GL_TEXTURE_RECTANGLE_ARB 0x84F5
 #endif
 
 #ifndef GL_UNPACK_CLIENT_STORAGE_APPLE
 #define GL_UNPACK_CLIENT_STORAGE_APPLE 0x85B2
+#endif
+
 #endif
 
 #include "gx_struc.h"
