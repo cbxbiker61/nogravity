@@ -459,9 +459,10 @@ static void SetTexture(GL_TexHandle *hnd, int tmu)
 		glEnable(GL_TEXTURE_2D);		
 		glBindTexture(GL_TEXTURE_2D, handle );
 
+#ifdef GL_VERSION_1_2
 		if (hnd->palette)
 			glColorTable(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB, GL_UNSIGNED_BYTE, hnd->palette);
-
+#endif
 		pipe_pTex[tmu] = handle;
 	}
 }
