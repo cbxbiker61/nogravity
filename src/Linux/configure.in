@@ -15,6 +15,13 @@ AC_ARG_ENABLE(debug,[  --enable-debug          Enable debug mode],
    then
      AC_DEFINE([_DEBUG], 1, [Define to 1 if debug mode is enabled.])
    fi])
+use_opengl="yes"
+AC_ARG_ENABLE(opengl, [  --enable-opengl         Enable use of OpenGL (enabled by default)],
+  [if test "$enableval" = "no"
+   then
+     use_opengl="no"
+   fi])
+AM_CONDITIONAL(USE_OPENGL, test "$use_opengl" = "yes")
 AC_ARG_ENABLE(sound, [  --enable-sound=type     Specify sound library (sdl_mixer or openal)],
   [sound="$enableval"])
 
@@ -40,15 +47,20 @@ AC_CHECK_FUNCS([atexit getcwd memmove memset mkdir pow strchr strstr strtol])
 AC_CHECK_HEADERS([pthread.h], , AC_MSG_ERROR([Can't find pthread headers.]))
 AC_CHECK_LIB([pthread], [pthread_create], , AC_MSG_ERROR([Can't find pthread library.]))
 
-# Checks for SDL.
-AM_PATH_SDL(1.2.0, , AC_MSG_ERROR([Can't find SDL 1.2 or later.]))
+# Checks for SDL.  Note that we don't use AM_PATH_SDL because it's not always
+# supported.
+AC_CHECK_HEADERS([SDL/SDL.h], , AC_MSG_ERROR([Can't find SDL headers.]))
+AC_CHECK_LIB([SDL], [SDL_Init], , AC_MSG_ERROR([Can't find SDL library.]))
 
-# Checks for OpenGL.
-AC_CHECK_HEADERS([GL/gl.h], , AC_MSG_ERROR([Can't find OpenGL headers.]))
-AC_CHECK_LIB([GL], [glBegin], , AC_MSG_ERROR([Can't find OpenGL library.]))
+# If we're using OpenGL, test for it.
+if test "$use_opengl" = "yes"
+then
+  # Checks for OpenGL.
+  AC_CHECK_HEADERS([GL/gl.h], , AC_MSG_ERROR([Can't find OpenGL headers.]))
+  AC_CHECK_LIB([GL], [glBegin], , AC_MSG_ERROR([Can't find OpenGL library.]))
 
-# Check for OpenGL 1.4 support.
-AC_CACHE_CHECK([for OpenGL 1.4 support], ac_cv_opengl_1_4_support, AC_TRY_RUN([
+  # Check for OpenGL 1.4 support.
+  AC_CACHE_CHECK([for OpenGL 1.4 support], ac_cv_opengl_1_4_support, AC_TRY_RUN([
 #include <GL/gl.h>"
 #include <GL/glext.h>"
 int main (int argc, char *argv[])
@@ -60,7 +72,8 @@ int main (int argc, char *argv[])
 #endif
 }
 ], [AS_VAR_SET(ac_cv_opengl_1_4_support, yes)], [AS_VAR_SET(ac_cv_opengl_1_4_support, no)]))
-AS_IF([test "AS_VAR_GET(ac_cv_opengl_1_4_support)" = "yes"], , AC_MSG_WARN([Some features will be disabled.]))
+  AS_IF([test "AS_VAR_GET(ac_cv_opengl_1_4_support)" = "yes"], , AC_MSG_WARN([Some features will be disabled.]))
+fi
 
 # Checks for OpenAL (optional).
 if test "$sound" = "openal"

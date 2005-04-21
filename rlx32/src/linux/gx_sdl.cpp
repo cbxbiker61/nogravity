@@ -39,30 +39,7 @@ Linux/SDL Port: 2005 - Matt Williams
 #include "gx_rgb.h"
 #include "gx_csp.h"
 #include "gx_init.h"
-#include "SDL.h"
-
-/*
-
-  If you want to have a SDL software renderer,
-  you need to add thoses files
-  
-  rlx32/src/renderers/gfx_ref/gr16bit.c
-  rlx32/src/renderers/gfx_ref/gr32bit.c
-  rlx32/src/renderers/gfx_ref/gr8bit.c
-  rlx32/src/renderers/gfx_ref/gx_drv.c
-  rlx32/src/renderers/gfx_ref/sp16bit.c
-  rlx32/src/renderers/gfx_ref/sp32bit.c
-  rlx32/src/renderers/v3x_ref/r08_128.c
-  rlx32/src/renderers/v3x_ref/r08_256.c
-  rlx32/src/renderers/v3x_ref/r16_128.c
-  rlx32/src/renderers/v3x_ref/r16_256.c
-  rlx32/src/renderers/v3x_ref/r32_246.c
-  rlx32/src/renderers/v3x_ref/v3xsoft.c
-  rlx32/src/renderers/v3x_ref/z08_256.c
-  rlx32/src/renderers/v3x_ref/z16_256.c
-  rlx32/src/renderers/v3x_ref/z32_256.c
-
-*/
+#include "SDL/SDL.h"
 
 #define GET_GX() g_pRLX->pGX
 
@@ -416,13 +393,16 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	int i;
 	if (bpp == 3)
 	{
-		int BytePerPixel = GET_GX()->View.BytePerPixel;
-		u_int8_t * src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
-		g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel,
-								 sp->data, colorTable, bpp, sp->LX*sp->LY);
-		g_pRLX->mm_heap->free(sp->data);
-		sp->data = src_buf;
-		bpp = BytePerPixel;
+	  int BytePerPixel = GET_GX()->View.BytePerPixel;
+	  int RedFieldPosition = GET_GX()->View.ColorMask.RedFieldPosition; // see gx_rgb.c: 465
+	  GET_GX()->View.ColorMask.RedFieldPosition = 8; // Force to BGR conversion
+	  u_int8_t * src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
+	  g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel,
+				   sp->data, colorTable, bpp, sp->LX*sp->LY);
+	  g_pRLX->mm_heap->free(sp->data);
+	  sp->data = src_buf;
+	  bpp = BytePerPixel;
+	  GET_GX()->View.ColorMask.RedFieldPosition = RedFieldPosition; // restore redfield 
 	}
 	else
 	if (bpp == 1)

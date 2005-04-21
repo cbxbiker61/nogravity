@@ -1,3 +1,27 @@
+if USE_OPENGL
+RENDERER = ../../rlx32/src/renderers/opengl/gl_gx.cpp \
+           ../../rlx32/src/renderers/opengl/gl_v3x.cpp \
+           ../../rlx32/src/renderers/opengl/linux/sdl_gl.cpp
+else
+RENDERER = ../../rlx32/src/renderers/v3x_ref/z16_256.c \
+           ../../rlx32/src/renderers/v3x_ref/r16_256.c \
+           ../../rlx32/src/renderers/v3x_ref/r08_256.c\
+           ../../rlx32/src/renderers/v3x_ref/z08_256.c \
+           ../../rlx32/src/renderers/v3x_ref/r16_128.c \
+           ../../rlx32/src/renderers/v3x_ref/z32_256.c \
+           ../../rlx32/src/renderers/v3x_ref/r08_128.c \
+           ../../rlx32/src/renderers/v3x_ref/r32_256.c \
+           ../../rlx32/src/renderers/v3x_ref/v3xref.c \
+           ../../rlx32/src/renderers/gfx_ref/sp8bit.c \
+           ../../rlx32/src/renderers/gfx_ref/sp16bit.c \
+           ../../rlx32/src/renderers/gfx_ref/gr32bit.c \
+           ../../rlx32/src/renderers/gfx_ref/gx_drv.c \
+           ../../rlx32/src/renderers/gfx_ref/gr16bit.c \
+           ../../rlx32/src/renderers/gfx_ref/gr8bit.c \
+           ../../rlx32/src/renderers/gfx_ref/sp32bit.c \
+           ../../rlx32/src/linux/gx_sdl.cpp
+endif
+
 nogravitydir = $(prefix)/games/nogravity
 nogravity_PROGRAMS = nogravity
 nogravity_DATA = ../../GNU.TXT ../../README.TXT
@@ -42,9 +66,6 @@ nogravity_SOURCES = ../../rlx32/src/systools.c \
                     ../../rlx32/src/linux/sysjoy.c \
                     ../../rlx32/src/linux/syskeyb.c \
                     ../../rlx32/src/linux/sysmouse.c \
-                    ../../rlx32/src/renderers/opengl/gl_gx.cpp \
-                    ../../rlx32/src/renderers/opengl/gl_v3x.cpp \
-                    ../../rlx32/src/renderers/opengl/linux/sdl_gl.cpp \
                     ../../src/lt_game.c \
                     ../../src/lt_weap.c \
                     ../../src/lt_info.c \
@@ -62,6 +83,6 @@ nogravity_SOURCES = ../../rlx32/src/systools.c \
                     ../../src/lt_start.c \
                     ../../src/lithium.c \
                     ../../src/lt_st2.c \
-                    ../../src/Linux/preferences.c
-AM_CPPFLAGS = @SDL_CFLAGS@ -I ../../rlx32/include -I ../../rlx32/src -I ../../rlx32/src/linux -I ../../rlx32/src/renderers/opengl -I ../../rlx32/src/renderers/opengl/linux -D__LINUX__
-AM_LDFLAGS = @SDL_LIBS@
+                    ../../src/Linux/preferences.c \
+                    $(RENDERER)
+AM_CPPFLAGS = -I ../../rlx32/include -I ../../rlx32/src -I ../../rlx32/src/linux -I ../../rlx32/src/renderers/opengl -I ../../rlx32/src/renderers/opengl/linux -D__LINUX__

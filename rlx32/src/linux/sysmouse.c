@@ -25,7 +25,7 @@ Linux/SDL Port: 2005 - Matt Williams
 */
 //-------------------------------------------------------------------------
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 #include "_rlx32.h"
 #include "_rlx.h"
