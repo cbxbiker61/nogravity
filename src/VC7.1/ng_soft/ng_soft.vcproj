@@ -193,7 +193,7 @@
 				RelativePath="..\..\..\rlx32\src\renderers\gfx_ref\sp8bit.c">
 			</File>
 			<File
-				RelativePath="..\..\..\rlx32\src\renderers\v3x_ref\v3xsoft.c">
+				RelativePath="..\..\..\rlx32\src\renderers\v3x_ref\v3xref.c">
 			</File>
 			<File
 				RelativePath="..\..\..\rlx32\src\renderers\v3x_ref\z08_256.c">
