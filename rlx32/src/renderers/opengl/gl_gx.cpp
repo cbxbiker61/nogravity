@@ -577,7 +577,7 @@ static unsigned RLXAPI GL_UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, con
 		g_pRLX->pfSmartConverter(src_buf, NULL, 4, (void*)bitmap, (rgb24_t*)colorTable, 1, sp->LX*sp->LY);
 
 		glBindTexture(pSprite->target, pSprite->handle);
-		glTexImage2D(pSprite->target, 0, 4, sp->LX, sp->LY, 0,
+		glTexSubImage2D(pSprite->target, 0, 0, 0, sp->LX, sp->LY,
 #ifdef LSB_FIRST
 		GL_RGBA
 #else
@@ -585,6 +585,7 @@ static unsigned RLXAPI GL_UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, con
 #endif		 
 		, GL_UNSIGNED_BYTE, src_buf);
 		g_pRLX->mm_std->free(src_buf);
+		glBindTexture(pSprite->target, 0);
 
     }
     return 0;
