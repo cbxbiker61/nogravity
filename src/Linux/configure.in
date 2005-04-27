@@ -49,6 +49,14 @@ AC_CHECK_LIB([pthread], [pthread_create], , AC_MSG_ERROR([Can't find pthread lib
 
 # Checks for SDL.  Note that we don't use AM_PATH_SDL because it's not always
 # supported.
+AC_CHECK_PROG(HAVE_SDL_CONFIG, [sdl-config], yes)
+if test "$HAVE_SDL_CONFIG" = "yes"
+then
+  CFLAGS="`sdl-config --cflags` $CFLAGS"
+  LIBSS="`sdl-config --libs` $LIBS"
+else
+  AC_MSG_WARN([Can't find sdl-config, guessing required headers and libraries.])
+fi
 AC_CHECK_HEADERS([SDL/SDL.h], , AC_MSG_ERROR([Can't find SDL headers.]))
 AC_CHECK_LIB([SDL], [SDL_Init], , AC_MSG_ERROR([Can't find SDL library.]))
 
@@ -90,6 +98,14 @@ then
 fi
 
 # Checks for libpng.
+AC_CHECK_PROG(HAVE_LIBPNG_CONFIG, [libpng-config], yes)
+if test "$HAVE_LIBPNG_CONFIG" = "yes"
+then
+  CFLAGS="`libpng-config --cflags` $CFLAGS"
+  LDFLAGS="`libpng-config --ldflags` $LDFLAGS"
+else
+  AC_MSG_WARN([Can't find libpng-config, guessing required headers and libraries.])
+fi
 AC_CHECK_HEADERS([png.h], , AC_MSG_ERROR([Can't find libpng header.]))
 AC_CHECK_LIB([png], [png_decompress_chunk], , AC_MSG_ERROR([Can't find libpng library.]))
 
