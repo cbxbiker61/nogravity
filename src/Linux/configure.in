@@ -7,7 +7,7 @@ AM_INIT_AUTOMAKE(nogravity, 1.99)
 
 AC_CONFIG_SRCDIR(preferences.c)
 AC_CONFIG_HEADER(autoconfig.h)
-AC_CONFIG_FILES([Makefile nogravity.spec])
+AC_CONFIG_FILES([Makefile])
 
 # Define arguments.
 AC_ARG_ENABLE(debug,[  --enable-debug          Enable debug mode],

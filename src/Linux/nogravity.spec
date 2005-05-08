@@ -1,6 +1,6 @@
 Summary: No Gravity is a fantastic and futuristic universe made of five intergalactic worlds.
 Name: nogravity
-Version: @VERSION@
+Version: 1.99
 Release: 1
 License: GPL
 Group: Amusements/Games
