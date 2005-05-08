@@ -20,8 +20,6 @@ A brief description of the objectives is given at the beginning of a mission. In
 
 When the objectives of the current sector is complete, the player needs to go the nearest 'NAV' point, when he can 'wrap' to the next sector. In the last sector, a 'warp' gate is apparearing and the player need to go through it and complete the level. At the end of each episodes (one episode is 10 missions), there is a large base station to destroy. When the player completes all the episodes (5 episodes), the game ends. The mission fails if : - The player got destroyed or - if an objective is not complete (like an important ship being destroyed by enemy).
 
-To play, you will also need to download the game data from http://www.realtech-vr.com/nogravity/.
-
 %prep
 cd $RPM_BUILD_DIR
 mkdir -p $RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION
