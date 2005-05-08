@@ -473,7 +473,7 @@ void STUB_Default(void)
 
 void STUB_ReadyToRun(void)
 {
-	char *resFile = "/Users/stephane/Dev/nogravity/src/MacOSX/build/NOGRAVITY.RMX";
+	char *resFile = "NOGRAVITY.RMX";
 	
 #ifdef _DEBUG
     SYS_Debug("Open file resource : %s\n", resFile);
