@@ -1,0 +1,47 @@
+# -*-shell-script-*-
+
+[Meta]
+RootName: @nogravity.sourceforge.net/nogravity:$SOFTWAREVERSION
+DisplayName: No Gravity
+ShortName: nogravity
+Maintainer: realtech VR
+Packager: Matt Williams <maffy@sourceforge.net>
+Summary: A fantastic and futuristic universe made of five intergalactic worlds.
+URL: http://www.realtech-vr.com/nogravity/
+License: GPL
+SoftwareVersion: 1.0
+AutopackageTarget: 1.0
+
+[Description]
+No Gravity is a fantastic and futuristic universe made of five intergalactic worlds. An arcade type game with great playability, where it is easy to plunge into space battles against spacefighters, space stations and more!
+
+No Gravity is a space shooter in 3D 'a la Wing Commander'. The player is controlling a space ship view from the first person. In each mission, the player need to accomplish some objectives, like shoot and destroys enemy ships or base, escorting some ships, clearing mine field, etc....
+
+A brief description of the objectives is given at the beginning of a mission. In some situations, the player has some wingmen, and it can controls them by giving order like attack enemy, retreat, protect the base etc... A mission is composed of different sectors which has differents objectives.
+
+When the objectives of the current sector is complete, the player needs to go the nearest 'NAV' point, when he can 'wrap' to the next sector. In the last sector, a 'warp' gate is apparearing and the player need to go through it and complete the level. At the end of each episodes (one episode is 10 missions), there is a large base station to destroy. When the player completes all the episodes (5 episodes), the game ends. The mission fails if : - The player got destroyed or - if an objective is not complete (like an important ship being destroyed by enemy).
+
+[BuildPrepare]
+export CC=apgcc
+export CXX=apg++
+./bootstrap
+./configure --enable-sound=sdl_mixer
+make
+
+[BuildUnprepare]
+unprepareBuild
+
+[Imports]
+echo /usr/local/games/nogravity/nogravity /usr/local/games/nogravity/NOGRAVITY.RMX | import
+
+[Prepare]
+require @libsdl.org/sdl
+require @libpng.org/libpng
+require @xiph.org/libogg
+require @xiph.org/libvorbis
+
+[Install]
+copyFiles /usr/local/games/nogravity/nogravity /usr/local/games/nogravity/NOGRAVITY.RMX $PREFIX/games/nogravity
+
+[Uninstall]
+uninstallFromLog
