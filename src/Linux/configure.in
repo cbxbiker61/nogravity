@@ -2,12 +2,12 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT(nogravity, 1.98, http://sourceforge.net/projects/nogravity)
-AM_INIT_AUTOMAKE(nogravity, 1.98)
+AC_INIT(nogravity, 1.99, http://sourceforge.net/projects/nogravity)
+AM_INIT_AUTOMAKE(nogravity, 1.99)
 
 AC_CONFIG_SRCDIR(preferences.c)
 AC_CONFIG_HEADER(autoconfig.h)
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile nogravity.spec])
 
 # Define arguments.
 AC_ARG_ENABLE(debug,[  --enable-debug          Enable debug mode],

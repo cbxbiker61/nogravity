@@ -1,6 +1,6 @@
 Summary: No Gravity is a fantastic and futuristic universe made of five intergalactic worlds.
 Name: nogravity
-Version: 1.98r9
+Version: @VERSION@
 Release: 1
 License: GPL
 Group: Amusements/Games
@@ -52,6 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/local/games/nogravity/nogravity
 /usr/local/games/nogravity/GNU.TXT
 /usr/local/games/nogravity/README.TXT
+/usr/local/games/nogravity/NOGRAVITY.RMX
 
 %changelog
 * Tue Mar 22 2005 Matt Williams <maffy@sourceforge.net> - 
