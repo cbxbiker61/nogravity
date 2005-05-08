@@ -266,7 +266,7 @@ struct V3XAUDIO
 	int32_t						driverID;
 };
 
-
+struct RLXSYSTEM;
 
 __extern_c
 

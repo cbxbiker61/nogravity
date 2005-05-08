@@ -226,8 +226,10 @@ static V3XA_HANDLE *SFX_SampleBatchLoad(SND_DWHANDLE *sef)
 		char tex[256];
 		sprintf(tex, ".\\voix\\%s.WAV", sef->name);
 		V3XA_Handle_LoadFromFn(sinfo, tex);
+#ifndef HAVE_OPENAL		
 		if (sinfo->samplingRate < 44100)
 			Resample44Khz(sinfo);
+#endif
 		V3XA.Client->SmpLoad( sinfo );
     }
     return WT;

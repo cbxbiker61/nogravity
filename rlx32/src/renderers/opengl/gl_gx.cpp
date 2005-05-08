@@ -30,6 +30,10 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "v3xrend.h"
 #include "fixops.h"
 
+#ifdef __APPLE__
+#define USE_ARGB_TEXTURE
+#endif 
+
 static void  CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
 {
     rgb24_t cl;
@@ -451,7 +455,8 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	GXSPRITEGL *pSprite = (GXSPRITEGL*) g_pRLX->mm_std->malloc(sizeof(GXSPRITEGL));
 	u_int8_t *src_buf = sp->data;
 	int lx, ly, src_lx, src_ly;
-	GLenum fmt = 
+	GLenum texture_type = GL_UNSIGNED_BYTE;
+	GLenum texture_fmt =
 #ifdef LSB_FIRST
 	 GL_RGBA
 #else
@@ -461,7 +466,7 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 
 	int t1 = isPowerOfTwo(sp->LX, &lx);
 	int t2 = isPowerOfTwo(sp->LY, &ly);
-	
+
 	if ((t1+t2 == 2) || gl_ARB_texture_non_power_of_two)
 	{
 		pSprite->u = 1.f;
@@ -477,23 +482,36 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 
 	if ((bpp == 3) && src_buf)
 	{
-		fmt = GL_RGB;
+		texture_fmt = GL_RGB;
 	}
 	else
 	if ((bpp == 1) && src_buf)
 	{
 		src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * 4);
-		g_pRLX->pfSmartConverter(src_buf, NULL, 4, 
-								 sp->data, colorTable, 1, sp->LX*sp->LY);
+
+#ifdef USE_ARGB_TEXTURE
+    	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 8;
+    	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 16;
+    	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 24;
+    	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 0;
+#endif
+		g_pRLX->pfSmartConverter(src_buf, NULL, 4, sp->data, colorTable, 1, sp->LX*sp->LY);
+
+#ifdef USE_ARGB_TEXTURE
+    	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 0;
+    	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
+    	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
+    	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
+        texture_type = GL_UNSIGNED_INT_8_8_8_8_REV;
+        texture_fmt = GL_BGRA_EXT; // Assume all renderers support this ..
+#endif
+
 		bpp = 4;
 	}
 
 	src_lx = sp->LX;
-	src_ly = sp->LY;
-
-	
-
-	if ((!(g_pRLX->pV3X->Client->Capabilities&GXSPEC_NONPOWOF2)) && (pSprite->target == GL_TEXTURE_RECTANGLE_ARB))
+	src_ly = sp->LY;   
+    if ((!(g_pRLX->pV3X->Client->Capabilities&GXSPEC_NONPOWOF2)) && (pSprite->target == GL_TEXTURE_RECTANGLE_ARB))
 	{
 		u_int8_t *dst_buf;
 		if (sp->data!=src_buf)
@@ -531,7 +549,7 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 
 	if (src_buf)
 	{
-		glTexImage2D(pSprite->target, 0, bpp, src_lx, src_ly, 0, fmt, GL_UNSIGNED_BYTE, src_buf);
+		glTexImage2D(pSprite->target, 0, bpp, src_lx, src_ly, 0, texture_fmt, texture_type, src_buf);
 
 		if (sp->data!=src_buf)
 			g_pRLX->mm_std->free(src_buf);
@@ -572,18 +590,36 @@ static unsigned RLXAPI GL_UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, con
 {
 	GXSPRITEGL *pSprite = (GXSPRITEGL *)sp->handle;
 	if (pSprite)
-    {        
-		u_int8_t *src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*4);
-		g_pRLX->pfSmartConverter(src_buf, NULL, 4, (void*)bitmap, (rgb24_t*)colorTable, 1, sp->LX*sp->LY);
-
-		glBindTexture(pSprite->target, pSprite->handle);
-		glTexSubImage2D(pSprite->target, 0, 0, 0, sp->LX, sp->LY,
+    {
+       GLenum texture_fmt =
 #ifdef LSB_FIRST
 		GL_RGBA
 #else
  		GL_BGRA_EXT
-#endif		 
-		, GL_UNSIGNED_BYTE, src_buf);
+#endif
+        ;
+        GLenum texture_type = GL_UNSIGNED_BYTE;
+		u_int8_t *src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*4);
+		
+#ifdef USE_ARGB_TEXTURE
+    	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 8;
+    	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 16;
+    	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 24;
+    	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 0;
+#endif
+		g_pRLX->pfSmartConverter(src_buf, NULL, 4, (void*)bitmap, (rgb24_t*)colorTable, 1, sp->LX*sp->LY);
+
+#ifdef USE_ARGB_TEXTURE
+    	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 0;
+    	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
+    	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
+    	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
+        texture_type = GL_UNSIGNED_INT_8_8_8_8_REV;
+        texture_fmt = GL_BGRA_EXT; // Assume all renderers support this ..
+#endif
+
+      	glBindTexture(pSprite->target, pSprite->handle);
+		glTexSubImage2D(pSprite->target, 0, 0, 0, sp->LX, sp->LY, texture_fmt, texture_type, src_buf);
 		g_pRLX->mm_std->free(src_buf);
 		glBindTexture(pSprite->target, 0);
 

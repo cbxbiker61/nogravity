@@ -222,7 +222,8 @@ void STUB_MainCode(void)
 	V3XPlugIn_Add(1, V3XPlug_CollisionMove);
 
     // Game Data
-#if defined __BEOS__ || defined _DEBUG
+#if defined __BEOS__ || 0 
+// defined _DEBUG
 	RLX.Video.Config|=RLXVIDEO_Windowed;
 #else
  	RLX.Video.Config&=~RLXVIDEO_Windowed;
@@ -472,7 +473,7 @@ void STUB_Default(void)
 
 void STUB_ReadyToRun(void)
 {
-	char *resFile = "NOGRAVITY.RMX";
+	char *resFile = "/Users/stephane/Dev/nogravity/src/MacOSX/build/NOGRAVITY.RMX";
 	
 #ifdef _DEBUG
     SYS_Debug("Open file resource : %s\n", resFile);

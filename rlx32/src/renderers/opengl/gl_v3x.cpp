@@ -31,6 +31,10 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #define PIPE_OPEN 1
 
+#ifdef __APPLE__
+#define USE_ARGB_TEXTURE
+#endif 
+
 static float g_fInvZFar;
 static GLint pipe_pTex[2];
 static GLuint pipe_iRender, pipe_prm;
@@ -241,23 +245,41 @@ static int V3XAPI TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *c
     
 	u_int8_t *src_buf = (u_int8_t *)pSprite->tmpbuf;
 
-	if (!src_buf)
-	{
-		return -1;
-	}
-
-	g_pRLX->pfSmartConverter(src_buf, NULL, 4, (void*)bitmap, (rgb24_t*)colorTable, 1, sp->LX*sp->LY);
-
-	glBindTexture(GL_TEXTURE_2D, pSprite->handle);	   
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, sp->LX, sp->LY, 
+    GLenum texture_fmt =
 #ifdef LSB_FIRST
 		GL_RGBA
 #else
  		GL_BGRA_EXT
 #endif
-		, GL_UNSIGNED_BYTE, src_buf);
+        ;
+    GLenum texture_type = GL_UNSIGNED_BYTE;
 
+	if (!src_buf)
+	{
+		return -1;
+	}
 
+#ifdef USE_ARGB_TEXTURE
+   	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 8;
+   	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 16;
+   	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 24;
+   	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 0;
+#endif
+
+	g_pRLX->pfSmartConverter(src_buf, NULL, 4, (void*)bitmap, (rgb24_t*)colorTable, 1, sp->LX*sp->LY);
+
+#ifdef USE_ARGB_TEXTURE
+   	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 0;
+   	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
+   	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
+   	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
+    texture_type = GL_UNSIGNED_INT_8_8_8_8_REV;
+    texture_fmt = GL_BGRA_EXT; // Assume all renderers support this ..
+#endif
+
+	glBindTexture(GL_TEXTURE_2D, pSprite->handle);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, sp->LX, sp->LY, texture_fmt, texture_type, src_buf);
+	glBindTexture(GL_TEXTURE_2D, 0);
     return 1;
 }
 
@@ -282,6 +304,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
     int texture_fmt = 0;
     int32_t bs = (bpp+1)>>3;
     int32_t bp = 0;
+    GLenum texture_type = GL_UNSIGNED_BYTE;
 	GL_TexHandle *hnd;
     u_int8_t *src_buf;
     GLuint handle;
@@ -294,16 +317,41 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
     {
         bpp = options & V3XTEXDWNOPTION_COLORKEY ? 32 : 24;
         bp = (bpp+1)>>3;
+        
+#ifdef USE_ARGB_TEXTURE
+
+        if (bp == 4 && (!(g_pRLX->pV3X->Client->Capabilities & GXSPEC_ENABLECOMPRESSION)))
+        {
+         	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 8;
+         	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 16;
+         	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 24;
+         	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 0;
+        }
+#endif
+
         src_buf = g_pRLX->pfSmartConverter(
 			NULL, (rgb24_t*)colorTable, bp, 
 			sp->data, (rgb24_t*)colorTable, bs, 
 			sp->LX*sp->LY
 		);
+
 		internal_fmt = bp;
 #ifdef LSB_FIRST
 		texture_fmt = bp==4 ? GL_RGBA : GL_RGB;
 #else
 		texture_fmt = bp==4 ? GL_BGRA_EXT : GL_BGR_EXT;
+#endif
+
+#ifdef USE_ARGB_TEXTURE
+        if (bp == 4 && (!(g_pRLX->pV3X->Client->Capabilities & GXSPEC_ENABLECOMPRESSION)))
+        {
+        	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 0;
+        	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
+        	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
+        	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
+            texture_type = GL_UNSIGNED_INT_8_8_8_8_REV;
+            texture_fmt = GL_BGRA_EXT;
+        }
 #endif
     }
     else
@@ -389,7 +437,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 	} 
 #endif
 
-	glTexImage2D( GL_TEXTURE_2D, 0, internal_fmt, sp->LX, sp->LY, 0, texture_fmt, GL_UNSIGNED_BYTE,	(options & V3XTEXDWNOPTION_DYNAMIC) && hnd->tmpbuf ? hnd->tmpbuf : src_buf);	
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_fmt, sp->LX, sp->LY, 0, texture_fmt, texture_type,	(options & V3XTEXDWNOPTION_DYNAMIC) && hnd->tmpbuf ? hnd->tmpbuf : src_buf);
 	hnd->handle = handle;	 
 
 	if (src_buf!=sp->data)

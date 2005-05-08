@@ -357,10 +357,19 @@ u_int8_t *RGB_SmartConverter(void *tgt, rgb24_t *target_pal, int target_bpp, voi
                     for (;i!=0;t++, a++, i--)
                     {
                         const rgb24_t *mp = source_pal + (*a);
-                        t->r = GX.View.ColorMask.RedFieldPosition&&(GX.View.BytePerPixel>=3) ? mp->b : mp->r;
-                        t->g = mp->g;
-                        t->b = GX.View.ColorMask.RedFieldPosition&&(GX.View.BytePerPixel>=3) ? mp->r : mp->b;
-                        t->a = (*a) ? 255 : 0;
+#ifdef LSB_FIRST
+                        *(u_int32_t*)t =
+                        ((u_int32_t)mp->r << (24-GX.View.ColorMask.RedFieldPosition)) |
+                        ((u_int32_t)mp->g << (24-GX.View.ColorMask.GreenFieldPosition)) |
+                        ((u_int32_t)mp->b << (24-GX.View.ColorMask.BlueFieldPosition)) |
+                        ((u_int32_t)(*a ? 255 : 0) << (24-GX.View.ColorMask.RsvdFieldPosition));
+#else
+                        *(u_int32_t*)t =
+                        ((u_int32_t)mp->r << GX.View.ColorMask.RedFieldPosition) |
+                        ((u_int32_t)mp->g << GX.View.ColorMask.GreenFieldPosition) |
+                        ((u_int32_t)mp->b << GX.View.ColorMask.BlueFieldPosition) |
+                        ((u_int32_t)(*a ? 255 : 0) << GX.View.ColorMask.RsvdFieldPosition);
+#endif
                     }
                 }
                 break;

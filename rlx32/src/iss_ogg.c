@@ -20,8 +20,7 @@
 #pragma pack(8) 
 #endif //
 
-#include <vorbis/codec.h>
-
+#include "vorbis/codec.h"
 
 typedef struct _ogg_context
 {

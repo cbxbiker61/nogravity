@@ -38,11 +38,11 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "v3x_2.h"
 #include "v3xrend.h"
 #include "../gl_v3x.h"
-
+#include <OpenGL/OpenGL.h>
 
 
 WindowPtr						g_hWnd;
-struct RLXSYSTEM 		*	g_pRLX;
+struct RLXSYSTEM 	      	*	g_pRLX;
 
 // GL Driver Specific
 int32_t							gl_pRect[4];
@@ -50,8 +50,7 @@ static int           			gl_lx,
 								gl_ly,
 								gl_bpp;
 
-AGLContext			 			g_pAGLC;
-static Rect					*	g_pRect;
+CGLContextObj		 			g_pCGLC;
 
 // CGL
 static CFArrayRef				g_cgDisplayModeList;
@@ -73,37 +72,24 @@ static int32_t getDictLong (CFDictionaryRef refDict, CFStringRef key)
 
 
 #ifdef _DEBUG
-int _SYS_AGLTRACE(int err, int line)
+int _SYS_CGLTRACE(int err, int line)
 {
-	int ret = aglGetError();
-	if (ret)
-	printf("%s(%d) : %s (%d)\n", __FILE__, line, aglErrorString(ret), err);
-    return err;
+	/*if (!err)
+		CGLReportError (CGLGetError());
+	if (err!=noErr)
+        printf("%s(%d) : %s\n", __FILE__, line, CGLErrorString(CGLGetError()));
+    */
+	return err;
 }
-#define SYS_AGLTRACE(err) _SYS_AGLTRACE(err, __LINE__)
+#define SYS_CGLTRACE(err) _SYS_CGLTRACE(err, __LINE__)
 #else
-#define SYS_AGLTRACE(err) err
+#define SYS_CGLTRACE(err) err
 #endif
-
-static void CenterWindow(WindowRef ref)
-{
-    Rect rect, bounds;
-    GetWindowPortBounds(ref, &rect);
-    GetRegionBounds(GetGrayRgn(), &bounds);
-    int lx = bounds.right - bounds.left;
-    int ly = bounds.bottom - bounds.top;
-    rect.left = bounds.left + ((lx - (rect.right - rect.left))/2);
-    rect.top = bounds.top + ((ly - (rect.bottom - rect.top))/2);
-    MoveWindow(ref, rect.left, rect.top, true);
-}
 
 static void RLXAPI Flip(void)
 {
-	glClearColor(1,0,1,1);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-   	aglSwapBuffers(g_pAGLC);
-    SYS_AGLTRACE(0);
-	return;
+   	CGLFlushDrawable(g_pCGLC);
+    return;
 }
 
 static u_int8_t RLXAPI *Lock(void)
@@ -171,6 +157,7 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 
 extern GXGRAPHICINTERFACE GI_OpenGL;
 extern GXSPRITEINTERFACE CSP_OpenGL;
+
 static void RLXAPI SetPrimitive()
 {
 	g_pRLX->pGX->View.Flip = Flip;
@@ -181,13 +168,10 @@ static void RLXAPI SetPrimitive()
     g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
     g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
     g_pRLX->pGX->csp_cfg.op = g_pRLX->pGX->csp.put;
- 
-	
-
 }
+
 static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 {
-	SYS_Debug("Set viewport %d x %d x %d\n", gl_lx, gl_ly, gl_bpp);
 	g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, gl_lx, gl_ly, gl_bpp);
 	g_pRLX->pGX->View.ColorMask.RedMaskSize		= 8;
 	g_pRLX->pGX->View.ColorMask.GreenMaskSize 	= 8;
@@ -219,101 +203,131 @@ static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
 
 static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 {
-	bpp = 16;
     gl_lx  = lx;
     gl_ly  = ly;
     gl_bpp = bpp == -1 ? (*(*GetMainDevice())->gdPMap)->pixelSize : bpp;
 
 	if ((g_pRLX->Video.Config & RLXVIDEO_Windowed)==0)
 	{
-		boolean_t ret;
+		boolean_t ret = false;
 		g_cgDisplayMode = CGDisplayBestModeForParameters(g_cgDisplayID, bpp, lx, ly, &ret);
 		return ModeHandleToDictRef(g_cgDisplayMode);
 	}
     return 1;
 }
 
+
+struct PixelFormatDesc
+{
+	CGLPixelFormatAttribute value;
+	const char *text;
+};
+
+static void DEBUG_PIXEL_FORMAT(CGLPixelFormatObj pix)
+{
+	const struct PixelFormatDesc p[] = {	
+   {kCGLPFAAllRenderers, "All renderers"},
+   {kCGLPFADoubleBuffer, "Double buffer"},
+   {kCGLPFAStereo, "Stereo"},
+   {kCGLPFAAuxBuffers, "Aux Buffers"},
+   {kCGLPFAColorSize, "Color Size"},
+   {kCGLPFAAlphaSize, "Alpha Size"},
+   {kCGLPFADepthSize, "Depth Size"},
+   {kCGLPFAStencilSize, "Stencil Size"},
+   {kCGLPFAAccumSize, "Accum Size"},
+   {kCGLPFAMinimumPolicy, "Minimum Policy"},
+   {kCGLPFAMaximumPolicy, "Maximum Policy"},
+   {kCGLPFAOffScreen, "Off Screen"},
+   {kCGLPFAFullScreen, "Full Screen"},
+   {kCGLPFASampleBuffers, "Sample Buffers"},
+   {kCGLPFASamples, "Samples"} ,
+   {kCGLPFAAuxDepthStencil, "Depth Stencil"},
+   {kCGLPFAColorFloat, "Color Float"},
+   {kCGLPFAMultisample, "Multi Sample"},
+   {kCGLPFASupersample, "Super Sample"},
+   {kCGLPFASampleAlpha, "Sample Alpha"},
+   {kCGLPFARendererID, "RendererID"},
+   {kCGLPFASingleRenderer, "Single Renderer"},
+   {kCGLPFANoRecovery, "No Recovery"},
+   {kCGLPFAAccelerated, "Accelerated"},
+   {kCGLPFAClosestPolicy, "Closest Policy"},
+   {kCGLPFARobust, "Robust"},
+   {kCGLPFABackingStore, "Backing Store"},
+   {kCGLPFAMPSafe, "MPSafe"},
+   {kCGLPFAWindow, "Window"},
+   {kCGLPFAMultiScreen, "Multiscreen"},
+   {kCGLPFACompliant, "Compliant"},
+   {kCGLPFADisplayMask, "Display Mask"},
+   {kCGLPFAPBuffer, "PBuffer"},
+   {kCGLPFARemotePBuffer, "Remote PBuffer"},
+   {kCGLPFAVirtualScreenCount, "Accum Size"},
+   {(CGLPixelFormatAttribute)0,0}
+   };
+   int i = 0;
+   while (p[i].value)
+   {
+		long value;
+		CGLDescribePixelFormat(pix, 0, p[i].value, &value);
+		if (p[i].value == kCGLPFARendererID)
+		printf("... %s: 0x%08lx\n", p[i].text, value);
+		else
+		printf("... %s: %ld\n", p[i].text, value);
+		i++;
+	}
+
+}
 static int RLXAPI CreateSurface(int numberOfSparePages)
 {
-    g_pRLX->pGX->View.lpBackBuffer   = NULL;
-	static GLint          attrib[32];
-	GLint		*pAttrib =  attrib;
+    CGOpenGLDisplayMask displayMask = CGDisplayIDToOpenGLDisplayMask( g_cgDisplayID ) ;
+    static CGLPixelFormatAttribute attribs[32];
+   	CGLPixelFormatAttribute	*pAttrib =  attribs;
+    CGLPixelFormatObj pixelFormatObj ;
+    long numPixelFormats = 0;
 
-	*pAttrib = AGL_RGBA; pAttrib++;
-	*pAttrib = AGL_ACCELERATED; pAttrib++;
-	*pAttrib = AGL_RED_SIZE; pAttrib++;
-	*pAttrib = 8; pAttrib++;
+	*pAttrib = kCGLPFAFullScreen; pAttrib++;
+	*pAttrib = kCGLPFASingleRenderer; pAttrib++; 
 
-	*pAttrib = AGL_CLOSEST_POLICY; pAttrib++;
+	*pAttrib = kCGLPFADisplayMask; pAttrib++;
+	*pAttrib = (CGLPixelFormatAttribute)displayMask; pAttrib++;
+
+	*pAttrib = kCGLPFADoubleBuffer; pAttrib++;
+	*pAttrib = kCGLPFAColorSize; pAttrib++;
+	*pAttrib = (CGLPixelFormatAttribute)gl_bpp; pAttrib++;
 	
-	if (!(g_pRLX->Video.Config & RLXVIDEO_Windowed))
+	 if ((g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING))
 	{
-		*pAttrib = AGL_FULLSCREEN; pAttrib++;
+		*pAttrib = kCGLPFASampleBuffers; pAttrib++;
+		*pAttrib = (CGLPixelFormatAttribute)1;  pAttrib++;
+
+		*pAttrib = kCGLPFASamples;  pAttrib++;
+		*pAttrib = (CGLPixelFormatAttribute)g_pRLX->pGX->View.Multisampling; pAttrib++;
 	}
-/*
-	if (g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING)
+
+	if (SYS_CGLTRACE(CGLChoosePixelFormat( attribs, &pixelFormatObj, &numPixelFormats )))
+    	return -1;
+
+    if (!numPixelFormats)
+        return -2;
+
+	DEBUG_PIXEL_FORMAT(pixelFormatObj);
+
+    if (SYS_CGLTRACE(CGLCreateContext( pixelFormatObj, NULL, &g_pCGLC )))
+       return -3;
+
+    CGLDestroyPixelFormat( pixelFormatObj ) ;
+
+    long swapInterval = !!(g_pRLX->pGX->View.Flags & GX_CAPS_VSYNC);
+    SYS_CGLTRACE(CGLSetParameter( g_pCGLC, kCGLCPSwapInterval, &swapInterval));
+    SYS_CGLTRACE(CGLSetCurrentContext( g_pCGLC ));
+    if (SYS_CGLTRACE(CGLSetFullScreen( g_pCGLC )))
 	{
-		*pAttrib = AGL_SAMPLE_BUFFERS_ARB; pAttrib++;
-		*pAttrib = 1; pAttrib++;
-		*pAttrib = AGL_SAMPLES_ARB; pAttrib++;
-		*pAttrib = g_pRLX->pGX->View.Multisampling; pAttrib++;
-    }
-*/
-	*pAttrib = AGL_DOUBLEBUFFER; pAttrib++;
-	*pAttrib = AGL_DEPTH_SIZE; pAttrib++;
-	*pAttrib = 24; pAttrib++;
-	*pAttrib = AGL_NO_RECOVERY; pAttrib++;
-	*pAttrib = AGL_NONE; pAttrib++;
-
-    AGLPixelFormat fmt;
-    GLboolean      ok;
-
-    /* Choose an rgb pixel format */
-    GDHandle gdhDisplay;
-    ok = DMGetGDeviceByDisplayID((DisplayIDType)g_cgDisplayID, &gdhDisplay, false);
-    SYS_ASSERT(ok == noErr);
-    fmt = aglChoosePixelFormat(&gdhDisplay, 1, attrib);
-	SYS_AGLTRACE(0);
-    if(fmt == NULL)
-    {
-        ok = SYS_AGLTRACE(aglGetError());
-     	return -1;
-    }
-    /* Create an AGL context */
-    g_pAGLC = aglCreateContext(fmt, NULL);
-    SYS_AGLTRACE(0);
-	if(g_pAGLC == NULL)
-		return -2;
-
-    /* Attach the window to the context */
-    ok = SYS_AGLTRACE(aglSetDrawable(g_pAGLC, GetWindowPort(g_hWnd)  ));
-    if(!ok)
-		return -3;
-
-    /* Make the context the current context */
-    ok = SYS_AGLTRACE(aglSetCurrentContext(g_pAGLC));
-    if(!ok)
-		return -4;
-
-	SizeWindow(g_hWnd, gl_lx, gl_ly, true);
-	if ((g_pRLX->Video.Config & RLXVIDEO_Windowed))
-		CenterWindow(g_hWnd);
-    ShowWindow(g_hWnd);
-
-	// copy portRect
-	GetPortBounds(GetWindowPort(g_hWnd), g_pRect);
-
-    /* Pixel format is no more needed */
-    aglDestroyPixelFormat(fmt);
-
-    if (!(g_pRLX->Video.Config & RLXVIDEO_Windowed))
-    {
-		HideMenuBar();
-        aglSetFullScreen(g_pAGLC, 0, 0, 0, 0);
-	    GLint swap = !!(g_pRLX->pGX->View.Flags & GX_CAPS_VSYNC);
-        aglSetInteger(g_pAGLC, AGL_SWAP_INTERVAL, &swap);
-		SYS_AGLTRACE(0);
+		CGDisplaySwitchToMode(g_cgDisplayID, g_cgPrevDisplayMode);
+		CGReleaseAllDisplays();
+	
+		return -5;
 	}
+
+	HideMenuBar();
 
     // Reset engine
     GL_InstallExtensions();
@@ -331,13 +345,14 @@ static int RLXAPI CreateSurface(int numberOfSparePages)
 
 static void RLXAPI ReleaseSurfaces(void)
 {
-	if (!g_pAGLC)
+	if (!g_pCGLC)
 		return;
 
-	aglSetCurrentContext(NULL);
-    aglSetDrawable(g_pAGLC, NULL);
-    aglDestroyContext(g_pAGLC);
-    g_pAGLC = 0;
+	CGLSetCurrentContext( NULL );
+    CGLClearDrawable( g_pCGLC );
+    CGLDestroyContext( g_pCGLC );
+
+    g_pCGLC = 0;
 	g_pRLX->pGX->Surfaces.maxSurface = 0;
     return;
 }
@@ -351,42 +366,40 @@ static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
 
 static void RLXAPI Shutdown(void)
 {
-	if (!g_pAGLC)
+	if (!g_pCGLC)
 		return;
 
-	if (g_cgOldDisplayModeRestore)
-	{
-		CGDisplaySwitchToMode(g_cgDisplayID, g_cgPrevDisplayMode);		
-		CGReleaseAllDisplays();
-		g_cgOldDisplayModeRestore = 0;
-		ShowMenuBar();
-	}
-	
+	CGDisplaySwitchToMode(g_cgDisplayID, g_cgPrevDisplayMode);
+	CGReleaseAllDisplays();
+	ShowMenuBar();
+
     return;
 }
 
 static int Open(void * hwnd)
 {
-
+    CGLRendererInfoObj renderer;
+    long numRenderer;
 	CGDirectDisplayID l[32];
 	CGDisplayCount count;
+
+	SYS_ASSERT(g_pCGLC == 0);
+	UNUSED(hwnd);
 	CGGetActiveDisplayList (sizeof(l), l, &count);
 
-	SYS_ASSERT(g_pAGLC == 0);
-	SYS_ASSERT(hwnd);
-	static Rect rect;
-	g_pRect = &rect;
-	g_hWnd = (WindowPtr) hwnd;
-#ifdef _DEBUG	
+#ifdef _DEBUG
 	// Debug in multiple monitor. Use the secondary monitor for rendering
-	g_cgDisplayID = l[count-1]; 
+	g_cgDisplayID = l[count-1];
 #else
 	g_cgDisplayID = CGMainDisplayID ();
-#endif	
+#endif
 
-	g_cgPrevDisplayMode = CGDisplayCurrentMode (g_cgDisplayID);		
-	g_cgOldDisplayModeRestore = 0;
+	g_cgPrevDisplayMode = CGDisplayCurrentMode (g_cgDisplayID);
 	g_cgDisplayModeList = CGDisplayAvailableModes (g_cgDisplayID);
+
+    CGLQueryRendererInfo(CGDisplayIDToOpenGLDisplayMask(g_cgDisplayID), &renderer, &numRenderer);
+    CGLDestroyRendererInfo(renderer);
+
     return 0;
 }
 
@@ -414,7 +427,7 @@ GXCLIENTDRIVER GX_OpenGL = {
     Shutdown,
     Open,
     NotifyEvent,    
-    "OpenGL"
+    "OpenGL/CGL"
 };
 
 extern void SetPrimitiveSprites();

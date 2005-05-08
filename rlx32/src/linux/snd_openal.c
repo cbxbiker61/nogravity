@@ -90,7 +90,9 @@ static int Initialize(void *hnd)
   ctxt = alcCreateContext(dev, (ALCint *)&attrs);
   alcMakeContextCurrent(ctxt);
   alDistanceModel(AL_INVERSE_DISTANCE);
-
+  alDopplerFactor(0.f); // No doppler
+  alDopplerVelocity(0.f); // No velocity
+ 
   RLX.Audio.Config|=RLXAUDIO_Use3D;
   return 0;
 }
@@ -189,7 +191,6 @@ static void RLXAPI UserSetParms(V3XMATRIX *lpMAT,
   }
   if (lpDopplerF != NULL)
   {
-    alDopplerFactor(*lpDopplerF);
   }
   if (lpRolloffF != NULL)
   {
@@ -232,7 +233,7 @@ static void ChannelSetPanning(int channel, float pan)
 
 static void ChannelSetSamplingRate(int channel, int sampleRate)
 {
-  alSourcef(g_pchannels[channel].src, AL_PITCH, 44100.0 / sampleRate);
+   alSourcef(g_pchannels[channel].src, AL_PITCH, 44100.0 / sampleRate);
 }
 
 static void ChannelSetParms(int channel, V3XVECTOR *pos, V3XVECTOR *velocity, V3XRANGE *fRange)
@@ -256,7 +257,7 @@ static int ChannelPlay(int channel, int sampleRate, float volume, float pan, V3X
   g_pchannels[channel].sam = sam;
   g_pchannels[channel].play = TRUE;
   alSourcei(g_pchannels[channel].src, AL_BUFFER, (ALuint)sam->sampleID);
-  ChannelSetParms(channel, (V3XVECTOR *)&vector, (V3XVECTOR *)&vector, (V3XRANGE *)&range);
+  ChannelSetParms(channel, (V3XVECTOR *)&g_ListenerPos, (V3XVECTOR *)&vector, (V3XRANGE *)&range);
   ChannelSetSamplingRate(channel, sampleRate);
   ChannelSetVolume(channel, volume);
   ChannelSetPanning(channel, pan);
@@ -339,7 +340,7 @@ static V3XA_HANDLE *ChannelGetSample(int channel)
 
 static void StreamRelease(V3XA_STREAM handle)
 {
-  ALuint buf;
+//  ALuint buf;
   alSourceStop(g_pchannels[g_pstreams[handle].chan].src);
   while (g_pstreams[handle].first != g_pstreams[handle].last)
   {
@@ -422,9 +423,9 @@ static size_t StreamGetPosition(V3XA_STREAM handle)
 static int StreamPoll(V3XA_STREAM handle)
 {
   ALint processed;
-  ALint queued;
+ // ALint queued;
   ALint size;
-  ALint status;
+//  ALint status;
   int ret_code = -1;
   if (!g_pstreams[handle].used)
   {
@@ -465,7 +466,7 @@ static void StreamSetVolume(V3XA_STREAM handle, float volume)
 static int StreamLoad(V3XA_STREAM handle, void *data, size_t size)
 {
   ALint status;
-  ALint queued;
+//  ALint queued;
   int ret_code = -1;
   if ((g_pstreams[handle].last != g_pstreams[handle].first - 2) &&
       (g_pstreams[handle].last - g_nbufsperstream != g_pstreams[handle].first - 2))

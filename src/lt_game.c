@@ -2196,7 +2196,12 @@ static void Line3D(V3XSCALAR x, V3XSCALAR y, V3XSCALAR z, V3XSCALAR x0, V3XSCALA
 {
     V3XVECTOR A, C;
     V3XVECTOR pA, pB;
-    C.x=x;C.y=y; C.z=z;
+	memset(&pA, 0, sizeof(pA));
+    memset(&pB, 0, sizeof(pB));
+	memset(&A, 0, sizeof(A));
+	memset(&C, 0, sizeof(C));
+	
+	C.x=x;C.y=y; C.z=z;
     V3XVector_ApplyTransposeMatrix(A, C, mat); A.z-=g_SGGame.RadarRange*3;
     if (A.z<CST_ZERO) V3XVector_ProjectWithCenter(pA, A);
     C.x=x0;C.y=y0; C.z=z0;
@@ -2225,7 +2230,9 @@ static void Display_Radar(void)
     V3XOVI *OVI;
     GXVIEWPORT oldView = GX.View;
     g_SGGame.MaxDetect[0] = g_SGGame.MaxDetect[1] = 0;
-
+	memset(&pt2, 0, sizeof(pt2));
+	memset(&pt3, 0, sizeof(pt3));
+	
 	V3XVector_Set(&nearest, 0,0, g_SGGame.RadarRange);
     if (!g_SGGame.RadarMode)
     {

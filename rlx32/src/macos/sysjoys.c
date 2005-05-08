@@ -551,7 +551,7 @@ static recDevice *HIDDisposeDevice (recDevice **ppDevice)
 static int HIDOpen(io_iterator_t *pHIDObjectIterator)
 {
 	IOReturn result = kIOReturnSuccess;
-	mach_port_t masterPort = NULL;
+	mach_port_t masterPort = 0;
 	CFMutableDictionaryRef hidMatchDictionary = NULL;	
 
 	*pHIDObjectIterator = 0;
@@ -587,7 +587,7 @@ static int HIDOpen(io_iterator_t *pHIDObjectIterator)
 		return -4;
 	}
 
-	if (NULL == *pHIDObjectIterator) /* there are no device */
+	if (0 == *pHIDObjectIterator) /* there are no device */
 	{
 		return -5;
 	}

@@ -782,7 +782,17 @@ static void NG_ExecSubMenu(char *name, SGMenu *pMenu,  PFRWCALLBACK  pf)
         if (ok)
         {
             if (bKeyboardSetup)
-            {   
+            {  
+				do
+                {
+                    if (STUB_TaskControl())
+						break;
+					sKEY->Update(0);
+					sJOY->Update(0);
+					sMOU->Update(0);
+				}
+				while(sKEY->scanCode);
+				 
                 do
                 {
                     if (STUB_TaskControl())

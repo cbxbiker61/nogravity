@@ -27,6 +27,8 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define _GX_INIT_HH
 
 struct RLXSYSTEM;
+struct GXSYSTEM;
+struct _gx_viewport;
 
 #ifdef __BEOS__
 	#ifdef V3X_EXPORT_DLL
@@ -37,6 +39,7 @@ struct RLXSYSTEM;
 #else
 	#define _V3XEXPORTFUNC 
 #endif
+
 
 __extern_c
 
