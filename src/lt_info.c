@@ -172,6 +172,13 @@ void NG_SaveGameInfo(void)
         fprintf(in, "Key=%s\n", SaveKey(g_SGSettings.key));
         fprintf(in, "Joy=%s\n", SaveKey(g_SGSettings.joy));
 		fprintf(in, "Mou=%s\n", SaveKey(g_SGSettings.mou));
+		if (RLX.Joy.Config != RLXCTRL_Uncalibrated)
+		fprintf(in, "JoyCalibration=%d %d %d %d",
+					RLX.Joy.J[0].MinX,
+					RLX.Joy.J[0].MaxX,
+					RLX.Joy.J[0].MinY,
+					RLX.Joy.J[0].MaxY);
+
         fclose(in);
     }
 #endif
@@ -255,6 +262,18 @@ void NG_ReadGameConfig(void)
             if (s) ReadKey(s, g_SGSettings.joy);
 			s = GetCF_str("Mou", &iniFile);
             if (s) ReadKey(s, g_SGSettings.mou);
+			s = GetCF_str("JoyCalibration", &iniFile);
+			if (s)
+			{
+				sscanf(s, "%d %d %d %d", &RLX.Joy.J[0].MinX, &RLX.Joy.J[0].MaxX, &RLX.Joy.J[0].MinY, &RLX.Joy.J[0].MaxY);
+			}
+			else
+			{
+#if defined __APPLE__ || defined __BEOS__
+				RLX.Joy.Config = RLXCTRL_Uncalibrated;
+#endif
+			}
+
         }
         DestroyConfig(&iniFile);
     }

@@ -136,6 +136,7 @@
 		20286C2CFDCF999611CA2CEA = {
 			children = (
 				F41C956C05EED06D00709073,
+				F4D2BE2D082E439900769785,
 				8D0C4E960486CD37000505A6,
 				0867D6AAFE840B52C02AAC07,
 				02345980000FD03B11CA0E72,
@@ -226,7 +227,7 @@
 				GCC_MODEL_CPU = "";
 				GCC_MODEL_TUNING = "";
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENAL;
-				HEADER_SEARCH_PATHS = "/Users/stephane/Dev/nogravity/SDK/oggvorbis/include ../.. ../SDK ";
+				HEADER_SEARCH_PATHS = "$(HOME)/Dev/nogravity/SDK/oggvorbis/include ../.. ../SDK ";
 				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				REZ_PREPROCESSOR_DEFINITIONS = "";
@@ -375,6 +376,7 @@
 				8D0C4E8D0486CD37000505A6,
 				8D0C4E8E0486CD37000505A6,
 				F41C956D05EED06D00709073,
+				F4D2BE2E082E439900769785,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2534,6 +2536,20 @@
 		};
 		F4C6FC90082CFD2800C5A2F3 = {
 			fileRef = F4C6FC8F082CFD2800C5A2F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4D2BE2D082E439900769785 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			name = NOGRAVITY.RMX;
+			path = build/NOGRAVITY.RMX;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F4D2BE2E082E439900769785 = {
+			fileRef = F4D2BE2D082E439900769785;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -1037,7 +1037,7 @@ static void RestoreTexture(V3XD3DHANDLE *handle, int fromDisk)
 void V3XRGB_Composing(rgb32_t *dest, V3XPOLY *fce)
 {
     V3XMATERIAL *Mat = (V3XMATERIAL*)fce->Mat;
-    int j, i = ( Mat->info.Shade == 1 )  ? 1 : fce->numEdges;
+    int i = ( Mat->info.Shade == 1 )  ? 1 : fce->numEdges;
     rgb32_t *cl = fce->rgb;
     u_int32_t ra = Mat->ambient.r>>2;
     u_int32_t rb = Mat->ambient.g>>2;

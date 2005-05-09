@@ -145,7 +145,8 @@ enum {
 
 enum {
     RLXCTRL_Enable = 0x1, 
-    RLXCTRL_IntKeyboard = 0x2
+    RLXCTRL_IntKeyboard = 0x2,
+	RLXCTRL_Uncalibrated = 0x4
 };
 
 struct _RClientDriver_Mouse;
@@ -164,16 +165,15 @@ typedef struct {
 
 }RLX_RegisterController;
 
-
-
 typedef struct {	
     int32_t MinX, MinY;
     int32_t MaxX, MaxY;
     int32_t CenterX, CenterY;
 }RLX_RegisterJoystick;
 
-typedef struct {
+typedef struct {	
     RLX_RegisterJoystick J[2];
+	u_int32_t Config;
 }RLX_RegisterJoystickCal;
 
 typedef struct {

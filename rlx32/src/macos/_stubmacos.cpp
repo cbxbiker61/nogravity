@@ -121,8 +121,10 @@ static void Stop()
 }
 
 // New application
-static char **_Argv;
-static int _Argc;
+
+extern "C" char **_Argv;
+char **_Argv;
+int _Argc;
 
 static void OnInit(int argc, char *argv[])
 {

@@ -551,7 +551,7 @@ static recDevice *HIDDisposeDevice (recDevice **ppDevice)
 static int HIDOpen(io_iterator_t *pHIDObjectIterator)
 {
 	IOReturn result = kIOReturnSuccess;
-	mach_port_t masterPort = 0;
+	mach_port_t masterPort = NULL;
 	CFMutableDictionaryRef hidMatchDictionary = NULL;	
 
 	*pHIDObjectIterator = 0;
@@ -587,7 +587,7 @@ static int HIDOpen(io_iterator_t *pHIDObjectIterator)
 		return -4;
 	}
 
-	if (0 == *pHIDObjectIterator) /* there are no device */
+	if (NULL == *pHIDObjectIterator) /* there are no device */
 	{
 		return -5;
 	}
@@ -822,10 +822,19 @@ static unsigned long JoystickUpdate(void *p)
 	element = device->firstAxis;
 	while (element)
 	{
-		*Axis = HIDGetElementValue(device, element) * 255; // HIDScaledCalibratedValue(device, element, 0, 65535);
+		*Axis = HIDGetElementValue(device, element); // HIDScaledCalibratedValue(device, element, 0, 65535);
 		Axis++;
 		element = element->pNext;
 	}
+
+	if (RLX.Joy.Config  == 0)
+	{
+		sJOY->lX  = (sJOY->lX  - RLX.Joy.J[0].MinX) * 65535 / (RLX.Joy.J[0].MaxX - RLX.Joy.J[0].MinX);
+		sJOY->lY  = (sJOY->lY  - RLX.Joy.J[0].MinY) * 65535 / (RLX.Joy.J[0].MaxY - RLX.Joy.J[0].MinY);
+		sJOY->lZ  = (sJOY->lZ  - RLX.Joy.J[1].MinX) * 65535 / (RLX.Joy.J[1].MaxX - RLX.Joy.J[1].MinX);
+		sJOY->lRx = (sJOY->lRx - RLX.Joy.J[1].MinY) * 65535 / (RLX.Joy.J[1].MaxY - RLX.Joy.J[1].MinY);
+	}
+
 	// Get hats
 	element = device->firstHat;
 	while (element)

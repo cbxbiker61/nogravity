@@ -222,8 +222,7 @@ void STUB_MainCode(void)
 	V3XPlugIn_Add(1, V3XPlug_CollisionMove);
 
     // Game Data
-#if defined __BEOS__ || 0 
-// defined _DEBUG
+#if defined __BEOS__ || defined _DEBUG
 	RLX.Video.Config|=RLXVIDEO_Windowed;
 #else
  	RLX.Video.Config&=~RLXVIDEO_Windowed;
@@ -296,6 +295,12 @@ void STUB_MainCode(void)
     NG_RosterLoad();
     NG_HighScoresLoad();
     
+	sysConPrint("Joystick calibration = [%d, %d], [%d, %d]",
+					RLX.Joy.J[0].MinX,
+					RLX.Joy.J[0].MaxX,
+					RLX.Joy.J[1].MinY,
+					RLX.Joy.J[1].MaxY);
+	
 	// Data
     NG_LoadGameData();
 	V3X.ViewPort.minTextureVisibleRadius = 6.f/200.f;
@@ -328,7 +333,9 @@ void STUB_MainCode(void)
 #endif
     NG_NetInitialize();
     
+#ifndef _DEBUG
 	NG_PlayPresentsGame();
+#endif
 
 	MM_heap.reset();    
 
@@ -479,6 +486,24 @@ void STUB_ReadyToRun(void)
     SYS_Debug("Open file resource : %s\n", resFile);
 #endif
 	FIO_wad = filewad_open(resFile, 0);
+#ifdef __APPLE__
+	if (!FIO_wad)
+	{
+		// Try the bundle ...
+		extern char **_Argv;
+		char path[1024];
+		char *c = path;
+		strcpy(path, _Argv[0]);
+		while (*c!=0) c++;
+		while (*c!='/') c--;
+		*c = 0;
+		while (*c!='/') c--;
+		*c = 0;
+		strcat(path, "/Resources");
+		chdir(path);
+		FIO_wad = filewad_open(resFile, 0);
+	}
+#endif
 	if (!FIO_wad)
 	{
 		SYS_Error("Couldn't find NOGRAVITY.RMX.\n\nGo to http://www.realtech-vr.com/nogravity/ \nand get the No Gravity Game Data package.");

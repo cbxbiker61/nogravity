@@ -96,7 +96,7 @@ static char *g_pDeletePlayer[]={g_szGmT[162], g_szGmT[66], g_szGmT[67], NULL};
 
 static char g_szLanguage[32] = "## English";
 
-static char *s_pMenuOptions[]={ g_szGmT[62], g_szLanguage, g_szGmT[63], g_szGmT[64], g_szGmT[65], g_szGmT[101], g_szGmT[119], g_szGmT[118],  NULL};
+static char *s_pMenuOptions[]={ g_szGmT[62], g_szLanguage, g_szGmT[63], g_szGmT[64], g_szGmT[65],  g_szGmT[119], g_szGmT[101], "Joystick", g_szGmT[118], NULL};
 
 
 static SGMenu g_pMenuKey[]={
@@ -1720,8 +1720,10 @@ static void ChangeLanguage()
 		g_SGSettings.Language = 0;
 
 	NG_SetLanguage(g_SGSettings.Language);
-	
 }
+
+int NG_JoystickCalibration();
+
 static void NG_OptionsMenu(void)
 {
     int ok;
@@ -1746,13 +1748,16 @@ static void NG_OptionsMenu(void)
             break;
             case 3:
             NG_ExecSubMenu(g_szGmT[65], g_pMenuControl, NG_RenderingSubMenu);
-            break;
+            break;            
             case 4:
-            NG_ExecSubMenu(g_szGmT[101], g_pMenuKey, NG_RenderingKeybMenu);
-            break;
-            case 5:
             NG_ExecSubMenu(g_szGmT[119], s_pMenuGame, NG_RenderingSubMenu);
             break;
+			case 5:
+            NG_ExecSubMenu(g_szGmT[101], g_pMenuKey, NG_RenderingKeybMenu);
+            break;
+			case 6:
+			NG_JoystickCalibration();
+			break;
         }
     }while(ok>=0);
     return;
@@ -1995,6 +2000,9 @@ int NG_MainMenu(void)
 	sysConSetLimits(0,0,GX.View.lWidth, GX.View.lHeight/2);
 	sysConPrint("Loading main menu ...");
 	NG_ResetColor();
+
+	if (sJOY->numControllers && (RLX.Joy.Config == RLXCTRL_Uncalibrated))
+		NG_JoystickCalibration();
 
     if (g_SGSettings.GoToBrief==2)
     {
@@ -2250,4 +2258,151 @@ int NG_EndLevel(void)
 
 	NG_RosterSave();
     return ok;
+}
+
+// Joystick calibration (Mac only)
+int NG_JoystickCalibration()
+{
+	char raw[256];
+	int part = 0;
+	int y2 = g_SGMenuPos.YZoneMin + 40;
+	int y3 = y2 + 20;
+    do
+    {
+        if (STUB_TaskControl())
+			break;
+
+        sKEY->Update(0);
+		sJOY->Update(0);
+		
+		CSP_Color(COLOR_WHITE);
+		if (g_csBackground.data)
+			GX.csp.zoom_pset(&g_csBackground, 0, 0, GX.View.lWidth, GX.View.lHeight);
+
+		CSP_Color(COLOR_WHITE);		
+		CSP_WriteText("Joystick Setup", g_SGMenuPos.Xtitle, g_SGMenuPos.Ytitle, g_pFontMenuLrg);
+		
+		CSP_Color(COLOR_GRAY4);
+		
+		switch(part) 
+		{
+			case 0:
+				RLX.Joy.Config = RLXCTRL_Uncalibrated; // 
+				CSP_DrawCenterText("Find Center Point", g_SGMenuPos.YZoneMin, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("Leave the handle centered, then", y2, g_pFontMenuSml, GX.csp_cfg.put);
+
+				CSP_DrawCenterText("press a button on the controller.", y3, g_pFontMenuSml, GX.csp_cfg.put);
+
+				RLX.Joy.J[0].MinX =
+				RLX.Joy.J[0].MaxX =
+				RLX.Joy.J[0].CenterX = sJOY->lX;
+
+				RLX.Joy.J[0].MinY =
+				RLX.Joy.J[0].MaxY =
+				RLX.Joy.J[0].CenterY = sJOY->lY;	
+
+				RLX.Joy.J[1].MinX =
+				RLX.Joy.J[1].MaxX =
+				RLX.Joy.J[1].CenterX = sJOY->lZ;
+
+				RLX.Joy.J[1].MinY =
+				RLX.Joy.J[1].MaxY =
+				RLX.Joy.J[1].CenterY = sJOY->lRx;	
+
+				sprintf(raw,"%d axis, %d buttons", sJOY->numAxes, sJOY->numButtons);
+				CSP_Color(COLOR_GRAY1);
+				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
+			break;
+
+			case 1:
+				CSP_DrawCenterText("Axis Calibration", g_SGMenuPos.YZoneMin, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("Move the handle in complete circles", y2, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("then press a button on the controller.", y3, g_pFontMenuSml, GX.csp_cfg.put);
+
+				{
+					int l = 180;
+					int lh = l>>1;
+					int cx = GX.View.lWidth/2;
+					int cy = g_SGMenuPos.YZoneMax - 40 - lh;
+					int dx, dy;
+					int i;
+					int n = min(sJOY->numControllers, 2);
+					
+					GX.csp_cfg.alpha = 0x80;	
+					CSP_Color(COLOR_BLUE);
+					GX.gi.drawShadedRect(cx-lh, cy-lh, cx+lh, cy+lh, NULL);
+					GX_DrawBoxEffect3D(cx-lh, cy-lh, l, l);										
+
+					GX.csp_cfg.alpha = 0xff;						
+
+					RLX.Joy.J[0].MinX = min(sJOY->lX, RLX.Joy.J[0].MinX);
+					RLX.Joy.J[0].MaxX = max(sJOY->lX, RLX.Joy.J[0].MaxX);
+					RLX.Joy.J[0].MinY = min(sJOY->lY, RLX.Joy.J[0].MinY);
+					RLX.Joy.J[0].MaxY = max(sJOY->lY, RLX.Joy.J[0].MaxY);
+
+					RLX.Joy.J[1].MinX = min(sJOY->lZ, RLX.Joy.J[1].MinX);
+					RLX.Joy.J[1].MaxX = max(sJOY->lZ, RLX.Joy.J[1].MaxX);
+					RLX.Joy.J[1].MinY = min(sJOY->lRx, RLX.Joy.J[1].MinY);
+					RLX.Joy.J[1].MaxY = max(sJOY->lRx, RLX.Joy.J[1].MaxY);	
+				
+					for (i=0;i<n;i++)
+					{
+						dx = RLX.Joy.J[i].MaxX - RLX.Joy.J[i].MinX;
+						dy = RLX.Joy.J[i].MaxY - RLX.Joy.J[i].MinY;
+						if (dx && dy)
+						{
+							int ox = ((sJOY->lX - RLX.Joy.J[i].MinX) * l / dx) - lh;
+							int oy = ((sJOY->lY - RLX.Joy.J[i].MinY) * l / dy) - lh;
+							int x = cx + min(max(ox, -lh), lh);
+							int y = cy + min(max(oy, -lh), lh);
+							GX.gi.drawVerticalLine(x, cy-lh+1, l-2, i==0 ? COLOR_WHITE : COLOR_GRAY4);
+							GX.gi.drawHorizontalLine(cx-lh+1, y, l-2,  i==0 ? COLOR_WHITE : COLOR_GRAY4);
+						}
+					}
+				}
+				sprintf(raw,"X=%d, Y=%d", sJOY->lX, sJOY->lY);
+				CSP_Color(COLOR_GRAY1);
+				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
+			break;
+
+			case 2:
+				RLX.Joy.Config = 0;
+				CSP_DrawCenterText("Verify Center Point", g_SGMenuPos.YZoneMin, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("Leave the handle centered, then", y2, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("press a button on the controller.", y3, g_pFontMenuSml, GX.csp_cfg.put);
+				RLX.Joy.J[0].CenterX = sJOY->lX;
+				RLX.Joy.J[0].CenterY = sJOY->lY;	
+				sprintf(raw,"X=%d, Y=%d", sJOY->lX, sJOY->lY);
+				CSP_Color(COLOR_GRAY1);
+				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
+			break;
+		}
+
+		{
+			int i;
+			for (i=0;i<sJOY->numButtons;i++)
+			{
+				if (sJOY_IsClicked(i))
+				{
+					part++;
+					NG_AudioPlaySound(NG_AudioGetByName("bloup")-1, 0);
+					if (part>=3)
+					{
+						
+					}
+					break;
+				}
+			}
+
+		}
+
+		if (sKEY_IsClicked(s_esc))
+		{
+			break;
+		}
+		
+        GX.View.Flip();
+		NG_UpdateColor();
+    }while(part<3);
+    return 0;
 }
