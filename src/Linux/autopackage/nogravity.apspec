@@ -9,7 +9,7 @@ Packager: Matt Williams <maffy@sourceforge.net>
 Summary: A fantastic and futuristic universe made of five intergalactic worlds.
 URL: http://www.realtech-vr.com/nogravity/
 License: GPL
-SoftwareVersion: 1.0
+SoftwareVersion: 1.99
 AutopackageTarget: 1.0
 
 [Description]
@@ -35,10 +35,10 @@ unprepareBuild
 echo /usr/local/games/nogravity/nogravity /usr/local/games/nogravity/NOGRAVITY.RMX | import
 
 [Prepare]
-require @libsdl.org/sdl
-require @libpng.org/libpng
-require @xiph.org/libogg
-require @xiph.org/libvorbis
+require @libsdl.org/sdl 1.2
+require @libpng.org/libpng 3
+require @xiph.org/libogg 0
+require @xiph.org/libvorbis 0
 
 [Install]
 copyFiles /usr/local/games/nogravity/nogravity /usr/local/games/nogravity/NOGRAVITY.RMX $PREFIX/games/nogravity
