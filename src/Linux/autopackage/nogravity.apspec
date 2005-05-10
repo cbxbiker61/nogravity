@@ -3,7 +3,7 @@
 [Meta]
 RootName: @nogravity.sourceforge.net/nogravity:$SOFTWAREVERSION
 DisplayName: No Gravity
-ShortName: nogravity
+ShortName: rt-nogravity
 Maintainer: realtech VR
 Packager: Matt Williams <maffy@sourceforge.net>
 Summary: A fantastic and futuristic universe made of five intergalactic worlds.
