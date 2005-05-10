@@ -122,7 +122,7 @@ static SGMenu g_pMenuKey[]={
     {"Down", &g_SGSettings.key[19], -1, -1, {NULL}}, 
     {"Right", &g_SGSettings.key[20], -1, -1, {NULL}},
     {"Left", &g_SGSettings.key[21], -1, -1, {NULL}},
-    {"Talk", &g_SGSettings.key[22], -1, -1, {NULL}},    
+    {"Talk", &g_SGSettings.key[22], -1, -1, {NULL}},
 	{g_szGmT[118], NULL, 0, 0, {NULL}},
 
     {NULL}
@@ -153,7 +153,7 @@ static SGMenu g_pMenuControl[]={
 
  SGMenu g_pMenuVideo[]={
     {g_szGmT[80], &g_SGSettings.DisplayIndex, 0, 5,  {NULL}}, 
-	{"Vertical Sync.", &g_SGSettings.VerticalSync, 0, 1, {g_szGmT[69], g_szGmT[68]}}, 
+	{"Vertical Sync.", &g_SGSettings.VerticalSync, 0, 1, {g_szGmT[69], g_szGmT[68]}},
 	{"Multisampling", &g_SGSettings.Multisampling, 0, 2, {"OFF","2X","4X"}}, 
     {"Limit FPS", &g_SGSettings.FrameSkip, 0, 2, {"70fps", "35fps", "24fps"}}, 
 	{"Tex. filtering", &g_SGSettings.TexFiltering, 0, 1, {"Bilinear", "Trilinear"}},
@@ -680,7 +680,7 @@ static int NG_RenderingMainMenu(RW_Interface *p, int mode)
 					{
 						a+=g_pSaveGames[j].level[k];
 						b+=g_pGameItem->EI[k].numLevel;
-					}	
+					}
 
 					sprintf(tex, "Score: ~%d~ Level: ~%s~ %s", 
 						(int)g_pSaveGames[j].score,						
@@ -2260,6 +2260,9 @@ int NG_EndLevel(void)
     return ok;
 }
 
+//
+// Move the Z Rotation all the way up and down
+
 // Joystick calibration (Mac only)
 int NG_JoystickCalibration()
 {
@@ -2267,7 +2270,10 @@ int NG_JoystickCalibration()
 	int part = 0;
 	int y2 = g_SGMenuPos.YZoneMin + 40;
 	int y3 = y2 + 20;
-    do
+	int y4 = y2 + 40;	
+	RLX.Joy.Config = RLXCTRL_Uncalibrated; // 
+	
+	do
     {
         if (STUB_TaskControl())
 			break;
@@ -2283,7 +2289,7 @@ int NG_JoystickCalibration()
 		CSP_WriteText("Joystick Setup", g_SGMenuPos.Xtitle, g_SGMenuPos.Ytitle, g_pFontMenuLrg);
 		
 		CSP_Color(COLOR_GRAY4);
-		
+
 		switch(part) 
 		{
 			case 0:
@@ -2294,20 +2300,16 @@ int NG_JoystickCalibration()
 				CSP_DrawCenterText("press a button on the controller.", y3, g_pFontMenuSml, GX.csp_cfg.put);
 
 				RLX.Joy.J[0].MinX =
-				RLX.Joy.J[0].MaxX =
-				RLX.Joy.J[0].CenterX = sJOY->lX;
+				RLX.Joy.J[0].MaxX =  sJOY->lX;
 
 				RLX.Joy.J[0].MinY =
-				RLX.Joy.J[0].MaxY =
-				RLX.Joy.J[0].CenterY = sJOY->lY;	
+				RLX.Joy.J[0].MaxY =  sJOY->lY;
 
-				RLX.Joy.J[1].MinX =
-				RLX.Joy.J[1].MaxX =
-				RLX.Joy.J[1].CenterX = sJOY->lZ;
+				RLX.Joy.J[0].MinZ =
+				RLX.Joy.J[0].MaxZ =  sJOY->lZ;
 
-				RLX.Joy.J[1].MinY =
-				RLX.Joy.J[1].MaxY =
-				RLX.Joy.J[1].CenterY = sJOY->lRx;	
+				RLX.Joy.J[0].MinR =
+				RLX.Joy.J[0].MaxR =  sJOY->lRx;
 
 				sprintf(raw,"%d axis, %d buttons", sJOY->numAxes, sJOY->numButtons);
 				CSP_Color(COLOR_GRAY1);
@@ -2325,10 +2327,8 @@ int NG_JoystickCalibration()
 					int cx = GX.View.lWidth/2;
 					int cy = g_SGMenuPos.YZoneMax - 40 - lh;
 					int dx, dy;
-					int i;
-					int n = min(sJOY->numControllers, 2);
-					
-					GX.csp_cfg.alpha = 0x80;	
+
+					GX.csp_cfg.alpha = 0x80;
 					CSP_Color(COLOR_BLUE);
 					GX.gi.drawShadedRect(cx-lh, cy-lh, cx+lh, cy+lh, NULL);
 					GX_DrawBoxEffect3D(cx-lh, cy-lh, l, l);										
@@ -2339,42 +2339,128 @@ int NG_JoystickCalibration()
 					RLX.Joy.J[0].MaxX = max(sJOY->lX, RLX.Joy.J[0].MaxX);
 					RLX.Joy.J[0].MinY = min(sJOY->lY, RLX.Joy.J[0].MinY);
 					RLX.Joy.J[0].MaxY = max(sJOY->lY, RLX.Joy.J[0].MaxY);
-
-					RLX.Joy.J[1].MinX = min(sJOY->lZ, RLX.Joy.J[1].MinX);
-					RLX.Joy.J[1].MaxX = max(sJOY->lZ, RLX.Joy.J[1].MaxX);
-					RLX.Joy.J[1].MinY = min(sJOY->lRx, RLX.Joy.J[1].MinY);
-					RLX.Joy.J[1].MaxY = max(sJOY->lRx, RLX.Joy.J[1].MaxY);	
-				
-					for (i=0;i<n;i++)
 					{
-						dx = RLX.Joy.J[i].MaxX - RLX.Joy.J[i].MinX;
-						dy = RLX.Joy.J[i].MaxY - RLX.Joy.J[i].MinY;
+						dx = RLX.Joy.J[0].MaxX - RLX.Joy.J[0].MinX;
+						dy = RLX.Joy.J[0].MaxY - RLX.Joy.J[0].MinY;
 						if (dx && dy)
 						{
-							int ox = ((sJOY->lX - RLX.Joy.J[i].MinX) * l / dx) - lh;
-							int oy = ((sJOY->lY - RLX.Joy.J[i].MinY) * l / dy) - lh;
+							int ox = ((sJOY->lX - RLX.Joy.J[0].MinX) * l / dx) - lh;
+							int oy = ((sJOY->lY - RLX.Joy.J[0].MinY) * l / dy) - lh;
 							int x = cx + min(max(ox, -lh), lh);
 							int y = cy + min(max(oy, -lh), lh);
-							GX.gi.drawVerticalLine(x, cy-lh+1, l-2, i==0 ? COLOR_WHITE : COLOR_GRAY4);
-							GX.gi.drawHorizontalLine(cx-lh+1, y, l-2,  i==0 ? COLOR_WHITE : COLOR_GRAY4);
+							GX.gi.drawVerticalLine(x, cy-lh+1, l-2, COLOR_WHITE);
+							GX.gi.drawHorizontalLine(cx-lh+1, y, l-2, COLOR_WHITE);
 						}
 					}
+
 				}
 				sprintf(raw,"X=%d, Y=%d", sJOY->lX, sJOY->lY);
 				CSP_Color(COLOR_GRAY1);
 				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
 			break;
-
+			
 			case 2:
 				RLX.Joy.Config = 0;
 				CSP_DrawCenterText("Verify Center Point", g_SGMenuPos.YZoneMin, g_pFontMenuSml, GX.csp_cfg.put);
 				CSP_DrawCenterText("Leave the handle centered, then", y2, g_pFontMenuSml, GX.csp_cfg.put);
 				CSP_DrawCenterText("press a button on the controller.", y3, g_pFontMenuSml, GX.csp_cfg.put);
-				RLX.Joy.J[0].CenterX = sJOY->lX;
-				RLX.Joy.J[0].CenterY = sJOY->lY;	
+
 				sprintf(raw,"X=%d, Y=%d", sJOY->lX, sJOY->lY);
 				CSP_Color(COLOR_GRAY1);
 				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
+
+			break;
+
+
+			case 3:
+				RLX.Joy.Config = RLXCTRL_Uncalibrated; // 
+
+				CSP_DrawCenterText("Axis Calibration", g_SGMenuPos.YZoneMin, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("Move the Z Axis", y2, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("all the way up and down", y3, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("then press a button on the controller.", y4, g_pFontMenuSml, GX.csp_cfg.put);
+
+				{
+					int l = 180;
+					int lh = l>>1;
+					int lq = l>>2;
+					int cx = GX.View.lWidth/2;
+					int cy = (3*GX.View.lHeight/4) - lq/2;
+					int dz;
+
+					GX.csp_cfg.alpha = 0x80;
+					CSP_Color(COLOR_BLUE);
+
+					GX.csp_cfg.alpha = 0xff;
+
+					RLX.Joy.J[0].MinZ = min(sJOY->lZ, RLX.Joy.J[0].MinZ);
+					RLX.Joy.J[0].MaxZ = max(sJOY->lZ, RLX.Joy.J[0].MaxZ);
+
+					dz = (RLX.Joy.J[0].MaxZ - RLX.Joy.J[0].MinZ);
+					if (dz)
+					{
+				        int w = (l * (sJOY->lZ - RLX.Joy.J[0].MinZ) / dz) - lh;
+						w = min(max(w, -lh), lh);
+						GX.csp_cfg.alpha = 0x80;
+						CSP_Color(COLOR_BLUE);
+						GX.gi.drawShadedRect(cx-lh, cy-lq, cx+w,  cy, NULL);						
+					}    
+					GX_DrawBoxEffect3D(cx-lh, cy-lq, l, lq);
+				}
+				sprintf(raw,"Z=%d", sJOY->lZ, RLX.Joy.J[0].MinZ, RLX.Joy.J[0].MaxZ);
+				CSP_Color(COLOR_GRAY1);
+				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
+			break;
+
+			case 4:
+				RLX.Joy.Config = RLXCTRL_Uncalibrated; // 
+
+				CSP_DrawCenterText("Axis Calibration", g_SGMenuPos.YZoneMin, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("Move the Z Rotation", y2, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("all the way up and down", y3, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("then press a button on the controller.", y4, g_pFontMenuSml, GX.csp_cfg.put);
+
+				{
+					int l = 180;
+					int lh = l>>1;
+					int lq = l>>2;
+					int cx = GX.View.lWidth/2;
+					int cy = (3*GX.View.lHeight/4) - lq/2;
+					int dz;
+
+					GX.csp_cfg.alpha = 0x80;
+					CSP_Color(COLOR_BLUE);
+
+					GX.csp_cfg.alpha = 0xff;
+
+					RLX.Joy.J[0].MinR = min(sJOY->lRx, RLX.Joy.J[0].MinR);
+					RLX.Joy.J[0].MaxR = max(sJOY->lRx, RLX.Joy.J[0].MaxR);
+
+					dz = (RLX.Joy.J[0].MaxR - RLX.Joy.J[0].MinR);
+					if (dz)
+					{
+				        int w = (l * (sJOY->lRx - RLX.Joy.J[0].MinR) / dz) - lh;
+						w = min(max(w, -lh), lh);
+					
+						GX.csp_cfg.alpha = 0x80;
+						CSP_Color(COLOR_BLUE);
+						GX.gi.drawShadedRect(cx-lh, cy-lq, cx+w,  cy, NULL);						
+					}    
+					GX_DrawBoxEffect3D(cx-lh, cy-lq, l, lq);
+				}
+				sprintf(raw,"R=%d", sJOY->lRx);
+				CSP_Color(COLOR_GRAY1);
+				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
+
+			break;
+			case 5:
+				RLX.Joy.Config = 0; // 
+				g_SGSettings.Ctrl = 2;
+					
+				CSP_DrawCenterText("Done!", g_SGMenuPos.YZoneMin, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("Default control is now using joystick", y2, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("Go to Keyboard menu to configure", y3, g_pFontMenuSml, GX.csp_cfg.put);
+				CSP_DrawCenterText("The joystick buttons mapping.", y4, g_pFontMenuSml, GX.csp_cfg.put);
 			break;
 		}
 
@@ -2385,11 +2471,22 @@ int NG_JoystickCalibration()
 				if (sJOY_IsClicked(i))
 				{
 					part++;
-					NG_AudioPlaySound(NG_AudioGetByName("bloup")-1, 0);
-					if (part>=3)
+					if (part == 3 && sJOY->numAxes<=2)
 					{
-						
+						part = 5;
 					}
+
+					if (part == 4 && sJOY->numAxes<=3)
+					{
+						part = 5;
+					}
+
+					NG_AudioPlaySound(NG_AudioGetByName("bloup")-1, 0);
+
+					if (part == 5)
+					{
+					}
+					
 					break;
 				}
 			}
@@ -2403,6 +2500,9 @@ int NG_JoystickCalibration()
 		
         GX.View.Flip();
 		NG_UpdateColor();
-    }while(part<3);
+    }while(part<6);
+	RLX.Joy.Config = 0; // 
+
     return 0;
+
 }

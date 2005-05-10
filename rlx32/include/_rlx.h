@@ -38,7 +38,7 @@ enum {
 enum {
     RLXSYSTEM_Enable = 0x1, 
     RLXSYSTEM_MultiThread = 0x2, 
-    RLXSYSTEM_Network  = 0x4, 
+    RLXSYSTEM_Network  = 0x4,
     RLXSYSTEM_IntelMMX = 0x8, 
     RLXSYSTEM_Amd3DNow = 0x10, 
     RLXSYSTEM_IntelXMMX = 0x20
@@ -118,7 +118,7 @@ enum {
     RLX3D_Reserved = 0x1, 
     RLX3D_NoPalettizedTex = 0x2, 
     RLX3D_UseMultiTex = 0x4, 
-    RLX3D_UseAGP = 0x8, 
+    RLX3D_UseAGP = 0x8,
     RLX3D_AutoDetect = 0x10, 
     RLX3D_FakeHardware = 0x20, 
     RLX3D_TexManager = 0x40, 
@@ -168,7 +168,8 @@ typedef struct {
 typedef struct {	
     int32_t MinX, MinY;
     int32_t MaxX, MaxY;
-    int32_t CenterX, CenterY;
+    int32_t MinZ, MaxZ;
+    int32_t MinR, MaxR;
 }RLX_RegisterJoystick;
 
 typedef struct {	

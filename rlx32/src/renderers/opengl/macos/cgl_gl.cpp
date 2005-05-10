@@ -297,7 +297,7 @@ static int RLXAPI CreateSurface(int numberOfSparePages)
 	 if ((g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING))
 	{
 		*pAttrib = kCGLPFASampleBuffers; pAttrib++;
-		*pAttrib = (CGLPixelFormatAttribute)1;  pAttrib++;
+		*pAttrib = (CGLPixelFormatAttribute)1;  pAttrib++; 
 
 		*pAttrib = kCGLPFASamples;  pAttrib++;
 		*pAttrib = (CGLPixelFormatAttribute)g_pRLX->pGX->View.Multisampling; pAttrib++;

@@ -173,11 +173,16 @@ void NG_SaveGameInfo(void)
         fprintf(in, "Joy=%s\n", SaveKey(g_SGSettings.joy));
 		fprintf(in, "Mou=%s\n", SaveKey(g_SGSettings.mou));
 		if (RLX.Joy.Config != RLXCTRL_Uncalibrated)
-		fprintf(in, "JoyCalibration=%d %d %d %d",
+		fprintf(in, "JoyCalibration2=%d %d %d %d %d %d %d %d",
 					RLX.Joy.J[0].MinX,
 					RLX.Joy.J[0].MaxX,
 					RLX.Joy.J[0].MinY,
-					RLX.Joy.J[0].MaxY);
+					RLX.Joy.J[0].MaxY,
+					RLX.Joy.J[0].MinZ,
+					RLX.Joy.J[0].MaxZ,
+					RLX.Joy.J[0].MinR,
+					RLX.Joy.J[0].MaxR
+					);
 
         fclose(in);
     }
@@ -262,10 +267,11 @@ void NG_ReadGameConfig(void)
             if (s) ReadKey(s, g_SGSettings.joy);
 			s = GetCF_str("Mou", &iniFile);
             if (s) ReadKey(s, g_SGSettings.mou);
-			s = GetCF_str("JoyCalibration", &iniFile);
+			s = GetCF_str("JoyCalibration2", &iniFile);
 			if (s)
 			{
-				sscanf(s, "%d %d %d %d", &RLX.Joy.J[0].MinX, &RLX.Joy.J[0].MaxX, &RLX.Joy.J[0].MinY, &RLX.Joy.J[0].MaxY);
+				sscanf(s, "%d %d %d %d %d %d %d %d", &RLX.Joy.J[0].MinX, &RLX.Joy.J[0].MaxX, &RLX.Joy.J[0].MinY, &RLX.Joy.J[0].MaxY,
+				&RLX.Joy.J[0].MinZ, &RLX.Joy.J[0].MaxZ, &RLX.Joy.J[0].MinR, &RLX.Joy.J[0].MaxR);
 			}
 			else
 			{

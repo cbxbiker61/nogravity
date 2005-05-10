@@ -829,10 +829,17 @@ static unsigned long JoystickUpdate(void *p)
 
 	if (RLX.Joy.Config  == 0)
 	{
+		if (RLX.Joy.J[0].MaxX != RLX.Joy.J[0].MinX)
 		sJOY->lX  = (sJOY->lX  - RLX.Joy.J[0].MinX) * 65535 / (RLX.Joy.J[0].MaxX - RLX.Joy.J[0].MinX);
+
+		if (RLX.Joy.J[0].MaxY != RLX.Joy.J[0].MinY)
 		sJOY->lY  = (sJOY->lY  - RLX.Joy.J[0].MinY) * 65535 / (RLX.Joy.J[0].MaxY - RLX.Joy.J[0].MinY);
-		sJOY->lZ  = (sJOY->lZ  - RLX.Joy.J[1].MinX) * 65535 / (RLX.Joy.J[1].MaxX - RLX.Joy.J[1].MinX);
-		sJOY->lRx = (sJOY->lRx - RLX.Joy.J[1].MinY) * 65535 / (RLX.Joy.J[1].MaxY - RLX.Joy.J[1].MinY);
+
+		if (RLX.Joy.J[0].MaxZ != RLX.Joy.J[0].MinZ)
+		sJOY->lZ  = (sJOY->lZ  - RLX.Joy.J[0].MinZ) * 65535 / (RLX.Joy.J[0].MaxZ - RLX.Joy.J[0].MinZ);
+
+		if (RLX.Joy.J[0].MaxR != RLX.Joy.J[0].MinR)
+		sJOY->lRx = (sJOY->lRx - RLX.Joy.J[0].MinR) * 65535 / (RLX.Joy.J[0].MaxR - RLX.Joy.J[0].MinR);
 	}
 
 	// Get hats

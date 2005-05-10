@@ -189,6 +189,8 @@ static void SFX_SampleBatchRelease(V3XA_HANDLE *smp)
     return;
 }
 
+#ifndef __APPLE__
+
 static void Resample44Khz(V3XA_HANDLE *smp)
 {
 	u_int8_t *src = (u_int8_t*)smp->sample;
@@ -212,6 +214,7 @@ static void Resample44Khz(V3XA_HANDLE *smp)
 	smp->length*=factor*2;
 	MM_heap.free(src);
 }
+#endif //
 
 static V3XA_HANDLE *SFX_SampleBatchLoad(SND_DWHANDLE *sef)
 {

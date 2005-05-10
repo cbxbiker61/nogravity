@@ -228,6 +228,7 @@
 				GCC_MODEL_TUNING = "";
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENAL;
 				HEADER_SEARCH_PATHS = "$(HOME)/Dev/nogravity/SDK/oggvorbis/include ../.. ../SDK ";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				REZ_PREPROCESSOR_DEFINITIONS = "";
@@ -494,7 +495,7 @@
 				F4B3C14007BF668E00EB3D65,
 				F4B3C14107BF668E00EB3D65,
 				F4253AB508099EB800924134,
-				F4C6FC90082CFD2800C5A2F3,
+				F4FFB4710831412B001E08D0,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -664,7 +665,7 @@
 		};
 		F41C907A05EEC1E500709073 = {
 			children = (
-				F4C6FC8F082CFD2800C5A2F3,
+				F4FFB4700831412B001E08D0,
 				F4F3367905FB41C0003626B9,
 				F4F3367A05FB41C0003626B9,
 				F41C90A805EEC24400709073,
@@ -2525,21 +2526,6 @@
 			settings = {
 			};
 		};
-		F4C6FC8F082CFD2800C5A2F3 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = cgl_gl.cpp;
-			path = ../../rlx32/src/renderers/opengl/macos/cgl_gl.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4C6FC90082CFD2800C5A2F3 = {
-			fileRef = F4C6FC8F082CFD2800C5A2F3;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4D2BE2D082E439900769785 = {
 			isa = PBXFileReference;
 			lastKnownFileType = file;
@@ -3155,6 +3141,21 @@
 		};
 		F4F336B505FB4245003626B9 = {
 			fileRef = F4F336B405FB4245003626B9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F4FFB4700831412B001E08D0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = cgl_gl.cpp;
+			path = ../../rlx32/src/renderers/opengl/macos/cgl_gl.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4FFB4710831412B001E08D0 = {
+			fileRef = F4FFB4700831412B001E08D0;
 			isa = PBXBuildFile;
 			settings = {
 			};
