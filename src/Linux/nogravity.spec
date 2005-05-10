@@ -7,7 +7,7 @@ Group: Amusements/Games
 Vendor: realtech VR
 Packager: Matt Williams <maffy@sourceforge.net>
 URL: http://www.realtech-vr.com/nogravity/
-Source: http://prdownloads.sourceforge.net/nogravity/rt-nogravity-src-198.zip?use_mirror=ovh
+Source: http://prdownloads.sourceforge.net/nogravity/rt-nogravity-src-199.zip?use_mirror=ovh
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
@@ -24,7 +24,7 @@ When the objectives of the current sector is complete, the player needs to go th
 cd $RPM_BUILD_DIR
 mkdir -p $RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION
 cd $RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION
-unzip -o $RPM_SOURCE_DIR/rt-nogravity-src-198.zip
+unzip -o $RPM_SOURCE_DIR/rt-nogravity-src-199.zip
 if [ $? -ne 0 ]; then
   exit $?
 fi
@@ -50,7 +50,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/local/games/nogravity/nogravity
 /usr/local/games/nogravity/GNU.TXT
 /usr/local/games/nogravity/README.TXT
-/usr/local/games/nogravity/NOGRAVITY.RMX
 
 %changelog
 * Tue Mar 22 2005 Matt Williams <maffy@sourceforge.net> - 
