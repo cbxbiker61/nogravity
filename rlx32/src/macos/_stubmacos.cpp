@@ -122,7 +122,10 @@ static void Stop()
 
 // New application
 
+#ifdef __cplusplus
 extern "C" char **_Argv;
+#endif
+
 char **_Argv;
 int _Argc;
 

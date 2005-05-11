@@ -248,10 +248,10 @@ static void CALLING_C blit(u_int32_t dest, u_int32_t src)
 static void CALLING_C setCursor(int32_t x, int32_t y){}
 static void CALLING_C copyCursor(u_int8_t *map){}
 
-static void SetPolyRenderState(GXSPRITE *sp, unsigned mode, rgb32_t &cl)
+static void SetPolyRenderState(GXSPRITE *sp, unsigned mode, rgb32_t *cl)
 {
     GXSPRITEGL* pSprite = (GXSPRITEGL*)sp->handle;
-    g_pRLX->pfGetPixelFormat((rgb24_t*)&cl, g_pRLX->pGX->csp_cfg.color);    
+    g_pRLX->pfGetPixelFormat((rgb24_t*)cl, g_pRLX->pGX->csp_cfg.color);    
 	
 	glEnable(pSprite->target);
 	glBindTexture(pSprite->target, pSprite->handle);
@@ -260,26 +260,26 @@ static void SetPolyRenderState(GXSPRITE *sp, unsigned mode, rgb32_t &cl)
         case 1: // Opacity	
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			cl.a = 255; 
+			cl->a = 255; 
         break;
         case 2:  // Opaque
 			glDisable(GL_BLEND);
-			cl.a = 255; 
+			cl->a = 255; 
         break;
         case 3:  // Additive
 			glEnable(GL_BLEND);			
 			glBlendFunc(GL_ONE, GL_ONE);
-			cl.a = 255; 
+			cl->a = 255; 
         break;
         case 4:  // Alpha			
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			cl.a = (u_int8_t)g_pRLX->pGX->csp_cfg.alpha;
+			cl->a = (u_int8_t)g_pRLX->pGX->csp_cfg.alpha;
         break;
 		case 5:  // Sub
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_ONE, GL_ONE);
-			cl.a = 255; 
+			cl->a = 255; 
         break;
     }    
     return;
@@ -292,7 +292,7 @@ static void DrawSpritePoly(int32_t x, int32_t y, GXSPRITE *sp, int mode)
     int lx = x + sp->LX;
     int ly = y + sp->LY;
 	SYS_ASSERT(pSprite);
-    SetPolyRenderState(sp, mode, cl);
+    SetPolyRenderState(sp, mode, &cl);
 	
     glBegin(GL_QUADS);
 		glColor4ubv((const GLubyte *)&cl);
@@ -350,7 +350,7 @@ static void DrawSpritePolyZoom(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, i
 	rgb32_t cl;
     GXSPRITEGL *pSprite = (GXSPRITEGL *)sp->handle;
 	SYS_ASSERT(pSprite);
-    SetPolyRenderState(sp, mode, cl);
+    SetPolyRenderState(sp, mode, &cl);
     glBegin(GL_QUADS);
 		glColor4ubv((const GLubyte *)&cl);
 		glTexCoord2f(0.f, 0.f);     
