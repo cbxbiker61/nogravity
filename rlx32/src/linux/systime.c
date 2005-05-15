@@ -50,7 +50,7 @@ u_int32_t timer_sec(void)
 void timer_snooze(u_int32_t t)
 {
   // Just call through into SDL.
-  SDL_Delay((Uint32)t);
+  SDL_Delay(t);
 }
 
 // 1 microsecond = 0.001 millisecond

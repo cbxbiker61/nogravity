@@ -94,7 +94,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 /* Data Types */
 #if !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L
-    #if defined __LCC__ || defined __LINUX__ || (defined __BEOS__ && B_BEOS_VERSION >=0x0520)
+    #if defined __LCC__ || defined __LINUX__ || defined LINUX || (defined __BEOS__ && B_BEOS_VERSION >=0x0520)
        #include <stdint.h>
        #include <stddef.h>       
     #elif defined __APPLE__ && defined __MACH__
