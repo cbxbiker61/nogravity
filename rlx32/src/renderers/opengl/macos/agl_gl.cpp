@@ -99,8 +99,6 @@ static void CenterWindow(WindowRef ref)
 
 static void RLXAPI Flip(void)
 {
-	glClearColor(1,0,1,1);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
    	aglSwapBuffers(g_pAGLC);
     SYS_AGLTRACE(0);
 	return;
@@ -219,7 +217,6 @@ static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
 
 static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 {
-	bpp = 16;
     gl_lx  = lx;
     gl_ly  = ly;
     gl_bpp = bpp == -1 ? (*(*GetMainDevice())->gdPMap)->pixelSize : bpp;
@@ -235,38 +232,17 @@ static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 
 static int RLXAPI CreateSurface(int numberOfSparePages)
 {
-    g_pRLX->pGX->View.lpBackBuffer   = NULL;
 	static GLint          attrib[32];
 	GLint		*pAttrib =  attrib;
 
 	*pAttrib = AGL_RGBA; pAttrib++;
-	*pAttrib = AGL_ACCELERATED; pAttrib++;
-	*pAttrib = AGL_RED_SIZE; pAttrib++;
-	*pAttrib = 8; pAttrib++;
-
-	*pAttrib = AGL_CLOSEST_POLICY; pAttrib++;
-	
-	if (!(g_pRLX->Video.Config & RLXVIDEO_Windowed))
-	{
-		*pAttrib = AGL_FULLSCREEN; pAttrib++;
-	}
-/*
-	if (g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING)
-	{
-		*pAttrib = AGL_SAMPLE_BUFFERS_ARB; pAttrib++;
-		*pAttrib = 1; pAttrib++;
-		*pAttrib = AGL_SAMPLES_ARB; pAttrib++;
-		*pAttrib = g_pRLX->pGX->View.Multisampling; pAttrib++;
-    }
-*/
 	*pAttrib = AGL_DOUBLEBUFFER; pAttrib++;
-	*pAttrib = AGL_DEPTH_SIZE; pAttrib++;
-	*pAttrib = 24; pAttrib++;
-	*pAttrib = AGL_NO_RECOVERY; pAttrib++;
 	*pAttrib = AGL_NONE; pAttrib++;
 
     AGLPixelFormat fmt;
     GLboolean      ok;
+
+    g_pRLX->pGX->View.lpBackBuffer   = NULL;
 
     /* Choose an rgb pixel format */
     GDHandle gdhDisplay;
@@ -286,7 +262,7 @@ static int RLXAPI CreateSurface(int numberOfSparePages)
 		return -2;
 
     /* Attach the window to the context */
-    ok = SYS_AGLTRACE(aglSetDrawable(g_pAGLC, GetWindowPort(g_hWnd)  ));
+    ok = SYS_AGLTRACE(aglSetDrawable(g_pAGLC, GetWindowPort(g_hWnd)));
     if(!ok)
 		return -3;
 

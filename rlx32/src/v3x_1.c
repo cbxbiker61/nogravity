@@ -75,6 +75,32 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
         V3XSCALAR *p;
         V3XLIGHT *lite = V3X.Light.light;
         // Initializing lights values
+
+		// Check
+		if (!(mesh->flags&V3XMESH_FLATSHADE))
+		{
+			if (!mesh->normal)
+			{
+				mesh->flags|=V3XMESH_FLATSHADE;
+				if (!mesh->normal_face)
+				{
+					return;
+				}
+			}			
+			
+		}
+		else
+		{
+			if (!mesh->normal_face)
+			{
+				mesh->flags&=~V3XMESH_FLATSHADE;
+				if (!mesh->normal)
+				{
+					return;
+				}				
+			}			
+		}
+
         n = (mesh->flags&V3XMESH_FLATSHADE) ? mesh->numFaces : mesh->numVerts;
         if ((V3X.Client->Capabilities&GXSPEC_RGBLIGHTING))
         {

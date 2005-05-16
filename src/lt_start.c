@@ -746,7 +746,7 @@ static void NG_CMXToObject(void)
             sysStrnCpy(name, ORI->name, 31);  
 			s = strstr(name, "_");
 #ifdef _DEBUG
-//			SYS_Debug("%s\n", name);
+			SYS_Debug("%s\n", name);
 #endif
             if (s)
             {
@@ -789,7 +789,10 @@ static void NG_CMXToObject(void)
                             Jf->OVI = OVI;
                             OVI->data = Jf;
                             if (Sif->Code==0) 
+							{
 								OVI->state |= V3XSTATE_HIDDEN;
+								
+							}
                             g_SGGame.numEnemies++; Jf++;
                             break;
                             case t_ENEMY:
@@ -798,7 +801,10 @@ static void NG_CMXToObject(void)
                             case t_FRIEND:
                             case t_DECOR:
                             Jf->pInf = *Sif;
-                            if (Sif->Type==t_FRIEND) g_cGameStat.total_amy++;
+                            if (Sif->Type==t_FRIEND) 
+							{
+								g_cGameStat.total_amy++;								
+							}
                             if (Sif->Type==t_ENEMY)
                             {
                                 g_cGameStat.total_nmy++;

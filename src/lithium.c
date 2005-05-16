@@ -191,6 +191,13 @@ int OnCheat(char *parms)
 	return 0;
 }
 
+static
+int OnWarp(char *parms)
+{
+	g_SGGame.CameraMode=CAMERA_NEWNAV;
+	return 0;
+}
+
 static 
 int OnWin(char *parms)
 {
@@ -262,6 +269,8 @@ void STUB_MainCode(void)
 	sysConCreate();
 	sysConPrint("Welcome to No Gravity.");
 	sysConBindCmd("/cheat", OnCheat);
+	sysConBindCmd("/warp", OnWarp);
+	
 	sysConBindCmd("/lose", OnLose);
 	sysConBindCmd("/win", OnWin);
 	sysConBindCmd("/ticker", OnTicker);
