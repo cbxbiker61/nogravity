@@ -81,6 +81,7 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
 		{
 			if (!mesh->normal)
 			{
+				
 				mesh->flags|=V3XMESH_FLATSHADE;
 				if (!mesh->normal_face)
 				{
@@ -93,6 +94,7 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
 		{
 			if (!mesh->normal_face)
 			{
+				
 				mesh->flags&=~V3XMESH_FLATSHADE;
 				if (!mesh->normal)
 				{
@@ -474,11 +476,15 @@ static void V3XMesh_T3(V3XMESH *mesh)
                 {
                     int32_t vX = *p1;
                     b = a + vX;
+					SYS_ASSERT(vX<mesh->numVerts);
                     pd->x = d[vX].x;
                     pd->y = d[vX].y;
+					
                     pd->z = b->z;
-                    if (b->z<zMin) zMin = b->z;
-                    if (b->z>zMax) zMax = b->z;
+                    if (b->z<zMin) 
+						zMin = b->z;
+                    if (b->z>zMax) 
+						zMax = b->z;
                 }
                 if ( zMax < V3X.Clip.Far ) fce->visible = 0;
                 else
@@ -509,6 +515,7 @@ static void V3XMesh_T3(V3XMESH *mesh)
                                 V3X.Buffer.prj_vertex[fce->faceTab[1]].x, 
                                 V3X.Buffer.prj_vertex[fce->faceTab[1]].y, 
                                 0);
+								
                             }
                             default:
                             if (!(V3X.Client->Capabilities&GXSPEC_XYCLIPPING))
@@ -531,6 +538,7 @@ static void V3XMesh_T3(V3XMESH *mesh)
                             }
                             if ((V3X.Client->Capabilities&(GXSPEC_ENABLEZBUFFER|GXSPEC_ENABLEWBUFFER))&&(!Mat->info.Transparency))
                             fce->distance =- fce->distance;
+
                             V3XPoly_QAddPipeline(fce);
                         }
                     }
@@ -564,6 +572,11 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
         V3XMatrix_Multiply3x3(MatrixS.Matrix, V3X.Camera.M.Matrix, MatrixOs.Matrix);
         MatrixS.v.Pos = Matrix.v.Pos;
     }
+
+	sysMemZero(V3X.Buffer.flag, mesh->numVerts);
+	sysMemZero(V3X.Buffer.rot_vertex, mesh->numVerts * sizeof(V3XVECTOR));
+	sysMemZero(V3X.Buffer.prj_vertex, mesh->numVerts * sizeof(V3XVECTOR));
+
     if (mesh->flags&V3XMESH_FULLUPDATE)
     {
         int n;
@@ -571,8 +584,7 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
         for (n=mesh->numFaces, f=mesh->face;n!=0;f++, n--)
         {
             f->visible=1;
-        }
-        sysMemZero(V3X.Buffer.flag, mesh->numVerts);
+        }        
     }
     else
     {
@@ -599,6 +611,10 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
                 for (m=f->numEdges, p1=f->faceTab;m!=0;m--, p1++)
                 {
                     u_int32_t index = *p1;
+					if (index>=mesh->numVerts)
+					{
+						index = *p1 = 0;
+					}
                     V3X.Buffer.flag[index]=0;
                 }
                 isVisible = 1;

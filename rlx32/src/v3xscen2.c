@@ -601,11 +601,16 @@ void RLXAPI static v3x_Destroy_ORI(V3XSCENE *pScene, int i)
     switch(ORI->type) {
         case V3XOBJ_LIGHT:
         if (ORI->light)
-        if ((ORI->flags&V3XORI_DUPLICATED)==0)
-        {
-            V3XLight_Release(ORI->light);
-        }
-        else MM_heap.free(ORI->light);   
+		{
+			if ((ORI->flags&V3XORI_DUPLICATED)==0)
+			{
+				V3XLight_Release(ORI->light);
+			}
+			else 
+			{
+				MM_heap.free(ORI->light);   
+			}
+		}
         break;
         case V3XOBJ_VIEWPORT:
         case V3XOBJ_DUMMY:   
@@ -1202,7 +1207,9 @@ static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
 				{
 					f->uvTab[0][j].u/=255.f;
 					f->uvTab[0][j].v/=255.f;
+					SYS_ASSERT(f->faceTab[j]<obj->numVerts);
 				}
+				
 
                 if (n>1) 
 					f->uvTab[1] = V3X_CALLOC(f->numEdges, V3XUV);

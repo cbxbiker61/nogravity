@@ -55,11 +55,3 @@ char *file_searchpath(const char *name)
     return NULL;
 }
 
-int GX_GetDesktopSize(int *lx, int *ly, int *bpp) // Get desktop resolution
-{
-  // TODO: Implement this if we ever need it.
-  printf("GX_GetDesktopSize not implemented!");
-  abort();
-
-  return 0;
-}

@@ -23,26 +23,19 @@ Original Source: 1996 - Stephane Denis
 Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 */
 //-------------------------------------------------------------------------
-#include <windows.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#ifndef __V3XGS_HH
+#define __V3XGS_HH
 
 #include "_rlx32.h"
 #include "_rlx.h"
+
 #include "systools.h"
-#include "sysresmx.h"
+#include "gx_struc.h"
+#include "gx_tools.h"
+#include "gx_csp.h"
+#include "gx_rgb.h"
 
-static int file_size(SYS_FILEHANDLE stream)
-{
-    int32_t curpos, length;
-    curpos = FIO_std.ftell(stream);
-    FIO_std.fseek(stream, 0L, SEEK_END);
-    length = FIO_std.ftell(stream);
-    FIO_std.fseek(stream, curpos, SEEK_SET);
-    return length;
-}
+#include "v3xdefs.h"
+#include "v3xrend.h"
 
-SYS_FILEIO FIO_std = { fopen, fclose, fseek, fread, fgetc, fwrite, ftell, feof, fgets, file_size, file_exists };
-
-
+#endif // __V3XGL_HH

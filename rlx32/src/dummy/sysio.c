@@ -1,6 +1,6 @@
 //-------------------------------------------------------------------------
 /*
-Copyright (C) 1996, 2005 - realtech VR
+Copyright (C) 1996, 2004 - realtech VR
 
 This file is part of No Gravity 1.9
 
@@ -21,17 +21,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 Original Source: 1996 - Stephane Denis
 Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
+Linux/SDL Port: 2005 - Matt Williams
 */
 //-------------------------------------------------------------------------
-#include <windows.h>
+
+
 #include <stdlib.h>
-#include <string.h>
+#include <stdarg.h>
 #include <stdio.h>
 
 #include "_rlx32.h"
 #include "_rlx.h"
-#include "systools.h"
-#include "sysresmx.h"
+#include "_stub.h"
+#include <sysresmx.h>
+#include <systools.h>
 
 static int file_size(SYS_FILEHANDLE stream)
 {
@@ -43,6 +46,11 @@ static int file_size(SYS_FILEHANDLE stream)
     return length;
 }
 
-SYS_FILEIO FIO_std = { fopen, fclose, fseek, fread, fgetc, fwrite, ftell, feof, fgets, file_size, file_exists };
+SYS_FILEIO FIO_std = {fopen, fclose, fseek, fread, fgetc, fwrite, ftell, feof, fgets, file_size, file_exists};
 
-
+char *file_searchpath(const char *name)
+{
+    if (file_exists((char*)name)) 
+		return (char*)name;
+    return NULL;
+}

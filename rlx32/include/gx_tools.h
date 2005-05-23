@@ -40,7 +40,6 @@ _RLXEXPORTFUNC    void RLXAPI     IMG_StretchBilinear(GXSPRITE *_new, GXSPRITE *
     // Image loading
 _RLXEXPORTFUNC    int  RLXAPI     IMG_LoadFn(const char *filename, GXSPRITE *sp);
 _RLXEXPORTFUNC    int  RLXAPI     IMG_LoadFp(const char *filename, SYS_FILEHANDLE fp, GXSPRITE *sp);
-_RLXEXPORTFUNC    void RLXAPI     IMG_SaveFp(const char *filename, SYS_FILEHANDLE fp, GXSPRITE *sp, int bpp);
 _RLXEXPORTFUNC    void RLXAPI     IMG_DumpScreen(char *prefix);
 
     // Addition Primitives
@@ -48,7 +47,7 @@ _RLXEXPORTFUNC    void CALLING_C  B_Line_8bit(int32_t x1, int32_t y1, int32_t x2
 _RLXEXPORTFUNC    void CALLING_C  A_Line_8bit(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
 _RLXEXPORTFUNC    void RLXAPI     GX_filledCircle(int x, int y, int radius, unsigned colour);
 _RLXEXPORTFUNC    void RLXAPI     GX_DrawBoxEffect3D(int32_t x, int32_t y, int32_t lx, int32_t ly);
-_RLXEXPORTFUNC	  int			  GX_GetDesktopSize(int *lx, int *ly, int *bpp); // Get desktop resolution
+
 __end_extern_c
 
 #endif

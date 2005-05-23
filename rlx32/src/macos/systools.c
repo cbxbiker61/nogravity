@@ -57,12 +57,3 @@ char *file_searchpath(const char *name)
     return NULL;
 }
 
-int GX_GetDesktopSize(int *lx, int *ly, int *bpp) // Get desktop resolution
-{
-	 Rect bounds;
-	 GetRegionBounds(GetGrayRgn(), &bounds);
-	 *lx = bounds.right - bounds.left;
-	 *ly = bounds.bottom - bounds.top;
-	 *bpp = (*(*GetMainDevice())->gdPMap)->pixelSize;
-	 return 0;
-}

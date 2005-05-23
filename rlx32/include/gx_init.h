@@ -40,7 +40,6 @@ struct _gx_viewport;
 	#define _V3XEXPORTFUNC 
 #endif
 
-
 __extern_c
 
 _RLXEXPORTFUNC	  void  RLXAPI  GX_KernelAlloc();

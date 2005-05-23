@@ -155,55 +155,6 @@ static void RGB_15to16(u_int16_t *map, u_int32_t sz)
 }
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void IMG_DumpScreen(char *prefix)
-*
-* DESCRIPTION :
-*
-*/
-void IMG_DumpScreen(char *prefix)
-{
-#ifndef RLX_IOREADONLY
-    GXSPRITE sp;
-    int cnt = 0;
-    char name[256];
-    do
-    {
-        sprintf(name, "%s%04u.%s", prefix, cnt, GX.View.BytePerPixel==1 ? "pcx" : "tga");
-        cnt++;
-    }while (file_exists(name)&&(cnt<99));
-    {
-        unsigned i, l;
-        sp.LX = GX.View.lWidth;
-        sp.LY = GX.View.lHeight;
-        l = sp.LX * GX.View.BytePerPixel;
-        sp.data = (u_int8_t*) MM_std.malloc(l*sp.LY);
-        if (sp.data && GX.Client->Lock())
-        {
-            u_int8_t *s, *d;
-            for (d = sp.data, s = GX.View.lpBackBuffer, i=0;i<sp.LY;i++)
-            {
-                sysMemCpy(d, s, l);
-                d+=l;
-                s+=GX.View.lPitch;
-            }
-            GX.Client->Unlock();
-        }
-        if (GX.View.ColorMask.GreenMaskSize == 6) RGB_15to16((u_int16_t*)sp.data, sp.LX*sp.LY);
-        {
-            SYS_FILEHANDLE fp = FIO_std.fopen(name, "wb");
-            if (fp)
-            {
-                IMG_SaveFp(name, fp, &sp, GX.View.BitsPerPixel);
-                FIO_std.fclose(fp);
-            }
-        }
-        MM_std.free(sp.data);
-    }
-#endif
-    return;
-}
-/*------------------------------------------------------------------------
-*
 * PROTOTYPE  :  void CSP_CaptureFrom(int32_t xx, int32_t yy, GXSPRITE *capt)
 *
 * DESCRIPTION :
