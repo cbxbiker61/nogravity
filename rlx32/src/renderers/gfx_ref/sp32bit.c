@@ -39,10 +39,11 @@ extern struct RLXSYSTEM *g_pRLX;
 
 #define Tsize unsigned int
 
+
 static __inline Tsize RGB_ADD(Tsize r0, Tsize r1)
 {
     Tsize __c, r;
-    rgb32_t *a=(rgb32_t*)&r0, *b=(rgb32_t*)&r1, *c=(rgb32_t*)&__c;
+    RGBENDIAN *a=(RGBENDIAN*)&r0, *b=(RGBENDIAN*)&r1, *c=(RGBENDIAN*)&__c;
     r = (Tsize)a->r + (Tsize)b->r; c->r=r<255 ? (u_int8_t)r : (u_int8_t)255;
     r = (Tsize)a->g + (Tsize)b->g; c->g=r<255 ? (u_int8_t)r : (u_int8_t)255;
     r = (Tsize)a->b + (Tsize)b->b; c->b=r<255 ? (u_int8_t)r : (u_int8_t)255;
@@ -52,7 +53,7 @@ static __inline Tsize RGB_ADD(Tsize r0, Tsize r1)
 static __inline Tsize RGB_MUL(Tsize r0, Tsize r1)
 {
     Tsize __c;
-    rgb32_t *a=(rgb32_t*)&r0, *b=(rgb32_t*)&r1, *c=(rgb32_t*)&__c;
+    RGBENDIAN *a=(RGBENDIAN*)&r0, *b=(RGBENDIAN*)&r1, *c=(RGBENDIAN*)&__c;
     c->r = (u_int8_t)(((Tsize)a->r * (Tsize)b->r)>>8); 
     c->g = (u_int8_t)(((Tsize)a->g * (Tsize)b->g)>>8); 
     c->b = (u_int8_t)(((Tsize)a->b * (Tsize)b->b)>>8); 
@@ -149,7 +150,9 @@ static void CALLING_C put (int32_t x, int32_t y, GXSPRITE *sp)
 			int j;
 			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 
 				if (u[j])
+				{
 					PUT(v, u[j]);
+				}
 		}
 	}
 	else
@@ -162,7 +165,9 @@ static void CALLING_C put (int32_t x, int32_t y, GXSPRITE *sp)
 			int j;
 			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 				
 				if (u[j])
+				{
 					PUT(v, p->palette[u[j]]);
+				}	
 		}
 	}
     return;

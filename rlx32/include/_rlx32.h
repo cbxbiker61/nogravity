@@ -143,6 +143,17 @@ typedef struct _gx_rgb32{
     u_int8_t    r, g, b, a;
 } rgb32_t;
 
+typedef struct _gx_bgr32
+{
+    u_int8_t			a, b, g, r;
+} bgr32_t;
+
+#ifdef LSB_FIRST
+#define RGBENDIAN bgr32_t
+#else
+#define RGBENDIAN rgb32_t
+#endif
+
 typedef struct _gx_sprite_sw{
 	int		bpp;
 	u_int32_t	palette[256];

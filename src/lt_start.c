@@ -288,9 +288,16 @@ GXSPRITEGROUP *NG_LoadSpriteGroup(char *filename, int resize)
         sprintf(tx, ".\\menu\\%s", filename);
     }
     
+	if (V3X.Client->Capabilities&GXSPEC_SPRITEAREPOLY)
+	{
+		pSpriteGroup = CSPG_GetFn(tx, FIO_cur, CSPLOAD_SURFACE);
+		SYS_ASSERT(pSpriteGroup);
+		return pSpriteGroup;
+	}
+	
     pSpriteGroup = CSPG_GetFn(tx, FIO_cur, CSPLOAD_POSTERIZE|CSPLOAD_SURFACE);
 	SYS_ASSERT(pSpriteGroup);
-
+	
     if (((GX.View.xmax!=639)||(GX.View.ymax!=479))&&(resize))
     {
         int32_t dp = GX.View.BytePerPixel;
@@ -746,7 +753,7 @@ static void NG_CMXToObject(void)
             sysStrnCpy(name, ORI->name, 31);  
 			s = strstr(name, "_");
 #ifdef _DEBUG
-			SYS_Debug("%s\n", name);
+		//	SYS_Debug("%s\n", name);
 #endif
             if (s)
             {

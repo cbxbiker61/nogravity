@@ -354,24 +354,32 @@ u_int8_t *RGB_SmartConverter(void *tgt, rgb24_t *target_pal, int target_bpp, voi
                 {
                     rgb32_t *t=tgt ? (rgb32_t*)tgt : (rgb32_t*)MM_heap.malloc(sizeof(rgb32_t)*size);
                     target = (u_int8_t*)t;
-                    for (;i!=0;t++, a++, i--)
+#ifdef LSB_FIRST   
+					if (GX.Client->Capabilities & 0x10)
+					{
+					for (;i!=0;t++, a++, i--)
                     {
                         const rgb24_t *mp = source_pal + (*a);
-#ifdef LSB_FIRST
                         *(u_int32_t*)t =
                         ((u_int32_t)mp->r << (24-GX.View.ColorMask.RedFieldPosition)) |
                         ((u_int32_t)mp->g << (24-GX.View.ColorMask.GreenFieldPosition)) |
                         ((u_int32_t)mp->b << (24-GX.View.ColorMask.BlueFieldPosition)) |
                         ((u_int32_t)(*a ? 255 : 0) << (24-GX.View.ColorMask.RsvdFieldPosition));
-#else
+                    }
+					}
+					else
+#endif
+					
+					for (;i!=0;t++, a++, i--)
+                    {
+                        const rgb24_t *mp = source_pal + (*a);
                         *(u_int32_t*)t =
                         ((u_int32_t)mp->r << GX.View.ColorMask.RedFieldPosition) |
                         ((u_int32_t)mp->g << GX.View.ColorMask.GreenFieldPosition) |
                         ((u_int32_t)mp->b << GX.View.ColorMask.BlueFieldPosition) |
                         ((u_int32_t)(*a ? 255 : 0) << GX.View.ColorMask.RsvdFieldPosition);
-#endif
                     }
-                }
+					                }
                 break;
             }
         }
@@ -466,9 +474,9 @@ u_int8_t *RGB_SmartConverter(void *tgt, rgb24_t *target_pal, int target_bpp, voi
                 return (u_int8_t*)source;
                 case 4:  // posterize special
                 {
-                    rgb32_t *t;
+                    RGBENDIAN *t;
                     target = tgt ?  (u_int8_t*)tgt : (u_int8_t*)MM_heap.malloc(size*sizeof(rgb32_t));
-                    t = (rgb32_t*)target;
+                    t = (RGBENDIAN*)target;
                     for (;i!=0;a++, t++, i--)
                     {
 						t->r = GX.View.ColorMask.RedFieldPosition ? a->b : a->r;

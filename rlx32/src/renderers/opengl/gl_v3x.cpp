@@ -572,8 +572,7 @@ static PFRENDERFUNC func;
 
 static void ChangeMaterial(const V3XMATERIAL *pMat)
 {
-	rgb24_t d = {255, 255, 255}, c = pMat->info.Sprite ? pMat->diffuse : d;
-
+	
 	if (pMat->info.Texturized)
 	{
 		GL_TexHandle *hnd = (GL_TexHandle*)pMat->texture[0].handle;

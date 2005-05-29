@@ -251,7 +251,7 @@ V3XMATERIAL *pipe_pMat;
 static __inline u_int32_t RGB_MUL32(u_int32_t r0, u_int32_t r1)
 {
     u_int32_t __c;
-    rgb32_t *a=(rgb32_t*)&r0, *b=(rgb32_t*)&r1, *c=(rgb32_t*)&__c;
+    RGBENDIAN *a=(RGBENDIAN*)&r0, *b=(RGBENDIAN*)&r1, *c=(RGBENDIAN*)&__c;
     c->r = (u_int8_t)(((u_int32_t)a->r * (u_int32_t)b->r)>>8); 
     c->g = (u_int8_t)(((u_int32_t)a->g * (u_int32_t)b->g)>>8); 
     c->b = (u_int8_t)(((u_int32_t)a->b * (u_int32_t)b->b)>>8); 

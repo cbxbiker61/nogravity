@@ -31,8 +31,7 @@ enum {
     CSPLOAD_POSTERIZE = 0x1, 
     CSPLOAD_SURFACE = 0x2, 
     CSPLOAD_HWSPRITE = 0x4, 
-    CSPLOAD_FORCE8 = 0x8, 
-    CSPLOAD_RGBAFIX = 0x10
+    CSPLOAD_FORCE8 = 0x8
 };
 
 // Font text write

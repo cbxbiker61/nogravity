@@ -29,11 +29,10 @@ extern struct RLXSYSTEM *g_pRLX;
 #define RGB_ALPHA50(a, b)        ((((a)&g_pRLX->pGX->View.RGB_Magic)+((b)&g_pRLX->pGX->View.RGB_Magic))>>1)
 
 typedef struct
-{		
+{	
 	int		bpp;
-	u_int32_t   palette[256];
+	u_int32_t   palette[256];	
 	u_int8_t * texture;
-	
 }V3XTEXTURESW;
 
 #ifdef cplusplus

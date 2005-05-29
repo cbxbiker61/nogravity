@@ -262,6 +262,15 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
     g_pRLX->pGX->View.ColorMask.BlueFieldPosition = 16;
     g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = 24;
   }
+  
+#ifdef LSB_FIRST
+
+  int a = g_pRLX->pGX->View.ColorMask.BlueFieldPosition;
+  g_pRLX->pGX->View.ColorMask.BlueFieldPosition =  g_pRLX->pGX->View.ColorMask.RedFieldPosition;
+  g_pRLX->pGX->View.ColorMask.RedFieldPosition = a;
+  
+#endif
+  
   SetPrimitive();
   return;
 }
@@ -408,7 +417,7 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	if (bpp == 1)
 	{
 		for (i=0;i<256;i++)
-			p->palette[i] = g_pRLX->pfSetPixelFormat(colorTable[i].r, colorTable[i].g, colorTable[i].b);
+			p->palette[i] = g_pRLX->pfSetPixelFormat(colorTable[i].r, colorTable[i].g, colorTable[i].b); // rgb ?
 	}
 	else
 	{

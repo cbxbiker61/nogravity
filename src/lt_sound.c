@@ -24,12 +24,17 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 */
 //-------------------------------------------------------------------------
 #define NG_EXPORT extern
-#define USE_THREAD
-#define USE_MUTEX
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "_rlx32.h"
+
+#ifndef __amigaos__
+#define USE_THREAD
+#define USE_MUTEX
+#endif 
+
 #include "_rlx.h"
 #include "_stub.h"
 #include "systools.h"

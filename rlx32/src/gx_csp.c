@@ -180,15 +180,17 @@ static int CSPG_GetES(GXSPRITEGROUP *s, const char *bitname, const char *spcname
 {
     SYS_FILEHANDLE in;
     GXSPRITE sp;
-    unsigned bs, bt = (RLX.V3X.Id==RLX3D_OPENGL) ? 4 : (option&CSPLOAD_FORCE8 ? 1 : GX.View.BytePerPixel);
+    unsigned bs, bt = (option&CSPLOAD_FORCE8 ? 1 : GX.View.BytePerPixel);
     int h = MM_heap.active;    
     MM_heap.active = 0;
 	bs = IMG_LoadFn(bitname, &sp); 
 	bs = (bs+1)>>3;
-	
-	if ((option&CSPLOAD_RGBAFIX)&&(bs==4)) 
-		RGBA_to_RGB((rgb32_t*)sp.data, sp.LX*sp.LY);
 
+	if (!(option & CSPLOAD_POSTERIZE))
+	{
+		bt = bs;
+	}
+	
 	if (option&CSPLOAD_POSTERIZE)
     {			
 		if ((bt>1)||(option&CSPLOAD_FORCE8))

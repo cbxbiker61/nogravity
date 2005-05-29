@@ -2407,7 +2407,7 @@ int NG_JoystickCalibration()
 					}    
 					GX_DrawBoxEffect3D(cx-lh, cy-lq, l, lq);
 				}
-				sprintf(raw,"Z=%d", sJOY->lZ, RLX.Joy.J[0].MinZ, RLX.Joy.J[0].MaxZ);
+				sprintf(raw,"Z=%d", sJOY->lZ);
 				CSP_Color(COLOR_GRAY1);
 				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
 			break;

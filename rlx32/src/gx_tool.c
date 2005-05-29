@@ -138,23 +138,6 @@ void IMG_rotate_image(u_int8_t *old, u_int8_t *tmp, int lx, int ly)
 
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static void RGB_16to15(u_int16_t *map, u_int32_t sz)
-*
-* DESCRIPTION :
-*
-*/
-static void RGB_15to16(u_int16_t *map, u_int32_t sz)
-{
-    rgb24_t a;
-    for (;sz!=0;map++, sz--)
-    {
-        RGB_GetPixelFormat(&a, *map);
-        *map = (u_int16_t)((a.b>>3) + ((a.g>>3)<<5) + ((a.r>>3)<<10));
-    }
-    return;
-}
-/*------------------------------------------------------------------------
-*
 * PROTOTYPE  :  void CSP_CaptureFrom(int32_t xx, int32_t yy, GXSPRITE *capt)
 *
 * DESCRIPTION :

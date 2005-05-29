@@ -427,7 +427,8 @@ GXCLIENTDRIVER GX_OpenGL = {
     Shutdown,
     Open,
     NotifyEvent,    
-    "OpenGL/CGL"
+    "OpenGL/CGL",
+	0x10 // ARGB
 };
 
 extern void SetPrimitiveSprites();

@@ -888,6 +888,14 @@ static int CreateSurface(int npages)
 			g_lpDDrawSurfaces[0]->SetPalette(g_lpDDPalette);
 		}
 	}
+
+	if (GET_GX()->View.ColorMask.GreenMaskSize == 8)
+	{
+		GET_GX()->View.ColorMask.RsvdFieldPosition = 24;
+		GET_GX()->View.ColorMask.RsvdMaskSize = 8;
+	}
+		
+
 		
 	GET_GX()->View.RGB_Magic =
           (((1L<<GET_GX()->View.ColorMask.RedMaskSize  )-2L) << GET_GX()->View.ColorMask.RedFieldPosition   )

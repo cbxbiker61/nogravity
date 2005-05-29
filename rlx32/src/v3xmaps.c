@@ -358,14 +358,18 @@ void V3XMaterial_Release(V3XMATERIAL *Mat, V3XMESH *Obj)
 */static void V3XMaterial_UploadTexture(GXSPRITE *pDst, const GXSPRITE *pSrc, int bpp, int option)
 {
     *pDst = *pSrc;
-    pDst->handle = V3X.Client->TextureDownload(pSrc, GX.ColorTable, bpp, option);
+    pDst->handle = V3X.Client->TextureDownload(pSrc, GX.ColorTable, bpp, option);	
 
     SYS_ASSERT(pDst->handle);
 
     if (V3X.Client->Capabilities&GXSPEC_HARDWARE)
     {
-        pDst->data = (u_int8_t*)pDst->handle;
+        pDst->data = (u_int8_t*)pDst->handle;		
     }
+	else
+	{
+		pDst->data = ((GXSPRITESW*)pDst->handle)->reserved;
+	}
 
     if (!pDst->handle)
     {
