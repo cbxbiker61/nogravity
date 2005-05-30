@@ -43,10 +43,6 @@ AC_FUNC_REALLOC
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([atexit getcwd memmove memset mkdir pow strchr strstr strtol])
 
-# Checks for pthreads.
-AC_CHECK_HEADERS([pthread.h], , AC_MSG_ERROR([Can't find pthread headers.]))
-AC_CHECK_LIB([pthread], [pthread_create], , AC_MSG_ERROR([Can't find pthread library.]))
-
 # Checks for SDL.  Note that we don't use AM_PATH_SDL because it's not always
 # supported.
 AC_CHECK_PROG(HAVE_SDL_CONFIG, [sdl-config], yes)

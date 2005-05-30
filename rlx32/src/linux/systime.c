@@ -26,7 +26,6 @@ Linux/SDL Port: 2005 - Matt Williams
 //------------------------------------------------------------------------- 
 #include <stdio.h>
 #include <SDL/SDL.h>
-#include <pthread.h>
 
 #include "_rlx32.h"
 #include "systools.h"
@@ -87,7 +86,7 @@ void timer_Update(SYS_TIMER *tm)
     	ticks_passed = tm->tEnd - tm->tStart;
 		ticks_left = (int64_t)ticks_to_wait - (int64_t)ticks_passed;
 		if (ticks_left > ticks_min)
-			usleep(1000);
+			timer_snooze(1);
 		else
 		{
 			int i=0;
@@ -115,67 +114,76 @@ void timer_Start(SYS_TIMER *tm, int iFreq, int iMinFrame)
     return;
 }
 
-// http://www.yolinux.com/TUTORIALS/LinuxTutorialPosixThreads.html
-typedef void *(*SYS_PTHREAD)(void *);
-
 int32_t thread_begin(SYS_THREAD *pThread, enum SYS_THREAD_PRIORITY_ENUM priority)
 {
-  // TODO: To reduce dependencies, it might be sensible to replace pthreads with SDL threads.
-    pThread->nStatus = 0;
-    if (!pthread_create ((pthread_t*)&pThread->hThread, NULL, (SYS_PTHREAD)pThread->pFunc, (void*)pThread->pArgument))
-    {
-		pThread->nStatus = 1;   // pthread_cond_t ?
-        return 0;
-    }
-    else
-        return -1;
+  pThread->nStatus = 0;
+  pThread->hThread = (void *)SDL_CreateThread((int(*)(void *))pThread->pFunc, pThread->pArgument);
+  if (pThread->hThread != NULL)
+  {
+    pThread->nStatus = 1;
+    return 0;
+  }
+  else
+    return -1;
 }
 
 void thread_end(SYS_THREAD *pThread)
 {
-	pthread_join((pthread_t)pThread->hThread, NULL);
-	pThread->nStatus = 0;   // pthread_cond_t ?
-	return;
+  SDL_WaitThread(pThread->hThread, NULL);
+  pThread->nStatus = 0;
+  return;
 }
 
 void thread_exit(int code)
 {
-    pthread_exit((void*)&code);   // pthread_cond_t ?
-    return;
+  // TODO: Implement. However, this function is not actually necessary for No Gravity.
+  return;
 }
 
-// Unix
 int mutex_init(SYS_MUTEX *mutex)
 {
-	/* Allocate mutex memory */
-	if ( mutex )
- 		 pthread_mutex_init((pthread_mutex_t*)&mutex->hMutex, NULL);
-	return mutex ? 0 : -1;
+  if (mutex == NULL)
+  {
+    return -1;
+  }
+  if (mutex->hMutex != NULL)
+  {
+    SDL_DestroyMutex((SDL_mutex *)mutex->hMutex);
+  }
+  mutex->hMutex = SDL_CreateMutex();
+  return (mutex->hMutex != NULL) ? 0 : -1;
 }
 
 int mutex_destroy(SYS_MUTEX *mutex)
 {
-   if ( mutex ) 
-   {
-		pthread_mutex_destroy((pthread_mutex_t*)&mutex->hMutex);
-		return 0;
-   }
-   return -1;
+  if ((mutex == NULL) ||
+      (mutex->hMutex == NULL))
+  {
+    return -1;
+  }
+  SDL_DestroyMutex((SDL_mutex *)mutex->hMutex);
+  mutex->hMutex = NULL;
+  return 0;
 }
 
 int mutex_lock(SYS_MUTEX *mutex)
 {
-	if ( mutex == NULL )
-		return -1;
-	pthread_mutex_lock((pthread_mutex_t*)&mutex->hMutex);
-
-	return 0;
+  if ((mutex == NULL) ||
+      (mutex->hMutex == NULL))
+  {
+    return -1;
+  }
+  SDL_mutexP((SDL_mutex *)mutex->hMutex);
+  return 0;
 }
 
 int mutex_unlock(SYS_MUTEX *mutex)
 {
-	if ( mutex == NULL )
-		return -1;
-	pthread_mutex_unlock((pthread_mutex_t*)&mutex->hMutex);
-	return 0;
+  if ((mutex == NULL) ||
+      (mutex->hMutex == NULL))
+  {
+    return -1;
+  }
+  SDL_mutexV((SDL_mutex *)mutex->hMutex);
+  return 0;
 }

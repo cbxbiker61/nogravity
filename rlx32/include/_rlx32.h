@@ -170,10 +170,13 @@ typedef FILE * SYS_FILEHANDLE ; /* I/O file handle. */
 #include <kernel/OS.h>
 typedef thread_id SYS_THREADHANDLE;
 typedef void* SYS_MUTEXHANDLE; /* Mutex handle. */
-#elif defined __MACH__ || defined __LINUX__ 
+#elif defined __MACH__
 #include <pthread.h>
 typedef pthread_mutex_t SYS_MUTEXHANDLE; /* Mutex handle. */
 typedef pthread_t SYS_THREADHANDLE; /* Thread handle. */
+#elif defined __LINUX__ 
+typedef void * SYS_MUTEXHANDLE; /* Mutex handle. */
+typedef void * SYS_THREADHANDLE; /* Thread handle. */
 #else
 typedef void* SYS_MUTEXHANDLE; /* Mutex handle. */
 typedef void* SYS_THREADHANDLE; /* Thread handle. */
