@@ -39,6 +39,9 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 	#define LSB_FIRST
     #define __C32__
 
+#elif defined __amigaos__ || defined __MORPHOS__
+	#define LSB_FIRST
+    #define __C32__
 #endif
 
 #ifdef HAVE_CONFIG_H

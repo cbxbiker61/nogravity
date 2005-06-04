@@ -1137,7 +1137,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngwutil.c;
-			path = ../../SDK/lpng125/pngwutil.c;
+			path = ../../SDK/lpng/pngwutil.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1146,7 +1146,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngwtran.c;
-			path = ../../SDK/lpng125/pngwtran.c;
+			path = ../../SDK/lpng/pngwtran.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1155,7 +1155,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngwrite.c;
-			path = ../../SDK/lpng125/pngwrite.c;
+			path = ../../SDK/lpng/pngwrite.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1164,7 +1164,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngwio.c;
-			path = ../../SDK/lpng125/pngwio.c;
+			path = ../../SDK/lpng/pngwio.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1173,7 +1173,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngvcrd.c;
-			path = ../../SDK/lpng125/pngvcrd.c;
+			path = ../../SDK/lpng/pngvcrd.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1182,7 +1182,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngtrans.c;
-			path = ../../SDK/lpng125/pngtrans.c;
+			path = ../../SDK/lpng/pngtrans.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1191,7 +1191,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngset.c;
-			path = ../../SDK/lpng125/pngset.c;
+			path = ../../SDK/lpng/pngset.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1200,7 +1200,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngrutil.c;
-			path = ../../SDK/lpng125/pngrutil.c;
+			path = ../../SDK/lpng/pngrutil.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1209,7 +1209,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngrtran.c;
-			path = ../../SDK/lpng125/pngrtran.c;
+			path = ../../SDK/lpng/pngrtran.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1218,7 +1218,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngrio.c;
-			path = ../../SDK/lpng125/pngrio.c;
+			path = ../../SDK/lpng/pngrio.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1227,7 +1227,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngread.c;
-			path = ../../SDK/lpng125/pngread.c;
+			path = ../../SDK/lpng/pngread.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1236,7 +1236,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngpread.c;
-			path = ../../SDK/lpng125/pngpread.c;
+			path = ../../SDK/lpng/pngpread.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1245,7 +1245,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngmem.c;
-			path = ../../SDK/lpng125/pngmem.c;
+			path = ../../SDK/lpng/pngmem.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1254,7 +1254,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngget.c;
-			path = ../../SDK/lpng125/pngget.c;
+			path = ../../SDK/lpng/pngget.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1263,7 +1263,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pnggccrd.c;
-			path = ../../SDK/lpng125/pnggccrd.c;
+			path = ../../SDK/lpng/pnggccrd.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1272,7 +1272,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngerror.c;
-			path = ../../SDK/lpng125/pngerror.c;
+			path = ../../SDK/lpng/pngerror.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1377,7 +1377,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = png.c;
-			path = ../../SDK/lpng125/png.c;
+			path = ../../SDK/lpng/png.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};

@@ -120,6 +120,7 @@
 		};
 		20286C2AFDCF999611CA2CEA = {
 			children = (
+				F435A7830851AA2A00AE4A4D,
 				F45E30D2063A9AB400985E8A,
 				F45E30BD063A9A9700985E8A,
 				F41C907505EEC1A000709073,
@@ -152,7 +153,6 @@
 				F4DBA540082AE28100298B19,
 				F42FF0ED0608DF3900C97909,
 				F4F336B405FB4245003626B9,
-				F4F3353805FB4178003626B9,
 				20286C33FDCF999611CA2CEA,
 				4A9504CAFFE6A41611CA0CBA,
 				4A9504C8FFE6A3BC11CA0CBA,
@@ -209,7 +209,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "_DEBUG HAVE_OPENAL";
-				HEADER_SEARCH_PATHS = "/Users/stephane/Dev/nogravity/SDK/oggvorbis/include ../.. ../SDK ";
+				HEADER_SEARCH_PATHS = "$(HOME)/Dev/nogravity/SDK/oggvorbis/include ../.. ../SDK ";
 				OPTIMIZATION_CFLAGS = "-O0";
 				ZERO_LINK = YES;
 			};
@@ -310,68 +310,9 @@
 		8D0C4E8A0486CD37000505A6 = {
 			buildActionMask = 2147483647;
 			files = (
-				8D0C4E8B0486CD37000505A6,
-				F4B3C17F07BF676700EB3D65,
-				F4B3C18107BF676700EB3D65,
-				F4B3C18207BF676700EB3D65,
-				F4B3C18307BF676700EB3D65,
-				F4B3C18407BF676700EB3D65,
-				F4B3C18607BF676700EB3D65,
-				F4B3C18707BF676700EB3D65,
-				F4B3C18807BF676700EB3D65,
-				F4B3C18907BF676700EB3D65,
-				F4B3C18A07BF676700EB3D65,
-				F4B3C18B07BF676700EB3D65,
-				F4B3C18C07BF676700EB3D65,
-				F4B3C18D07BF676700EB3D65,
-				F4B3C18E07BF676700EB3D65,
-				F4B3C18F07BF676700EB3D65,
-				F4B3C19107BF676700EB3D65,
-				F4B3C19207BF676700EB3D65,
-				F4B3C19307BF676700EB3D65,
-				F4B3C19407BF676700EB3D65,
-				F4B3C19507BF676700EB3D65,
-				F4B3C19607BF676700EB3D65,
-				F4B3C19707BF676700EB3D65,
-				F4B3C19807BF676700EB3D65,
-				F4B3C19907BF676700EB3D65,
-				F4B3C19A07BF676700EB3D65,
-				F4B3C19B07BF676700EB3D65,
-				F4B3C19C07BF676700EB3D65,
-				F4B3C19D07BF676700EB3D65,
-				F4B3C19E07BF676700EB3D65,
-				F4B3C1A007BF676700EB3D65,
-				F4B3C1A107BF676700EB3D65,
-				F4B3C1A207BF676700EB3D65,
-				F4B3C1A307BF676700EB3D65,
-				F4B3C1A507BF676700EB3D65,
-				F4B3C1A607BF676700EB3D65,
-				F4B3C1A707BF676700EB3D65,
-				F4B3C1AE07BF677E00EB3D65,
-				F4B3C1AF07BF677E00EB3D65,
-				F4B3C1B007BF677E00EB3D65,
-				F4D808C407CFAEB00031F08A,
-				F4D808C507CFAEB00031F08A,
-				F4D808C607CFAEB00031F08A,
-				F4D808C707CFAEB00031F08A,
-				F4D808C807CFAEB00031F08A,
-				F4D808CC07CFAEBF0031F08A,
-				F4D808D107CFAECA0031F08A,
-				F4D808D607CFAEE80031F08A,
-				F423A681082CCE21005A53CE,
-				F423A682082CCE21005A53CE,
-				F423A683082CCE21005A53CE,
-				F423A684082CCE21005A53CE,
-				F423A685082CCE21005A53CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8D0C4E8B0486CD37000505A6 = {
-			fileRef = 32DBCF6D0370B57F00C91783;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		8D0C4E8C0486CD37000505A6 = {
 			buildActionMask = 2147483647;
@@ -506,7 +447,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D0C4E920486CD37000505A6,
-				F4F3353905FB4178003626B9,
 				F4F336B505FB4245003626B9,
 				F42FF0EE0608DF3900C97909,
 				F4DBA541082AE28100298B19,
@@ -686,11 +626,6 @@
 		};
 		F41C907B05EEC1EA00709073 = {
 			children = (
-				F423A67C082CCE21005A53CE,
-				F423A67D082CCE21005A53CE,
-				F423A67E082CCE21005A53CE,
-				F423A67F082CCE21005A53CE,
-				F423A680082CCE21005A53CE,
 				F4253AB408099EB800924134,
 				F4ABFB3805FB516600FAA545,
 				F41C90BC05EEC25A00709073,
@@ -1122,7 +1057,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngwutil.c;
-			path = ../../SDK/lpng128/pngwutil.c;
+			path = ../../SDK/lpng/pngwutil.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1131,7 +1066,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngwtran.c;
-			path = ../../SDK/lpng128/pngwtran.c;
+			path = ../../SDK/lpng/pngwtran.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1140,7 +1075,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngwrite.c;
-			path = ../../SDK/lpng128/pngwrite.c;
+			path = ../../SDK/lpng/pngwrite.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1149,7 +1084,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngwio.c;
-			path = ../../SDK/lpng128/pngwio.c;
+			path = ../../SDK/lpng/pngwio.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1158,7 +1093,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngvcrd.c;
-			path = ../../SDK/lpng128/pngvcrd.c;
+			path = ../../SDK/lpng/pngvcrd.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1167,7 +1102,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngtrans.c;
-			path = ../../SDK/lpng128/pngtrans.c;
+			path = ../../SDK/lpng/pngtrans.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1176,7 +1111,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngset.c;
-			path = ../../SDK/lpng128/pngset.c;
+			path = ../../SDK/lpng/pngset.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1185,7 +1120,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngrutil.c;
-			path = ../../SDK/lpng128/pngrutil.c;
+			path = ../../SDK/lpng/pngrutil.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1194,7 +1129,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngrtran.c;
-			path = ../../SDK/lpng128/pngrtran.c;
+			path = ../../SDK/lpng/pngrtran.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1203,7 +1138,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngrio.c;
-			path = ../../SDK/lpng128/pngrio.c;
+			path = ../../SDK/lpng/pngrio.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1212,7 +1147,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngread.c;
-			path = ../../SDK/lpng128/pngread.c;
+			path = ../../SDK/lpng/pngread.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1221,7 +1156,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngpread.c;
-			path = ../../SDK/lpng128/pngpread.c;
+			path = ../../SDK/lpng/pngpread.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1230,7 +1165,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngmem.c;
-			path = ../../SDK/lpng128/pngmem.c;
+			path = ../../SDK/lpng/pngmem.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1239,7 +1174,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngget.c;
-			path = ../../SDK/lpng128/pngget.c;
+			path = ../../SDK/lpng/pngget.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1248,7 +1183,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pnggccrd.c;
-			path = ../../SDK/lpng128/pnggccrd.c;
+			path = ../../SDK/lpng/pnggccrd.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1257,7 +1192,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = pngerror.c;
-			path = ../../SDK/lpng128/pngerror.c;
+			path = ../../SDK/lpng/pngerror.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1362,7 +1297,7 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = png.c;
-			path = ../../SDK/lpng128/png.c;
+			path = ../../SDK/lpng/png.c;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
@@ -1385,89 +1320,14 @@
 			settings = {
 			};
 		};
-		F423A67C082CCE21005A53CE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = alut.h;
-			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alut.h;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F423A67D082CCE21005A53CE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = alc.h;
-			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alc.h;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F423A67E082CCE21005A53CE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = alctypes.h;
-			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alctypes.h;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F423A67F082CCE21005A53CE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = al.h;
-			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/al.h;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F423A680082CCE21005A53CE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = altypes.h;
-			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/altypes.h;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F423A681082CCE21005A53CE = {
-			fileRef = F423A67C082CCE21005A53CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F423A682082CCE21005A53CE = {
-			fileRef = F423A67D082CCE21005A53CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F423A683082CCE21005A53CE = {
-			fileRef = F423A67E082CCE21005A53CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F423A684082CCE21005A53CE = {
-			fileRef = F423A67F082CCE21005A53CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F423A685082CCE21005A53CE = {
-			fileRef = F423A680082CCE21005A53CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4253AB408099EB800924134 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = snd_openal.c;
-			path = /Users/stephane/Dev/nogravity/rlx32/src/linux/snd_openal.c;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../rlx32/src/linux/snd_openal.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F4253AB508099EB800924134 = {
 			fileRef = F4253AB408099EB800924134;
@@ -1488,6 +1348,64 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		F435A7830851AA2A00AE4A4D = {
+			children = (
+				F435A7910851AAAB00AE4A4D,
+				F435A7920851AAAB00AE4A4D,
+				F435A7930851AAAB00AE4A4D,
+				F435A7940851AAAB00AE4A4D,
+				F435A7950851AAAB00AE4A4D,
+			);
+			isa = PBXGroup;
+			name = openal;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F435A7910851AAAB00AE4A4D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = alut.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alut.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F435A7920851AAAB00AE4A4D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = alc.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alc.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F435A7930851AAAB00AE4A4D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = alctypes.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alctypes.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F435A7940851AAAB00AE4A4D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = al.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/al.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F435A7950851AAAB00AE4A4D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = altypes.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/altypes.h;
+			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F45E30BD063A9A9700985E8A = {
 			children = (
@@ -2276,222 +2194,6 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4B3C17F07BF676700EB3D65 = {
-			fileRef = F4B3C15507BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18107BF676700EB3D65 = {
-			fileRef = F4B3C15707BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18207BF676700EB3D65 = {
-			fileRef = F4B3C15807BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18307BF676700EB3D65 = {
-			fileRef = F4B3C15907BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18407BF676700EB3D65 = {
-			fileRef = F4B3C15A07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18607BF676700EB3D65 = {
-			fileRef = F4B3C15C07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18707BF676700EB3D65 = {
-			fileRef = F4B3C15D07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18807BF676700EB3D65 = {
-			fileRef = F4B3C15E07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18907BF676700EB3D65 = {
-			fileRef = F4B3C15F07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18A07BF676700EB3D65 = {
-			fileRef = F4B3C16007BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18B07BF676700EB3D65 = {
-			fileRef = F4B3C16107BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18C07BF676700EB3D65 = {
-			fileRef = F4B3C16207BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18D07BF676700EB3D65 = {
-			fileRef = F4B3C16307BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18E07BF676700EB3D65 = {
-			fileRef = F4B3C16407BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18F07BF676700EB3D65 = {
-			fileRef = F4B3C16507BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19107BF676700EB3D65 = {
-			fileRef = F4B3C16707BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19207BF676700EB3D65 = {
-			fileRef = F4B3C16807BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19307BF676700EB3D65 = {
-			fileRef = F4B3C16907BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19407BF676700EB3D65 = {
-			fileRef = F4B3C16A07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19507BF676700EB3D65 = {
-			fileRef = F4B3C16B07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19607BF676700EB3D65 = {
-			fileRef = F4B3C16C07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19707BF676700EB3D65 = {
-			fileRef = F4B3C16D07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19807BF676700EB3D65 = {
-			fileRef = F4B3C16E07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19907BF676700EB3D65 = {
-			fileRef = F4B3C16F07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19A07BF676700EB3D65 = {
-			fileRef = F4B3C17007BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19B07BF676700EB3D65 = {
-			fileRef = F4B3C17107BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19C07BF676700EB3D65 = {
-			fileRef = F4B3C17207BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19D07BF676700EB3D65 = {
-			fileRef = F4B3C17307BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19E07BF676700EB3D65 = {
-			fileRef = F4B3C17407BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A007BF676700EB3D65 = {
-			fileRef = F4B3C17607BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A107BF676700EB3D65 = {
-			fileRef = F4B3C17707BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A207BF676700EB3D65 = {
-			fileRef = F4B3C17807BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A307BF676700EB3D65 = {
-			fileRef = F4B3C17907BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A507BF676700EB3D65 = {
-			fileRef = F4B3C17B07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A607BF676700EB3D65 = {
-			fileRef = F4B3C17C07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A707BF676700EB3D65 = {
-			fileRef = F4B3C17D07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4B3C1AB07BF677E00EB3D65 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2518,24 +2220,6 @@
 			path = ../../rlx32/include/_stub.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
-		};
-		F4B3C1AE07BF677E00EB3D65 = {
-			fileRef = F4B3C1AB07BF677E00EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1AF07BF677E00EB3D65 = {
-			fileRef = F4B3C1AC07BF677E00EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1B007BF677E00EB3D65 = {
-			fileRef = F4B3C1AD07BF677E00EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F4CE207E08392D8B00D695C6 = {
 			fileEncoding = 30;
@@ -2611,36 +2295,6 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4D808C407CFAEB00031F08A = {
-			fileRef = F4D808BF07CFAEAF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808C507CFAEB00031F08A = {
-			fileRef = F4D808C007CFAEAF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808C607CFAEB00031F08A = {
-			fileRef = F4D808C107CFAEAF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808C707CFAEB00031F08A = {
-			fileRef = F4D808C207CFAEAF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808C807CFAEB00031F08A = {
-			fileRef = F4D808C307CFAEB00031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4D808CB07CFAEBF0031F08A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2649,12 +2303,6 @@
 			path = ../console.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
-		};
-		F4D808CC07CFAEBF0031F08A = {
-			fileRef = F4D808CB07CFAEBF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F4D808CF07CFAECA0031F08A = {
 			fileEncoding = 30;
@@ -2665,12 +2313,6 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4D808D107CFAECA0031F08A = {
-			fileRef = F4D808CF07CFAECA0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4D808D507CFAEE80031F08A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2679,12 +2321,6 @@
 			path = ../../rlx32/include/beos/stub.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
-		};
-		F4D808D607CFAEE80031F08A = {
-			fileRef = F4D808D507CFAEE80031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F4DBA540082AE28100298B19 = {
 			isa = PBXFileReference;
@@ -3004,20 +2640,6 @@
 		};
 		F4F3351F05FB4074003626B9 = {
 			fileRef = F4F3351E05FB4074003626B9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4F3353805FB4178003626B9 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = AGL.framework;
-			path = /System/Library/Frameworks/AGL.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F4F3353905FB4178003626B9 = {
-			fileRef = F4F3353805FB4178003626B9;
 			isa = PBXBuildFile;
 			settings = {
 			};
