@@ -263,7 +263,7 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
     g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = 24;
   }
   
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 
   int a = g_pRLX->pGX->View.ColorMask.BlueFieldPosition;
   g_pRLX->pGX->View.ColorMask.BlueFieldPosition =  g_pRLX->pGX->View.ColorMask.RedFieldPosition;
