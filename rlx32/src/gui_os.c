@@ -409,13 +409,13 @@ RW_Interface * RW_Interface_GetFp(SYS_FILEHANDLE in)
     unsigned short int max;
     FIO_cur->fread(SPChead, sizeof(char), 4, in);
     FIO_cur->fread(&max, sizeof(unsigned short int), 1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP16(&max, 1);
 #endif
     for (i=0;i<max;i++)
     {
         FIO_cur->fread(&spl, sizeof(GXSPRITEFORMAT), 1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         BSWAP16((u_int16_t*)&spl.a, 4);
 #endif
         RW_Zone_CreateWithSize(pInterface, spl.a, spl.b, spl.c-spl.a+1, spl.d-spl.b+1);

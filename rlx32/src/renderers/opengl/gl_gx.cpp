@@ -30,10 +30,6 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "v3xrend.h"
 #include "fixops.h"
 
-#ifdef __APPLE__
-#define USE_ARGB_TEXTURE
-#endif 
-
 static void  CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
 {
     rgb24_t cl;
@@ -457,7 +453,7 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	int lx, ly, src_lx, src_ly;
 	GLenum texture_type = GL_UNSIGNED_BYTE;
 	GLenum texture_fmt =
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 	 GL_RGBA
 #else
  	 GL_BGRA_EXT
@@ -592,7 +588,7 @@ static unsigned RLXAPI GL_UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, con
 	if (pSprite)
     {
        GLenum texture_fmt =
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		GL_RGBA
 #else
  		GL_BGRA_EXT

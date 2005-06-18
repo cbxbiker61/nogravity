@@ -31,10 +31,6 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #define PIPE_OPEN 1
 
-#ifdef __APPLE__
-#define USE_ARGB_TEXTURE
-#endif 
-
 static float g_fInvZFar;
 static GLint pipe_pTex[2];
 static GLuint pipe_iRender, pipe_prm;
@@ -246,7 +242,7 @@ static int V3XAPI TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *c
 	u_int8_t *src_buf = (u_int8_t *)pSprite->tmpbuf;
 
     GLenum texture_fmt =
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		GL_RGBA
 #else
  		GL_BGRA_EXT
@@ -336,7 +332,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 		);
 
 		internal_fmt = bp;
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		texture_fmt = bp==4 ? GL_RGBA : GL_RGB;
 #else
 		texture_fmt = bp==4 ? GL_BGRA_EXT : GL_BGR_EXT;
@@ -366,7 +362,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 	
 			case 24:
 				internal_fmt = 3;
-	#ifdef LSB_FIRST
+	#ifdef __BIG_ENDIAN__
 				texture_fmt = GL_RGB;
 	#else
 				texture_fmt = GL_BGR_EXT;
@@ -375,7 +371,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 			break;
 			case 32:
 				internal_fmt = 4;
-	#ifdef LSB_FIRST
+	#ifdef __BIG_ENDIAN__
 				texture_fmt = GL_RGBA;
 	#else
 				texture_fmt = GL_BGRA_EXT;

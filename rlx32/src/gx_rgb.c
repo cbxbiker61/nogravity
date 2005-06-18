@@ -354,7 +354,7 @@ u_int8_t *RGB_SmartConverter(void *tgt, rgb24_t *target_pal, int target_bpp, voi
                 {
                     rgb32_t *t=tgt ? (rgb32_t*)tgt : (rgb32_t*)MM_heap.malloc(sizeof(rgb32_t)*size);
                     target = (u_int8_t*)t;
-#ifdef LSB_FIRST   
+#ifdef __BIG_ENDIAN__   
 					if (GX.Client->Capabilities & 0x10)
 					{
 					for (;i!=0;t++, a++, i--)

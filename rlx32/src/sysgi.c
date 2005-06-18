@@ -88,7 +88,7 @@ static GI_Panel *PanelOpen(GI_Panel *p, char *name, unsigned mode)
         {
             u_int16_t _m;
             FIO_cur->fread(&_m, sizeof(unsigned short int), 1, in);
-            #ifdef LSB_FIRST
+            #ifdef __BIG_ENDIAN__
             BSWAP16(&_m, 1);
             #endif
             max = _m;
@@ -106,7 +106,7 @@ static GI_Panel *PanelOpen(GI_Panel *p, char *name, unsigned mode)
         {
             GXSPRITEFORMAT spl;
             FIO_cur->fread(&spl, sizeof(GXSPRITEFORMAT), 1, in);
-            #ifdef LSB_FIRST
+            #ifdef __BIG_ENDIAN__
             BSWAP16((u_int16_t*)&spl.a, 4);
             #endif
             ClickAreaNew(panel, 0, spl.a, spl.b, spl.c, spl.d);

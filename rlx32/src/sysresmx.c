@@ -121,7 +121,7 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 	{
         FIO_std.fseek( fdata, -4, SEEK_END);
         FIO_std.fread(&overlayOffset, sizeof(u_int32_t), 1, fdata);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32((u_int32_t*)&overlayOffset, 1);
 #endif
         FIO_std.fseek(fdata, -overlayOffset, SEEK_END);
@@ -130,21 +130,21 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 
 	// Table offset
     FIO_std.fread(&dataOffset, sizeof(u_int32_t), 1, fdata);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 	BSWAP32((u_int32_t*)&dataOffset, 1);
 #endif
 	if (dataOffset < 0)
 	{
 		dataOffset = -dataOffset;
 		FIO_std.fread(&pWad->fat.numEntries, sizeof(u_int32_t), 1, fdata);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32(&pWad->fat.numEntries, 1);
 #endif
 		SYS_ASSERT(pWad->fat.numEntries>0);
 		pWad->fat.entries = MM_CALLOC(pWad->fat.numEntries, struct _sys_wadentry);
 
 		FIO_std.fread(&pWad->fat.fatSize, sizeof(u_int32_t), 1, fdata);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32(&pWad->fat.fatSize, 1);
 #endif
 
@@ -162,14 +162,14 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 		SYS_ASSERT(gz);
 	
 		FIO_gzip.fread(&pWad->fat.numEntries, sizeof(u_int32_t), 1, gz);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32(&pWad->fat.numEntries, 1);
 #endif
 		SYS_ASSERT(pWad->fat.numEntries>0);
 		pWad->fat.entries = MM_CALLOC(pWad->fat.numEntries, struct _sys_wadentry);
 
 		FIO_gzip.fread(&pWad->fat.fatSize, sizeof(u_int32_t), 1, gz);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32(&pWad->fat.fatSize, 1);
 #endif
 
@@ -186,7 +186,7 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 	// Reallocate offset
 	for (file = pWad->fat.entries, i = 0;i < pWad->fat.numEntries; i++, file++)
 	{
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32(&file->size, 1);
 #endif
 		SYS_ASSERT(file->size>0);

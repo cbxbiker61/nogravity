@@ -211,7 +211,7 @@ static void Resample44Khz(V3XA_HANDLE *smp)
 		}
 	}
 	smp->sampleFormat|=V3XA_FMT16BIT;
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 	smp->sampleFormat|=V3XA_FMTBIGENDIAN;
 #endif
 	smp->samplingRate = 44100;

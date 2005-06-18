@@ -192,7 +192,7 @@ static size_t read_chunk(SYS_FILEHANDLE fp, WAVCHUNK *chunk, int tagOnly)
 	else
 	{
 		size_t ret = FIO_cur->fread(chunk, 1, sizeof(WAVCHUNK), fp);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32((u_int32_t*)&chunk->ckSize, 1);
 #endif
 		return ret;
@@ -238,7 +238,7 @@ static int SFX_DecodeWAV(SYS_FILEHANDLE fp, int options, V3XA_HANDLE *pHandle)
 	}
 	FIO_cur->fread(&format, sizeof(WAVEFORMAT), 1, fp);	
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 	BSWAP16((u_int16_t*)&format.wFormatTag, 2);
 	BSWAP32((u_int32_t*)&format.nSamplesPerSec, 2);
 	BSWAP16((u_int16_t*)&format.nBlockAlign, 2);	

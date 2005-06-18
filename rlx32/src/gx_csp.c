@@ -133,7 +133,7 @@ static void CSPG_GetFp(GXSPRITEGROUP *pSpriteGroup, SYS_FILEHANDLE in, u_int8_t 
     GXSPRITE   *sp;    
     FIO_cur->fread(SPChead, sizeof(char), 4, in);
     FIO_cur->fread(&pSpriteGroup->maxItem, sizeof(unsigned short int), 1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP16((u_int16_t*)&pSpriteGroup->maxItem, 1);
 #endif
     pSpriteGroup->item = MM_CALLOC(pSpriteGroup->maxItem, GXSPRITE);
@@ -141,7 +141,7 @@ static void CSPG_GetFp(GXSPRITEGROUP *pSpriteGroup, SYS_FILEHANDLE in, u_int8_t 
     {
         GXSPRITEFORMAT   spl;
         FIO_cur->fread(&spl, sizeof(GXSPRITEFORMAT), 1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         BSWAP16((u_int16_t*)&spl, 4);
 #endif
         sp->LX = spl.c - spl.a + 1;

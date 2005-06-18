@@ -31,16 +31,14 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #if defined __BEOS__
     #include <byteorder.h>
     #if B_HOST_IS_BENDIAN
-        #define LSB_FIRST
+        #define __BIG_ENDIAN__
     #endif
     
 #elif defined __APPLE__ && defined __MACH__
 	#define __MACOS__
-	#define LSB_FIRST
     #define __C32__
 
 #elif defined __amigaos__ || defined __MORPHOS__
-	#define LSB_FIRST
     #define __C32__
 #endif
 

@@ -1039,7 +1039,7 @@ static void RLXAPI *v3x_read_alloc(int32_t sz, int32_t n, int32_t n2, SYS_FILEHA
 *
 */
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 static u_int32_t BGETFIELD(u_int32_t bf, int base, int length)
 {
 	return (bf >> base) & (( 1<<length ) - 1);
@@ -1052,7 +1052,7 @@ V3XMATERIAL *V3XMaterials_GetFp(SYS_FILEHANDLE in, int numMaterial)
 	SYS_ASSERT(numMaterial < 255);
 	Mat = (V3XMATERIAL*)v3x_read_alloc(sizeof(V3XMATERIAL), numMaterial, -1, in);
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 	{
     V3XMATERIAL *pMat = Mat;
     int i;
@@ -1105,7 +1105,7 @@ V3XNODE static RLXAPI *v3x_VMX_unpack_node(SYS_FILEHANDLE in)
 {
     V3XMESH *obj;
     obj =(V3XMESH*)v3x_read_alloc(sizeof(V3XMESH), 1, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP32((u_int32_t*)&obj->matrix, 12);
 	BSWAP32((u_int32_t*)&obj->Tk, 3+3+1);
 #endif
@@ -1119,7 +1119,7 @@ static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
     int i;
     V3XPOLY *f;
     obj =(V3XMESH*)v3x_read_alloc(sizeof(V3XMESH), 1, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP16((u_int16_t*)&obj->numVerts, 4);
     BSWAP32((u_int32_t *)&obj->flags, 1);
     BSWAP32((u_int32_t *)&obj->scale, 1);
@@ -1129,21 +1129,21 @@ static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
     if (obj->numVerts)
     {
         obj->vertex = (V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numVerts, -1, in);
-#ifdef LSB_FIRST        
+#ifdef __BIG_ENDIAN__        
         BSWAP32((u_int32_t*)obj->vertex , obj->numVerts*3);
 #endif
         obj->face = (V3XPOLY*) v3x_read_alloc(sizeof(V3XPOLY) , obj->numFaces, -1, in);
         if (obj->uv)
         {
             obj->uv =(V3XUV*) v3x_read_alloc(sizeof(V3XUV), obj->numVerts, -1, in);
-#ifdef LSB_FIRST        
+#ifdef __BIG_ENDIAN__        
 			BSWAP32((u_int32_t*)obj->uv, obj->numVerts*2);
 #endif
         }
         if (obj->normal)
         {
             obj->normal =(V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numVerts, -1, in);
-#ifdef LSB_FIRST     
+#ifdef __BIG_ENDIAN__     
 			BSWAP32((u_int32_t*)obj->normal, obj->numVerts*3);
 #endif
         }
@@ -1151,7 +1151,7 @@ static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
         {
             unsigned nb = obj->flags&V3XMESH_FLATSHADE ? obj->numFaces : obj->numVerts;
             obj->rgb = (rgb32_t*)v3x_read_alloc(sizeof(rgb32_t), nb, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
             BSWAP32((u_int32_t*)obj->rgb, nb);
 #endif
             if ((V3X.Client->Capabilities&GXSPEC_RGBLIGHTING)==0)
@@ -1165,7 +1165,7 @@ static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
 		}
 
         obj->normal_face = (V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numFaces, -1, in);
-#ifdef LSB_FIRST        
+#ifdef __BIG_ENDIAN__        
         BSWAP32((u_int32_t*)obj->normal_face, obj->numFaces*3);
 #endif
         obj->material = V3XMaterials_GetFp(in, obj->numMaterial);
@@ -1173,7 +1173,7 @@ static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
         for (f=obj->face, i=obj->numFaces;i!=0;f++, i--)
         {
             V3XMATERIAL *pMat;
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
             BSWAP32((u_int32_t*)&f->matIndex, 1);
 #endif
             f->matIndex--;
@@ -1187,7 +1187,7 @@ static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
 			f->dispTab = (V3XPTS*)MM_heap.malloc(sizeof(V3XPTS)*f->numEdges);
       
 			f->faceTab = (u_int32_t *)v3x_read_alloc(sizeof(u_int32_t), f->numEdges, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
             BSWAP32((u_int32_t*)f->faceTab, f->numEdges);
 #endif
             f->shade = (pMat->info.Shade)  ? (V3XSCALAR *) v3x_read_alloc(sizeof(V3XSCALAR) , f->numEdges, -1, in) : NULL;   
@@ -1200,7 +1200,7 @@ static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
                 unsigned n = pMat->info.Environment&V3XENVMAPTYPE_DOUBLE ? 2 : 1;
                 f->uvTab = V3X_CALLOC(V3X_MAXTMU, V3XUV*);
                 f->uvTab[0] = (V3XUV *) v3x_read_alloc(sizeof(V3XUV), f->numEdges, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
                 BSWAP32((u_int32_t*)f->uvTab[0], 2 * f->numEdges);
 #endif
 				for (j=0;j<f->numEdges;j++)
@@ -1234,7 +1234,7 @@ V3XLIGHT static RLXAPI *v3x_VMX_unpack_light(SYS_FILEHANDLE in)
 {
     V3XLIGHT *light;
     light = (V3XLIGHT*)v3x_read_alloc(sizeof(V3XNODE), 1, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP32((u_int32_t*)&light->pos, 16);
 #endif
     if ((light->flags&V3XLIGHTCAPS_LENZFLARE)&&(light->material))
@@ -1260,7 +1260,7 @@ V3XCAMERA static RLXAPI *v3x_VMX_unpack_camera(SYS_FILEHANDLE in)
 {
     V3XCAMERA *camera;
     camera = (V3XCAMERA*)v3x_read_alloc(sizeof(V3XNODE), 1, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP32((u_int32_t*)&camera->M, 16);
 #endif
     return camera;
@@ -1275,12 +1275,12 @@ V3XCAMERA static RLXAPI *v3x_VMX_unpack_camera(SYS_FILEHANDLE in)
 V3XCL static RLXAPI *v3x_VMX_unpack_collide(SYS_FILEHANDLE in)
 {
     V3XCL *Cs = (V3XCL*) v3x_read_alloc(sizeof(V3XCL), 1, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP32((u_int32_t*)Cs, 2);
 #endif
 	SYS_ASSERT(sizeof(V3XCL_ITEM) == 64);
     Cs->item = (V3XCL_ITEM*)v3x_read_alloc(sizeof(V3XCL_ITEM), Cs->numItem, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP32((u_int32_t*)&Cs->global, 9);
     {
         V3XCL_ITEM *item = Cs->item;
@@ -1311,7 +1311,7 @@ V3XTWEEN static RLXAPI *v3x_VMX_unpack_morph3D(SYS_FILEHANDLE in)
     unsigned int i;
     V3XTWEEN *Mo;
     Mo = (V3XTWEEN*)v3x_read_alloc(sizeof(V3XTWEEN), 1, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP32((u_int32_t*)&Mo->numFrames, 3);
 #endif
     if ((!Mo->numFrames)||(!Mo->numVerts)) return NULL;
@@ -1319,7 +1319,7 @@ V3XTWEEN static RLXAPI *v3x_VMX_unpack_morph3D(SYS_FILEHANDLE in)
     for (i=0;i<Mo->numFrames;i++)
     {
         Mo->frame[i].vertex = (V3XVECTOR*) v3x_read_alloc(sizeof(V3XVECTOR), Mo->numVerts, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         BSWAP32((u_int32_t*)Mo->frame[i].vertex, Mo->numVerts*3);
 #endif
     }
@@ -1385,7 +1385,7 @@ static void RLXAPI v3x_VMX_unpack_OVI(V3XOVI *OVI, SYS_FILEHANDLE in)
 */
 static void RLXAPI v3x_VMX_unpack_TRI(V3XTRI *TRI, SYS_FILEHANDLE in)
 {
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 	BSWAP32((u_int32_t *)&TRI->index_CHAIN, 1);
 	BSWAP16((u_int16_t*)&TRI->numFrames, 3);
 #endif
@@ -1395,7 +1395,7 @@ static void RLXAPI v3x_VMX_unpack_TRI(V3XTRI *TRI, SYS_FILEHANDLE in)
         if (TRI->flags&V3XKF_KEYEX)
         {
             TRI->keyEx=(V3XKEYEX*)v3x_read_alloc(sizeof(V3XKEYEX), TRI->numKeys, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
             {
                 int i;
                 V3XKEYEX *kf = TRI->keyEx;
@@ -1410,7 +1410,7 @@ static void RLXAPI v3x_VMX_unpack_TRI(V3XTRI *TRI, SYS_FILEHANDLE in)
         else
         {
             TRI->keys=(V3XKEY*)v3x_read_alloc(sizeof(V3XKEY), TRI->numFrames, -1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
             BSWAP32((u_int32_t*)TRI->keys, TRI->numFrames*7);
 #endif
         }
@@ -1437,7 +1437,7 @@ static void v3xORI_Convert97(V3XSCENE *pScene, SYS_FILEHANDLE in)
     {
         const u_int8_t objTable[8] = { V3XOBJ_NONE, V3XOBJ_MESH, V3XOBJ_DUMMY, V3XOBJ_LIGHT, V3XOBJ_NONE, V3XOBJ_CAMERA, V3XOBJ_VIEWPORT};
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         BSWAP32((u_int32_t* )&ori97->global_rayon, 1);
         BSWAP32((u_int32_t* )&ori97->global_pivot, 3);
         BSWAP16((u_int16_t*)&ori97->index_Parent, 1);
@@ -1475,7 +1475,7 @@ static void v3xOVI_Convert97(V3XSCENE *pScene, SYS_FILEHANDLE in)
     
 	for (ovi97 = ovi97A, ovi = pScene->OVI, i = 0; i < pScene->numOVI; i++, ovi97++, ovi++)
     {
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         BSWAP16((u_int16_t*)&ovi97->index_OVI, 3);
 #endif
         ovi->state = V3XSTATE_MATRIXUPDATE;
@@ -1531,7 +1531,7 @@ static void ReadSceneNodes(V3XSCENE *pScene, SYS_FILEHANDLE in, int bFormat97)
         V3XTVI *TVI = pScene->TVI;
         for (i=0;i<pScene->numTVI;i++, TVI++)
 		{ 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 			BSWAP16((u_int16_t*)&TVI->pad, 1);
 #endif 
 			TVI->index_TRI = TVI->pad;
@@ -1567,7 +1567,7 @@ _RLXEXPORTFUNC V3XSCENE RLXAPI *V3XScene_GetFromFile_VMX(const char *filename)
     temp = (u_int8_t*) MM_std.malloc(HEAD1 + sizeof(V3XLAYER97));
     FIO_gzip.fread(temp, HEAD1 + sizeof(V3XLAYER97), 1, in);
     sysMemCpy(pScene, temp, HEAD1);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 	BSWAP16(&pScene->numOVI, 4);
 #endif
     ReadSceneNodes(pScene, in, 1);
@@ -1707,7 +1707,7 @@ V3XOVI RLXAPI *V3XOVI_GetFromFile(V3XSCENE *pScene, const char *filename, int do
     if (!pScene) return NULL;
     // Read header
     FIO_gzip.fread(&flags, 1, sizeof(u_int32_t), in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP32(&flags, 1);
 #endif
     for (j=0;j<flags;j++)
@@ -1726,7 +1726,7 @@ V3XOVI RLXAPI *V3XOVI_GetFromFile(V3XSCENE *pScene, const char *filename, int do
     do
     {
         FIO_gzip.fread(&flags, 1, sizeof(u_int32_t), in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         BSWAP32(&flags, 1);
 #endif
         OVI = ovl[j];
@@ -1779,7 +1779,7 @@ V3XTVI RLXAPI *V3XTVI_GetFromFile(V3XSCENE *pScene, const char *filename)
         if (!master) master = TVI;
         // Read from disk
         FIO_gzip.fread(&flags, 1, sizeof(u_int32_t), in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         BSWAP32(&flags, 1);
 #endif
         FIO_gzip.fread(TRI, 1, sizeof(V3XTRI), in);
@@ -1809,7 +1809,7 @@ V3XTRI RLXAPI *V3XTRI_GetFromFile(V3XSCENE *pScene, char *filename)
         if (!master) master = TRI;
         // Read from disk
         FIO_gzip.fread(&flags, 1, sizeof(u_int32_t), in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         BSWAP32(&flags, 1);
 #endif
         FIO_gzip.fread(TRI, 1, sizeof(V3XTRI), in);

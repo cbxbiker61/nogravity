@@ -77,7 +77,7 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	Chunks--;
         chunk_size = *(u_int32_t*)Buffer;
 	ax = *(u_int16_t*)(esi+4);
-        #ifdef LSB_FIRST
+        #ifdef __BIG_ENDIAN__
 	BSWAP32(&chunk_size, 1);
 	BSWAP16((u_int16_t*)&ax, 1);
 	#endif
@@ -87,7 +87,7 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	switch(ax) {
 	    case CT_FLI_SS2:
 	    bx = *(u_int16_t*)esi;
-	    #ifdef LSB_FIRST
+	    #ifdef __BIG_ENDIAN__
 	    BSWAP16((u_int16_t*)&bx, 1);
 	    #endif
 	    esi+=2;
@@ -97,7 +97,7 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 		do
 		{
 		  dx = *(short*)esi;
-		  #ifdef LSB_FIRST
+		  #ifdef __BIG_ENDIAN__
 		  BSWAP16((u_int16_t*)&dx, 1);
 		  #endif
 		  esi+=2;
@@ -118,7 +118,7 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 			{
 			    cx = -cx;
 			    ax = *(u_int16_t*)(esi+2);
-			    #ifdef LSB_FIRST
+			    #ifdef __BIG_ENDIAN__
 			    BSWAP16((u_int16_t*)&ax, 1);
 			    #endif
 			    esi+=4;
@@ -136,7 +136,7 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	    break;
 	    case CT_FLI_COLOR8BIT:
 	    bx = *(u_int16_t*)esi;
-	    #ifdef LSB_FIRST
+	    #ifdef __BIG_ENDIAN__
 	    BSWAP16((u_int16_t*)&bx, 1);
 	    #endif
 	    esi+=2;
@@ -153,7 +153,7 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	    break;
 	    case CT_FLI_COLOR6BIT:
 	    bx = *(u_int16_t*)esi;
-	    #ifdef LSB_FIRST
+	    #ifdef __BIG_ENDIAN__
 	    BSWAP16((u_int16_t*)&bx, 1);
 	    #endif
 	    esi+=2;
@@ -170,13 +170,13 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	    break;
 	    case CT_FLI_DELTA_FLI:
 	    ax = *(u_int16_t*)esi ;
-	    #ifdef LSB_FIRST
+	    #ifdef __BIG_ENDIAN__
 	    BSWAP16((u_int16_t*)&ax, 1);
 	    #endif
 	    ax*= (u_int16_t)dwWidth;
 	    edi = output + ax;
 	    bx = *(u_int16_t*)(esi+2);
-	    #ifdef LSB_FIRST
+	    #ifdef __BIG_ENDIAN__
 	    BSWAP16((u_int16_t*)&bx, 1);
 	    #endif
 	    esi+= 4;
@@ -284,7 +284,7 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
     if (md&FLI_LZWPACKED) FIO_cur = &FIO_gzip;
     pAnim->start = FIO_cur->ftell( pAnim->fli_stream ) + 128L;
     FIO_cur->fread(pAnim->Header.Raw, sizeof(char), 128, in);
-    #ifdef LSB_FIRST
+    #ifdef __BIG_ENDIAN__
     BSWAP32((u_int32_t*)&pAnim->Header.Struct.size, 1);
     BSWAP16(&pAnim->Header.Struct.type, 6);
     BSWAP32((u_int32_t*)&pAnim->Header.Struct.frame1, 2);
@@ -493,7 +493,7 @@ _RLXEXPORTFUNC void FLI_Unpack(FLI_STRUCT *pAnim)
         }
         if (pAnim->ReadMode!=FLI_EXPANDED)
         {
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
             BSWAP32((u_int32_t*)&j.Struct.size, 1);
             BSWAP16(&j.Struct.type, 6);
 #endif

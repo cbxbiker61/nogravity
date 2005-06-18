@@ -183,11 +183,11 @@ void NG_HighScoresSave(void)
     if (in)
     {
 		int ver = sizeof(SGPlayerSave);		
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32((u_int32_t*)&ver, 1);
 #endif
 		FIO_std.fwrite(&ver, sizeof(int), 1, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         int i;
         for (i=0;i<10;i++)
         {
@@ -196,7 +196,7 @@ void NG_HighScoresSave(void)
         }
 #endif
         FIO_std.fwrite( g_pBestGames, sizeof(SGPlayerSave), MAX_SAVE_GAMES, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         for (i=0;i<10;i++)
         {
             BSWAP32((u_int32_t*)&g_pBestGames[i].episode, 5);
@@ -220,7 +220,7 @@ void NG_HighScoresLoad(void)
     {
 		int ver;
 		FIO_std.fread(&ver, 1, sizeof(int), in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32((u_int32_t*)&ver, 1);
 #endif
 		if (ver!=sizeof(SGPlayerSave))
@@ -232,7 +232,7 @@ void NG_HighScoresLoad(void)
 		else
 		{
 			FIO_std.fread( g_pBestGames, sizeof(SGPlayerSave), MAX_SAVE_GAMES, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 			{
 				int i;
 				for (i=0;i<10;i++)
@@ -293,12 +293,12 @@ void NG_RosterSave(void)
     if (in)
     {
 		int ver = sizeof(SGPlayerSave);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32((u_int32_t*)&ver, 1);
 #endif
 		FIO_std.fwrite(&ver, 1, sizeof(int), in);
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         int i;
         for (i=0;i<MAX_SAVE_GAMES;i++)
         {
@@ -307,7 +307,7 @@ void NG_RosterSave(void)
         }
 #endif
         FIO_std.fwrite( g_pSaveGames, sizeof(SGPlayerSave), MAX_SAVE_GAMES, in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
         for (i=0;i<MAX_SAVE_GAMES;i++)
         {
 			BSWAP32((u_int32_t*)&g_pSaveGames[i].episode, 5);
@@ -334,7 +334,7 @@ void NG_RosterLoad(void)
     {
 		int ver;
 		FIO_std.fread(&ver, 1, sizeof(int), in);
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 		BSWAP32((u_int32_t*)&ver, 1);
 #endif
 		if (ver!=sizeof(SGPlayerSave))
@@ -347,7 +347,7 @@ void NG_RosterLoad(void)
 		{
 			FIO_std.fread( g_pSaveGames, sizeof(SGPlayerSave), MAX_SAVE_GAMES, in);
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 			{
 				int i;
 				for (i=0;i<MAX_SAVE_GAMES;i++)
@@ -436,14 +436,14 @@ int NG_ReplayLoad(void)
 	sysConPrint("Load replay game %s", tex);
     pIO->fread(&g_pRecordData, sizeof(SGRecordReplay), 1, in);
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 	BSWAP16((u_int16_t*)&g_pRecordData.startlevel, 2);
     BSWAP32((u_int32_t*)&g_pRecordData.maxstep, 2);
 #endif
     g_pRecordData.pos = (SGNetData*)MM_heap.malloc(sizeof(SGNetData)*g_pRecordData.step);
     pIO->fread(g_pRecordData.pos, sizeof(SGNetData), g_pRecordData.step, in);
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
     BSWAP32((u_int32_t*)g_pRecordData.pos, (g_pRecordData.step*sizeof(SGNetData))>>2);
 #endif
 
@@ -456,7 +456,7 @@ int NG_ReplayLoad(void)
         for (k=0;k<g_pRecordData.step;k++)
         {
             SGRecordBuffer *rec = g_pRecordData.rec + k;
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 			BSWAP32(&rec->length, 1);
 #endif
             rec->buffer = (u_int8_t *)MM_std.malloc(rec->length);

@@ -148,7 +148,7 @@ typedef struct _gx_bgr32
     u_int8_t			a, b, g, r;
 } bgr32_t;
 
-#ifdef LSB_FIRST
+#ifdef __BIG_ENDIAN__
 #define RGBENDIAN bgr32_t
 #else
 #define RGBENDIAN rgb32_t

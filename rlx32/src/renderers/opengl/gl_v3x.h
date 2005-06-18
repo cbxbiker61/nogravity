@@ -50,6 +50,10 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include <OpenGL/glext.h>
 #include <AGL/agl.h>
 
+#ifdef __BIG_ENDIAN__
+#define USE_ARGB_TEXTURE
+#endif 
+
 #ifndef GL_ARB_texture_rectangle
 #define GL_TEXTURE_RECTANGLE_ARB 0x84F5
 #endif
