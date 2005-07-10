@@ -1,0 +1,116 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.59)
+AC_INIT(nogravity, 1.99, http://sourceforge.net/projects/nogravity)
+AM_INIT_AUTOMAKE(nogravity, 1.99)
+
+AC_CONFIG_SRCDIR(preferences.c)
+AC_CONFIG_HEADER(autoconfig.h)
+AC_CONFIG_FILES([Makefile])
+
+# Define arguments.
+AC_ARG_ENABLE(debug,[  --enable-debug          Enable debug mode],
+  [if test "$enableval" = "yes"
+   then
+     AC_DEFINE([_DEBUG], 1, [Define to 1 if debug mode is enabled.])
+   fi])
+use_opengl="yes"
+AC_ARG_ENABLE(opengl, [  --enable-opengl         Enable use of OpenGL (enabled by default)],
+  [if test "$enableval" = "no"
+   then
+     use_opengl="no"
+   fi])
+AM_CONDITIONAL(USE_OPENGL, test "$use_opengl" = "yes")
+AC_ARG_ENABLE(sound, [  --enable-sound=type     Specify sound library (sdl_mixer or openal)],
+  [sound="$enableval"])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+# Checks for standard headers and functions.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([stddef.h stdint.h stdlib.h string.h unistd.h])
+AC_FUNC_MALLOC
+AC_FUNC_MEMCMP
+AC_FUNC_REALLOC
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS([atexit getcwd memmove memset mkdir pow strchr strstr strtol])
+
+# Checks for SDL.  Note that we don't use AM_PATH_SDL because it's not always
+# supported.
+AC_CHECK_PROG(HAVE_SDL_CONFIG, [sdl-config], yes)
+if test "$HAVE_SDL_CONFIG" = "yes"
+then
+  CFLAGS="`sdl-config --cflags` $CFLAGS"
+  LIBSS="`sdl-config --libs` $LIBS"
+else
+  AC_MSG_WARN([Can't find sdl-config, guessing required headers and libraries.])
+fi
+AC_CHECK_HEADERS([SDL/SDL.h], , AC_MSG_ERROR([Can't find SDL headers.]))
+AC_CHECK_LIB([SDL], [SDL_Init], , AC_MSG_ERROR([Can't find SDL library.]))
+
+# If we're using OpenGL, test for it.
+if test "$use_opengl" = "yes"
+then
+  # Checks for OpenGL.
+  AC_CHECK_HEADERS([GL/gl.h], , AC_MSG_ERROR([Can't find OpenGL headers.]))
+  AC_CHECK_LIB([GL], [glBegin], , AC_MSG_ERROR([Can't find OpenGL library.]))
+
+  # Check for OpenGL 1.4 support.
+  AC_CACHE_CHECK([for OpenGL 1.4 support], ac_cv_opengl_1_4_support, AC_TRY_RUN([
+#include <GL/gl.h>"
+#include <GL/glext.h>"
+int main (int argc, char *argv[])
+{
+#ifdef GL_VERSION_1_4
+  return 0;
+#else
+  return 1;
+#endif
+}
+], [AS_VAR_SET(ac_cv_opengl_1_4_support, yes)], [AS_VAR_SET(ac_cv_opengl_1_4_support, no)]))
+  AS_IF([test "AS_VAR_GET(ac_cv_opengl_1_4_support)" = "yes"], , AC_MSG_WARN([Some features will be disabled.]))
+fi
+
+# Checks for OpenAL (optional).
+if test "$sound" = "openal"
+then
+  AC_CHECK_HEADERS([AL/al.h AL/alc.h], , AC_MSG_ERROR([Can't find OpenAL headers for sound.]))
+  AC_CHECK_LIB([openal], [alGenSources], , AC_MSG_ERROR([Can't find OpenAL library for sound.]))
+fi
+
+# Checks for SDL_mixer (optional).
+if test "$sound" = "sdl_mixer"
+then
+  AC_CHECK_HEADERS([SDL/SDL_mixer.h], , AC_MSG_ERROR([Can't find SDL_mixer headers for sound.]))
+  AC_CHECK_LIB([SDL_mixer], [Mix_OpenAudio], , AC_MSG_ERROR([Can't find SDL_mixer library for sound.]))
+fi
+
+# Checks for libpng.
+AC_CHECK_PROG(HAVE_LIBPNG_CONFIG, [libpng-config], yes)
+if test "$HAVE_LIBPNG_CONFIG" = "yes"
+then
+  CFLAGS="`libpng-config --cflags` $CFLAGS"
+  LDFLAGS="`libpng-config --ldflags` $LDFLAGS"
+else
+  AC_MSG_WARN([Can't find libpng-config, guessing required headers and libraries.])
+fi
+AC_CHECK_HEADERS([png.h], , AC_MSG_ERROR([Can't find libpng header.]))
+AC_CHECK_LIB([png], [png_decompress_chunk], , AC_MSG_ERROR([Can't find libpng library.]))
+
+# Checks for Ogg.
+AC_CHECK_LIB([ogg], [ogg_stream_init], , AC_MSG_ERROR([Can't find Ogg library.]))
+
+# Checks for Vorbis.
+AC_CHECK_HEADERS([vorbis/codec.h], , AC_MSG_ERROR([Can't find Vorbis header.]))
+AC_CHECK_LIB([vorbis], [vorbis_synthesis_init], , AC_MSG_ERROR([Can't find Vorbis library.]))
+
+# Output it all.
+AC_OUTPUT

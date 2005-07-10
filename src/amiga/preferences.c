@@ -32,16 +32,17 @@ Linux/SDL Port: 2005 - Matt Williams
 #include "_stub.h"
 #include "systools.h"
 
-int STUB_OsStartup(char *parms)
-{
-	char *s = (char *)getenv("HOME");
-	sysStrCpy(RLX.IniPath, s);
-	strcat(RLX.IniPath, "/.realtech");
-	mkdir(RLX.IniPath, S_IRWXU);
-	strcat(RLX.IniPath, "/nogravity");
-	mkdir(RLX.IniPath, S_IRWXU);
-	return 1;
-}
+ int STUB_OsStartup(char *parms)
+ {
+	// PROGDIR: ?
+	char *s = "" ; //(char *)getenv("HOME");
+ 	sysStrCpy(RLX.IniPath, s);
+	//strcat(RLX.IniPath, "/.realtech");
+	//mkdir(RLX.IniPath, S_IRWXU);
+	strcat(RLX.IniPath, "nogravity");
+ 	mkdir(RLX.IniPath, S_IRWXU);
+ 	return 1;
+ }
 
 int STUB_OsCustom(char *parms)
 {

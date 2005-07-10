@@ -38,8 +38,11 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 	#define __MACOS__
     #define __C32__
 
-#elif defined __amigaos__ || defined __MORPHOS__
+#elif defined __amigaos4__ || defined __MORPHOS__
     #define __C32__
+    #ifndef __BIG_ENDIAN__
+    #define __BIG_ENDIAN__
+    #endif
 #endif
 
 #ifdef HAVE_CONFIG_H

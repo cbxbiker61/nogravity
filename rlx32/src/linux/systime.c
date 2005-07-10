@@ -91,7 +91,11 @@ void timer_Update(SYS_TIMER *tm)
 		{
 			int i=0;
 			for (;i<10;i++)
-                 sched_yield();
+				#ifdef __amigaos4__
+					SDL_Delay( 0 );
+				#else
+					sched_yield();
+				#endif
 		}
 
     }while(ticks_left>=0);
