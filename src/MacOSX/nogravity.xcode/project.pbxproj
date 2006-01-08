@@ -14,14 +14,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		0249A66BFF388E3F11CA2CEA = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = "libstdc++.a";
-			path = "/usr/lib/libstdc++.a";
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
 //020
 //021
 //022
@@ -128,6 +120,7 @@
 		};
 		20286C2AFDCF999611CA2CEA = {
 			children = (
+				F435A7830851AA2A00AE4A4D,
 				F45E30D2063A9AB400985E8A,
 				F45E30BD063A9A9700985E8A,
 				F41C907505EEC1A000709073,
@@ -144,6 +137,7 @@
 		20286C2CFDCF999611CA2CEA = {
 			children = (
 				F41C956C05EED06D00709073,
+				F4D2BE2D082E439900769785,
 				8D0C4E960486CD37000505A6,
 				0867D6AAFE840B52C02AAC07,
 				02345980000FD03B11CA0E72,
@@ -156,15 +150,12 @@
 		};
 		20286C32FDCF999611CA2CEA = {
 			children = (
-				F42FF25E0608F72400C97909,
-				F42FF1910608DF5900C97909,
+				F4DBA540082AE28100298B19,
 				F42FF0ED0608DF3900C97909,
 				F4F336B405FB4245003626B9,
-				F4F3353805FB4178003626B9,
 				20286C33FDCF999611CA2CEA,
 				4A9504CAFFE6A41611CA0CBA,
 				4A9504C8FFE6A3BC11CA0CBA,
-				0249A66BFF388E3F11CA2CEA,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -217,8 +208,8 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
-				HEADER_SEARCH_PATHS = "../..;/../SDK";
+				GCC_PREPROCESSOR_DEFINITIONS = "_DEBUG HAVE_OPENAL";
+				HEADER_SEARCH_PATHS = "$(HOME)/Dev/nogravity/SDK/oggvorbis/include ../.. ../SDK ";
 				OPTIMIZATION_CFLAGS = "-O0";
 				ZERO_LINK = YES;
 			};
@@ -231,10 +222,15 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_AUTO_VECTORIZATION = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_INPUT_FILETYPE = sourcecode.c.c;
 				GCC_MODEL_CPU = "";
+				GCC_MODEL_TUNING = "";
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENAL;
-				HEADER_SEARCH_PATHS = ";../..;/../SDK";
+				GCC_VERSION = 3.3;
+				HEADER_SEARCH_PATHS = "$(HOME)/Dev/nogravity/SDK/oggvorbis/include ../.. ../SDK ";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
 				REZ_PREPROCESSOR_DEFINITIONS = "";
@@ -297,7 +293,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ng;
+				PRODUCT_NAME = "No Gravity";
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -307,75 +303,16 @@
 			isa = PBXNativeTarget;
 			name = nogravity;
 			productInstallPath = "$(HOME)/Applications";
-			productName = ng;
+			productName = "No Gravity";
 			productReference = 8D0C4E970486CD37000505A6;
 			productType = "com.apple.product-type.application";
 		};
 		8D0C4E8A0486CD37000505A6 = {
 			buildActionMask = 2147483647;
 			files = (
-				8D0C4E8B0486CD37000505A6,
-				F4B3C17F07BF676700EB3D65,
-				F4B3C18107BF676700EB3D65,
-				F4B3C18207BF676700EB3D65,
-				F4B3C18307BF676700EB3D65,
-				F4B3C18407BF676700EB3D65,
-				F4B3C18607BF676700EB3D65,
-				F4B3C18707BF676700EB3D65,
-				F4B3C18807BF676700EB3D65,
-				F4B3C18907BF676700EB3D65,
-				F4B3C18A07BF676700EB3D65,
-				F4B3C18B07BF676700EB3D65,
-				F4B3C18C07BF676700EB3D65,
-				F4B3C18D07BF676700EB3D65,
-				F4B3C18E07BF676700EB3D65,
-				F4B3C18F07BF676700EB3D65,
-				F4B3C19107BF676700EB3D65,
-				F4B3C19207BF676700EB3D65,
-				F4B3C19307BF676700EB3D65,
-				F4B3C19407BF676700EB3D65,
-				F4B3C19507BF676700EB3D65,
-				F4B3C19607BF676700EB3D65,
-				F4B3C19707BF676700EB3D65,
-				F4B3C19807BF676700EB3D65,
-				F4B3C19907BF676700EB3D65,
-				F4B3C19A07BF676700EB3D65,
-				F4B3C19B07BF676700EB3D65,
-				F4B3C19C07BF676700EB3D65,
-				F4B3C19D07BF676700EB3D65,
-				F4B3C19E07BF676700EB3D65,
-				F4B3C1A007BF676700EB3D65,
-				F4B3C1A107BF676700EB3D65,
-				F4B3C1A207BF676700EB3D65,
-				F4B3C1A307BF676700EB3D65,
-				F4B3C1A507BF676700EB3D65,
-				F4B3C1A607BF676700EB3D65,
-				F4B3C1A707BF676700EB3D65,
-				F4B3C1AE07BF677E00EB3D65,
-				F4B3C1AF07BF677E00EB3D65,
-				F4B3C1B007BF677E00EB3D65,
-				F4D808C407CFAEB00031F08A,
-				F4D808C507CFAEB00031F08A,
-				F4D808C607CFAEB00031F08A,
-				F4D808C707CFAEB00031F08A,
-				F4D808C807CFAEB00031F08A,
-				F4D808CC07CFAEBF0031F08A,
-				F4D808D107CFAECA0031F08A,
-				F4D808D607CFAEE80031F08A,
-				F4253ABD08099ED400924134,
-				F4253ABE08099ED400924134,
-				F4253ABF08099ED400924134,
-				F4253AC008099ED400924134,
-				F4253AC108099ED400924134,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8D0C4E8B0486CD37000505A6 = {
-			fileRef = 32DBCF6D0370B57F00C91783;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		8D0C4E8C0486CD37000505A6 = {
 			buildActionMask = 2147483647;
@@ -383,6 +320,7 @@
 				8D0C4E8D0486CD37000505A6,
 				8D0C4E8E0486CD37000505A6,
 				F41C956D05EED06D00709073,
+				F4D2BE2E082E439900769785,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -468,7 +406,6 @@
 				F4F3351F05FB4074003626B9,
 				F4F3367C05FB41C0003626B9,
 				F4F3367D05FB41C0003626B9,
-				F4F3368805FB41E3003626B9,
 				F4F3369D05FB4216003626B9,
 				F4F3369E05FB4216003626B9,
 				F4F3369F05FB4216003626B9,
@@ -501,6 +438,7 @@
 				F4B3C14007BF668E00EB3D65,
 				F4B3C14107BF668E00EB3D65,
 				F4253AB508099EB800924134,
+				F4CE207F08392D8B00D695C6,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -509,25 +447,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D0C4E920486CD37000505A6,
-				8D0C4E930486CD37000505A6,
-				F4F3353905FB4178003626B9,
 				F4F336B505FB4245003626B9,
 				F42FF0EE0608DF3900C97909,
-				F42FF1920608DF5900C97909,
-				F42FF25F0608F72400C97909,
-				F4253AC508099EEA00924134,
+				F4DBA541082AE28100298B19,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8D0C4E920486CD37000505A6 = {
 			fileRef = 20286C33FDCF999611CA2CEA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		8D0C4E930486CD37000505A6 = {
-			fileRef = 0249A66BFF388E3F11CA2CEA;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -551,7 +479,7 @@
 			explicitFileType = wrapper.application;
 			includeInIndex = 0;
 			isa = PBXFileReference;
-			path = ng.app;
+			path = "No Gravity.app";
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -679,9 +607,7 @@
 		};
 		F41C907A05EEC1E500709073 = {
 			children = (
-				F4F3368705FB41E3003626B9,
-				F4F3367905FB41C0003626B9,
-				F4F3367A05FB41C0003626B9,
+				F49409540849DC5E00E4255C,
 				F41C90A805EEC24400709073,
 				F41C90A705EEC24400709073,
 				F41C90A605EEC24400709073,
@@ -700,12 +626,6 @@
 		};
 		F41C907B05EEC1EA00709073 = {
 			children = (
-				F4253AC408099EEA00924134,
-				F4253AB808099ED400924134,
-				F4253AB908099ED400924134,
-				F4253ABA08099ED400924134,
-				F4253ABB08099ED400924134,
-				F4253ABC08099ED400924134,
 				F4253AB408099EB800924134,
 				F4ABFB3805FB516600FAA545,
 				F41C90BC05EEC25A00709073,
@@ -1405,101 +1325,12 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.c;
 			name = snd_openal.c;
-			path = /Users/stephane/Dev/nogravity/rlx32/src/linux/snd_openal.c;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../../rlx32/src/linux/snd_openal.c;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F4253AB508099EB800924134 = {
 			fileRef = F4253AB408099EB800924134;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4253AB808099ED400924134 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = al.h;
-			path = ../../SDK/AL/al.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4253AB908099ED400924134 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = alc.h;
-			path = ../../SDK/AL/alc.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4253ABA08099ED400924134 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = alctypes.h;
-			path = ../../SDK/AL/alctypes.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4253ABB08099ED400924134 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = altypes.h;
-			path = ../../SDK/AL/altypes.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4253ABC08099ED400924134 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = alut.h;
-			path = ../../SDK/AL/alut.h;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4253ABD08099ED400924134 = {
-			fileRef = F4253AB808099ED400924134;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4253ABE08099ED400924134 = {
-			fileRef = F4253AB908099ED400924134;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4253ABF08099ED400924134 = {
-			fileRef = F4253ABA08099ED400924134;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4253AC008099ED400924134 = {
-			fileRef = F4253ABB08099ED400924134;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4253AC108099ED400924134 = {
-			fileRef = F4253ABC08099ED400924134;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4253AC408099EEA00924134 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = OpenAL.framework;
-			path = ../../../../../../Library/Frameworks/OpenAL.framework;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4253AC508099EEA00924134 = {
-			fileRef = F4253AC408099EEA00924134;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1518,33 +1349,63 @@
 			settings = {
 			};
 		};
-		F42FF1910608DF5900C97909 = {
+		F435A7830851AA2A00AE4A4D = {
+			children = (
+				F435A7910851AAAB00AE4A4D,
+				F435A7920851AAAB00AE4A4D,
+				F435A7930851AAAB00AE4A4D,
+				F435A7940851AAAB00AE4A4D,
+				F435A7950851AAAB00AE4A4D,
+			);
+			isa = PBXGroup;
+			name = openal;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F435A7910851AAAB00AE4A4D = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = CoreAudio.framework;
-			path = /System/Library/Frameworks/CoreAudio.framework;
+			lastKnownFileType = sourcecode.c.h;
+			name = alut.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alut.h;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		F42FF1920608DF5900C97909 = {
-			fileRef = F42FF1910608DF5900C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F42FF25E0608F72400C97909 = {
+		F435A7920851AAAB00AE4A4D = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = AudioUnit.framework;
-			path = /System/Library/Frameworks/AudioUnit.framework;
+			lastKnownFileType = sourcecode.c.h;
+			name = alc.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alc.h;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
-		F42FF25F0608F72400C97909 = {
-			fileRef = F42FF25E0608F72400C97909;
-			isa = PBXBuildFile;
-			settings = {
-			};
+		F435A7930851AAAB00AE4A4D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = alctypes.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/alctypes.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F435A7940851AAAB00AE4A4D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = al.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/al.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F435A7950851AAAB00AE4A4D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = altypes.h;
+			path = /System/Library/Frameworks/OpenAL.framework/Versions/A/Headers/altypes.h;
+			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F45E30BD063A9A9700985E8A = {
 			children = (
@@ -1897,6 +1758,17 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		F49409540849DC5E00E4255C = {
+			children = (
+				F4CE207E08392D8B00D695C6,
+				F4F3367905FB41C0003626B9,
+				F4F3367A05FB41C0003626B9,
+			);
+			isa = PBXGroup;
+			name = opengl;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		F4ABFB3805FB516600FAA545 = {
 			fileEncoding = 30;
@@ -2322,222 +2194,6 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4B3C17F07BF676700EB3D65 = {
-			fileRef = F4B3C15507BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18107BF676700EB3D65 = {
-			fileRef = F4B3C15707BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18207BF676700EB3D65 = {
-			fileRef = F4B3C15807BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18307BF676700EB3D65 = {
-			fileRef = F4B3C15907BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18407BF676700EB3D65 = {
-			fileRef = F4B3C15A07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18607BF676700EB3D65 = {
-			fileRef = F4B3C15C07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18707BF676700EB3D65 = {
-			fileRef = F4B3C15D07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18807BF676700EB3D65 = {
-			fileRef = F4B3C15E07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18907BF676700EB3D65 = {
-			fileRef = F4B3C15F07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18A07BF676700EB3D65 = {
-			fileRef = F4B3C16007BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18B07BF676700EB3D65 = {
-			fileRef = F4B3C16107BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18C07BF676700EB3D65 = {
-			fileRef = F4B3C16207BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18D07BF676700EB3D65 = {
-			fileRef = F4B3C16307BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18E07BF676700EB3D65 = {
-			fileRef = F4B3C16407BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C18F07BF676700EB3D65 = {
-			fileRef = F4B3C16507BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19107BF676700EB3D65 = {
-			fileRef = F4B3C16707BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19207BF676700EB3D65 = {
-			fileRef = F4B3C16807BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19307BF676700EB3D65 = {
-			fileRef = F4B3C16907BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19407BF676700EB3D65 = {
-			fileRef = F4B3C16A07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19507BF676700EB3D65 = {
-			fileRef = F4B3C16B07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19607BF676700EB3D65 = {
-			fileRef = F4B3C16C07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19707BF676700EB3D65 = {
-			fileRef = F4B3C16D07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19807BF676700EB3D65 = {
-			fileRef = F4B3C16E07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19907BF676700EB3D65 = {
-			fileRef = F4B3C16F07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19A07BF676700EB3D65 = {
-			fileRef = F4B3C17007BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19B07BF676700EB3D65 = {
-			fileRef = F4B3C17107BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19C07BF676700EB3D65 = {
-			fileRef = F4B3C17207BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19D07BF676700EB3D65 = {
-			fileRef = F4B3C17307BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C19E07BF676700EB3D65 = {
-			fileRef = F4B3C17407BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A007BF676700EB3D65 = {
-			fileRef = F4B3C17607BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A107BF676700EB3D65 = {
-			fileRef = F4B3C17707BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A207BF676700EB3D65 = {
-			fileRef = F4B3C17807BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A307BF676700EB3D65 = {
-			fileRef = F4B3C17907BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A507BF676700EB3D65 = {
-			fileRef = F4B3C17B07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A607BF676700EB3D65 = {
-			fileRef = F4B3C17C07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4B3C1A707BF676700EB3D65 = {
-			fileRef = F4B3C17D07BF676700EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4B3C1AB07BF677E00EB3D65 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2565,20 +2221,31 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4B3C1AE07BF677E00EB3D65 = {
-			fileRef = F4B3C1AB07BF677E00EB3D65;
+		F4CE207E08392D8B00D695C6 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = cgl_gl.cpp;
+			path = ../../rlx32/src/renderers/opengl/macos/cgl_gl.cpp;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		F4CE207F08392D8B00D695C6 = {
+			fileRef = F4CE207E08392D8B00D695C6;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		F4B3C1AF07BF677E00EB3D65 = {
-			fileRef = F4B3C1AC07BF677E00EB3D65;
-			isa = PBXBuildFile;
-			settings = {
-			};
+		F4D2BE2D082E439900769785 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			name = NOGRAVITY.RMX;
+			path = build/NOGRAVITY.RMX;
+			refType = 4;
+			sourceTree = "<group>";
 		};
-		F4B3C1B007BF677E00EB3D65 = {
-			fileRef = F4B3C1AD07BF677E00EB3D65;
+		F4D2BE2E082E439900769785 = {
+			fileRef = F4D2BE2D082E439900769785;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2628,36 +2295,6 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4D808C407CFAEB00031F08A = {
-			fileRef = F4D808BF07CFAEAF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808C507CFAEB00031F08A = {
-			fileRef = F4D808C007CFAEAF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808C607CFAEB00031F08A = {
-			fileRef = F4D808C107CFAEAF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808C707CFAEB00031F08A = {
-			fileRef = F4D808C207CFAEAF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4D808C807CFAEB00031F08A = {
-			fileRef = F4D808C307CFAEB00031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4D808CB07CFAEBF0031F08A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2666,12 +2303,6 @@
 			path = ../console.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
-		};
-		F4D808CC07CFAEBF0031F08A = {
-			fileRef = F4D808CB07CFAEBF0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F4D808CF07CFAECA0031F08A = {
 			fileEncoding = 30;
@@ -2682,12 +2313,6 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4D808D107CFAECA0031F08A = {
-			fileRef = F4D808CF07CFAECA0031F08A;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4D808D507CFAEE80031F08A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2697,8 +2322,16 @@
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
-		F4D808D607CFAEE80031F08A = {
-			fileRef = F4D808D507CFAEE80031F08A;
+		F4DBA540082AE28100298B19 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = OpenAL.framework;
+			path = /System/Library/Frameworks/OpenAL.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F4DBA541082AE28100298B19 = {
+			fileRef = F4DBA540082AE28100298B19;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3011,20 +2644,6 @@
 			settings = {
 			};
 		};
-		F4F3353805FB4178003626B9 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = AGL.framework;
-			path = /System/Library/Frameworks/AGL.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F4F3353905FB4178003626B9 = {
-			fileRef = F4F3353805FB4178003626B9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F4F3367905FB41C0003626B9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3051,21 +2670,6 @@
 		};
 		F4F3367D05FB41C0003626B9 = {
 			fileRef = F4F3367A05FB41C0003626B9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F4F3368705FB41E3003626B9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = agl_gl.cpp;
-			path = ../../rlx32/src/renderers/opengl/macos/agl_gl.cpp;
-			refType = 2;
-			sourceTree = SOURCE_ROOT;
-		};
-		F4F3368805FB41E3003626B9 = {
-			fileRef = F4F3368705FB41E3003626B9;
 			isa = PBXBuildFile;
 			settings = {
 			};
