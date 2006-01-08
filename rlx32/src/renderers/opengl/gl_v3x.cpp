@@ -102,9 +102,6 @@ void GL_InstallExtensions()
 {
     GLint n;
     GLint g_nTextureMaxSize = 0;
-	const char *v = (const char *)glGetString(GL_VERSION);
-	int gl_major_version = v[0]-'0';
-	int gl_minor_version = v[2]-'0';
 	
 	if (GL_IsSupported("GL_ARB_multitexture"))
     {

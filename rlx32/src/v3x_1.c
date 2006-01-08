@@ -125,9 +125,10 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
             &&(mesh->flags&V3XMESH_EXCPTDYNLIGHT)))
             {
                 V3XVECTOR temp1, v_lite3pt;
-                V3XSCALAR  ds=CST_ZERO;
-                V3XSCALAR  multiplier = lite->intensity;
-                V3XSCALAR  invRange = CST_ZERO;
+                V3XSCALAR ds=CST_ZERO;
+                V3XSCALAR multiplier = lite->intensity;
+                V3XSCALAR invRange = CST_ZERO;
+				V3XVector_Set(&v_lite3pt, 0, 0, 0);
                 V3XVector_Dif(&temp1, &lite->pos, &mesh->matrix.v.Pos);
                 if (
                 (lite->flags & V3XLIGHTCAPS_RANGE)&&((lite->flags&V3XLIGHTCAPS_INFINITE)==0)

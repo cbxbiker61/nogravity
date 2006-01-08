@@ -385,7 +385,9 @@ void NG_FXFlare(void)
         if (light->flags&V3XLIGHTCAPS_LENZFLARE)
         {
             V3XVECTOR light2cam;   
-            switch (light->type) {
+			V3XVector_Set(&light2cam, 0, 0, 0);
+            switch (light->type) 
+			{
                 case V3XLIGHTTYPE_OMNI:
                 case V3XLIGHTTYPE_DIRECTIONAL:
                 V3XVector_Dif(&light2cam, &V3X.Camera.M.v.Pos, &light->pos);

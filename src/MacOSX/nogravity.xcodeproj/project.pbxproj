@@ -307,7 +307,7 @@
 		F4B3C1AC07BF677E00EB3D65 /* _rlx32.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = _rlx32.h; path = ../../rlx32/include/_rlx32.h; sourceTree = SOURCE_ROOT; };
 		F4B3C1AD07BF677E00EB3D65 /* _stub.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = _stub.h; path = ../../rlx32/include/_stub.h; sourceTree = SOURCE_ROOT; };
 		F4CE207E08392D8B00D695C6 /* cgl_gl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cgl_gl.cpp; path = ../../rlx32/src/renderers/opengl/macos/cgl_gl.cpp; sourceTree = SOURCE_ROOT; };
-		F4D2BE2D082E439900769785 /* NOGRAVITY.RMX */ = {isa = PBXFileReference; lastKnownFileType = file; name = NOGRAVITY.RMX; path = build/NOGRAVITY.RMX; sourceTree = "<group>"; };
+		F4D2BE2D082E439900769785 /* NOGRAVITY.RMX */ = {isa = PBXFileReference; lastKnownFileType = file; name = NOGRAVITY.RMX; path = ../../bin/NOGRAVITY.RMX; sourceTree = "<group>"; };
 		F4D808BF07CFAEAF0031F08A /* lt_cmx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = lt_cmx.h; path = ../lt_cmx.h; sourceTree = SOURCE_ROOT; };
 		F4D808C007CFAEAF0031F08A /* lt_conf.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = lt_conf.h; path = ../lt_conf.h; sourceTree = SOURCE_ROOT; };
 		F4D808C107CFAEAF0031F08A /* lt_data.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = lt_data.h; path = ../lt_data.h; sourceTree = SOURCE_ROOT; };
@@ -977,7 +977,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ng_Prefix.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENAL;
-				GCC_VERSION = 3.3;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
@@ -990,7 +989,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				LIBRARY_STYLE = Static;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lz";
 				OTHER_REZFLAGS = "";
@@ -1042,22 +1041,34 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_INPUT_FILETYPE = sourcecode.c.c;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				REZ_PREPROCESSOR_DEFINITIONS = _DEBUG;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
 		};
 		F4259CDA08636DB4006643CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_INPUT_FILETYPE = sourcecode.c.c;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SEPARATE_STRIP = YES;
 			};
 			name = Release;
 		};
 		F4259CDB08636DB4006643CB /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Default;
 		};

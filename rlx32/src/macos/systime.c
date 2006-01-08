@@ -26,6 +26,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include <stdio.h>
 #include <time.h>
 #include <pthread.h>
+#include <unistd.h>
 
 #include "_rlx32.h"
 #include "systools.h"

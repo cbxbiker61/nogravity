@@ -681,6 +681,11 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	wglGetProcAddressesARB(g_hDC);
 	GL_InstallExtensions();
 	GL_ResetViewport();
+
+	if (wglSwapIntervalEXT)
+	{
+		wglSwapIntervalEXT(g_pRLX->pGX->View.Flags&GX_CAPS_VSYNC);
+	}
 	
 #ifdef _DEBUG
 	SYS_Debug("...%s", glGetString(GL_VENDOR));
