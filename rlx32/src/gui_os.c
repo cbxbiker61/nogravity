@@ -251,7 +251,7 @@ int RW_Interface_Scan(RW_Interface *pInt, int pCurSel, int *ok, PFRWCALLBACK pfC
 		if (!RW.isLocked)
 		{
 			key = ScanKeys(pInt, &pCurSel, &pPrevSel);
-			if (sMOU->numControllers)
+			if (sMOU->numControllers && !RW.isMouseHidden)
 			{
 				pCurSel = CheckMouseOverlap(pInt, pCurSel);
 				

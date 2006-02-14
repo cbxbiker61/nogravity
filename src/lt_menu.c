@@ -77,6 +77,7 @@ typedef struct {
 
 int g_cFadeValue;
 int g_cFadeValueDir;
+static int bControlSetup = 0;
 
 static char *g_pRootMain[]={g_szGmT[45], g_szGmT[46], g_szGmT[48], g_szGmT[49], g_szGmT[50], g_szGmT[51], g_szGmT[37], g_szGmT[52], NULL};
 
@@ -100,6 +101,10 @@ static char *s_pMenuOptions[]={ g_szGmT[62], g_szLanguage, g_szGmT[63], g_szGmT[
 
 
 static SGMenu g_pMenuKey[]={
+    {"Up", &g_SGSettings.key[18], -1, -1, {NULL}},
+    {"Down", &g_SGSettings.key[19], -1, -1, {NULL}}, 
+    {"Right", &g_SGSettings.key[20], -1, -1, {NULL}},
+    {"Left", &g_SGSettings.key[21], -1, -1, {NULL}},
     {"Throttle", &g_SGSettings.key[0], -1, -1, {NULL}},
     {"Speed+", &g_SGSettings.key[1], -1, -1, {NULL}}, 
     {"Speed-", &g_SGSettings.key[2], -1, -1, {NULL}}, 
@@ -118,10 +123,6 @@ static SGMenu g_pMenuKey[]={
     {"HUD", &g_SGSettings.key[15], -1, -1, {NULL}},
     {"Radar", &g_SGSettings.key[16], -1, -1, {NULL}}, 
     {"Com", &g_SGSettings.key[17], -1, -1, {NULL}}, 
-    {"Up", &g_SGSettings.key[18], -1, -1, {NULL}},
-    {"Down", &g_SGSettings.key[19], -1, -1, {NULL}}, 
-    {"Right", &g_SGSettings.key[20], -1, -1, {NULL}},
-    {"Left", &g_SGSettings.key[21], -1, -1, {NULL}},
     {"Talk", &g_SGSettings.key[22], -1, -1, {NULL}},
 	{g_szGmT[118], NULL, 0, 0, {NULL}},
 
@@ -147,7 +148,10 @@ static SGMenu g_pMenuAudio[]={
 static SGMenu g_pMenuControl[]={
     {g_szGmT[100], &g_SGSettings.Ctrl, 0, 2, {g_szGmT[120], g_szGmT[101], g_szGmT[102]}},
     {g_szGmT[103], &g_SGSettings.FlipYMouse, 0, 1, {g_szGmT[67], g_szGmT[66]}}, 
-    {g_szGmT[144], &g_SGSettings.Mickey, 1, 32, {NULL}}, 
+	{"Alt. mouse", &g_SGSettings.AltMouse,  0, 1, {g_szGmT[67], g_szGmT[66]}}, 
+    {g_szGmT[144], &g_SGSettings.MouseSensitivity, 1, 32, {NULL}}, 
+	{"Joy.Axis Throttle", &g_SGSettings.AxisThrottle, 0, 4, {"None", "Z-axis", "X-axis rotation", "Y-axis rotation", "Z-axis rotation"}}, 
+	{"Joy.Axis Roll", &g_SGSettings.AxisRoll, 0, 4, {"None", "Z-axis", "X-axis rotation", "Y-axis rotation", "Z-axis rotation"}}, 	
     {g_szGmT[118], NULL, 0, 0, {NULL}},
 {NULL}};
 
@@ -157,7 +161,7 @@ static SGMenu g_pMenuControl[]={
 	{"Multisampling", &g_SGSettings.Multisampling, 0, 2, {"OFF","2X","4X"}}, 
     {"Limit FPS", &g_SGSettings.FrameSkip, 0, 2, {"70fps", "35fps", "24fps"}}, 
 	{"Tex. filtering", &g_SGSettings.TexFiltering, 0, 1, {"Bilinear", "Trilinear"}},
-	{"NPOT", &g_SGSettings.TexPOT, 0, 1, {g_szGmT[68], g_szGmT[69]}},
+	{"Tex. rectangle", &g_SGSettings.TexPOT, 0, 1, {g_szGmT[68], g_szGmT[69]}},
 	{"Tex. compression", &g_SGSettings.TexCompression, 0, 1, {g_szGmT[69], g_szGmT[68]}},
     {"3D effects", &g_SGSettings.VisualsFx, 1, 4, {NULL, NULL} },
     {g_szGmT[147], &g_SGSettings.LensFX, 0, 1, {g_szGmT[69], g_szGmT[68]}}, 
@@ -378,6 +382,7 @@ static int RW_RenderSelection(RW_Interface *pInterface)
 	int ret = 0;
     GXSPRITE *sp = NG_GetCursorSprite();
 	RW_Button *b = pInterface->item + RW.current;
+
     int x = b->X-(b->X>0),
 		yy = GX.View.ymin + b->Y-(b->Y>0);
 
@@ -503,11 +508,13 @@ static int NG_RenderingKeybMenu(RW_Interface *p, int mode)
 			
 			CSP_Color(COLOR_GRAY);
 			CSP_WriteText(tex, x+(g_SGMenuPos.Width2*3/4), y, pFont);
-
 		}
+	
 		
 		if (!mode)
+		{
 			RW_Zone_CreateWithSize(p, x, y, (g_SGMenuPos.Width2*3/4)-8, pFont->item[0].LY);
+		}
 
     }
 	
@@ -532,7 +539,7 @@ static int NG_RenderingSubMenu(RW_Interface *p, int mode)
 	char tex[256];
     SGMenu *pMenu = g_SGMenuPos.pMenu;
     GXSPRITEGROUP *pFont = g_pFontMenuSml;
-    int i, numItems = 0, x = g_SGMenuPos.item2X, y, dy = pFont->item[0].LY + 0;
+    int i, numItems = 0, x = g_SGMenuPos.item2X, y, dy = pFont->item[0].LY + 1;
     g_cCursorMenu.Mode = 1;
 
     while(pMenu[numItems].szTitle!=0)
@@ -575,10 +582,26 @@ static int NG_RenderingSubMenu(RW_Interface *p, int mode)
         if (!mode)
             RW_Zone_CreateWithSize(p, x, y, g_SGMenuPos.Width2-8, pFont->item[0].LY);
     }
-	
+
+	{
+		char raw[64];
+		int axisX, axisY, axisRoll = 0, axisThrottle = 0, status;					
+		SGJOY_ReadAxis(&axisX, &axisY, &axisRoll, &axisThrottle, &status);
+		
+		if (bControlSetup)
+		{
+			sprintf(raw,"Throttle=%d, Roll=%d", axisThrottle, axisRoll);
+			CSP_Color(COLOR_GRAY1);
+			CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
+		}
+	}
+
+
 	CSP_Color(COLOR_GRAY4);
     CSP_WriteText(g_SGMenuPos.name, g_SGMenuPos.Xtitle, g_SGMenuPos.Ytitle, g_pFontMenuSml);
 	RW_RenderSelection(p);
+
+
     GX.Client->Unlock();
     GX.View.Flip();
 	NG_UpdateColor();
@@ -759,17 +782,28 @@ static void NG_ExecSubMenu(char *name, SGMenu *pMenu,  PFRWCALLBACK  pf)
     while(pMenu[j].szTitle!=0) 
 		j++;
     jm = j-1;
+
+	RW.current = 0;
+
+	if (bKeyboardSetup)
+	{
+		g_pMenu = RW_Interface_Create(RW_VERT);
+	}
+	g_SGMenuPos.name = name;
     
     while(ok!=0)
     {
-		g_pMenu = RW_Interface_Create(RW_VERT);
-        g_SGMenuPos.name = name;
+		if (!bKeyboardSetup)
+		{
+			g_pMenu = RW_Interface_Create(RW_VERT);		
+		}
+        
         g_SGMenuPos.pMenu = pMenu;
         
 	    if (t) 
 			t = 0;
 
-        but = RW_Interface_Scan(g_pMenu, but, &ok, pf);
+		but = RW_Interface_Scan(g_pMenu, RW.current, &ok, pf);
 		if (STUB_TaskControl())
 			break;
 
@@ -834,6 +868,7 @@ static void NG_ExecSubMenu(char *name, SGMenu *pMenu,  PFRWCALLBACK  pf)
                     NG_ChangeMenu(pMenu, jm, sKEY->scanCode, *v);
                     *v = sKEY->scanCode;
                 }
+				sKEY->Update(0);
             }
             else
             {
@@ -878,7 +913,7 @@ static void NG_ExecSubMenu(char *name, SGMenu *pMenu,  PFRWCALLBACK  pf)
 				}
             }
         }
-		g_pMenu = RW_Interface_Create(RW_VERT);
+		// g_pMenu = RW_Interface_Create(RW_VERT);
     }
     
     return ;
@@ -1730,6 +1765,7 @@ static void NG_OptionsMenu(void)
     do
     {
 		GetLanguageText();
+		bControlSetup = 0;
         ok = NG_ExecMainMenu(s_pMenuOptions, 0, 0xffffffff, 0);
         switch(ok)
 		{
@@ -1747,9 +1783,10 @@ static void NG_OptionsMenu(void)
             g_SGMenuPos.Help=1;
             break;
             case 3:
+			bControlSetup = 1;
             NG_ExecSubMenu(g_szGmT[65], g_pMenuControl, NG_RenderingSubMenu);
             break;            
-            case 4:
+            case 4:			
             NG_ExecSubMenu(g_szGmT[119], s_pMenuGame, NG_RenderingSubMenu);
             break;
 			case 5:
@@ -2407,7 +2444,7 @@ int NG_JoystickCalibration()
 					}    
 					GX_DrawBoxEffect3D(cx-lh, cy-lq, l, lq);
 				}
-				sprintf(raw,"Z=%d", sJOY->lZ);
+				sprintf(raw,"Z-axis=%d", sJOY->lZ);
 				CSP_Color(COLOR_GRAY1);
 				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
 			break;
@@ -2448,7 +2485,7 @@ int NG_JoystickCalibration()
 					}    
 					GX_DrawBoxEffect3D(cx-lh, cy-lq, l, lq);
 				}
-				sprintf(raw,"R=%d", sJOY->lRx);
+				sprintf(raw,"X-axis Rotation=%d", sJOY->lRx);
 				CSP_Color(COLOR_GRAY1);
 				CSP_DrawCenterText(raw, g_SGMenuPos.YZoneMax - 30, g_pFontMenuSml, GX.csp_cfg.put);
 

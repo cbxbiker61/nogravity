@@ -938,6 +938,21 @@ static void setFormation(int code)
 * DESCRIPTION :
 *
 */
+static void RollControl(V3XSCALAR ra)
+{
+	int dZ = 0;
+	if (sKEY_IsHeld(LK_ROLLRIGHT))  
+		dZ = 1;
+
+	if (sKEY_IsHeld(LK_ROLLLEFT))  
+		dZ = -1;
+	{
+		static float lZ;
+		float nlZ = dZ * ra / 2.f;
+		lZ = (lZ * 0.8f + nlZ * 0.2f);
+		g_pPlayer->Mv.z = lZ;
+	}
+}
 static void NG_ReadInput(int *dx, int *dy, int *InMax)
 {
     sKEY->Update(0);
@@ -969,10 +984,12 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
         }
         else
         {
+			V3XSCALAR ra = 2.f*g_cTimer.fCounter*(float)(1+g_SGSettings.MouseSensitivity+8);					
             switch(g_SGSettings.Ctrl) 
 			{
                 case CTRL_Joystick: // Joystick Control
 					*InMax= (int)(16.f*g_cTimer.fCounter);
+
                 switch(RLX.Control.Id)
 				{
                     case RLXCTRL_JoyPad:
@@ -991,6 +1008,7 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
 								*dy= 1;
 							g_pPlayer->Mv.x -= (float)(3*(*dx)) * g_cTimer.fCounter;
 							g_pPlayer->Mv.y -= (float)(3*(*dy)) * g_cTimer.fCounter;
+							RollControl(ra);
 						}
                     break;
                     case RLXCTRL_ThrustMaster:
@@ -999,45 +1017,38 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
                     default:
 						if (sJOY)
 						{
-							int x, y, z;
+							int axisX, axisY, axisRoll, axisThrottle, status;
+						
+							static float lX, lY, lZ;
+							float nlX, nlY;
 							sJOY->Update(0);
 							SGJOY_MapKeyboard();
-							if (sJOY->lRz)
-								g_pPlayer->Mv.inert = (float)((65535-sJOY->lRz)*g_pPlayer->J.pInf.fSpeedMax)/65000.f;
+							SGJOY_ReadAxis(&axisX, &axisY, &axisRoll, &axisThrottle, &status);
+					
+							nlX = (float)axisX * g_cTimer.fCounter/512.f;
+							nlY = (float)axisY * g_cTimer.fCounter/512.f;
 
-							#define deadZone 10000
-							x = sJOY->lX - 32768;
-							if (abs(x)<deadZone)
+							lX = (lX * 0.8f + nlX * 0.2f);
+							lY = (lY * 0.8f + nlY * 0.2f);
+
+							g_pPlayer->Mv.x = -lX;						
+							g_pPlayer->Mv.y = -lY;
+
+							if (status & 4)
 							{
-								g_pPlayer->Mv.x *= 0.99f;
+								float nlZ = - ((V3XSCALAR)axisRoll * g_cTimer.fCounter)/(1024.f);
+								lZ = (lZ * 0.8f + nlZ * 0.2f);
+								g_pPlayer->Mv.z = lZ;
 							}
 							else
 							{
-								x+=(x<0?deadZone:-deadZone);
-								g_pPlayer->Mv.x = - ((V3XSCALAR)x * g_cTimer.fCounter)/(512.f);
+								RollControl(ra);
 							}
 
-							y = sJOY->lY - 32768;
-							if (abs(y)<deadZone)
-								g_pPlayer->Mv.y *= 0.99f;
-							else
+							if (status & 8)
 							{
-								y+=(y<0?deadZone:-deadZone);
-								g_pPlayer->Mv.y = - ((V3XSCALAR)y * g_cTimer.fCounter)/(512.f);
-							}
-
-							z = sJOY->lZ - 32768;
-							if (abs(z)<deadZone)
-							{
-								z = 0;
-								g_pPlayer->Mv.z *= 0.99f;
-							}
-							else
-							{
-								z+=(z<0?deadZone:-deadZone);
-								g_pPlayer->Mv.z = - ((V3XSCALAR)z * g_cTimer.fCounter)/(2048.f);
-							}						
-							
+								g_pPlayer->Mv.inert = (float)(axisThrottle*g_pPlayer->J.pInf.fSpeedMax)/65000.f;
+							}							
 							
 						}
                     break;
@@ -1046,30 +1057,72 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
                 break;
                 case CTRL_Keyb:  // Keyboard Control
 				{
+					int dX = 0, dY = 0;					
 					if (sKEY_IsHeld(LK_RIGHT))
+					{
 						*dx =  1;
+						dX = 1;
+					}
 					if (sKEY_IsHeld(LK_LEFT))
+					{
 						*dx = -1;
+						dX =  -1;
+					}
 					if (sKEY_IsHeld(LK_DOWN))
+					{
 						*dy =  1;
+						dY = 1;
+					}
 					if (sKEY_IsHeld(LK_UP))  
+					{
 						*dy = -1;
-					if (*dx) 
-						g_pPlayer->Mv.x -= (float)(3*(*dx))*g_cTimer.fCounter;
-					if (*dy) 
-						g_pPlayer->Mv.y -= (float)(3*(*dy))*g_cTimer.fCounter;
+						dY = -1;
+					}
+
+					{
+						static float lX, lY;
+
+						float nlX = dX * ra / 2.f;
+						float nlY = dY * ra / 2.f;
+
+						lX = (lX * 0.8f + nlX * 0.2f);
+						lY = (lY * 0.8f + nlY * 0.2f);
+
+						g_pPlayer->Mv.x= -lX;						
+						g_pPlayer->Mv.y= lY;
+					}
+
+					RollControl(ra);
+
 					*InMax = (int)(16.f*g_cTimer.fCounter);
 				}
                 break;				
                 case CTRL_Mouse:
-                {
-                    V3XSCALAR ra = 2.f*g_cTimer.fCounter*(float)(g_SGSettings.Mickey+16), s1;
+                {                  	
                     sMOU->Update(0);
 					SGMOU_MapKeyboard();
-                    s1 = DIVF32((float)sMOU->x, (float)GX.View.xmax) - 0.5f;
-                    g_pPlayer->Mv.x =  - s1 * ra;
-                    s1 = DIVF32((float)sMOU->y, (float)GX.View.ymax) - 0.5f;
-                    g_pPlayer->Mv.y =  s1 * ra;
+					
+					if (g_SGSettings.AltMouse)
+					{
+						static float lX, lY;
+						float nlX = sMOU->lX * ra / 50.f;
+						float nlY = sMOU->lY * ra / 50.f;
+
+						lX = (lX * 0.8f + nlX * 0.2f);
+						lY = (lY * 0.8f + nlY * 0.2f);
+
+						g_pPlayer->Mv.x= -lX;						
+						g_pPlayer->Mv.y= lY;
+					}
+					else
+					{
+						float s1 = DIVF32((float)sMOU->x, (float)GX.View.xmax) - 0.5f;
+						g_pPlayer->Mv.x =  - s1 * ra;
+						s1 = DIVF32((float)sMOU->y, (float)GX.View.ymax) - 0.5f;
+						g_pPlayer->Mv.y =  s1 * ra;
+					}
+
+					RollControl(ra);
                 }
                 *InMax = (int)(16.f*g_cTimer.fCounter);
                 break;
@@ -1118,12 +1171,7 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
                 if (sKEY_IsHeld(LK_STOP))
 					g_pPlayer->Mv.inert=g_pPlayer->J.pInf.fSpeedMax;
 
-                if (sKEY_IsHeld(LK_ROLLRIGHT))  
-					g_pPlayer->Mv.z-=4*g_cTimer.fCounter;
-
-                if (sKEY_IsHeld(LK_ROLLLEFT))
-					g_pPlayer->Mv.z+=4*g_cTimer.fCounter;
-
+            
                 if (sKEY_IsClicked(LK_RADAR))
                 {
                     g_SGGame.RadarMode^=1;
@@ -1181,54 +1229,6 @@ static void NG_ReadInput(int *dx, int *dy, int *InMax)
                 }
             }
         }
-
-
-		/*
-        if (0)
-        {
-            V3XVECTOR v;
-            v.x = CST_ZERO;
-            v.y = CST_ZERO;
-
-            if (g_pPlayer->Mx.but&1)
-            {
-                int amp=(g_pPlayer->J.pInf.Attack<<10);
-                if (g_pPlayer->J.pInf.Attack&1) amp=-amp;
-                v.x+=(V3XSCALAR)amp;
-            }
-
-            if (g_SGGame.Shock)
-            {
-                int amp = (g_SGGame.Shock);
-                v.x+=(V3XSCALAR)((sysRand(amp)-(amp/2))<<8);
-                v.y+=(V3XSCALAR)((sysRand(amp)-(amp/2))<<8);
-            }
-            if (g_pPlayer->fBooster)
-            {
-                v.y+=g_pPlayer->fBooster * 256;
-            }
-
-            // Speed
-            {
-                V3XVECTOR v2=g_pPlayer->J.OVI->ORI->Cs->velocity;
-                v.x+=(-v2.z)*(V3XSCALAR)100;
-                v.y+=(-v2.y)*(V3XSCALAR)100;
-            }
-            if (v.y>(V3XSCALAR)32767L) 
-				v.y=(V3XSCALAR)32767L;
-
-            if (v.x>(V3XSCALAR)32767L) 
-				v.x=(V3XSCALAR)32767L;
-
-            if (v.y<(V3XSCALAR)(-32767L)) 
-				v.y=(V3XSCALAR)(-32767L);
-
-            if (v.x<(V3XSCALAR)(-32767L)) 
-				v.x=(V3XSCALAR)(-32767L);
-
-            sJOY->FB_ApplyForce((int)v.x, (int)v.y);
-        }
-		*/
 
         if (sKEY_IsClicked(s_f1)) 
 			g_pPlayer->Mx.but|=(1L<<18);
@@ -1529,21 +1529,33 @@ int32_t static NG_ControlGame(void)
         }
         if (g_pPlayer->J.pInf.fFrozen<=0)
         {
+			static float Mvx, Mvy, Mvz;
+			Mvx = g_pPlayer->Mv.x * 0.1f + Mvx * 0.9f;
+			Mvy = g_pPlayer->Mv.y * 0.1f + Mvy * 0.9f;
+			Mvz = g_pPlayer->Mv.z * 0.1f + Mvz * 0.9f;
+
+			/*
             if (g_pPlayer->Mv.x)
-            {
-                g_pPlayer->Mv.x=(float)NG_MomentumValue((int32_t)g_pPlayer->Mv.x, InMax);
-                V3XMatrix_Rotate_Y_Local((int32_t)g_pPlayer->Mv.x, g_pPlayer->Mat->Matrix);
+            {				
+                g_pPlayer->Mv.x=(float)NG_MomentumValue((int32_t)g_pPlayer->Mv.x, InMax);                
             }
-            if (g_pPlayer->Mv.y)
+            
+			if (g_pPlayer->Mv.y)
             {
                 g_pPlayer->Mv.y=(float)NG_MomentumValue((int)g_pPlayer->Mv.y, InMax);
-                V3XMatrix_Rotate_X_Local (g_SGSettings.FlipYMouse ? -(int32_t)g_pPlayer->Mv.y : (int32_t)g_pPlayer->Mv.y, g_pPlayer->Mat->Matrix);
+                
             }
-            if ((g_pPlayer->Mv.z)||(g_pPlayer->Mv.x))
+            
+			if ((g_pPlayer->Mv.z)||(g_pPlayer->Mv.x))
             {
-				g_pPlayer->Mv.z=(float)NG_MomentumValue((int32_t)g_pPlayer->Mv.z, InMax);
-				V3XMatrix_Rotate_Z_Local((int32_t)(g_pPlayer->Mv.z-(g_pPlayer->Mv.x*.7)), g_pPlayer->Mat->Matrix);
+				g_pPlayer->Mv.z=(float)NG_MomentumValue((int32_t)g_pPlayer->Mv.z, InMax);			
             }
+			*/
+
+			V3XMatrix_Rotate_Y_Local((int32_t)g_pPlayer->Mv.x, g_pPlayer->Mat->Matrix);
+			V3XMatrix_Rotate_X_Local (g_SGSettings.FlipYMouse ? -(int32_t)g_pPlayer->Mv.y : (int32_t)g_pPlayer->Mv.y, g_pPlayer->Mat->Matrix);
+			V3XMatrix_Rotate_Z_Local((int32_t)(g_pPlayer->Mv.z-(g_pPlayer->Mv.x*.7)), g_pPlayer->Mat->Matrix);
+
             if (!(g_SGGame.Count&63))
             {
                 V3XVector_Normalize(&g_pPlayer->Mat->v.I, &g_pPlayer->Mat->v.I);
@@ -2695,7 +2707,7 @@ static void NG_DrawHUD()
 
 	 CSP_Color(g_SGGame.CI_WHITE);
 
-    if ((g_SGSettings.Ctrl==CTRL_Mouse)&&(g_SGSettings.DemoMode<2)&&(g_SGGame.CameraMode<CAMERA_NAV))
+    if ((g_SGSettings.Ctrl==CTRL_Mouse)&&(g_SGSettings.DemoMode<2)&&(g_SGGame.CameraMode<CAMERA_NAV)&&(!g_SGSettings.AltMouse))
 		GX.csp.put(sMOU->x, sMOU->y, g_pspHud2->item + 0);
 
 	NG_HudDisplayCamera();

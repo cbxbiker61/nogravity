@@ -125,6 +125,68 @@ int NG_SampleButtonMouse()
 #define isjoyzup    (sJOY->z<32767L-deadZone2)
 #define isjoyzdown  (sJOY->z>32767L+deadZone2)
 
+
+void SGJOY_ReadAxis(int *lpAxisX, int *lpAxisY, int *lpAxisRoll, int *lpAxisThrottle, int *status)
+{
+	int lZ = 0, lRz = 0;
+	*status = 0;
+
+
+	*lpAxisX = sJOY->lX - 32768;	
+	if (abs(*lpAxisX)>deadZone2)
+	{
+		*status|=1;
+		if (*lpAxisX < 0)
+			(*lpAxisX) += deadZone2;
+		else
+			(*lpAxisX) -= deadZone2;
+	}
+	else
+		*lpAxisX = 0;
+
+	*lpAxisY = sJOY->lY - 32768;
+	if (abs(*lpAxisY)>deadZone2)
+	{
+		*status|=2;
+		if (*lpAxisY < 0)
+			(*lpAxisY) += deadZone2;
+		else
+			(*lpAxisY) -= deadZone2;
+	}
+	else
+		*lpAxisY = 0;
+
+	switch(g_SGSettings.AxisRoll)
+	{
+		case 0:	lZ = 0; break;
+		case 1:	lZ = sJOY->lZ; break;
+		case 2:	lZ = sJOY->lRx; break;
+		case 3:	lZ = sJOY->lRy; break;
+		case 4:	lZ = sJOY->lRz; break;
+	}
+
+	switch(g_SGSettings.AxisThrottle)
+	{
+		case 0:	lRz = 0; break;
+		case 1:	lRz = sJOY->lZ; break;
+		case 2:	lRz = sJOY->lRx; break;
+		case 3:	lRz = sJOY->lRy; break;
+		case 4:	lRz = sJOY->lRz; break;
+	}
+		
+	if (g_SGSettings.AxisRoll)
+	{
+		*lpAxisRoll = lZ - 32768;	
+		*status|=4;
+	}
+
+	if (g_SGSettings.AxisThrottle)
+	{
+		*lpAxisThrottle = 65535 - lRz;		
+		*status|=8;
+	}
+}
+
 void SGJOY_MapKeyboard()
 {
     // Remap buttons

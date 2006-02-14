@@ -82,7 +82,9 @@ int NG_ColorToNAV(int x)
 */
 int NG_MomentumValue(int x, int mx)
 {
+	
     int p = (g_cTimer.iCounter>>15)<<g_pCurrentGame->ship;
+	
     if (x>0)
     {
         x-=p;
@@ -96,6 +98,8 @@ int NG_MomentumValue(int x, int mx)
         if (x<-mx) x =-mx;
         if (x>0) x=0;
     }
+	
+	
     return x;
 }
 /*------------------------------------------------------------------------

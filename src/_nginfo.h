@@ -83,9 +83,12 @@ typedef struct
 	u_int8_t 	FlipYMouse;
     u_int8_t 	FrameSkip;
 	u_int8_t 	Ctrl;
-	u_int8_t	Mickey;
+	u_int8_t	MouseSensitivity;
 	u_int8_t    ComPlayer;
 	u_int8_t	DisplayIndex;
+	u_int8_t	AxisThrottle;
+	u_int8_t	AxisRoll;
+	u_int8_t	AltMouse;
 
 }NG_GameSettings;
 

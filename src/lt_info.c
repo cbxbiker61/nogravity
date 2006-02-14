@@ -167,11 +167,14 @@ void NG_SaveGameInfo(void)
 
         fprintf(in, "\n[Control]\n");
         fprintf(in, "Controller=%s\n", Ctr[g_SGSettings.Ctrl]);
-        fprintf(in, "Speed=%d\n", (int)g_SGSettings.Mickey);
+        fprintf(in, "Speed=%d\n", (int)g_SGSettings.MouseSensitivity);
         fprintf(in, "FlipY=%s\n", YesNo[g_SGSettings.FlipYMouse]);
         fprintf(in, "Key=%s\n", SaveKey(g_SGSettings.key));
         fprintf(in, "Joy=%s\n", SaveKey(g_SGSettings.joy));
 		fprintf(in, "Mou=%s\n", SaveKey(g_SGSettings.mou));
+		fprintf(in, "AltMouse=%d\n", g_SGSettings.AltMouse);
+		fprintf(in, "JoyThrottleAxis=%d\n", g_SGSettings.AxisThrottle);
+		fprintf(in, "JoyRollAxis=%d\n", g_SGSettings.AxisRoll);
 		if (RLX.Joy.Config != RLXCTRL_Uncalibrated)
 		fprintf(in, "JoyCalibration2=%d %d %d %d %d %d %d %d",
 					RLX.Joy.J[0].MinX,
@@ -183,6 +186,8 @@ void NG_SaveGameInfo(void)
 					RLX.Joy.J[0].MinR,
 					RLX.Joy.J[0].MaxR
 					);
+
+		
 
         fclose(in);
     }
@@ -249,7 +254,7 @@ void NG_ReadGameConfig(void)
 
         if(SelectConfigClass("Control", &iniFile))
         {
-            g_SGSettings.Mickey = (u_int8_t)GetCF_long("Speed", &iniFile);
+            g_SGSettings.MouseSensitivity = (u_int8_t)GetCF_long("Speed", &iniFile);
             g_SGSettings.FlipYMouse = (u_int8_t)GetCF_bool("FlipY", &iniFile);
             s = GetCF_str("Controller", &iniFile);
             if (s)
@@ -279,6 +284,16 @@ void NG_ReadGameConfig(void)
 				RLX.Joy.Config = RLXCTRL_Uncalibrated;
 #endif
 			}
+			s = GetCF_str("AltMouse", &iniFile);
+            if (s) g_SGSettings.AltMouse = GetCF_long("AltMouse", &iniFile);
+			else g_SGSettings.AltMouse = 0;
+			s = GetCF_str("JoyThrottleAxis", &iniFile);
+            if (s) g_SGSettings.AxisThrottle = GetCF_long("JoyThrottleAxis", &iniFile);
+			else g_SGSettings.AxisThrottle = 0;
+			s = GetCF_str("JoyRollAxis", &iniFile);
+            if (s) g_SGSettings.AxisRoll = GetCF_long("JoyRollAxis", &iniFile);
+			else g_SGSettings.AxisRoll = 0;
+			
 
         }
         DestroyConfig(&iniFile);
@@ -289,7 +304,7 @@ void NG_ReadGameConfig(void)
         g_SGSettings.Difficulty = 1;
         g_SGSettings.DemoMode = 0;
         g_SGSettings.Intro = 0;
-        g_SGSettings.Mickey = 4;
+        g_SGSettings.MouseSensitivity = 4+8;
         g_SGSettings.VisualsFx = 4;
         g_SGSettings.VolDIG = 100;
         g_SGSettings.VolMusic = 100;
@@ -297,7 +312,6 @@ void NG_ReadGameConfig(void)
         g_SGSettings.VisualsFx = 3;
         g_SGSettings.Language = 0;
         g_SGSettings.Ctrl = CTRL_Mouse;
-        g_SGSettings.Mickey= 3;
         g_SGSettings.OS = 0;
 		RLX.V3X.Id = RLX3D_DIRECT3D;
     }

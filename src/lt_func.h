@@ -50,6 +50,7 @@ int NG_MainMenu(void);
 void NG_CleanUp(void);
 void SGMOU_MapKeyboard();
 void SGJOY_MapKeyboard();
+void SGJOY_ReadAxis(int *lpAxisX, int *lpAxisY, int *lpAxisThrottle, int *lpAxisRoll, int *status);
 void NG_DrawFlash();
 void NG_ResetKey();
 void NG_SetGamma(float gamma);
