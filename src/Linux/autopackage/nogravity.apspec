@@ -9,7 +9,7 @@ Packager: Matt Williams <maffy@sourceforge.net>
 Summary: A fantastic and futuristic universe made of five intergalactic worlds.
 URL: http://www.realtech-vr.com/nogravity/
 License: GPL
-SoftwareVersion: 1.99
+SoftwareVersion: 2.0
 AutopackageTarget: 1.0
 
 [Description]
