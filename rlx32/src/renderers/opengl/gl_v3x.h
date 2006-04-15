@@ -61,7 +61,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #elif (defined __LINUX__)
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
-#include <GL/glext.h
+#include <GL/glext.h>
 #ifndef GL_ARB_texture_rectangle
 #define GL_TEXTURE_RECTANGLE_ARB 0x84F5
 #endif

@@ -77,6 +77,8 @@ static int ReadKey(char *s, u_int8_t *table)
                 table[i]=j;
                 d++;
             }
+	    else
+		table[i]=0;
         }
     }
     return d>=LK_MAX-1;
