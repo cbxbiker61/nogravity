@@ -46,6 +46,7 @@ struct stream
   size_t pos;
   ssize_t start;
   ssize_t end;
+  u_int8_t vol;
   int8_t buf[409600];
 };
 
@@ -224,6 +225,17 @@ static V3XA_HANDLE *ChannelGetSample(int channel)
   return g_pchannels[channel].sam;
 }
 
+static void CopySample16(int16_t *dst, const int16_t *src, int len)
+{
+  while (len > 0)
+  {
+    *dst = (((int32_t)*src) * g_stream.vol) >> 8;
+    src ++;
+    dst ++;
+    len --;
+  }
+}
+
 static void StreamFill(void *dummy, Uint8 *stream, int len)
 {
   int music_len;
@@ -232,13 +244,13 @@ static void StreamFill(void *dummy, Uint8 *stream, int len)
   music_len = (music_len > len) ? len : music_len;
   if (g_stream.start + music_len <= 409600)
   {
-    memcpy(stream, &g_stream.buf[g_stream.start], music_len);
+    CopySample16((int16_t *)stream, (int16_t *)&g_stream.buf[g_stream.start], music_len / 2);
     g_stream.start += music_len;
   }
   else
   {
-    memcpy(stream, &g_stream.buf[g_stream.start], 409600 - g_stream.start);
-    memcpy(&stream[409600 - g_stream.start], g_stream.buf, g_stream.start + music_len - 409600);
+    CopySample16((int16_t *)stream, (int16_t *)&g_stream.buf[g_stream.start], (409600 - g_stream.start) / 2);
+    CopySample16((int16_t *)&stream[409600 - g_stream.start], (int16_t *)g_stream.buf, (g_stream.start + music_len - 409600) / 2);
     g_stream.start = g_stream.start + music_len - 409600;
   }
   g_stream.pos += music_len;
@@ -265,6 +277,7 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t nSi
     g_stream.pos = 0;
     g_stream.start = 0;
     g_stream.end = 0;
+    g_stream.vol = 255;
   }
   else
   {
@@ -298,7 +311,7 @@ static int StreamPoll(V3XA_STREAM handle)
 
 static void StreamSetVolume(V3XA_STREAM handle, float volume)
 {
-  // TODO: Implement.
+  g_stream.vol = volume * 255;
 }
 
 static int StreamLoad(V3XA_STREAM handle, void *data, size_t size)
