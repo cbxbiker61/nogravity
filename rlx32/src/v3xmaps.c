@@ -392,11 +392,11 @@ static void V3XMaterial_LoadTexturesFn(V3XMATERIAL *Mat, char *szFilename, GXSPR
     char *szFullPathName;
     if (!szFilename[0]) 
 		return;
-		szFullPathName = file_searchpathES(szFilename, V3X.Setup.texturePath);
+		szFullPathName = file_searchpathES(szFilename, V3X.Setup.CommonPath);
 	if (!szFullPathName)
 	{
 		sysStrExtChg(szFilename, szFilename, "png");
-		szFullPathName = file_searchpathES(szFilename, V3X.Setup.texturePath);
+		szFullPathName = file_searchpathES(szFilename, V3X.Setup.CommonPath);
 	}
 
 	SYS_ASSERT(szFullPathName);
@@ -510,7 +510,7 @@ static void V3XMaterial_LoadTexturesFn(V3XMATERIAL *Mat, char *szFilename, GXSPR
         if (V3X.Setup.flags&V3XOPTION_WARNING)
         {
 			char tex[256];
-            sprintf(tex, "Texture file not found %s\n%s", szFilename, V3X.Setup.texturePath);
+            sprintf(tex, "Texture file not found %s\n%s", szFilename, V3X.Setup.CommonPath);
             SYS_Msg(tex);
             SYS_Debug(tex);
         }

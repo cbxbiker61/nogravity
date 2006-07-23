@@ -116,60 +116,6 @@
 		F4F336B505FB4245003626B9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4F336B405FB4245003626B9 /* OpenGL.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		4A9504C5FFE6A39111CA0CBA /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUGGING_SYMBOLS = YES;
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					_DEBUG,
-					HAVE_OPENAL,
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(HOME)/Dev/nogravity/SDK/oggvorbis/include",
-					../..,
-					../SDK,
-				);
-				OPTIMIZATION_CFLAGS = "-O0";
-				ZERO_LINK = YES;
-			};
-			name = Development;
-		};
-		4A9504C6FFE6A39111CA0CBA /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_AUTO_VECTORIZATION = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_INPUT_FILETYPE = sourcecode.c.c;
-				GCC_MODEL_CPU = "";
-				GCC_MODEL_TUNING = "";
-				GCC_PREPROCESSOR_DEFINITIONS = HAVE_OPENAL;
-				GCC_VERSION = 3.3;
-				HEADER_SEARCH_PATHS = (
-					"$(HOME)/Dev/nogravity/SDK/oggvorbis/include",
-					../..,
-					../SDK,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_LDFLAGS = "-lz";
-				PREBINDING = NO;
-				REZ_PREPROCESSOR_DEFINITIONS = "";
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		F4E2CE610607B25E000317C8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -705,32 +651,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/Frameworks";
-				GCC_ENABLE_TRIGRAPHS = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ng_Prefix.pch;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
-				LIBRARY_STYLE = Static;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "No Gravity";
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = app;
-			};
 			dependencies = (
 			);
 			name = nogravity;
@@ -745,12 +665,6 @@
 		20286C28FDCF999611CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = F4259CD808636DB4006643CB /* Build configuration list for PBXProject "nogravity" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				4A9504C5FFE6A39111CA0CBA /* Development */,
-				4A9504C6FFE6A39111CA0CBA /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			mainGroup = 20286C29FDCF999611CA2CEA /* NoGravityGirl */;
 			projectDirPath = "";

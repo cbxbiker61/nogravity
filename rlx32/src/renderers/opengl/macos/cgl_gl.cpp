@@ -173,14 +173,20 @@ static void RLXAPI SetPrimitive()
 static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 {
 	g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, gl_lx, gl_ly, gl_bpp);
-	g_pRLX->pGX->View.ColorMask.RedMaskSize		= 8;
-	g_pRLX->pGX->View.ColorMask.GreenMaskSize 	= 8;
+	g_pRLX->pGX->View.ColorMask.RedMaskSize			= 8;
+	g_pRLX->pGX->View.ColorMask.GreenMaskSize 		= 8;
 	g_pRLX->pGX->View.ColorMask.BlueMaskSize		= 8;
 	g_pRLX->pGX->View.ColorMask.RsvdMaskSize		= 8;
+#ifdef __BIG_ENDIAN__
 	g_pRLX->pGX->View.ColorMask.RedFieldPosition	= 0;
-	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
-	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
-	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
+	g_pRLX->pGX->View.ColorMask.GreenFieldPosition  = 8;
+	g_pRLX->pGX->View.ColorMask.BlueFieldPosition   = 16;
+#else
+	g_pRLX->pGX->View.ColorMask.RedFieldPosition	= 16;
+	g_pRLX->pGX->View.ColorMask.GreenFieldPosition  = 8;
+	g_pRLX->pGX->View.ColorMask.BlueFieldPosition   = 0;
+#endif
+	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition	= 24;
 	SetPrimitive();
 	GL_FakeViewPort();
 	UNUSED(mode);

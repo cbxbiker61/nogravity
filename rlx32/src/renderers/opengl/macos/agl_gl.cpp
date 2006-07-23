@@ -169,6 +169,7 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 
 extern GXGRAPHICINTERFACE GI_OpenGL;
 extern GXSPRITEINTERFACE CSP_OpenGL;
+
 static void RLXAPI SetPrimitive()
 {
 	g_pRLX->pGX->View.Flip = Flip;
@@ -179,22 +180,26 @@ static void RLXAPI SetPrimitive()
     g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
     g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
     g_pRLX->pGX->csp_cfg.op = g_pRLX->pGX->csp.put;
- 
-	
-
 }
+
 static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 {
 	SYS_Debug("Set viewport %d x %d x %d\n", gl_lx, gl_ly, gl_bpp);
 	g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, gl_lx, gl_ly, gl_bpp);
-	g_pRLX->pGX->View.ColorMask.RedMaskSize		= 8;
-	g_pRLX->pGX->View.ColorMask.GreenMaskSize 	= 8;
+	g_pRLX->pGX->View.ColorMask.RedMaskSize			= 8;
+	g_pRLX->pGX->View.ColorMask.GreenMaskSize 		= 8;
 	g_pRLX->pGX->View.ColorMask.BlueMaskSize		= 8;
 	g_pRLX->pGX->View.ColorMask.RsvdMaskSize		= 8;
+#ifdef __BIG_ENDIAN__
 	g_pRLX->pGX->View.ColorMask.RedFieldPosition	= 0;
-	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
-	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
-	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
+	g_pRLX->pGX->View.ColorMask.GreenFieldPosition  = 8;
+	g_pRLX->pGX->View.ColorMask.BlueFieldPosition   = 16;
+#else
+	g_pRLX->pGX->View.ColorMask.RedFieldPosition	= 16;
+	g_pRLX->pGX->View.ColorMask.GreenFieldPosition  = 8;
+	g_pRLX->pGX->View.ColorMask.BlueFieldPosition   = 0;
+#endif
+	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition   = 24;
 	SetPrimitive();
 	GL_FakeViewPort();
 	UNUSED(mode);

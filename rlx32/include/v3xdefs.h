@@ -472,7 +472,7 @@ typedef struct _v3x_sceneSetup {
     u_int32_t       version;                // version
     u_int32_t       warnings;
     u_int32_t       flags;                  // flags
-    char        texturePath[256];
+    char        CommonPath[256];
     unsigned    MaxStartObjet;          // object of objects by default in a scene
     unsigned    MaxExtentableObjet;     // object maximum per scene
     void      (*add_poly)(void);        // callback before object processing

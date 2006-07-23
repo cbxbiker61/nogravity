@@ -481,7 +481,7 @@ static int GL_SetupPixelFormat(HWND hWnd)
 
 	g_pRLX->pGX->View.ColorMask.RedMaskSize	= pfd.cRedBits;
 	g_pRLX->pGX->View.ColorMask.GreenMaskSize = pfd.cGreenBits;
-	g_pRLX->pGX->View.ColorMask.BlueMaskSize = pfd.cBlueBits;
+	g_pRLX->pGX->View.ColorMask.BlueMaskSize = pfd.cBlueBit
 	g_pRLX->pGX->View.ColorMask.RsvdMaskSize = pfd.cAlphaBits;
 	g_pRLX->pGX->View.ColorMask.RedFieldPosition = pfd.cRedShift;
 	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = pfd.cGreenShift;
