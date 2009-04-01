@@ -255,7 +255,7 @@ static void DeinterleaveAudio(void *outdata,
 /* convert floats to 16 bit signed ints (host order) and
    interleave */
    
-__inline ogg_int16_t FloatToShort(float v)
+ogg_int16_t FloatToShort(float v)
 {
 	if (v>1)
 		return 32767;

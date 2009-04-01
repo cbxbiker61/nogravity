@@ -26,8 +26,8 @@ Linux/SDL Port: 2005 - Matt Williams
 //-------------------------------------------------------------------------
 
 #ifdef __MACH__
-#include "al.h"
-#include "alc.h"
+#include <OpenAL/al.h>
+#include <OpenAL/alc.h>
 
 #else
 #include <AL/al.h>
