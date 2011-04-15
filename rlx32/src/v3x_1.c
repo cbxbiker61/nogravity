@@ -118,8 +118,10 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
         // Lights processing
         for (sx=V3X.Light.numSource;sx!=0;lite++, sx--)
         {
-            if ((lite->type!=V3XLIGHTTYPE_DIRECTIONAL)||
-            (lite->type==V3XLIGHTTYPE_DIRECTIONAL) && (((V3X.Setup.flags&V3XOPTION_RAYTRACE)==0)||V3XVECTOR_IsVisible(NULL, &lite->pos, &mesh->matrix.v.Pos, 2, NULL)))
+            if ((lite->type != V3XLIGHTTYPE_DIRECTIONAL)
+				|| ((lite->type == V3XLIGHTTYPE_DIRECTIONAL)
+					&& (((V3X.Setup.flags&V3XOPTION_RAYTRACE) == 0)
+						|| V3XVECTOR_IsVisible(NULL, &lite->pos, &mesh->matrix.v.Pos, 2, NULL))))
             if (!((lite->flags&V3XLIGHTCAPS_DYNAMIC)
             &&(mesh->flags&V3XMESH_EXCPTDYNLIGHT)))
             {
