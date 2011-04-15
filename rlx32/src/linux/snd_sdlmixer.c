@@ -133,7 +133,6 @@ static void RLXAPI UserSetParms(V3XMATRIX *lpMAT,
 
 static void ChannelOpen(int nGain, int numChannels)
 {
-  int channel;
   // TODO: What do I do with nGain?
   g_nchannels = numChannels;
   Mix_AllocateChannels(g_nchannels);
