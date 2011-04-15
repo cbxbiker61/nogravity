@@ -794,6 +794,7 @@ static void V3x_render_buildGeometry(V3XSCENE *Scene, GXVIEWPORT *fen, int spec)
     V3X.ViewPort = OldV;
 }
 
+#if 0
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void v3x_GetGlobalMatrix(V3XOVI *OVI, V3XMATRIX *Mat)
@@ -826,6 +827,7 @@ static void v3x_GetGlobalMatrix(V3XOVI *OVI, V3XMATRIX *Mat)
         V3XMatrix_Multiply3x4(*Mat, objP->matrix, obj->matrix);
     } else *Mat = obj->matrix;
 }
+#endif
 
 /*------------------------------------------------------------------------
 *
