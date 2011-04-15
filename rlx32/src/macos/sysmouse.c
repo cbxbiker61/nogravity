@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -62,40 +62,37 @@ static unsigned long Update(void * device)
     return sMOU->rgbButtons[0];
 }
 
-static void SetPosition(u_int32_t x, u_int32_t y)
+static void SetPosition(uint32_t x, uint32_t y)
 {
 	sMOU->x = x;
 	sMOU->y = y;
-    return;
 }
 
 static void Show(void)
 {
 	ShowCursor();
-    return;
 }
 
 static void Hide(void)
 {
 	HideCursor();
-    return;
 }
 
 static void Release(void)
 {
-	return;
 }
 
 static MSE_ClientDriver MsMouse = {
 	Open,
-	Release, 
+	Release,
 	Show,
-	Hide, 
+	Hide,
 	SetPosition,
 	Update
 };
 
 _RLXEXPORTFUNC MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
-{	
+{
     return &MsMouse;
 }
+

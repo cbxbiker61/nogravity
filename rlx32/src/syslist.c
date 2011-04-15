@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -31,6 +31,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "systools.h"
 #include "sysini.h"
 #include "syslist.h"
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -45,6 +46,7 @@ Queue *QueueCreate(void)
     q->firstItem = q->lastItem = NULL;
     return q;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -68,8 +70,8 @@ void QueueMerge(Queue *q1, Queue   *q2)
     q1->lastItem->next=q2->firstItem;
     q1->lastItem=q2->lastItem;
     MM_heap.free(q2);
-    return ;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -91,6 +93,7 @@ void QueueDestroy( Queue *q )
     }
     MM_heap.free(q);
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -110,8 +113,8 @@ void QueueDestroyFirst( Queue *q )
         MM_heap.free(item);
         q->firstItem=item2;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -119,8 +122,7 @@ void QueueDestroyFirst( Queue *q )
 * DESCRIPTION :
 *
 */
-void QueueDestroyLast( Queue *
-q )
+void QueueDestroyLast( Queue *q )
 {
     QueueItem*item, *item2;
     if( !q ) return;
@@ -132,8 +134,8 @@ q )
         MM_heap.free(item);
         q->lastItem=item2;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -171,8 +173,8 @@ void QueueDestroyPosition( Queue *q, int n)
             }
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -190,6 +192,7 @@ void QueueInsertTop( Queue *q, void *data )
     if( q->lastItem == NULL ) q->lastItem = item;
     item->data = data;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -214,6 +217,7 @@ void QueueInsertBottom( Queue *q, void *data )
     }
     item->data = data;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -232,6 +236,7 @@ void *QueueGetItem(  Queue *q )
     if((q->firstItem = item) == NULL) q->lastItem = NULL;
     return data;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -248,6 +253,7 @@ int QueueSearchItem( const Queue *q, void *data, int dataSize )
     if( item ) return 1;
     else return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -270,6 +276,7 @@ void *QueuePosition( const Queue *q, int n )
     }while(!(((i-1) == n)  || (item == NULL)));
     return (itemd);
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -292,6 +299,7 @@ int QueueSize( const Queue *q )
     }
     return i;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -322,13 +330,13 @@ void QueueRandom( Queue *q, int fileco)
             }
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void QueueSwapItem(QueueItem *a, QueueItem *b)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static void QueueSwapItem(QueueItem *a, QueueItem *b)
@@ -337,13 +345,13 @@ static void QueueSwapItem(QueueItem *a, QueueItem *b)
     c.data = a->data;
     a->data = b->data;
     b->data = c.data;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void QueueSort(Queue *q, int (*sort_function)( const void *a, const void *b))
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void QueueSort(Queue *q, int (*sort_function)( const void *a, const void *b))
@@ -362,5 +370,5 @@ void QueueSort(Queue *q, int (*sort_function)( const void *a, const void *b))
         }
         a=a->next;
     }
-    return;
 }
+

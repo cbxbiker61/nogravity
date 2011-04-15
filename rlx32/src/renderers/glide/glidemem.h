@@ -1,5 +1,6 @@
+#pragma once
 /*
-** Copyright (c) 1999, 2000 3Dfx Interactive, Inc. 
+** Copyright (c) 1999, 2000 3Dfx Interactive, Inc.
 ** All Rights Reserved.
 **
 ** This is UNPUBLISHED PROPRIETARY SOURCE CODE of 3Dfx Interactive, Inc.;
@@ -19,7 +20,7 @@
 ** Revision 1.2  2005/02/26 00:15:39  realtech
 ** Release 6. BeOS bug fixes
 **
-** 
+**
 */
 
 #ifndef __GLIDEMEM_H__
@@ -43,21 +44,22 @@ public:
     GrMemManager();
     ~GrMemManager();
     GrMemOffset alloc(size_t size,GrChipID_t tmu = GR_TMU0);
-    void        free(GrMemOffset offset,GrChipID_t tmu = GR_TMU0);     
+    void        free(GrMemOffset offset,GrChipID_t tmu = GR_TMU0);
     void        garbageCollection(GrChipID_t tmu = GR_TMU0);
     unsigned    coreleft(GrChipID_t tmu = GR_TMU0) const { return _maxMemory[tmu]; }
     unsigned    getNumbersOfBlock(GrChipID_t tmu = GR_TMU0) const;
 
-protected:      
+protected:
     GrMemBlock* addBlock(size_t size,GrChipID_t tmu, bool connect);
     GrMemBlock* findBlockByOffset(GrMemOffset offset,GrChipID_t tmu);
     GrMemBlock* findEmptyBlock(size_t size,GrChipID_t tmu);
     void        clearList(GrChipID_t tmu);
     void        initList(GrChipID_t tmu);
-    GrMemBlock *_lastBlock[ GLIDE_NUM_TMU ], *_firstBlock[ GLIDE_NUM_TMU ];     
-    unsigned    _maxMemory[ GLIDE_NUM_TMU ];        
+    GrMemBlock *_lastBlock[ GLIDE_NUM_TMU ], *_firstBlock[ GLIDE_NUM_TMU ];
+    unsigned    _maxMemory[ GLIDE_NUM_TMU ];
     int         _strategy;
 };
 
 #endif
 #endif //__GLIDEMEM_H__
+

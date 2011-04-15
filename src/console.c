@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -40,7 +40,6 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #include "console.h"
 
-
 struct sys_console_item
 {
 	char						text[MAX_SYS_CONSOLE_TEXT];
@@ -51,17 +50,16 @@ struct sys_console_item
 struct sys_console_cmd
 {
     struct sys_console_cmd	*	next;
-    char 						szCmd[MAX_SYS_CONSOLE_TEXT];
+    char						szCmd[MAX_SYS_CONSOLE_TEXT];
     PFV3XCNLCMD					pfFunc;
 };
 
 struct sys_console_cvar
 {
     struct sys_console_cvar	 *	next;
-    char 						szVar[MAX_SYS_CONSOLE_TEXT];
+    char						szVar[MAX_SYS_CONSOLE_TEXT];
     void					 *  pData;
 };
-
 
 static struct sys_console_item	*	m_pFirst;
 static struct sys_console_item	*	m_pLast;
@@ -106,7 +104,7 @@ void sysConPrint(const char *newmsg, ...)
     va_start (argptr,newmsg);
     vsprintf (msg, newmsg, argptr);
     va_end (argptr);
-    
+
 #ifdef _DEBUG
     SYS_Debug("%s\n", msg);
 #endif
@@ -182,7 +180,7 @@ void sysConHandleInput()
 				{
 					strncat(m_pInput.text, " ", 1);
 					m_nNumSpaces++;
-				}			
+				}
 			}
 			break;
 			case s_delete:
@@ -209,11 +207,11 @@ void sysConHandleInput()
 			//case s_numreturn:
 			case s_return:
 				{
-					//If console_buffer[0] strlen() != 0            
+					//If console_buffer[0] strlen() != 0
 					//1. Push the m_pInput.text unto the console_buffer
 					//2. parse the text
 
-					sysConPrint("%s",m_pInput.text);			
+					sysConPrint("%s",m_pInput.text);
 					m_nNumSpaces = 0;
 					sysConParse(m_pInput.text);
 
@@ -235,7 +233,7 @@ void sysConHandleInput()
 						if(m_pCurrent->next != NULL)
 						{
 							m_pCurrent = m_pCurrent->next;
-						} 
+						}
 						else
 						{
 							break;
@@ -296,12 +294,11 @@ void sysConHandleInput()
 		}
 }
 
-void 
-sysConSave(const char *szFilename)
+void sysConSave(const char *szFilename)
 {
 	SYS_FILEHANDLE fp = FIO_std.fopen(szFilename, "wt");
 	if (fp)
-	{	
+	{
 		struct sys_console_item *p = m_pFirst;
 		while(p)
 		{
@@ -313,11 +310,9 @@ sysConSave(const char *szFilename)
 	}
 	else
 		sysConPrint("Can't write file");
-
 }
 
-int
-sysConBindCmd(const char *szCmd, PFV3XCNLCMD pfFunc)
+int sysConBindCmd(const char *szCmd, PFV3XCNLCMD pfFunc)
 {
 	struct sys_console_cmd *p = (struct sys_console_cmd*) malloc(sizeof(struct sys_console_cmd ));
 	p->next = 0;
@@ -331,12 +326,11 @@ sysConBindCmd(const char *szCmd, PFV3XCNLCMD pfFunc)
 	{
 		m_pLastCmd->next = p;
 		m_pLastCmd = p;
-	}	
+	}
 	return 0;
 }
 
-int
-sysConBindCVar(const char *szVar, const void *pData)
+int sysConBindCVar(const char *szVar, const void *pData)
 {
 	struct sys_console_cvar *p = (struct sys_console_cvar*) malloc(sizeof(struct sys_console_cvar));
 	p->next = 0;
@@ -350,36 +344,32 @@ sysConBindCVar(const char *szVar, const void *pData)
 	{
 		m_pLastCvar->next = p;
 		m_pLastCvar = p;
-	}	
+	}
 	return 0;
 }
 
-int 
-onClear(char *parms)
+int onClear(char *parms)
 {
     sysConClear();
 	UNUSED(parms);
 	return 0;
 }
 
-static int
-onConDump(char *parms)
+static int onConDump(char *parms)
 {
 	if (parms)
 		sysConSave(parms);
 	return 0;
 }
 
-static int
-onClose(char *parms)
+static int onClose(char *parms)
 {
 	m_bActive = 0;
 	UNUSED(parms);
 	return 0;
 }
 
-static int
-onCvarList(char *parms)
+static int onCvarList(char *parms)
 {
 	struct sys_console_cvar *p = m_pFirstCvar;
 	int n = 0;
@@ -394,8 +384,7 @@ onCvarList(char *parms)
 	return 0;
 }
 
-static int
-onCmdList(char *parms)
+static int onCmdList(char *parms)
 {
 	struct sys_console_cmd *p = m_pFirstCmd;
 	int n = 0;
@@ -409,7 +398,6 @@ onCmdList(char *parms)
 	UNUSED(parms);
 	return 0;
 }
-
 
 void sysConCreate()
 {
@@ -447,7 +435,7 @@ int sysConParse(char *cmd)
 
 	char seps[] = " ";
 	char *token;
-	
+
 	if (!cmd)
 		return -1;
 
@@ -456,19 +444,17 @@ int sysConParse(char *cmd)
 		return -2;
 
 	while (p)
-	{		
+	{
 		if (!strcmp(p->szCmd, token))
 		{
 			return p->pfFunc(strtok( NULL , seps ));
 		}
 		p = p->next;
-	}	
+	}
 	return -1;
 }
 
-
-void
-sysConSetLimits(int x, int y, int w, int h)
+void sysConSetLimits(int x, int y, int w, int h)
 {
 	m_x = x;
 	m_y = y;
@@ -501,7 +487,7 @@ void sysConRender()
 	CSP_Color(0xffffffff);
 
 	{
-		char szOut[512];	
+		char szOut[512];
 		sprintf(szOut,"%s%c", m_pInput.text, (timer_ms()%1000 < 500) ? '_' : ' ');
 
 		{
@@ -514,7 +500,7 @@ void sysConRender()
 				// m_pFont->printJustified(szOut, (int)x, (int)y, (int)(m_right-m_left));
 				y-= n * v;
 			}
-		
+
 			{
 				struct sys_console_item *p = m_pCurrent;
 
@@ -536,8 +522,7 @@ void sysConRender()
 	}
 }
 
-void
-sysConSetFont(GXSPRITEGROUP *font)
+void sysConSetFont(GXSPRITEGROUP *font)
 {
 	m_pFont = font;
 }

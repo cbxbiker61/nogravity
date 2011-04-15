@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -39,17 +39,17 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 enum V3XA_STREAM_STATE
 {
-	V3XA_STREAM_STATE_OK 	 		= 1,
-	V3XA_STREAM_STATE_LOOP	 		= 2,
-	V3XA_STREAM_STATE_PACKED  		= 4,
-	V3XA_STREAM_STATE_STANDBY 		= 8,
-	V3XA_STREAM_STATE_DUAL	 		= 16,
-	V3XA_STREAM_STATE_MUTE1	 		= 32,
-	V3XA_STREAM_STATE_MUTE2	 		= 64,
-	V3XA_STREAM_STATE_EOF	 		= 128,
-	V3XA_STREAM_STATE_SEEKABLE 		= 256,
-	V3XA_STREAM_STATE_PLAY	  		= 512,
-	V3XA_STREAM_STATE_REWIND   		= 1024,
+	V3XA_STREAM_STATE_OK			= 1,
+	V3XA_STREAM_STATE_LOOP			= 2,
+	V3XA_STREAM_STATE_PACKED		= 4,
+	V3XA_STREAM_STATE_STANDBY		= 8,
+	V3XA_STREAM_STATE_DUAL			= 16,
+	V3XA_STREAM_STATE_MUTE1			= 32,
+	V3XA_STREAM_STATE_MUTE2			= 64,
+	V3XA_STREAM_STATE_EOF			= 128,
+	V3XA_STREAM_STATE_SEEKABLE		= 256,
+	V3XA_STREAM_STATE_PLAY			= 512,
+	V3XA_STREAM_STATE_REWIND		= 1024,
 	V3XA_STREAM_FEED				= 2048
 
 };
@@ -58,21 +58,20 @@ typedef struct _v3xa_stream
 	V3XA_HANDLE					info;
 	int32_t						numTrack;
 	int32_t						dwState;
-	
+
 	size_t						chunkLength;
 	size_t						dwFileOffset;
 	size_t						dwLength;
 	size_t						dwPositionRead;
 	size_t						dwPositionWrite;
 
-	V3XA_STREAM					handle[MAX_V3XA_TRACKS_PER_STREAM]; 
-	void				*		sample[MAX_V3XA_TRACKS_PER_STREAM]; 
+	V3XA_STREAM					handle[MAX_V3XA_TRACKS_PER_STREAM];
+	void				*		sample[MAX_V3XA_TRACKS_PER_STREAM];
 	void				*		context[MAX_V3XA_TRACKS_PER_STREAM];
-	
-	SYS_FILEHANDLE 				pFile;
+
+	SYS_FILEHANDLE				pFile;
 	SYS_FILEIO			*		pStream;
 	SYS_WAD				*		pFatMgr;
-	
 }V3XA_STREAMEX;
 
 static V3XA_STREAMEX g_pStreams[MAX_V3XA_AUDIO_STREAM];
@@ -92,9 +91,8 @@ static void V3XA_STREAM_Stop(V3XA_STREAMEX *pHandle)
 	pHandle->dwState&=~(V3XA_STREAM_STATE_EOF|V3XA_STREAM_STATE_STANDBY|V3XA_STREAM_STATE_PLAY);
 	for (i=0;i<pHandle->numTrack;i++)
 	{
-		V3XA.Client->StreamStop(pHandle->handle[i]); 
+		V3XA.Client->StreamStop(pHandle->handle[i]);
 	}
-	return;
 }
 
 static void V3XA_STREAM_Close(V3XA_STREAMEX *pHandle)
@@ -114,12 +112,12 @@ static void V3XA_STREAM_Close(V3XA_STREAMEX *pHandle)
 	for (i=0;i<pHandle->numTrack;i++)
 	{
 		MM_std.free(pHandle->sample[i]);
-		V3XA.Client->StreamRelease(pHandle->handle[i]); 
+		V3XA.Client->StreamRelease(pHandle->handle[i]);
 		pHandle->info.codec->release(pHandle->context[i]);
 	}
 	filewad_setcurrent( pFatMgr );
-	return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	static void V3XA_STREAM_Rewind(V3XA_STREAMEX *pHandle)
@@ -145,7 +143,7 @@ static void V3XA_STREAM_Rewind(V3XA_STREAMEX *pHandle)
 	for (i=0; i<pHandle->numTrack; i++)
 	{
 		if (pHandle->context[i])
-		{	
+		{
 			pHandle->info.codec->release(pHandle->context[i]);
 			pHandle->context[i] = pHandle->info.codec->initialize(pHandle->chunkLength, pHandle->pStream, &MM_std);
 			if (pHandle->info.codec->open)
@@ -164,7 +162,6 @@ static void V3XA_STREAM_Rewind(V3XA_STREAMEX *pHandle)
 	pHandle->dwState|=V3XA_STREAM_STATE_PLAY | V3XA_STREAM_STATE_REWIND;
 
 	filewad_setcurrent(pFatMgr);
-	return;
 }
 
 static int V3XA_STREAM_Load(V3XA_STREAMEX *pHandle, size_t size)
@@ -185,7 +182,7 @@ static int V3XA_STREAM_Load(V3XA_STREAMEX *pHandle, size_t size)
 			void *ptr = NULL;
 			size_t sizeWrite = 0, sizeRead = 0;
 			do
-			{				
+			{
 				if (pHandle->dwState & V3XA_STREAM_FEED)
 				{
 					sizeRead = size;
@@ -345,16 +342,13 @@ int V3XAStream_PollAll()
 	   s+=V3XAStream_Poll((V3XA_STREAM)i);
 	}
 	return s;
-
 }
-
 
 void V3XAStream_Release(V3XA_STREAM handle)
 {
 	V3XA_STREAMEX *pHandle=g_pStreams+handle;
-	if (pHandle->dwState&V3XA_STREAM_STATE_OK) 
+	if (pHandle->dwState&V3XA_STREAM_STATE_OK)
 		V3XA_STREAM_Close(pHandle);
-	return ;
 }
 
 void V3XAStream_ReleaseAll(void)
@@ -363,11 +357,10 @@ void V3XAStream_ReleaseAll(void)
 	V3XA_STREAMEX *pHandle=g_pStreams;
 	for (i=0;i<MAX_V3XA_AUDIO_STREAM;i++, pHandle++)
 	{
-	   if (pHandle->dwState&V3XA_STREAM_STATE_OK) 
+	   if (pHandle->dwState&V3XA_STREAM_STATE_OK)
 		   V3XA_STREAM_Close(pHandle);
 	   V3XAStream_Poll((V3XA_STREAM)i);
 	}
-	return ;
 }
 
 void V3XAStream_Rewind(V3XA_STREAM handle)
@@ -407,7 +400,6 @@ int V3XAStream_Start(V3XA_STREAM handle)
 	return 1;
 }
 
-
 void V3XAStream_SetVolume(V3XA_STREAM handle, int channel, float volume)
 {
 	V3XA_STREAMEX *pHandle = g_pStreams + (int)handle;
@@ -427,8 +419,8 @@ void V3XAStream_SetVolume(V3XA_STREAM handle, int channel, float volume)
 			V3XA.Client->StreamSetVolume(hnd, volume);
 		}
 	}
-	return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	int V3XAStream_GetFn(char *filename, int loop)
@@ -436,13 +428,12 @@ void V3XAStream_SetVolume(V3XA_STREAM handle, int channel, float volume)
 * DESCRIPTION :
 *
 */
-
 int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 {
 	char *filename = (char *)szFilename;
 	V3XA_STREAMEX *pHandle = NULL;
 	unsigned bestCache;
-	V3XA_FILECODEC * codec = V3XA_CodecFind((char*)szFilename);	
+	V3XA_FILECODEC * codec = V3XA_CodecFind((char*)szFilename);
 
 	int i;
 	size_t chunkLength = 0;
@@ -463,7 +454,7 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 
 	sysMemZero(pHandle, sizeof(V3XA_STREAM));
 	pHandle->pFatMgr = filewad_getcurrent();
-	pHandle->pStream = FIO_cur;		
+	pHandle->pStream = FIO_cur;
 	pHandle->pFile = pHandle->pStream->fopen(filename, "rb");
 	if (!pHandle->pFile)
 		return -21;	// file not found
@@ -471,14 +462,14 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 	// default stream buffer size
 	bestCache = SOUND_BUFFER_CACHE_SIZE * 1024;
 	pHandle->dwFileOffset = pHandle->pStream->ftell(pHandle->pFile);
-	pHandle->info.chunkLength = pHandle->chunkLength = bestCache;	 
+	pHandle->info.chunkLength = pHandle->chunkLength = bestCache;
 
 	// parse header
 	ret = codec->decode(pHandle->pFile, 0, &pHandle->info);
 
 	// read internal codec
-	pHandle->dwState = V3XA_STREAM_STATE_PLAY | V3XA_STREAM_STATE_SEEKABLE | 
-		               V3XA_STREAM_STATE_REWIND | V3XA_STREAM_STATE_OK | 
+	pHandle->dwState = V3XA_STREAM_STATE_PLAY | V3XA_STREAM_STATE_SEEKABLE |
+		               V3XA_STREAM_STATE_REWIND | V3XA_STREAM_STATE_OK |
 					   (loop ? V3XA_STREAM_STATE_LOOP : 0);
 
 	// parse header
@@ -508,19 +499,18 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 	else
 		pHandle->chunkLength = pHandle->info.chunkLength;
 
-	SYS_ASSERT(pHandle->chunkLength);	
+	SYS_ASSERT(pHandle->chunkLength);
 
-	
 	chunkLength = pHandle->chunkLength * 2;
-	pHandle->dwLength = pHandle->info.length;	
+	pHandle->dwLength = pHandle->info.length;
 
 	SYS_ASSERT(pHandle->dwLength);
-	SYS_ASSERT(pHandle->info.length);	
+	SYS_ASSERT(pHandle->info.length);
 
 	for (i=0;i<pHandle->numTrack;i++)
 	{
 		pHandle->sample[i] = MM_std.malloc(pHandle->chunkLength);
-		pHandle->handle[i] = V3XA.Client->StreamInitialize(pHandle->info.sampleFormat, 
+		pHandle->handle[i] = V3XA.Client->StreamInitialize(pHandle->info.sampleFormat,
 			pHandle->info.samplingRate, chunkLength);
 	}
 
@@ -528,3 +518,4 @@ int V3XAStream_GetFn( V3XA_STREAM *stream, const char *szFilename, int loop)
 	*stream = (int)(pHandle - g_pStreams);
 	return 0;
 }
+

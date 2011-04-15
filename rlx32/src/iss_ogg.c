@@ -1,30 +1,30 @@
 #if (defined _WIN32 || defined _WIN64) && !defined _XBOX
 #include <windows.h>
 #elif defined __BEOS__
-#include <KernelKit.h> 
+#include <KernelKit.h>
 #define SUPPORT_IEEE_AUDIO
 #elif (defined __APPLE__ && defined __MACH__) && !defined HAVE_OPENAL
 #define SUPPORT_IEEE_AUDIO
-#endif 
+#endif
 
 #include "_rlx32.h"
 #include "systools.h"
 #include "sysresmx.h"
 #include "iss_defs.h"
 
-#define OGG_BUFFER_SIZE 	(4096)*16
+#define OGG_BUFFER_SIZE	(4096)*16
 
 #ifndef __BEOS__
 // See http://www.xiph.org/archives/vorbis/200204/0218.html
 // Structure must be 8-byte packed
-#pragma pack(8) 
+#pragma pack(8)
 #endif //
 
 #include "vorbis/codec.h"
 
 typedef struct _ogg_context
 {
-	vorbis_info 	 vi; /* struct that stores all the static vorbis bitstream	settings */
+	vorbis_info	 vi; /* struct that stores all the static vorbis bitstream	settings */
 	vorbis_comment	 vc; /* struct that stores all the bitstream user comments */
 	vorbis_dsp_state vd; /* central working state for the packet->PCM decoder */
 	vorbis_block	 vb; /* local working space for packet->PCM decode */
@@ -44,7 +44,6 @@ typedef struct _ogg_context
 }OGG_context;
 
 extern V3XA_AUDIOCODEC V3XA_Codec_OGG;
-
 
 // Entry point : must pass file manager and memory manager
 static void *Initialize(size_t size, SYS_FILEIO *pFileIO, SYS_MEMORYMANAGER *pMem)
@@ -182,7 +181,6 @@ static int ReadHeader(OGG_context *ctx, SYS_FILEHANDLE file)
 	return 1;
 }
 
-
 static int Release(void *context)
 {
 	OGG_context *ctx = (OGG_context*)context;
@@ -233,8 +231,8 @@ static int Open(void *context, SYS_FILEHANDLE file, V3XA_HANDLE *info)
 
 #ifdef SUPPORT_IEEE_AUDIO
 
-static void DeinterleaveAudio(void *outdata, 
-							   float **pcm, 
+static void DeinterleaveAudio(void *outdata,
+							   float **pcm,
 							  int channels, size_t n)
 {
 	size_t j;
@@ -254,7 +252,7 @@ static void DeinterleaveAudio(void *outdata,
 
 /* convert floats to 16 bit signed ints (host order) and
    interleave */
-   
+
 ogg_int16_t FloatToShort(float v)
 {
 	if (v>1)
@@ -264,9 +262,8 @@ ogg_int16_t FloatToShort(float v)
 	return (ogg_int16_t)(v*32768.f);
 }
 
-static void ConvertFloatToInteger(void *outdata, 
-								  
-								  float **pcm, 
+static void ConvertFloatToInteger(void *outdata,
+								  float **pcm,
 								  int channels, size_t n)
 {
 	size_t j;
@@ -285,21 +282,21 @@ static void ConvertFloatToInteger(void *outdata,
 #endif
 
 // Decode
-static int Decode(void *context, const void *dataRAW, 
+static int Decode(void *context, const void *dataRAW,
 					size_t sizeRAW, void **ppdataPCM, size_t *sizePCM)
 {
 	OGG_context *ctx = (OGG_context*)context;
 
 	*sizePCM = 0;
 	*ppdataPCM = 0;
-	
+
 	if (!dataRAW)
 		return 0;
 
 	switch(ctx->state)
 	{
 		// Sync buffer
-		case 0xff:			
+		case 0xff:
 		{
 			sysMemCpy(ogg_sync_buffer(&ctx->oy, (int32_t)sizeRAW), dataRAW, sizeRAW);
 			ctx->input_size = sizeRAW;
@@ -310,7 +307,7 @@ static int Decode(void *context, const void *dataRAW,
 		// Sync page out
 		case 0:
 		{
-			int result = ogg_sync_pageout(&ctx->oy, &ctx->og);			
+			int result = ogg_sync_pageout(&ctx->oy, &ctx->og);
 			if (result == 0)
 			{
 				ctx->state = 0xff;
@@ -331,7 +328,7 @@ static int Decode(void *context, const void *dataRAW,
 		// Stream packet out
 		case 1:
 		{
-			int result = ogg_stream_packetout(&ctx->os, &ctx->op);			
+			int result = ogg_stream_packetout(&ctx->os, &ctx->op);
 			if (result == 0)
 			{
 				ctx->state = 0;
@@ -355,7 +352,7 @@ static int Decode(void *context, const void *dataRAW,
 		case 3:
 		{
 			size_t samples;
-			float **pcm;		
+			float **pcm;
 			samples = vorbis_synthesis_pcmout(&ctx->vd, &pcm);
 			if (samples<=0)
 			{
@@ -367,14 +364,14 @@ static int Decode(void *context, const void *dataRAW,
 				size_t bytesCount = samples < convsize ? samples : convsize;
 				SYS_ASSERT(bytesCount < OGG_BUFFER_SIZE);
 #ifdef SUPPORT_IEEE_AUDIO
-				DeinterleaveAudio(ctx->uncompressed, pcm, ctx->vi.channels, bytesCount);				
+				DeinterleaveAudio(ctx->uncompressed, pcm, ctx->vi.channels, bytesCount);
 				*sizePCM = 4 * ctx->vi.channels * bytesCount;
 #else
 				ConvertFloatToInteger(ctx->uncompressed, pcm, ctx->vi.channels, bytesCount);
 				*sizePCM = 2 * ctx->vi.channels * bytesCount;
 #endif
 				/* tell libvorbis how many samples we actually consumed */
-				vorbis_synthesis_read(&ctx->vd, (int32_t)bytesCount); 				
+				vorbis_synthesis_read(&ctx->vd, (int32_t)bytesCount);
 				*ppdataPCM = ctx->uncompressed;
 			}
 		}
@@ -406,5 +403,6 @@ int SFX_DecodeOGG(SYS_FILEHANDLE fp, int options, V3XA_HANDLE *pHandle)
 
 	pHandle->codec = &V3XA_Codec_OGG;
 
-	return 1;	
+	return 1;
 }
+

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -31,34 +31,32 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "_rlx32.h"
 #include "_rlx.h"
 
-void SYS_Msg(char *fmt, ...)
+void SYS_Msg(const char *fmt, ...)
 {
     char buffer[4096];
     va_list argptr;
     va_start(argptr, fmt);
-    vsprintf(buffer, fmt, argptr);
+    vsnprintf(buffer, sizeof(buffer), fmt, argptr);
     printf("%s\n", buffer);
     va_end(argptr);
-    return;
 }
 
-void SYS_Debug(char *fmt, ...)
+void SYS_Debug(const char *fmt, ...)
 {
 	char buffer[2048];
 	va_list argptr;
 	va_start(argptr, fmt);
-	vsprintf(buffer, fmt, argptr);
+	vsnprintf(buffer, sizeof(buffer), fmt, argptr);
 	printf( "%s", buffer);
 	va_end(argptr);
-    return;
 }
 
- void SYS_Error(char *fmt, ...)
+void SYS_Error(const char *fmt, ...)
 {
     char buffer[2048];
     va_list argptr;
     va_start(argptr, fmt);
-    vsprintf(buffer, fmt, argptr);
+    vsnprintf(buffer, sizeof(buffer), fmt, argptr);
     printf("%s\n", buffer);
     va_end(argptr);
     exit(-1);

@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -52,7 +53,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #ifdef __BIG_ENDIAN__
 #define USE_ARGB_TEXTURE
-#endif 
+#endif
 
 #ifndef GL_ARB_texture_rectangle
 #define GL_TEXTURE_RECTANGLE_ARB 0x84F5
@@ -78,14 +79,14 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "gx_csp.h"
 #include "gx_rgb.h"
 
-typedef struct 
+typedef struct
 {
     float	u, v;
     GLuint	handle;
 	GLenum  target;
 }GXSPRITEGL;
 
-typedef struct 
+typedef struct
 {
 	GLint	 handle;
 	rgb24_t *palette;
@@ -98,11 +99,12 @@ __extern_c
 		void						GL_FakeViewPort();
 		extern struct RLXSYSTEM *	g_pRLX;
 
-		extern GLbyte				gl_EXT_paletted_texture, 
-									gl_SGIS_generate_mipmap, 
+		extern GLbyte				gl_EXT_paletted_texture,
+									gl_SGIS_generate_mipmap,
 									gl_EXT_texture_rectangle,
 									gl_ARB_texture_non_power_of_two,
 									gl_APPLE_client_storage;
 __end_extern_c
 
 #endif // __V3XGL_HH
+

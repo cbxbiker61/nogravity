@@ -3,15 +3,15 @@
 Copyright (C) 1996, 2005 - realtech VR
 
 This file is part of No Gravity 1.9
-												   
+
 No Gravity is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -51,19 +51,19 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 static HWND g_hWnd;
 #endif
 
-typedef struct 
+typedef struct
 {
-    u_int16_t lWidth, lHeight, BitsPerPixel;
+    uint16_t lWidth, lHeight, BitsPerPixel;
     GrScreenResolution_t mode;
 }GlideDisplayMode;
 
 GlideDisplayMode static g_lpDisplayModes[12]=
 {
     { 8, 8, 1    , 1},
-    { 640, 480, 16, GR_RESOLUTION_640x480}, 
-    { 512, 384, 16, GR_RESOLUTION_512x384}, 
+    { 640, 480, 16, GR_RESOLUTION_640x480},
+    { 512, 384, 16, GR_RESOLUTION_512x384},
     { 640, 400, 16, GR_RESOLUTION_640x400},
-    { 800, 600, 16, GR_RESOLUTION_800x600}, 
+    { 800, 600, 16, GR_RESOLUTION_800x600},
     { 0, 0, 0, 0}
 };
 static GrMemManager		*	g_Mem;
@@ -88,14 +88,14 @@ static unsigned ZbufferClear(rgb24_t *color, V3XSCALAR z, void *bitmap)
     return 0;
 }
 
-static unsigned SetState(unsigned command, u_int32_t value)
+static unsigned SetState(unsigned command, uint32_t value)
 {
-    switch(command) 
+    switch(command)
 	{
 		case V3XCMD_SETZBUFFERSTATE:
 			if (value)
 				g_pRLX->pV3X->Client->Capabilities|=GXSPEC_ENABLEZBUFFER;
-			else       
+			else
 				g_pRLX->pV3X->Client->Capabilities&=~GXSPEC_ENABLEZBUFFER;
 		return 1;
 		case V3XCMD_SETZBUFFERCOMP:
@@ -111,14 +111,13 @@ static int HardwareSetup(void)
     return 0;
 }
 
-static u_int8_t *Lock(void)
+static uint8_t *Lock(void)
 {
     return 0;
 }
 
 static void Unlock(void)
 {
-    return;
 }
 
 static void HardwareShutdown(void)
@@ -126,10 +125,9 @@ static void HardwareShutdown(void)
     grSstWinClose();
     grGlideShutdown();
     g_pRLX->mm_heap->free(g_lpVertexBuffer);
-    return;
 }
 
-static int TextureModify(GXSPRITE *id, u_int8_t *newBuffer, const rgb24_t *colorTable)
+static int TextureModify(GXSPRITE *id, uint8_t *newBuffer, const rgb24_t *colorTable)
 {
     UNUSED(id);
     UNUSED(newBuffer);
@@ -142,21 +140,21 @@ static void FreeTexture(void *handle)
     return;
 }
 
-static u_int8_t *ChooseBestTextureFormat(const GXSPRITE *sp, unsigned bpp, unsigned *format)
+static uint8_t *ChooseBestTextureFormat(const GXSPRITE *sp, unsigned bpp, unsigned *format)
 {
-    u_int8_t *src_buf = NULL;
+    uint8_t *src_buf = NULL;
     *format = GR_TEXFMT_16BIT;
-    switch(bpp) 
+    switch(bpp)
 	{
 		case 12:
 		case 32: // Convert en 4444
-			src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*2);
+			src_buf = (uint8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*2);
 			g_pRLX->pfSmartConverter(src_buf, g_pRLX->pGX->ColorTable, 2, sp->data, g_pRLX->pGX->ColorTable, bpp==12 ? 2 : 4, sp->LX*sp->LY);
 		break;
 		case 4:
 		case 8:  // Pas de mode palettized, on laisse en 16 bit FIXME
 			*format = GR_TEXFMT_RGB_565;
-			src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*2);
+			src_buf = (uint8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*2);
 			g_pRLX->pfSmartConverter(src_buf, g_pRLX->pGX->ColorTable, 2, sp->data, g_pRLX->pGX->ColorTable, 1, sp->LX*sp->LY);
 		break;
 		case 15:
@@ -169,7 +167,7 @@ static u_int8_t *ChooseBestTextureFormat(const GXSPRITE *sp, unsigned bpp, unsig
 		break;
 		case 24:  // map 24bit
 			*format = GR_TEXFMT_RGB_565;
-			src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*2);
+			src_buf = (uint8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*2);
 			g_pRLX->pfSmartConverter(src_buf, g_pRLX->pGX->ColorTable, 2, sp->data, g_pRLX->pGX->ColorTable, 3, sp->LX*sp->LY);
 		break;
     }
@@ -179,7 +177,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 {
     GrMipMapId_t pHandle = GR_NULL_MIPMAP_HANDLE;
     GrLOD_t lod=0;
-    u_int8_t *bytes;
+    uint8_t *bytes;
 
     int x = g_pRLX->mm_heap->active;
     int filter = g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEFILTERING ? GR_TEXTUREFILTER_BILINEAR : GR_TEXTUREFILTER_POINT_SAMPLED;
@@ -204,23 +202,23 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 		GR_MIPMAP_DISABLE,         // No Mipsrc_buf
 		lod,                       // Largest
 		lod,                       //
-		GR_ASPECT_1x1, 
-		GR_TEXTURECLAMP_WRAP, 
-		GR_TEXTURECLAMP_WRAP, 
-		filter, 
+		GR_ASPECT_1x1,
+		GR_TEXTURECLAMP_WRAP,
+		GR_TEXTURECLAMP_WRAP,
 		filter,
-		0.0F, 
-		FXFALSE 
+		filter,
+		0.0F,
+		FXFALSE
 	);
-    if ( pHandle != GR_NULL_MIPMAP_HANDLE )  
+    if ( pHandle != GR_NULL_MIPMAP_HANDLE )
 		guTexDownloadMipMap( pHandle, bytes, NULL);
 
-    if (bytes!=sp->data)  
+    if (bytes!=sp->data)
 		g_pRLX->mm_std->free(bytes);
-    
+
 	g_pRLX->mm_heap->active = x;
 
-	return (u_int8_t *)pHandle;
+	return (uint8_t *)pHandle;
 }
 
 static void ChangeRender(V3XMATERIAL *pMat)
@@ -228,7 +226,7 @@ static void ChangeRender(V3XMATERIAL *pMat)
 	pipe_renderID = pMat->RenderID;
 	if (pMat->info.Texturized)
 	{
-		switch(pMat->info.Shade) 
+		switch(pMat->info.Shade)
 		{
 			case 1:
 			case 2:
@@ -256,23 +254,23 @@ static void ChangeRender(V3XMATERIAL *pMat)
 		grTexCombineFunction(GR_TMU0, GR_TEXTURECOMBINE_ZERO);
 	}
 	// Transparency
-	switch(pMat->info.Transparency) 
+	switch(pMat->info.Transparency)
 	{
-		case V3XBLENDMODE_SUB: 
+		case V3XBLENDMODE_SUB:
 			guAlphaSource( GR_ALPHASOURCE_ITERATED_ALPHA );
 			grAlphaBlendFunction(
-			GR_BLEND_SRC_COLOR, 
+			GR_BLEND_SRC_COLOR,
 			GR_BLEND_ONE_MINUS_SRC_COLOR,
-			GR_BLEND_ONE, 
+			GR_BLEND_ONE,
 			GR_BLEND_ZERO);
 			grAlphaTestFunction( GR_CMP_ALWAYS );
 		break;
 		case V3XBLENDMODE_ADD:
 			guAlphaSource( GR_ALPHASOURCE_ITERATED_ALPHA );
 			grAlphaBlendFunction(
-			GR_BLEND_ONE, 
-			GR_BLEND_ONE, 
-			GR_BLEND_ONE, 
+			GR_BLEND_ONE,
+			GR_BLEND_ONE,
+			GR_BLEND_ONE,
 			GR_BLEND_ZERO);
 			grAlphaTestFunction( GR_CMP_ALWAYS );
 		break;
@@ -280,7 +278,7 @@ static void ChangeRender(V3XMATERIAL *pMat)
 			guAlphaSource( GR_ALPHASOURCE_ITERATED_ALPHA );
 			grAlphaBlendFunction(
 			GR_BLEND_SRC_ALPHA,
-			GR_BLEND_ONE_MINUS_SRC_ALPHA, 
+			GR_BLEND_ONE_MINUS_SRC_ALPHA,
 			GR_BLEND_ONE,
 			GR_BLEND_ZERO);
 			grAlphaTestFunction( GR_CMP_ALWAYS );
@@ -288,26 +286,27 @@ static void ChangeRender(V3XMATERIAL *pMat)
 		case V3XBLENDMODE_NONE:
 			grAlphaBlendFunction(
 			GR_BLEND_ONE,
-			GR_BLEND_ZERO, 
-			GR_BLEND_ONE, 
+			GR_BLEND_ZERO,
+			GR_BLEND_ONE,
 			GR_BLEND_ZERO);
 		break;
 	}
 }
+
 static void RenderPoly(V3XPOLY **fe, int count)
 {
     for (;count!=0;fe++, count--)
     {
 		V3XPOLY *fce = *fe;
 		V3XMATERIAL *pMat = (V3XMATERIAL*)fce->Mat;
-		if (pMat->info.Shade)  
+		if (pMat->info.Shade)
 			V3XRGB_Composing(g_pRLX->pV3X->Buffer.rgb, fce);
 
-		if (pMat->Render==255) 
-			pMat->render_clip(fce);	
+		if (pMat->Render==255)
+			pMat->render_clip(fce);
 		else
 		{
-			if (!pMat->RenderID) 
+			if (!pMat->RenderID)
 				return;
 			if (pMat->RenderID!=pipe_renderID)
 				ChangeRender(pMat);
@@ -339,7 +338,7 @@ static void RenderPoly(V3XPOLY **fe, int count)
 				}
 				else
 				{
-					v->r =  v->g = 	v->b = 0;
+					v->r = v->g = v->b = 0;
 				}
 				v->a = pMat->alpha;
 				if (pMat->info.Texturized)
@@ -392,9 +391,9 @@ static void RenderPoly(V3XPOLY **fe, int count)
 			guTexSource( pipe_pTex[0] );
 			guAlphaSource( GR_ALPHASOURCE_ITERATED_ALPHA );
 			grAlphaBlendFunction(
-			GR_BLEND_SRC_ALPHA, 
-			GR_BLEND_ONE_MINUS_SRC_ALPHA, 
-			GR_BLEND_ONE, 
+			GR_BLEND_SRC_ALPHA,
+			GR_BLEND_ONE_MINUS_SRC_ALPHA,
+			GR_BLEND_ONE,
 			GR_BLEND_ZERO);
 			grAlphaTestFunction( GR_CMP_ALWAYS );
 			for (i=0;i<fce->numEdges;i++, v++)
@@ -404,7 +403,6 @@ static void RenderPoly(V3XPOLY **fe, int count)
 			grDrawPolygonVertexList(fce->numEdges, g_lpVertexBuffer);
 		}
 	}
-    return;
 }
 
 static void StartList(void)
@@ -420,8 +418,8 @@ static void StartList(void)
     grDepthMask( s ? FXTRUE : FXFALSE);
     grDepthBufferMode( s ? GR_DEPTHBUFFER_ZBUFFER : GR_DEPTHBUFFER_DISABLE);
     grDepthBufferFunction( GR_CMP_GEQUAL );
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : static void EndList(void)
@@ -432,8 +430,8 @@ static void StartList(void)
 static void EndList(void)
 {
     g_pRLX->pGX->View.State&=~GX_STATE_SCENEBEGUN;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : static void RenderDisplay(void)
@@ -445,13 +443,12 @@ static void RenderDisplay(void)
 {
     int n = g_pRLX->pV3X->Buffer.MaxFaces;
     V3XPOLY **f=g_pRLX->pV3X->Buffer.RenderedFaces;
-    if (!n) 
+    if (!n)
 		return;
     RenderPoly(f, n);
-    return;
 }
 
-static void DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int option, rgb32_t *color)
+static void DrawPrimitives(V3XVECTOR *vertexes, uint16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int option, rgb32_t *color)
 {
     UNUSED(vertexes);
     UNUSED(indexTab);
@@ -459,7 +456,6 @@ static void DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsigned Nu
     UNUSED(NumVertexes);
     UNUSED(option);
     UNUSED(color);
-    return;
 }
 
 static GXDISPLAYMODEINFO  *EnumDisplayList(int bpp)
@@ -495,13 +491,11 @@ static GXDISPLAYMODEINFO  *EnumDisplayList(int bpp)
 static void CALLING_C Wait(void)
 {
     grSstIdle();
-    return;
 }
 
 static void CALLING_C clearBackBuffer(void)
 {
     grBufferClear( g_pRLX->pV3X->ViewPort.backgroundColor, 0, GR_WDEPTHVALUE_FARTHEST );
-    return;
 }
 
 static void CALLING_C clearVideo(void)
@@ -513,31 +507,27 @@ static void CALLING_C clearVideo(void)
 		grBufferClear( 0, 0, GR_WDEPTHVALUE_FARTHEST );
 		grBufferSwap( 1 );
     }
-    return;
 }
 
 static void CALLING_C PageFlip(void)
 {
     grBufferSwap(1);
-    return;
 }
 
-static void CALLING_C blit(u_int32_t dest, u_int32_t src)
+static void CALLING_C blit(uint32_t dest, uint32_t src)
 {
     UNUSED(dest);
     UNUSED(src);
-    return;
 }
 
-static void CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
+static void CALLING_C setPalette(uint32_t a, uint32_t b, void * pal)
 {
     UNUSED(a);
     UNUSED(b);
     UNUSED(pal);
-    return;
 }
 
-static void CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+static void CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
     GrVertex *v=g_lpVertexBuffer;
     int i;
@@ -551,20 +541,20 @@ static void CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2
     if (pipe_renderID!=1024)
     {
 	pipe_renderID=1024;
-	grColorCombine( GR_COMBINE_FUNCTION_LOCAL, 
-	GR_COMBINE_FACTOR_NONE, 
-	GR_COMBINE_LOCAL_CONSTANT, 
-	GR_COMBINE_OTHER_NONE, 
+	grColorCombine( GR_COMBINE_FUNCTION_LOCAL,
+	GR_COMBINE_FACTOR_NONE,
+	GR_COMBINE_LOCAL_CONSTANT,
+	GR_COMBINE_OTHER_NONE,
 	FXFALSE );
 	grAlphaCombine( GR_COMBINE_FUNCTION_LOCAL,
-	GR_COMBINE_FACTOR_NONE, 
-	GR_COMBINE_LOCAL_ITERATED, 
-        GR_COMBINE_OTHER_NONE, 
+	GR_COMBINE_FACTOR_NONE,
+	GR_COMBINE_LOCAL_ITERATED,
+        GR_COMBINE_OTHER_NONE,
         FXFALSE );
 	grAlphaBlendFunction(
-        GR_BLEND_SRC_ALPHA, 
-        GR_BLEND_ONE_MINUS_SRC_ALPHA, 
-        GR_BLEND_ONE, 
+        GR_BLEND_SRC_ALPHA,
+        GR_BLEND_ONE_MINUS_SRC_ALPHA,
+        GR_BLEND_ONE,
         GR_BLEND_ZERO);
     }
     if (colour>>16)
@@ -592,31 +582,27 @@ static void CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2
     else
     grDrawLine(v+0, v+1);
     if (s) Lock();
-    return;
 }
 
-static void CALLING_C drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t colour)
+static void CALLING_C drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t colour)
 {
     drawAnyLine(x1, y1, x1+lx, y1, colour);
-    return;
 }
 
-static void CALLING_C drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t colour)
+static void CALLING_C drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t colour)
 {
     drawAnyLine(x1, y1, x1, y1+lx, colour);
-    return;
 }
 
-static void CALLING_C drawWiredRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+static void CALLING_C drawWiredRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
     drawAnyLine(x1, y1, x1, y2, colour);
     drawAnyLine(x1, y2, x2, y2, colour);
     drawAnyLine(x2, y2, x2, y1, colour);
     drawAnyLine(x2, y1, x1, y1, colour);
-    return;
 }
 
-static void CALLING_C drawFilledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+static void CALLING_C drawFilledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
     int i;
     int s = g_pRLX->pGX->View.State&GX_STATE_LOCKED;
@@ -632,14 +618,13 @@ static void CALLING_C drawFilledRect(int32_t x1, int32_t y1, int32_t x2, int32_t
     grTexCombineFunction(GR_TMU0, GR_TEXTURECOMBINE_ZERO);
     guAlphaSource( GR_ALPHASOURCE_ITERATED_ALPHA );
     grAlphaBlendFunction(
-    GR_BLEND_ONE, 
+    GR_BLEND_ONE,
     GR_BLEND_ZERO,
-    GR_BLEND_ZERO, 
+    GR_BLEND_ZERO,
     GR_BLEND_ZERO);
     grConstantColorValue( RGB_565to888(colour));
     grDrawPlanarPolygonVertexList(4, g_lpVertexBuffer);
     if (s) Lock();
-    return;
 }
 
 static void CALLING_C drawShadedRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, void *palette)
@@ -662,15 +647,14 @@ static void CALLING_C drawShadedRect(int32_t x1, int32_t y1, int32_t x2, int32_t
     guAlphaSource( GR_ALPHASOURCE_ITERATED_ALPHA );
     grAlphaBlendFunction(
     GR_BLEND_SRC_ALPHA,
-    GR_BLEND_ONE_MINUS_SRC_ALPHA, 
-    GR_BLEND_ONE, 
+    GR_BLEND_ONE_MINUS_SRC_ALPHA,
+    GR_BLEND_ONE,
     GR_BLEND_ZERO);
     grAlphaTestFunction( GR_CMP_ALWAYS );
     grConstantColorValue(  RGB_565to888(g_pRLX->pGX->csp_cfg.color) );
     grDrawPolygonVertexList(4, g_lpVertexBuffer);
-    if (s) 
+    if (s)
 		Lock();
-    return;
 }
 
 static void GetDisplayInfo(int mode)
@@ -711,7 +695,6 @@ static void GetDisplayInfo(int mode)
 
 
     g_pRLX->pGX->View.lPitch = 1024*2;
-    return;
 }
 
 static int SetDisplayMode(int mode)
@@ -762,7 +745,6 @@ static void ReleaseSurfaces(void)
     }
     for (i=0;i<g_pRLX->pGX->Surfaces.maxSurface+1;i++) g_pRLX->pGX->Surfaces.lpSurface[i]=NULL;
     g_pRLX->pGX->Surfaces.maxSurface = 0;
-    return;
 }
 
 static int CreateSurface(int page)
@@ -778,7 +760,7 @@ static int CreateSurface(int page)
 
     for (i=2;i<page+1;i++)
     {
-        g_pRLX->pGX->Surfaces.lpSurface[i] = (u_int8_t*)g_pRLX->mm_std->malloc(g_pRLX->pGX->View.lSurfaceSize+1024);
+        g_pRLX->pGX->Surfaces.lpSurface[i] = (uint8_t*)g_pRLX->mm_std->malloc(g_pRLX->pGX->View.lSurfaceSize+1024);
 		SYS_ASSERT(g_pRLX->pGX->Surfaces.lpSurface[i]);
         if (g_pRLX->pGX->Surfaces.lpSurface[i])
 			sysMemZero(g_pRLX->pGX->Surfaces.lpSurface[i], g_pRLX->pGX->View.lSurfaceSize+1024);
@@ -805,34 +787,30 @@ static int SearchDisplayMode(int lx, int ly, int bpp)
 
 static void RegisterMode(int mode)
 {
-    g_pRLX->pGX->View.DisplayMode = (u_int16_t)mode;
+    g_pRLX->pGX->View.DisplayMode = (uint16_t)mode;
     g_pRLX->pGX->Client->GetDisplayInfo(mode);
     g_pRLX->pGX->Client->SetDisplayMode(mode);
-    return;
 }
 
 
 static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 {
     UNUSED(sp);
-    return;
 }
 
 static void ReleaseSprite(GXSPRITE *sp)
 {
-    g_pRLX->mm_heap->free(sp->data); 
+    g_pRLX->mm_heap->free(sp->data);
 	sp->data = NULL;
-    return;
 }
 
-static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+static unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 {
     return 0;
 }
 
 static void Shutdown(void)
 {
-    return;
 }
 
 static int Open(void *hWnd)
@@ -860,19 +838,19 @@ static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)
 }
 
 V3X_GXSystem V3X_Glide={
-    NULL, 
-    RenderDisplay, 
-    UploadTexture, 
-    FreeTexture, 
-    TextureModify, 
-    HardwareSetup, 
-    HardwareShutdown,     
-    SetState, 
+    NULL,
+    RenderDisplay,
+    UploadTexture,
+    FreeTexture,
+    TextureModify,
+    HardwareSetup,
+    HardwareShutdown,
+    SetState,
     ZbufferAlloc,
     RenderPoly,
     StartList,
-    EndList, 
-    DrawPrimitives, 
+    EndList,
+    DrawPrimitives,
     "Glide",
     256+10,
     GXSPEC_ZBUFFER+
@@ -891,26 +869,25 @@ V3X_GXSystem V3X_Glide={
     GXSPEC_HARDWARE|
     GXSPEC_ENABLEPERSPECTIVE
    , // Capabilities
-    0x000000, 
+    0x000000,
     1
 };
-
 
 GXCLIENTDRIVER GX_Glide = {
     Lock,
     Unlock,
-    EnumDisplayList, 
-    GetDisplayInfo, 
-    SetDisplayMode, 
+    EnumDisplayList,
+    GetDisplayInfo,
+    SetDisplayMode,
     SearchDisplayMode,
     CreateSurface,
-    ReleaseSurfaces, 
-    UploadSprite, 
-    ReleaseSprite, 
-    UpdateSprite, 
-    RegisterMode, 
-    Shutdown, 
-    Open, 
+    ReleaseSurfaces,
+    UploadSprite,
+    ReleaseSprite,
+    UpdateSprite,
+    RegisterMode,
+    Shutdown,
+    Open,
     NotifyEvent,
     "Glide"
 };
@@ -918,13 +895,12 @@ GXCLIENTDRIVER GX_Glide = {
 void GX_EntryPoint(struct RLXSYSTEM *p)
 {
 	g_pRLX = p;
-    g_pRLX->pGX->Client = &GX_Glide; 
-    return;
+    g_pRLX->pGX->Client = &GX_Glide;
 }
 
 void V3X_EntryPoint(struct RLXSYSTEM *p)
 {
 	GX_EntryPoint(p);
     g_pRLX->pV3X->Client = &V3X_Glide;
-    return;
 }
+

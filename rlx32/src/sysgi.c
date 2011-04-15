@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -37,6 +37,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "iss_defs.h"
 #include "sys_gi.h"
 GI_Descriptor RLX_GI;
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GI_ClickArea *ClickAreaNew(GI_Panel *panel, unsigned mode, int32_t x, int32_t y, int32_t x2, int32_t y2)
@@ -63,6 +64,7 @@ static GI_ClickArea *ClickAreaNew(GI_Panel *panel, unsigned mode, int32_t x, int
     }
     return click;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GI_Panel *PanelOpen(char *name, unsigned mode)
@@ -86,7 +88,7 @@ static GI_Panel *PanelOpen(GI_Panel *p, char *name, unsigned mode)
         else panel = p;
         FIO_cur->fread(header, sizeof(char), 4, in);
         {
-            u_int16_t _m;
+            uint16_t _m;
             FIO_cur->fread(&_m, sizeof(unsigned short int), 1, in);
             #ifdef __BIG_ENDIAN__
             BSWAP16(&_m, 1);
@@ -107,7 +109,7 @@ static GI_Panel *PanelOpen(GI_Panel *p, char *name, unsigned mode)
             GXSPRITEFORMAT spl;
             FIO_cur->fread(&spl, sizeof(GXSPRITEFORMAT), 1, in);
             #ifdef __BIG_ENDIAN__
-            BSWAP16((u_int16_t*)&spl.a, 4);
+            BSWAP16((uint16_t*)&spl.a, 4);
             #endif
             ClickAreaNew(panel, 0, spl.a, spl.b, spl.c, spl.d);
         }
@@ -115,6 +117,7 @@ static GI_Panel *PanelOpen(GI_Panel *p, char *name, unsigned mode)
     }
     return panel;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GI_Panel *PanelNew(unsigned mode, unsigned maxClickAreas)
@@ -131,6 +134,7 @@ static GI_Panel *PanelNew(unsigned mode, unsigned maxClickAreas)
     UNUSED(mode);
     return panel;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GI_Panel *PanelScale(GI_Panel *panel, unsigned mode, int32_t x, int32_t y, int32_t dx, int32_t dy)
@@ -162,6 +166,7 @@ static GI_Panel *PanelScale(GI_Panel *panel, unsigned mode, int32_t x, int32_t y
     UNUSED(mode);
     return panel;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void SetKeyMessage(GI_Panel *panel, unsigned key, unsigned id_mesg)
@@ -174,13 +179,13 @@ static void SetKeyMessage(GI_Panel *panel, unsigned key, unsigned id_mesg)
     GI_Message    *mesg = panel->keyMesg + panel->maxKeyMessages;
     if ( panel->maxKeyMessages < GI_MAXMESSAGES)
     {
-        mesg->key = (u_int8_t)key;
+        mesg->key = (uint8_t)key;
         mesg->id_mesg = id_mesg;
         mesg->flags  |= GI_KEYMNG_ENABLE|GI_KEYMNG_BUFFERED;
     }
     panel->maxKeyMessages++;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void SetClickMessage(GI_Panel *panel, unsigned clickArea, unsigned id_mesg)
@@ -191,8 +196,8 @@ static void SetKeyMessage(GI_Panel *panel, unsigned key, unsigned id_mesg)
 static void SetClickMessage(GI_Panel *panel, unsigned clickArea, unsigned id_mesg)
 {
     panel->item[clickArea].clickMessage = id_mesg;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void SetCursorCallback(GI_Panel *, (void)callback(GI_Panel *panel, unsigned mode))
@@ -203,8 +208,8 @@ static void SetClickMessage(GI_Panel *panel, unsigned clickArea, unsigned id_mes
 static void SetCursorCallback(GI_Panel *panel, int (*callback)(GI_Panel *panel, unsigned mode, int message))
 {
     panel->Cursor = callback;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void GetMessage(GI_Panel *panel, unsigned mode)
@@ -223,6 +228,7 @@ static int GI_IsMouseInsideArea(GI_ClickArea *area)
     && (y<=area->y+area->ly)
     );
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static int GI_GetArea(GI_Panel *panel)
@@ -242,6 +248,7 @@ static int GI_GetArea(GI_Panel *panel)
     panel->display|=1;
     return area;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static unsigned GetMessage(GI_Panel *panel, unsigned mode)
@@ -299,6 +306,7 @@ static unsigned GetMessage(GI_Panel *panel, unsigned mode)
     UNUSED(mode);
     return mesg;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GI_Descriptor *GI_GetBasicDescriptor(GI_Descriptor *GI)
@@ -327,13 +335,13 @@ static void SetDefaultMessaging(GI_Panel *panel)
     panel->display       |= 2|1;
     panel->onArea = GI_GetArea(panel);
     panel->onAreaClicked = -1;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static int GetText(char *texte, unsigned maxCharacters, int (*callback)(char *, unsigned, int ))
 *
-* Description :  
+* Description :
 *
 */
 static int GetText(char *texte, unsigned maxCharacters, int (*callback)(char *, unsigned, int ))
@@ -370,7 +378,7 @@ static int GetText(char *texte, unsigned maxCharacters, int (*callback)(char *, 
                 {
                     if ((ch>=32) && (ch<128))
                     {
-                        __temp[l]=(u_int8_t)ch;
+                        __temp[l]=(uint8_t)ch;
                         l++;
                         __temp[l]=0;
                         mode|=1;
@@ -383,6 +391,7 @@ static int GetText(char *texte, unsigned maxCharacters, int (*callback)(char *, 
     }while(ok!=1);
     return ok;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GI_Descriptor *GI_GetBasicDescriptor(GI_Descriptor *GI)
@@ -405,3 +414,4 @@ GI_Descriptor *GI_GetBasicDescriptor(GI_Descriptor *GI)
     GI->GetText  = GetText;
     return GI;
 }
+

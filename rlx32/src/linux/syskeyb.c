@@ -146,7 +146,7 @@ static unsigned long KeyboardUpdate(void *dev)
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
   };
-  static u_int8_t keys[SKEY_SCANTABLESIZE] = {0};
+  static uint8_t keys[SKEY_SCANTABLESIZE] = {0};
 
   // Copy the current key state to be the old key state.
   memcpy(sKEY->steButtons, sKEY->rgbButtons, SKEY_SCANTABLESIZE);
@@ -213,3 +213,4 @@ _RLXEXPORTFUNC KEY_ClientDriver *KEY_SystemGetInterface_STD(void)
 
   return sKEY;
 }
+

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,18 +28,20 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #include "poly.hpp"
 #include "rd_128.hpp"
+
 void CALLING_C Rend8bit_CS_map_bump_F (V3XPOLY *fce)
 {
    fce=fce;
    return;
 }
+
 // =========================================================================
 void CALLING_C Rend8bit_CS_map_norm_G(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_IT
     VAR_MAP
-    
+
     MASTER_1
     CALC_IT
     CALC_MAP
@@ -66,8 +68,8 @@ void CALLING_C Rend8bit_CS_map_norm_G(V3XPOLY *fce)
 		    ADD_IT
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // ==================/ le rendu sacr‚ /===============================
 void CALLING_C Rend8bit_CS_map_normal(V3XPOLY *fce)
 {
@@ -92,8 +94,8 @@ void CALLING_C Rend8bit_CS_map_normal(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend8bit_CS_map_dualtex(V3XPOLY *fce)
 {
@@ -124,13 +126,12 @@ void CALLING_C Rend8bit_CS_map_dualtex(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
 
 // =========================================================================
 void CALLING_C Rend8bit_CS_map_sprite(V3XPOLY *fce)
 {
-    u_int8_t vx;
+    uint8_t vx;
     TRI_VAR
     VAR_MAP
     MASTER_1
@@ -153,19 +154,18 @@ void CALLING_C Rend8bit_CS_map_sprite(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
 
 // =========================================================================
 void CALLING_C Rend8bit_CS_map_norm_F(V3XPOLY *fce)
 {
-    u_int8_t *Shader;
+    uint8_t *Shader;
     int32_t *shade=(int32_t*)fce->shade;
     TRI_VAR
     VAR_MAP
-    
-    Shader = (u_int8_t*)g_MixTable[shade[0]];
-    
+
+    Shader = (uint8_t*)g_MixTable[shade[0]];
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -185,14 +185,14 @@ void CALLING_C Rend8bit_CS_map_norm_F(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend8bit_CS_tex_alpha(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -212,18 +212,17 @@ void CALLING_C Rend8bit_CS_tex_alpha(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
 // =========================================================================
 void CALLING_C Rend8bit_CS_map_sprite_F(V3XPOLY *fce)
 {
-    u_int8_t *Shader;
+    uint8_t *Shader;
     int32_t *shade=(int32_t*)fce->shade;
-    u_int8_t vx;
+    uint8_t vx;
     TRI_VAR
     VAR_MAP
-    
-    Shader = (u_int8_t*)g_MixTable[shade[0]];
+
+    Shader = (uint8_t*)g_MixTable[shade[0]];
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -244,15 +243,15 @@ void CALLING_C Rend8bit_CS_map_sprite_F(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend8bit_CS_map_phong(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
     VAR_MAP2
-    
+
     MASTER_1
     CALC_MAP
     CALC_MAP2
@@ -282,6 +281,5 @@ void CALLING_C Rend8bit_CS_map_phong(V3XPOLY *fce)
 		    ADD_MAP
 		    ADD_MAP2
 		    FINAL
-    return;
 }
 

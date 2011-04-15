@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -64,36 +64,36 @@ class auSoundBuffer
 {
 
     public:
-    	int						Create(int sampleFormat, int sampleRate, int length, bool b);
-    	int						Release();
-    	int						GetPlayPosition(int32_t	*lpPos);
-    	int						Play(int32_t option);
-    	int						Stop();
-    	int						Rewind();
-    	int						WriteSample(int	offset,	void *data,	int	size);
-    	int						SetPanValues(int v,	float *v);
-    	int						SetGain(float gain);
-    	int						SetPriority(float priority);
-    	int						SetSampleRate(int sampleRate);
-    	int						GetStatus();
-    	int						Lock();
-    	int						Unlock();
-    	int						DuplicateSource(auSoundBuffer *src);
-    
-    	u_int32_t	    			m_nIndex;		 //	channel
-    	volatile u_int32_t			m_nFlags;		 //	flags
-    	int32_t					m_nNumFrame;	 //	number of frames
-    	int32_t					m_nCurFrame;	 //	current	write position
+		int						Create(int sampleFormat, int sampleRate, int length, bool b);
+		int						Release();
+		int						GetPlayPosition(int32_t	*lpPos);
+		int						Play(int32_t option);
+		int						Stop();
+		int						Rewind();
+		int						WriteSample(int	offset,	void *data,	int	size);
+		int						SetPanValues(int v,	float *v);
+		int						SetGain(float gain);
+		int						SetPriority(float priority);
+		int						SetSampleRate(int sampleRate);
+		int						GetStatus();
+		int						Lock();
+		int						Unlock();
+		int						DuplicateSource(auSoundBuffer *src);
+
+		uint32_t				m_nIndex;		 //	channel
+		volatile uint32_t		m_nFlags;		 //	flags
+		int32_t					m_nNumFrame;	 //	number of frames
+		int32_t					m_nCurFrame;	 //	current	write position
 		int32_t					m_nPlayPosition; // current play position
-		
-    	float			    	m_fPan[2];		 //	pan	values
-    	float			     	m_fGain;		 //	gain values
-    	int32_t					m_nSampleRate;	 //	sample rate
-    
-    	float		      		m_fPriority;	 //	priority
-    	float		        *   m_pData;		 //	sample data
-    	V3XA_HANDLE		    *	m_pSample;		 //	sample ID
-    	int						m_nInstance;
+
+		float					m_fPan[2];		 //	pan	values
+		float					m_fGain;		 //	gain values
+		int32_t					m_nSampleRate;	 //	sample rate
+
+		float					m_fPriority;	 //	priority
+		float		        *   m_pData;		 //	sample data
+		V3XA_HANDLE		    *	m_pSample;		 //	sample ID
+		int						m_nInstance;
 };
 
 static auSoundBuffer		g_pHandle[MAX_V3XA_AUDIO_MIX];
@@ -103,7 +103,7 @@ typedef struct
     V3XA_CHANNEL			nChannel;
     V3XA_HANDLE				sample;
 
-	int 					nState;
+	int						nState;
 
 	int32_t					m_nWritePosition,
 							m_nPreviousPosition;
@@ -111,7 +111,7 @@ typedef struct
 	int32_t					m_nWriteBytes,
 							m_nTotalBytes,
 							m_nUploadedBytes;
-	u_int32_t		    	m_nStreamState;
+	uint32_t				m_nStreamState;
 }auStreamBuffer;
 
 static auStreamBuffer       g_pStream[MAX_V3XA_AUDIO_STREAM];
@@ -124,8 +124,8 @@ static AudioUnit            g_AuReverb;
 static AudioUnit            g_AuOutput;
 static float                g_fGain = 1.f;
 
-static int 					theNumberDevices;
-static AudioDeviceID 	*	theDeviceList;
+static int					theNumberDevices;
+static AudioDeviceID	*	theDeviceList;
 #include <sys/sysctl.h>
 #include <ppc_intrinsics.h>
 
@@ -153,7 +153,6 @@ static inline const vector float vec_setzero()
     return (const vector float) (0.);
 }
 
-
 static void FillBufferF32Stereo(const float *lpSrc,
                                 float *lpDst,
                                 float fVolLeft,
@@ -165,7 +164,7 @@ static void FillBufferF32Stereo(const float *lpSrc,
 {
     int			i;
 	lpSrc+=offset;
-  	if ((fVolLeft==1) && (fVolRight==1)) 
+	if ((fVolLeft==1) && (fVolRight==1))
     {
 		sysMemCpy(lpDst, lpSrc, sz * sizeof(float));
 		return;
@@ -186,22 +185,22 @@ static void FillBufferF32Stereo(const float *lpSrc,
         const vector float gain = vec_mergeh(gain_l, gain_r);
         const vector float mix = vec_setzero();
         remain = sz & 15;
-       	for (i=0;i<sz;i+=16)
-    	{
-    		vector float v0 = vec_ld(0x0, lpSrc + i);
-    		vector float v1 = vec_ld(0x10, lpSrc + i);
-    		vector float v2 = vec_ld(0x20, lpSrc + i);
-    		vector float v3 = vec_ld(0x30, lpSrc + i);
+		for (i=0;i<sz;i+=16)
+		{
+			vector float v0 = vec_ld(0x0, lpSrc + i);
+			vector float v1 = vec_ld(0x10, lpSrc + i);
+			vector float v2 = vec_ld(0x20, lpSrc + i);
+			vector float v3 = vec_ld(0x30, lpSrc + i);
 
-    		vector float v4 = vec_madd(v0, gain, mix);
-    		vector float v5 = vec_madd(v1, gain, mix);
-    		vector float v6 = vec_madd(v2, gain, mix);
-    		vector float v7 = vec_madd(v3, gain, mix);
+			vector float v4 = vec_madd(v0, gain, mix);
+			vector float v5 = vec_madd(v1, gain, mix);
+			vector float v6 = vec_madd(v2, gain, mix);
+			vector float v7 = vec_madd(v3, gain, mix);
 
-    		vec_st(v4, 0x0, lpDst + i);
-    		vec_st(v5, 0x10, lpDst + i);
-    		vec_st(v6, 0x20, lpDst + i);
-    		vec_st(v7, 0x30, lpDst + i);
+			vec_st(v4, 0x0, lpDst + i);
+			vec_st(v5, 0x10, lpDst + i);
+			vec_st(v6, 0x20, lpDst + i);
+			vec_st(v7, 0x30, lpDst + i);
         }
     }
 
@@ -210,7 +209,6 @@ static void FillBufferF32Stereo(const float *lpSrc,
 		lpDst[i  ]=lpSrc[i  ]*fVolLeft;
 		lpDst[i+1]=lpSrc[i+1]*fVolRight;
 	}
-
 }
 
 static void FillBufferF32Mono(const float *lpSrc,
@@ -221,7 +219,7 @@ static void FillBufferF32Mono(const float *lpSrc,
 								int offset,
                                 int n)
 {
-   	lpSrc+=offset;
+	lpSrc+=offset;
     if ((fVolLeft==0) && (fVolRight==0)) {
 
 		sysMemZero(lpDst, sz * sizeof(float) << 1);
@@ -234,17 +232,17 @@ static void FillBufferF32Mono(const float *lpSrc,
 	{
 	    if (HasAltivec)
 	    {
-     	    remain = sz & 3;
-    	    for (;i<sz;i+=4,j+=8)
-    		{
-    			vector float v0 = vec_ld(0, lpSrc + i); // v0(s0,s1,s2,s3)
-    			vector float v2 = vec_mergeh(v0, v0);
-    			vector float v3 = vec_mergel(v0, v0);
-    			vec_st(v2, 0, lpDst + j);
-    			vec_st(v3, 0x10, lpDst + j);
-    	    }
-    	    sz = remain;
-    	}
+		    remain = sz & 3;
+		    for (;i<sz;i+=4,j+=8)
+			{
+				vector float v0 = vec_ld(0, lpSrc + i); // v0(s0,s1,s2,s3)
+				vector float v2 = vec_mergeh(v0, v0);
+				vector float v3 = vec_mergel(v0, v0);
+				vec_st(v2, 0, lpDst + j);
+				vec_st(v3, 0x10, lpDst + j);
+		    }
+		    sz = remain;
+		}
 
         for (i=0;i<remain;i++,j+=2)
 		{
@@ -265,12 +263,12 @@ static void FillBufferF32Mono(const float *lpSrc,
 
        for (;i<sz;i+=4,j+=8)
        {
-    		vector float v0 = vec_ld(0, lpSrc + i); // v0(s0,s1,s2,s3)
-    		vector float v1 = vec_madd(v0, gain, mix);
-    		vector float v2 = vec_mergeh(v1, v1);
-    		vector float v3 = vec_mergel(v1, v1);
-    		vec_st(v2, 0, lpDst + j);
-    		vec_st(v3, 0x10, lpDst + j);
+			vector float v0 = vec_ld(0, lpSrc + i); // v0(s0,s1,s2,s3)
+			vector float v1 = vec_madd(v0, gain, mix);
+			vector float v2 = vec_mergeh(v1, v1);
+			vector float v3 = vec_mergel(v1, v1);
+			vec_st(v2, 0, lpDst + j);
+			vec_st(v3, 0x10, lpDst + j);
        }
        sz = remain;
     }
@@ -291,7 +289,7 @@ static OSStatus snd_input_callback(void *inRefCon,
 {
     int					 bufsz, writesz,
                          m_nCurFrame, nEndFrame, m_nNumFrame;
-    float			 	 fVol[2];
+    float				 fVol[2];
     float               *m_pData;
     auSoundBuffer		*chan;
 
@@ -299,7 +297,7 @@ static OSStatus snd_input_callback(void *inRefCon,
 
     // get the proper channel for this audio unit
 	chan->Lock();
-	
+
 	m_nCurFrame = chan->m_nCurFrame;
     m_nNumFrame = chan->m_nNumFrame;
 
@@ -356,7 +354,7 @@ static OSStatus snd_input_callback(void *inRefCon,
              writesz,
              m_nCurFrame,
              m_nNumFrame);
-  
+
 	chan->m_nPlayPosition = m_nCurFrame + writesz;
     m_pData = m_pData + writesz;
 
@@ -393,9 +391,9 @@ static OSStatus snd_input_callback(void *inRefCon,
     if (writesz <= 0)
 	   goto end;
 end:
-    
+
 	chan->Unlock();
-	
+
 	return noErr;
 }
 
@@ -481,10 +479,7 @@ static void Release(void)
         AUDIO_CHECK(AudioUnitUninitialize(g_AuMixer));
         CloseComponent(g_AuMixer);
     }
-
-	return;
 }
-
 
 // Initialise driver
 static int Initialize(void *hwnd)
@@ -501,8 +496,8 @@ static int Initialize(void *hwnd)
     chan = g_pHandle;
     for ((i=0);(i!=MAX_V3XA_AUDIO_MIX);i++) {
         chan->m_nIndex = i;
-      	chan->m_fPan[0] = chan->m_fPan[1] = chan->m_fGain = 1.f;
-      	chan->m_pData = 0;
+		chan->m_fPan[0] = chan->m_fPan[1] = chan->m_fGain = 1.f;
+		chan->m_pData = 0;
         chan->m_nInstance = 0;
         chan++;
     }
@@ -586,7 +581,6 @@ static int Initialize(void *hwnd)
     return 0;
 }
 
-
 int auSoundBuffer::GetPlayPosition(int32_t *lpPos)
 {
 	 Lock();
@@ -597,8 +591,8 @@ int auSoundBuffer::GetPlayPosition(int32_t *lpPos)
 
 int auSoundBuffer::Play(int32_t option)
 {
- 	AudioUnitInputCallback	aucallback;
-    
+	AudioUnitInputCallback	aucallback;
+
     aucallback.inputProc = snd_input_callback;
     aucallback.inputProcRefCon = (void*)m_nIndex;
 
@@ -610,11 +604,11 @@ int auSoundBuffer::Play(int32_t option)
                          sizeof(AudioUnitInputCallback)))==noErr)
 
     {
-    	m_nFlags|=DSH_PLAYING;
+		m_nFlags|=DSH_PLAYING;
         if (option & DSH_LOOPED)
-        	m_nFlags|=DSH_LOOPED;
+			m_nFlags|=DSH_LOOPED;
         else
-       	    m_nFlags&=~DSH_LOOPED;
+		    m_nFlags&=~DSH_LOOPED;
     }
     return 0;
 }
@@ -624,10 +618,10 @@ int auSoundBuffer::Stop()
     if (m_nFlags & DSH_PLAYING)
     {
 	   Lock();
-  	   AudioUnitInputCallback	aucallback;
+	   AudioUnitInputCallback	aucallback;
        aucallback.inputProc = NULL;
        aucallback.inputProcRefCon = (void*)m_nIndex;
-  	   AUDIO_CHECK(AudioUnitSetProperty(g_AuMixer,
+	   AUDIO_CHECK(AudioUnitSetProperty(g_AuMixer,
                            kAudioUnitProperty_SetInputCallback,
                            kAudioUnitScope_Input,
                            m_nIndex,
@@ -696,7 +690,6 @@ static void *snd_int16BIG_to_float(void *dst, const void *src, size_t n, int sca
 	return dst;
 }
 
-
 static void *snd_int16LITTLE_to_float(void *dst, const void *src, size_t n, int scale)
 {
 	const float f = 1.f / 32767.f;
@@ -708,7 +701,7 @@ static void *snd_int16LITTLE_to_float(void *dst, const void *src, size_t n, int 
     for (i=0;i<n;i++)
     {
         int16_t k = lpSrc[i*scale>>P_RESAMPLE_BITS];
-        lpDst[i] = f * (float)(int16_t)(  (((u_int16_t)k)<<8) | (((u_int16_t)k)>>8) );
+        lpDst[i] = f * (float)(int16_t)(  (((uint16_t)k)<<8) | (((uint16_t)k)>>8) );
     }
 	return dst;
 }
@@ -722,7 +715,7 @@ static void *snd_float_to_float(void *dst, const void *src, size_t n, int scale)
     n>>=2;
 	for (i=0;i<n;i++)
     {
-    	lpDst[i] = lpSrc[i*scale>>P_RESAMPLE_BITS];
+		lpDst[i] = lpSrc[i*scale>>P_RESAMPLE_BITS];
     }
 	return dst;
 }
@@ -735,7 +728,7 @@ int auSoundBuffer::WriteSample(int offset, void *data, int size)  // offset, siz
     Lock();
 
 	int n = 0;
-	
+
 	if (m_pSample->sampleFormat & V3XA_FMTIEEE)
 	{
 		pf = snd_float_to_float;
@@ -755,7 +748,7 @@ int auSoundBuffer::WriteSample(int offset, void *data, int size)  // offset, siz
 		pf = snd_byte_to_float;
 		n = 1;
 	}
-	
+
 	int length = m_nNumFrame * sizeof(float);
 	void *lpP1 = (char*)m_pData + offset * sizeof(float) / n;
     int dwB1 = 0;
@@ -787,8 +780,6 @@ int auSoundBuffer::WriteSample(int offset, void *data, int size)  // offset, siz
     Unlock();
     return size;
 }
-
-
 
 int auSoundBuffer::Create(int sampleFormat, int sampleRate, int length, bool bStreaming)
 {
@@ -881,13 +872,12 @@ int auSoundBuffer::GetStatus()
 static void ChannelSetParms(int channel, V3XVECTOR *pos,
 										 V3XVECTOR *velocity,
 										 V3XRANGE *fRange
-					 	   )
+						   )
 {
     /*
         auSoundBuffer *chan=&g_pHandle[channel];
         Store parameters
     */
-	return;
 }
 
 static void RLXAPI UserSetParms(V3XMATRIX *lpMAT,
@@ -899,7 +889,6 @@ static void RLXAPI UserSetParms(V3XMATRIX *lpMAT,
     /*
        Store parameters
     */
-	return;
 }
 
 static int ChannelSetEnvironment(V3XA_CHANNEL channel, V3XA_REVERBPROPERTIES *cfg)
@@ -921,8 +910,8 @@ void RLXAPI Render(void)
           if channel configure for 3D
           Compute new volume / panning
    */
-	return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void DriverSampleSetVolume(float volume)
@@ -933,8 +922,8 @@ void RLXAPI Render(void)
 static void SetVolume(float volume)
 {
     g_fGain = (float) volume / MAX_V3XA_AUDIO_VOLUME;
-	return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	void ChannelSetVolume(int channel, float volume)
@@ -947,8 +936,8 @@ static void ChannelSetVolume(int channel, float volume)
     auSoundBuffer		*chan;
     chan=&g_pHandle[channel];
     chan->SetGain((float)volume / MAX_V3XA_AUDIO_VOLUME);
-	return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	void ChannelSetPanning(int channel, float pan)
@@ -956,7 +945,6 @@ static void ChannelSetVolume(int channel, float volume)
 * DESCRIPTION :  Set panning (only with 2D buffers)
 *
 */
-
 static void ChannelSetPanning(int channel, float pan)
 {
     auSoundBuffer		*chan;
@@ -974,15 +962,14 @@ static void ChannelSetPanning(int channel, float pan)
 		f[0] = 1.f - v;
 		f[1] = 1.f;
 	}
-	
+
 	chan->Lock();
 
 	chan->SetPanValues(2, f);
 
 	chan->Unlock();
-
-	return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	void ChannelSetSamplingRate(int channel, int m_nSampleRate)
@@ -996,9 +983,7 @@ static void ChannelSetSamplingRate(int channel, int sampleRate)
     chan=&g_pHandle[channel];
     if (!chan->GetStatus()) return;
     chan->SetSampleRate(sampleRate);
-	return;
 }
-
 
 /*------------------------------------------------------------------------
 *
@@ -1010,7 +995,6 @@ static void ChannelSetSamplingRate(int channel, int sampleRate)
 static void ChannelOpen(int nGain, int numChannels)
 {
     V3XA.numChannel = numChannels;
-	return;
 }
 
 /*------------------------------------------------------------------------
@@ -1034,7 +1018,6 @@ static int SmpLoad(V3XA_HANDLE *sam)
 */
 static void SmpRelease(V3XA_HANDLE *sam)
 {
-	return;
 }
 
 /*------------------------------------------------------------------------
@@ -1050,13 +1033,13 @@ static int ChannelGetFree(V3XA_HANDLE *sam)
 	int prefSecure		=-1;
 	int prefSamready	=-1;
 	int prefSamStoppedMatch =-1;
-	int prefSamPriority 	=-1;
+	int prefSamPriority	=-1;
 	int newChannel		=-1;
 	auSoundBuffer *p;
 	SYS_ASSERT(V3XA.numChannel>=0); // did you forget V3XA.Client->ChannelOpen() ?
 	for (i = 0, p = g_pHandle;i < V3XA.numChannel;i++, p++)
 	{
-     	if ((p->m_nFlags&DSH_RESERVED)==0) // n'y pense MEME PAS!
+		if ((p->m_nFlags&DSH_RESERVED)==0) // n'y pense MEME PAS!
 		{
 			if (!p->m_pSample)
 			{
@@ -1108,6 +1091,7 @@ static int ChannelGetFree(V3XA_HANDLE *sam)
 		newChannel = prefSecure;
 	return newChannel>=32 ? -1 : newChannel;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int ChannelPlay(int channel, int sampleRate, float volume, float pan, V3XA_HANDLE *sam)
@@ -1115,15 +1099,14 @@ static int ChannelGetFree(V3XA_HANDLE *sam)
 * DESCRIPTION :  Play a sound in a given channel, sampling rate, volume, pan
 *
 */
-
 static int ChannelPlay(int channel, int sampleRate, float volume, float pan, V3XA_HANDLE *sam)
 {
     auSoundBuffer *chan=&g_pHandle[channel];
-  
+
     // hookup the input to the mixer
     chan->Stop();
     chan->Rewind();
-  
+
     if (sam != chan->m_pSample)
     {
         int bFound = 0;
@@ -1136,12 +1119,12 @@ static int ChannelPlay(int channel, int sampleRate, float volume, float pan, V3X
             chan->WriteSample(0, sam->sample, sam->length);
         }
     }
-    
+
 	ChannelSetVolume(channel, volume);
 	ChannelSetPanning(channel, pan);
 	return chan->Play(sam->loopend ? DSH_LOOPED : DSH_SINGLE);
-    
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	void ChannelStop(int channel)
@@ -1155,8 +1138,8 @@ static void ChannelStop(int channel)
     chan=&g_pHandle[channel];
     if (!chan->GetStatus()) return;
     chan->Stop();
-	return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	int ChannelGetStatus(int channel)
@@ -1185,7 +1168,6 @@ static V3XA_HANDLE *ChannelGetSample(int channel)
 * DESCRIPTION : Release a stream buffer
 *
 */
-
 static V3XA_STREAM GetFreeStreamHandle()
 {
 	int i;
@@ -1203,14 +1185,12 @@ static void StreamRelease(V3XA_STREAM handle)
     auStreamBuffer *pStr = g_pStream + handle;
 	if (!pStr->nState)
 		return;
-		
+
 	auSoundBuffer   *pSrc = g_pHandle + pStr->nChannel;
 
 	pSrc->Stop();
 	pSrc->Release();
 	pStr->nState = 0;
-
-	return;
 }
 
 static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t size)
@@ -1224,10 +1204,10 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t siz
 		return -1;
 
     pStr->nChannel = 0;
-	
+
 	pStr->nState = 1;
 	sysMemZero(&pStr->sample, sizeof(V3XA_HANDLE));
-	
+
 	pStr->sample.length = size;
 	pStr->sample.sampleFormat = sampleFormat;
 	pStr->sample.samplingRate = sampleRate;
@@ -1285,7 +1265,7 @@ static int StreamLoad(V3XA_STREAM handle, void *data, size_t size)
 		return 0;
 
 	auSoundBuffer   *pSrc = g_pHandle + pStr->nChannel;
-	
+
 	if (pSrc->WriteSample(pStr->m_nWritePosition, data, size))
 	{
 		pStr->m_nUploadedBytes += size;
@@ -1320,7 +1300,6 @@ static void StreamStop(V3XA_STREAM handle)
 		return;
 	auSoundBuffer   *pSrc = g_pHandle + pStr->nChannel;
     pSrc->Stop();
-	return;
 }
 
 static int StreamStart(V3XA_STREAM handle)
@@ -1361,7 +1340,6 @@ static void StreamSetVolume(V3XA_STREAM handle, float volume)
 	if (!pStr->nState)
 		return;
 	ChannelSetVolume(pStr->nChannel, volume);
-	return;
 }
 
 static size_t StreamGetPosition(V3XA_STREAM handle)
@@ -1384,9 +1362,8 @@ static void ChannelFlushAll(int mode)
     int i;
     for (i=0;i<MAX_V3XA_AUDIO_MIX;i++)
     {
-    	g_pHandle[i].Stop();
+		g_pHandle[i].Stop();
     }
-	return;
 }
 
 /*------------------------------------------------------------------------
@@ -1401,13 +1378,12 @@ static void ChannelInvalidate(V3XA_HANDLE *snd)
     int i;
     for (i=0;i<MAX_V3XA_AUDIO_MIX;i++)
     {
-    	if (g_pHandle[i].m_pSample == snd)
-    	{
-        	g_pHandle[i].Stop();
-        	g_pHandle[i].m_pSample = 0;
+		if (g_pHandle[i].m_pSample == snd)
+		{
+			g_pHandle[i].Stop();
+			g_pHandle[i].m_pSample = 0;
         }
     }
-	return;
 }
 
 static V3XA_WaveClientDriver CoreAudio_Client = {
@@ -1415,8 +1391,8 @@ static V3XA_WaveClientDriver CoreAudio_Client = {
 	Enum,
 	Detect,
 	Initialize,
-	Release, 
-	SetVolume, 
+	Release,
+	SetVolume,
 	Start,
 	Stop,
 	Poll,
@@ -1424,27 +1400,27 @@ static V3XA_WaveClientDriver CoreAudio_Client = {
 	UserSetParms,
 
 	ChannelOpen,
-	ChannelPlay, 
+	ChannelPlay,
 	ChannelStop,
 
-	ChannelSetVolume, 
+	ChannelSetVolume,
 	ChannelSetPanning,
 	ChannelSetSamplingRate,
 
 	ChannelGetStatus,
 
 	ChannelSetParms,
-	ChannelSetEnvironment, 
+	ChannelSetEnvironment,
 
-	ChannelGetFree, 
-	ChannelFlushAll, 
+	ChannelGetFree,
+	ChannelFlushAll,
 	ChannelInvalidate,
 	ChannelGetSample,
 
-	StreamRelease, 
+	StreamRelease,
 	StreamInitialize,
-	StreamGetChannel, 
-	StreamGetPosition, 
+	StreamGetChannel,
+	StreamGetPosition,
 	StreamPoll,
 	StreamSetVolume,
 	StreamLoad,
@@ -1459,5 +1435,5 @@ static V3XA_WaveClientDriver CoreAudio_Client = {
 void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *)
 {
 	V3XA.Client = &CoreAudio_Client;
-	return;
 }
+

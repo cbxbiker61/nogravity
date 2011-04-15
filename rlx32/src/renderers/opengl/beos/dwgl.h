@@ -1,19 +1,20 @@
+#pragma once
 /****************************************************************************
-; * 																		
-; * 	File		:  dwgl.h
-; * 																		
-; * 	Description :  BDirectGLWindow driver
-; * 																		
-; * 	Copyright © Realtech VR 1995 - 2003 - http://www.v3x.net.
-; * 																		
-; * 	Permission to use, copy, modify, distribute and sell this software	
-; * 	and its documentation for any purpose is hereby granted without fee,
-; * 	provided that the above copyright notice appear in all copies and
-; * 	that both that copyright notice and this permission notice appear	
-; * 	in supporting documentation.  Realtech makes no representations 	
-; * 	about the suitability of this software for any purpose. 			
-; * 	It is provided "as is" without express or implied warranty. 		
-; * 																		
+; *
+; *	File		:  dwgl.h
+; *
+; *	Description :  BDirectGLWindow driver
+; *
+; *	Copyright © Realtech VR 1995 - 2003 - http://www.v3x.net.
+; *
+; *	Permission to use, copy, modify, distribute and sell this software
+; *	and its documentation for any purpose is hereby granted without fee,
+; *	provided that the above copyright notice appear in all copies and
+; *	that both that copyright notice and this permission notice appear
+; *	in supporting documentation.  Realtech makes no representations
+; *	about the suitability of this software for any purpose.
+; *	It is provided "as is" without express or implied warranty.
+; *
 ; ***************************************************************************/
 
 #ifndef __DWGL_HH
@@ -44,7 +45,7 @@ class V3X_BDirectGLWindow : public BDirectGLWindow
 		static          V3X_BDirectGLWindow *GetInstance() { return m_pInstance; }
 
 	private:
-		static          V3X_BDirectGLWindow * m_pInstance;	
+		static          V3X_BDirectGLWindow * m_pInstance;
 		thread_id		m_DrawThread;
 		bool			m_bTearDown;
 		bool			m_bInitialized;
@@ -52,8 +53,4 @@ class V3X_BDirectGLWindow : public BDirectGLWindow
 };
 
 #endif
-
-
-
-
 

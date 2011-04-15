@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -47,20 +47,20 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define GET_GX() g_pRLX->pGX
 
 __extern_c
-LPDIRECTDRAW           			g_lpDDraw;
-LPDIRECTDRAW4          			g_lpDD;
-LPDIRECTDRAWPALETTE    			g_lpDDPalette;
-LPDIRECTDRAWSURFACE4   			g_lpPrimarySurface;
-LPDIRECTDRAWSURFACE4   			g_lpDDrawSurfaces[DXMAXVPAGE];
+LPDIRECTDRAW					g_lpDDraw;
+LPDIRECTDRAW4					g_lpDD;
+LPDIRECTDRAWPALETTE				g_lpDDPalette;
+LPDIRECTDRAWSURFACE4			g_lpPrimarySurface;
+LPDIRECTDRAWSURFACE4			g_lpDDrawSurfaces[DXMAXVPAGE];
 extern struct RLXSYSTEM *	g_pRLX;
 __end_extern_c
 
 HWND g_hWnd;
 RECT g_cRect;
-	
+
 static rgb32_t					g_lpPalette[256];
 static GXDISPLAYMODEINFO     *	g_lpDisplayModeInfo;
-static u_int8_t               *	g_lpBackBuffer;
+static uint8_t               *	g_lpBackBuffer;
 static int						g_nDisplayModes, g_nPage;
 static LPDIRECTDRAWCLIPPER		g_lpDDClipper;
 static int						g_nCurrentDisplayMode=-1;
@@ -77,7 +77,7 @@ static void getWindowPixelFormat(void)
 	};
 	g_hDC = GetDC(g_hWnd);
 	DescribePixelFormat(g_hDC, GetPixelFormat(g_hDC), sizeof(PIXELFORMATDESCRIPTOR), &pfd);
-  
+
 	GET_GX()->View.ColorMask.RedMaskSize = pfd.cRedBits;
     GET_GX()->View.ColorMask.GreenMaskSize = pfd.cGreenBits;
     GET_GX()->View.ColorMask.BlueMaskSize  = pfd.cBlueBits;
@@ -86,7 +86,7 @@ static void getWindowPixelFormat(void)
     GET_GX()->View.ColorMask.GreenFieldPosition = pfd.cGreenShift;
     GET_GX()->View.ColorMask.BlueFieldPosition = pfd.cBlueShift;
     GET_GX()->View.ColorMask.RsvdFieldPosition = pfd.cAlphaShift;
-	
+
 	ReleaseDC(g_hWnd, g_hDC);
 }
 
@@ -114,10 +114,10 @@ void W32_WindowLayoutSetStyle(HWND hWnd, bool bWindowed)
 }
 
 static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwHeight, bool bFullScrn, bool bResizable) // Must be in called at D3Dx window creation
-{	
+{
 	DWORD dwStyle = GetWindowStyle(hWnd);
 	DWORD dwExStyle = GetWindowExStyle( hWnd);
-	RECT  rc;				
+	RECT  rc;
 	// If we are still a WS_POPUP window we should convert to a normal app
 	// window so we look like a windows app.
 	if (!bFullScrn)
@@ -143,13 +143,13 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 	if (!bFullScrn)
 	{
 		RECT  rcWork;
-		
+
 		// Center Window
 		SetRect( &rc, 0, 0, dwWidth, dwHeight );
 		SystemParametersInfo( SPI_GETWORKAREA, 0, &rcWork, 0 );
-		
+
 		int cx = (rcWork.right - rcWork.left - (rc.right - rc.left)) >>1;
-		int cy = (rcWork.bottom - rcWork.top - (rc.bottom - rc.top)) >>1;		
+		int cy = (rcWork.bottom - rcWork.top - (rc.bottom - rc.top)) >>1;
 
 		rc.left+=cx;
 		rc.right+=cx;
@@ -160,57 +160,54 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 		if( rc.left < rcWork.left ) rc.left = rcWork.left;
 		if( rc.top  < rcWork.top )  rc.top  = rcWork.top;
 
-		AdjustWindowRectEx( &rc, 
-							GetWindowStyle(hWnd), 
+		AdjustWindowRectEx( &rc,
+							GetWindowStyle(hWnd),
 #if _WIN32_WCE
 							0,
 #else
-	  						GetMenu(hWnd) != NULL,
+							GetMenu(hWnd) != NULL,
 #endif
 							GetWindowExStyle(hWnd) );
 
 
 
 
-		SetWindowPos( hWnd, NULL, 
-					  rc.left, rc.top, 
-					  rc.right - rc.left, 
+		SetWindowPos( hWnd, NULL,
+					  rc.left, rc.top,
+					  rc.right - rc.left,
 					  rc.bottom - rc.top,
 					  SWP_NOZORDER | SWP_NOACTIVATE );
 
-		
+
 	}
 	else
-	{		
+	{
 		SetRect( &rc, 0, 0, dwWidth, dwHeight );
-		SetWindowPos( hWnd, HWND_TOPMOST, rc.left, rc.top, 
-					 rc.right - rc.left, 
+		SetWindowPos( hWnd, HWND_TOPMOST, rc.left, rc.top,
+					 rc.right - rc.left,
 					 rc.bottom - rc.top, NULL);
 	}
 
 	if (pRect)
 		*pRect = rc;
-	return;
 }
-
 
 static void Unlock(void)
 {
-    int i = GET_GX()->View.Flags&GX_CAPS_DRAWFRONTBACK ? 0 : 1;    
+    int i = GET_GX()->View.Flags&GX_CAPS_DRAWFRONTBACK ? 0 : 1;
 	SYS_ASSERT((GET_GX()->View.State&GX_STATE_LOCKED));
 	SYS_ASSERT(g_lpDDrawSurfaces[0]);
 
     if (GET_GX()->Surfaces.lpSurface[i]!=NULL)
     {
-        SYS_DXTRACE(g_lpDDrawSurfaces[i]->Unlock(NULL));        
+        SYS_DXTRACE(g_lpDDrawSurfaces[i]->Unlock(NULL));
         GET_GX()->Surfaces.lpSurface[i]= NULL;
 		GET_GX()->View.lpBackBuffer = 0;
     }
 	GET_GX()->View.State&=~GX_STATE_LOCKED;
-    return;
 }
 
-static u_int8_t *Lock(void)
+static uint8_t *Lock(void)
 {
     int i = GET_GX()->View.Flags&GX_CAPS_DRAWFRONTBACK ? 0 : 1 ;
     DDSURFACEDESC2 ddsd;
@@ -224,18 +221,18 @@ static u_int8_t *Lock(void)
         {
             HRESULT res;
             while((res = g_lpDDrawSurfaces[i]->Lock(
-				NULL, 
-				&ddsd, 
+				NULL,
+				&ddsd,
 				DDLOCK_WAIT|
 				DDLOCK_SURFACEMEMORYPTR, NULL)) == DDERR_WASSTILLDRAWING)
             {
             }
             GET_GX()->Surfaces.lpSurface[i] = (res == DD_OK)
-            ? (u_int8_t *)ddsd.lpSurface
+            ? (uint8_t *)ddsd.lpSurface
             : NULL;
-            if (res==DD_OK) 
+            if (res==DD_OK)
 				GET_GX()->View.State|=GX_STATE_LOCKED;
-            else 
+            else
 				return NULL;
         }
 		if (GET_GX()->View.Flags&GX_CAPS_BACKBUFFERINVIDEO)
@@ -243,8 +240,8 @@ static u_int8_t *Lock(void)
 			GET_GX()->View.lPitch = ddsd.lPitch << ((GET_GX()->View.Flags&GX_CAPS_FBINTERLEAVED)!=0 ? 1 : 0);
             GET_GX()->View.lpBackBuffer = GET_GX()->Surfaces.lpSurface[i];
             GET_GX()->View.lpFrontBuffer = GET_GX()->Surfaces.lpSurface[i^1];
-            if (!GET_GX()->View.lpFrontBuffer) 
-				GET_GX()->View.lpFrontBuffer = GET_GX()->View.lpBackBuffer;			
+            if (!GET_GX()->View.lpFrontBuffer)
+				GET_GX()->View.lpFrontBuffer = GET_GX()->View.lpBackBuffer;
         }
         else
         {
@@ -257,10 +254,10 @@ static u_int8_t *Lock(void)
 
 static void CopyPage()
 {
-    int32_t   ecx = g_ly>>1, 
+    int32_t   ecx = g_ly>>1,
     edx = GET_GX()->View.lPitch;
-    u_int8_t *edi = GET_GX()->Surfaces.lpSurface[1] + (g_nPage ? edx : 0);
-    u_int8_t *esi = g_lpBackBuffer;
+    uint8_t *edi = GET_GX()->Surfaces.lpSurface[1] + (g_nPage ? edx : 0);
+    uint8_t *esi = g_lpBackBuffer;
 	int lPitch = GET_GX()->View.lPitch;
     if (GET_GX()->View.Flags&GX_CAPS_FBINTERLEAVESWAP)
     {
@@ -273,7 +270,6 @@ static void CopyPage()
         esi+=edx;
         edi+=lPitch<<1;
     }
-    return;
 }
 
 static void RestoreSurfaces(void)
@@ -303,7 +299,6 @@ static void RestoreSurfaces(void)
         ShowWindow(g_hWnd, SW_NORMAL);
         UpdateWindow(g_hWnd);
     }
-    return;
 }
 
 static void CALLING_C Flip(void)
@@ -346,8 +341,8 @@ static void CALLING_C Flip(void)
             }
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -358,20 +353,23 @@ static void CALLING_C Flip(void)
 typedef struct {
     RGBQUAD palette[256];
 } DIB_Palette;
+
 typedef struct {
  //   BITMAPV4HEADER   bmi4;
 	BITMAPINFOHEADER bmi;
     DIB_Palette      pal;
 } DIB_Bitmap;
+
 static DIB_Bitmap DIBinf;
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static void CALLING_C DIB_setPalette(u_int32_t a, u_int32_t b, void * pal)
+* PROTOTYPE  :  static void CALLING_C DIB_setPalette(uint32_t a, uint32_t b, void * pal)
 *
 * DESCRIPTION :
 *
 */
-static void CALLING_C DIB_setPalette(u_int32_t a, u_int32_t b, void * pal)
+static void CALLING_C DIB_setPalette(uint32_t a, uint32_t b, void * pal)
 {
     unsigned int i;
     rgb24_t *palette = (rgb24_t*)pal                + a;
@@ -382,16 +380,16 @@ static void CALLING_C DIB_setPalette(u_int32_t a, u_int32_t b, void * pal)
         palx->rgbGreen = palette->g;
         palx->rgbBlue = palette->b;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static void DIB_Blit(u_int8_t* output, int32_t resx, int32_t resy, int32_t bpp)
+* PROTOTYPE  :  static void DIB_Blit(uint8_t* output, int32_t resx, int32_t resy, int32_t bpp)
 *
 * DESCRIPTION :
 *
 */
-static void DIB_Blit(u_int8_t* output, int32_t resx, int32_t resy, int32_t bpp)
+static void DIB_Blit(uint8_t* output, int32_t resx, int32_t resy, int32_t bpp)
 {
     HDC handle = GetDC(g_hWnd);
     sysMemZero(&DIBinf.bmi, sizeof(BITMAPINFOHEADER));
@@ -399,25 +397,25 @@ static void DIB_Blit(u_int8_t* output, int32_t resx, int32_t resy, int32_t bpp)
     DIBinf.bmi.biWidth =  resx;
     DIBinf.bmi.biHeight =  -resy;
     DIBinf.bmi.biPlanes = 1;
-    DIBinf.bmi.biBitCount = bpp==16 ? 15 : (u_int8_t)bpp;
+    DIBinf.bmi.biBitCount = bpp==16 ? 15 : (uint8_t)bpp;
     DIBinf.bmi.biCompression = BI_RGB;
     DIBinf.bmi.biXPelsPerMeter = 1;
     DIBinf.bmi.biYPelsPerMeter = 1;
     if ((handle)&&(output))
     {
         int ret = StretchDIBits(
-			  handle, 
-			  0, 0, resx, resy, 
-			  0, 0, resx, resy, 
-        (CONST void *)output, 
-        (CONST BITMAPINFO *)(&DIBinf.bmi), 
-        GET_GX()->View.BytePerPixel==1 ? DIB_RGB_COLORS : 0, 
+			  handle,
+			  0, 0, resx, resy,
+			  0, 0, resx, resy,
+        (CONST void *)output,
+        (CONST BITMAPINFO *)(&DIBinf.bmi),
+        GET_GX()->View.BytePerPixel==1 ? DIB_RGB_COLORS : 0,
 		SRCCOPY );
 		SYS_ASSERT(ret == GDI_ERROR);
         ReleaseDC(g_hWnd, handle);
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void CALLING_C DX_WinBlt(void)
@@ -427,16 +425,16 @@ static void DIB_Blit(u_int8_t* output, int32_t resx, int32_t resy, int32_t bpp)
 */
 static void CALLING_C DX_WinBlt(void)
 {
-    u_int8_t *v = Lock();
+    uint8_t *v = Lock();
     Unlock();
     DIB_Blit(v, g_lx, g_ly, g_bpp);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void CALLING_C DX_WinDBlt(void)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static void CALLING_C DX_WinDBlt(void)
@@ -445,16 +443,16 @@ static void CALLING_C DX_WinDBlt(void)
     RECT    rc;
     GetWindowRect(g_hWnd, &rc);
     hr = g_lpDDrawSurfaces[0]->Blt(&rc, g_lpDDrawSurfaces[1], NULL, DDBLT_WAIT, NULL);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static void DX_MaskToVESA(u_int32_t mask, u_int8_t *pos, u_int8_t *size)
+* PROTOTYPE  :  static void DX_MaskToVESA(uint32_t mask, uint8_t *pos, uint8_t *size)
 *
 * DESCRIPTION :
 *
 */
-static void DX_MaskToVESA(u_int32_t mask, u_int8_t *pos, u_int8_t *size)
+static void DX_MaskToVESA(uint32_t mask, uint8_t *pos, uint8_t *size)
 {
     *pos=0;
     while (!(  ((mask&1)==1) || (mask==0)    ))
@@ -468,8 +466,8 @@ static void DX_MaskToVESA(u_int32_t mask, u_int8_t *pos, u_int8_t *size)
         (*size)++;
         mask>>=1;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : GXDISPLAYMODEINFO *EnumDisplayList(int bpp)
@@ -480,14 +478,15 @@ static void DX_MaskToVESA(u_int32_t mask, u_int8_t *pos, u_int8_t *size)
 HRESULT CALLBACK GetVideoCallback(LPDDSURFACEDESC pSurf, void *ptr)
 {
     GXDISPLAYMODEINFO *pstParam=g_lpDisplayModeInfo + g_nDisplayModes;
-    pstParam->lWidth = (u_int16_t) pSurf->dwWidth;
-    pstParam->lHeight = (u_int16_t) pSurf->dwHeight;
-    pstParam->BitsPerPixel = (u_int8_t)  pSurf->ddpfPixelFormat.dwRGBBitCount;
+    pstParam->lWidth = (uint16_t) pSurf->dwWidth;
+    pstParam->lHeight = (uint16_t) pSurf->dwHeight;
+    pstParam->BitsPerPixel = (uint8_t)  pSurf->ddpfPixelFormat.dwRGBBitCount;
     g_nDisplayModes+= (g_nDisplayModes < DXMAXLISTABLE-1);
-    pstParam->mode = (u_int16_t) g_nDisplayModes;
+    pstParam->mode = (uint16_t) g_nDisplayModes;
     UNUSED(ptr);
     return DDENUMRET_OK;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : int DX_Install(void)
@@ -502,19 +501,19 @@ int DX_DrawSetup(void)
     g_nDisplayModes = 0;
     p = g_lpDisplayModeInfo = (GXDISPLAYMODEINFO*) g_pRLX->mm_heap->malloc(DXMAXLISTABLE * sizeof(GXDISPLAYMODEINFO));
     if (g_lpDDraw->EnumDisplayModes(0, NULL, NULL, GetVideoCallback)!=DD_OK ) return 0;
-    g_lpDisplayModeInfo = p;    
+    g_lpDisplayModeInfo = p;
     g_lpDisplayModeInfo[g_nDisplayModes].mode = 0;
-    
-	if (g_nDisplayModes == 0) 
+
+	if (g_nDisplayModes == 0)
 		return 0;
 
-    if (g_pRLX->V3X.Id == 0) 
+    if (g_pRLX->V3X.Id == 0)
 		return 1;
     {
         DDCAPS ddcaps;
 		if (!g_lpDD)
 			hr = g_lpDDraw->QueryInterface(IID_IDirectDraw4, (LPVOID *)&g_lpDD);
-        if (hr!=DD_OK) 
+        if (hr!=DD_OK)
 			return 0;
         sysMemZero(&ddcaps, sizeof(DDSCAPS));
         ddcaps.dwSize = sizeof( ddcaps );
@@ -524,15 +523,17 @@ int DX_DrawSetup(void)
     return 1;
     // Set Window
 }
+
 typedef struct {
     int       index;
     GUID FAR *lpGUID;
 }DX_Context;
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static BOOL WINAPI DDEnumCallback(GUID FAR *lpGUID, char const * lpDriverDesc, char const * lpDriverName, LPVOID lpContext)
 *
-* Description :  
+* Description :
 *
 */
 static BOOL WINAPI DDEnumCallback(GUID FAR *lpGUID, char const * lpDriverDesc, char const * lpDriverName, LPVOID lpContext)
@@ -547,11 +548,12 @@ static BOOL WINAPI DDEnumCallback(GUID FAR *lpGUID, char const * lpDriverDesc, c
     cx->index++;
     return TRUE;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int DX_Install(int nCmdShow)
 *
-* Description :  
+* Description :
 *
 */
 int DX_Install(int nCmdShow)
@@ -567,6 +569,7 @@ int DX_Install(int nCmdShow)
     UNUSED(nCmdShow);
     return DX_DrawSetup();
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GXDISPLAYMODEINFO *EnumDisplayList(int bpp)
@@ -590,6 +593,7 @@ GXDISPLAYMODEINFO *EnumDisplayList(int bpp)
     }
     return lst;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void SearchDisplayMode(int lx, int ly, int bpp)
@@ -608,7 +612,7 @@ static int DX_GetDesktopColorDepth(HWND hwnd)
 static int SearchDisplayMode(int lx, int ly, int bpp)
 {
     GXDISPLAYMODEINFO *ls = g_lpDisplayModeInfo;
-    
+
     if (g_pRLX->Video.Config&RLXVIDEO_Windowed)
     {
 		g_lx = lx;
@@ -621,12 +625,13 @@ static int SearchDisplayMode(int lx, int ly, int bpp)
     {
         if ((ls->lWidth == lx)
         && (ls->lHeight == ly)
-        && (ls->BitsPerPixel == bpp)) 
+        && (ls->BitsPerPixel == bpp))
 			return ls->mode;
         ls++;
     }
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void SetDisplayMode(int mode)
@@ -639,27 +644,28 @@ static int SetDisplayMode(int mode)
 	if (g_pRLX->Video.Config&RLXVIDEO_Windowed)
 	{
 		SYS_DXTRACE(g_lpDDraw->SetCooperativeLevel(g_hWnd, DDSCL_NORMAL));
-		W32_WindowLayoutSetSize(g_hWnd, &g_cRect, g_lx, g_ly, false, false);		        
+		W32_WindowLayoutSetSize(g_hWnd, &g_cRect, g_lx, g_ly, false, false);
 		W32_WindowLayoutSetStyle(g_hWnd, true);
 		ShowWindow(g_hWnd, SW_NORMAL);
-	
+
 	}
 	else
 	{
 		SYS_DXTRACE(g_lpDDraw->SetCooperativeLevel(g_hWnd, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWREBOOT));
 		W32_WindowLayoutSetSize(g_hWnd, &g_cRect, g_lx, g_ly, true, false);
 		W32_WindowLayoutSetStyle(g_hWnd, false);
-		ShowWindow(g_hWnd, SW_NORMAL);		    
+		ShowWindow(g_hWnd, SW_NORMAL);
 		SYS_DXTRACE(g_lpDD->SetDisplayMode(g_lx, g_ly, g_bpp, 0, 0));
 	}
     g_nCurrentDisplayMode = mode;
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void ReleaseSurfaces(void)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static void ReleaseSurfaces(void)
@@ -670,7 +676,7 @@ static void ReleaseSurfaces(void)
         g_lpDDPalette->Release();
         g_lpDDPalette = NULL;
     }
-    
+
 	if (g_lpBackBuffer)
     {
         g_pRLX->mm_std->free(g_lpBackBuffer);
@@ -683,7 +689,7 @@ static void ReleaseSurfaces(void)
         g_lpDDClipper = NULL;
 
     }
-    
+
 	i = DXMAXVPAGE-1;
 	do
     {
@@ -699,13 +705,13 @@ static void ReleaseSurfaces(void)
 
     GET_GX()->Surfaces.maxSurface = 0;
     GET_GX()->View.State&=~GX_STATE_LOCKED;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void Shutdown(void)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static void Shutdown(void)
@@ -715,18 +721,18 @@ static void Shutdown(void)
     if (g_lpDD)
 	{
 		g_lpDD->SetCooperativeLevel(g_hWnd, DDSCL_NORMAL);
-		if (0<g_lpDD->Release()) 
+		if (0<g_lpDD->Release())
 			return;
 	}
     if (g_lpDDraw)
 	{
-		if (0<g_lpDDraw->Release()) 
+		if (0<g_lpDDraw->Release())
 			return;
 	}
     g_lpDDraw = NULL;
     g_lpDD = NULL;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void CALLING_C ClearBackBuffer(void)
@@ -747,7 +753,7 @@ static void CALLING_C ClearBackBuffer(void)
     /* Réalise l'effacement */
     ddbltfx.dwSize = sizeof(ddbltfx);
     ddbltfx.dwFillColor = 0x0;
-    if (b) 
+    if (b)
 		Unlock();
     for (i=0;i<2;i++)
     {
@@ -755,10 +761,10 @@ static void CALLING_C ClearBackBuffer(void)
         if ((g_pRLX->Video.Config&RLXVIDEO_Windowed)==0)
 			g_lpDDrawSurfaces[0]->Flip(NULL, DDFLIP_WAIT);
     }
-    if (b) 
+    if (b)
 		Lock();
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void CreateSurface(int npages)
@@ -792,7 +798,7 @@ static int CreateSurface(int npages)
         if ((g_pRLX->V3X.Id==RLX3D_DIRECT3D)&&(GET_GX()->View.Flags&GX_CAPS_3DSYSTEM))
 			ddsd.ddsCaps.dwCaps |= DDSCAPS_3DDEVICE | (g_pRLX->V3X.Config&RLX3D_FakeHardware ? DDSCAPS_SYSTEMMEMORY : DDSCAPS_VIDEOMEMORY);
     }
-    else 
+    else
 		GET_GX()->View.Flags&=~GX_CAPS_BACKBUFFERINVIDEO;
 
 	SYS_ASSERT(g_lpDDrawSurfaces[0] == 0);
@@ -810,14 +816,14 @@ static int CreateSurface(int npages)
         {
             if (GET_GX()->View.Flags&GX_CAPS_FBINTERLEAVED)
             {
-                g_lpBackBuffer = (u_int8_t*) g_pRLX->mm_std->malloc(GET_GX()->View.lSurfaceSize);
+                g_lpBackBuffer = (uint8_t*) g_pRLX->mm_std->malloc(GET_GX()->View.lSurfaceSize);
 				SYS_ASSERT(g_lpBackBuffer);
             }
-            else 
+            else
 				i = 0;
         }
     }
-    else 
+    else
 		i = 0;
 
     // Create offscreens
@@ -855,17 +861,17 @@ static int CreateSurface(int npages)
         GET_GX()->Client->Lock = Lock;
 		GET_GX()->Client->Unlock = Unlock;
 
-        if ((GET_GX()->View.Flags&GX_CAPS_3DSYSTEM)==0) 
+        if ((GET_GX()->View.Flags&GX_CAPS_3DSYSTEM)==0)
 		{
 			if ((GET_GX()->View.BitsPerPixel==16)||(GET_GX()->View.BitsPerPixel==15))
-			{				
+			{
 				GET_GX()->View.ColorMask.BlueMaskSize = 5;
 				GET_GX()->View.ColorMask.GreenMaskSize = 6;
-				GET_GX()->View.ColorMask.RedMaskSize = 5;				
-				GET_GX()->View.ColorMask.RsvdMaskSize = 0;				
+				GET_GX()->View.ColorMask.RedMaskSize = 5;
+				GET_GX()->View.ColorMask.RsvdMaskSize = 0;
 				GET_GX()->View.ColorMask.BlueFieldPosition = 0;
 				GET_GX()->View.ColorMask.GreenFieldPosition = 5;
-				GET_GX()->View.ColorMask.RedFieldPosition = 11;				
+				GET_GX()->View.ColorMask.RedFieldPosition = 11;
 				GET_GX()->View.ColorMask.RsvdFieldPosition = 16;
 				doMask = 1;
 			}
@@ -874,15 +880,15 @@ static int CreateSurface(int npages)
 	if (!doMask)
 	{
 		if (GET_GX()->View.BitsPerPixel>8)
-		{        		
+		{
 			DX_MaskToVESA(ddPix.dwRBitMask, &GET_GX()->View.ColorMask.RedFieldPosition, &GET_GX()->View.ColorMask.RedMaskSize);
 			DX_MaskToVESA(ddPix.dwGBitMask, &GET_GX()->View.ColorMask.GreenFieldPosition, &GET_GX()->View.ColorMask.GreenMaskSize);
 			DX_MaskToVESA(ddPix.dwBBitMask, &GET_GX()->View.ColorMask.BlueFieldPosition, &GET_GX()->View.ColorMask.BlueMaskSize);
-			DX_MaskToVESA(ddPix.dwRGBAlphaBitMask, &GET_GX()->View.ColorMask.RsvdFieldPosition, &GET_GX()->View.ColorMask.RsvdMaskSize);			
+			DX_MaskToVESA(ddPix.dwRGBAlphaBitMask, &GET_GX()->View.ColorMask.RsvdFieldPosition, &GET_GX()->View.ColorMask.RsvdMaskSize);
 		}
-		else    
+		else
 		{
-			if (g_lpDDPalette) 
+			if (g_lpDDPalette)
 				g_lpDDPalette->Release();
 			g_lpDD->CreatePalette(DDPCAPS_8BIT|DDPCAPS_ALLOW256, (tagPALETTEENTRY *)g_lpPalette, &g_lpDDPalette, NULL);
 			g_lpDDrawSurfaces[0]->SetPalette(g_lpDDPalette);
@@ -894,23 +900,22 @@ static int CreateSurface(int npages)
 		GET_GX()->View.ColorMask.RsvdFieldPosition = 24;
 		GET_GX()->View.ColorMask.RsvdMaskSize = 8;
 	}
-		
 
-		
 	GET_GX()->View.RGB_Magic =
           (((1L<<GET_GX()->View.ColorMask.RedMaskSize  )-2L) << GET_GX()->View.ColorMask.RedFieldPosition   )
         | (((1L<<GET_GX()->View.ColorMask.GreenMaskSize)-2L) << GET_GX()->View.ColorMask.GreenFieldPosition )
         | (((1L<<GET_GX()->View.ColorMask.BlueMaskSize )-2L) << GET_GX()->View.ColorMask.BlueFieldPosition  );
-	
+
 	g_lpPrimarySurface = g_lpDDrawSurfaces[1];
     GET_GX()->View.State &= ~GX_STATE_BACKBUFFERPAGE;
     ClearBackBuffer();
     Lock();
     Unlock();
 	SYS_ASSERT(GET_GX()->View.lPitch);
- 
+
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -920,8 +925,8 @@ static int CreateSurface(int npages)
 */
 static void CALLING_C DX_Idle(void)
 {
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CALLING_C Surfaces_putPage(void *src)
@@ -932,8 +937,8 @@ static void CALLING_C DX_Idle(void)
 void CALLING_C Surfaces_putPage(void *src)
 {
     UNUSED(src);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CALLING_C Surfaces_getPage(void *src)
@@ -944,22 +949,22 @@ void CALLING_C Surfaces_putPage(void *src)
 void CALLING_C Surfaces_getPage(void *src)
 {
     UNUSED(src);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static void CALLING_C DX_filledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t color)
+* PROTOTYPE  :  static void CALLING_C DX_filledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color)
 *
 * DESCRIPTION :
 *
 */
-static void CALLING_C DX_filledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t color)
+static void CALLING_C DX_filledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color)
 {
     IDirectDrawSurface4 *Source = g_lpDDrawSurfaces[GET_GX()->View.Flags&GX_CAPS_DRAWFRONTBACK?0:1];
     DDBLTFX ddbltfx;
     RECT RSource;
     int b = GET_GX()->View.State&GX_STATE_LOCKED;
-    if (!Source) 
+    if (!Source)
 		return;
     /* Remplit la structure standard du rectangle */
     RSource.left = x1;
@@ -973,8 +978,8 @@ static void CALLING_C DX_filledRect(int32_t x1, int32_t y1, int32_t x2, int32_t 
     if (b) Unlock();
     Source->Blt(&RSource, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
     if (b) Lock();
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void CALLING_C DX_Clear(void)
@@ -1000,25 +1005,25 @@ static void CALLING_C DX_Clear(void)
     if (b) Unlock();
     Source->Blt(&RSource, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
     if (b) Lock();
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static void CALLING_C DX_Blit(u_int32_t dest, u_int32_t src)
+* PROTOTYPE  :  static void CALLING_C DX_Blit(uint32_t dest, uint32_t src)
 *
 * DESCRIPTION :
 *
 */
-static void CALLING_C DX_Blit(u_int32_t dest, u_int32_t src)
+static void CALLING_C DX_Blit(uint32_t dest, uint32_t src)
 {
     int ps = (src ==0) ? 1 : src ;
     int pd = (dest==0) ? 1 : dest;
     HRESULT hr;
-    IDirectDrawSurface4 *Destination=g_lpDDrawSurfaces[pd], 
+    IDirectDrawSurface4 *Destination=g_lpDDrawSurfaces[pd],
     *Source =g_lpDDrawSurfaces[ps];
     RECT RSource, RDest;
     int b = GET_GX()->View.State&GX_STATE_LOCKED;
-    if((!Source)||(!Destination)) 
+    if((!Source)||(!Destination))
 		return;
     /* Constitue les rectangles sources et destination */
     RSource.left = 0;
@@ -1027,7 +1032,7 @@ static void CALLING_C DX_Blit(u_int32_t dest, u_int32_t src)
     RSource.bottom = g_ly;
     RDest = RSource;
     // Blit
-    if (b)  
+    if (b)
 		Unlock();
     hr = Destination->Blt(&RSource, Source, &RSource, FALSE, NULL);
     // Fix 3DFx, copie manuel
@@ -1045,22 +1050,22 @@ static void CALLING_C DX_Blit(u_int32_t dest, u_int32_t src)
         lx = min(ddsd1.lPitch, ddsd2.lPitch);
         if (lx)
         {
-            u_int8_t *a, *b;
+            uint8_t *a, *b;
             int i;
-            for (a=(u_int8_t*)ddsd2.lpSurface, 
-            b=(u_int8_t*)ddsd1.lpSurface, 
+            for (a=(uint8_t*)ddsd2.lpSurface,
+            b=(uint8_t*)ddsd1.lpSurface,
             i=RSource.top;
             i<RSource.bottom;
-            i++, 
-            a+=ddsd2.lPitch, 
+            i++,
+            a+=ddsd2.lPitch,
             b+=ddsd1.lPitch) sysMemCpy(a, b, lx);
         }
         Source->Unlock(NULL);
         Destination->Unlock(NULL);
     }
     if (b) Lock();
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void CALLING_C DX_SoftClear(void)
@@ -1071,8 +1076,8 @@ static void CALLING_C DX_Blit(u_int32_t dest, u_int32_t src)
 static void CALLING_C DX_SoftClear(void)
 {
     sysMemZero(GET_GX()->View.lpBackBuffer, GET_GX()->View.lSurfaceSize);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -1087,11 +1092,12 @@ __end_extern_c
 static int RegisterMode(int mode)
 {
 
-    GET_GX()->View.DisplayMode = (u_int16_t)mode;
+    GET_GX()->View.DisplayMode = (uint16_t)mode;
     GET_GX()->Client->GetDisplayInfo(mode);
 	V3XRef_HardwareRegister(GET_GX()->View.BytePerPixel);
     return GET_GX()->Client->SetDisplayMode(mode);
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void UploadSprite(GXSPRITE *sp)
@@ -1099,8 +1105,6 @@ static int RegisterMode(int mode)
 * DESCRIPTION :
 *
 */
-
-
 static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 {
 	GXSPRITESW *p = (GXSPRITESW*) g_pRLX->mm_heap->malloc(sizeof(GXSPRITESW));
@@ -1108,8 +1112,8 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	if (bpp == 3)
 	{
 		int BytePerPixel = GET_GX()->View.BytePerPixel;
-		u_int8_t * src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
-		g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel, 
+		uint8_t * src_buf = (uint8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
+		g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel,
 								 sp->data, colorTable, bpp, sp->LX*sp->LY);
 		g_pRLX->mm_heap->free(sp->data);
 		sp->data = src_buf;
@@ -1128,8 +1132,8 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	sp->handle = p;
 	p->bpp = bpp;
     UNUSED(sp);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void ReleaseSprite(GXSPRITE *sp)
@@ -1142,16 +1146,16 @@ static void ReleaseSprite(GXSPRITE *sp)
 	GXSPRITESW *p = (GXSPRITESW*) sp->handle;
 	g_pRLX->mm_heap->free(p);
 	sp->data = NULL;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+* PROTOTYPE  :  unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 *
 * DESCRIPTION :
 *
 */
-static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+static unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 {
 	GXSPRITESW *p = (GXSPRITESW*) sp->handle;
 	int i;
@@ -1160,6 +1164,7 @@ static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t
 	sysMemCpy(sp->data, bitmap, sp->LX * sp->LY);
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void GX_SetPrimitive(void)
@@ -1167,14 +1172,13 @@ static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t
 * DESCRIPTION :
 *
 */
-
-static void CALLING_C DX_setPalette(u_int32_t firstReg, u_int32_t numRegs, void *paletteData)
+static void CALLING_C DX_setPalette(uint32_t firstReg, uint32_t numRegs, void *paletteData)
 {
     PALETTEENTRY    pe[256];
     PALETTEENTRY   *p;
     rgb24_t      *pl=(rgb24_t*)paletteData;
     unsigned        i;
-    if (!g_lpDDPalette) 
+    if (!g_lpDDPalette)
 		return;
     for (i=numRegs, p=pe;i!=0;p++, pl++, i--)
     {
@@ -1186,7 +1190,6 @@ static void CALLING_C DX_setPalette(u_int32_t firstReg, u_int32_t numRegs, void 
     if ((GET_GX()->View.Flags&GX_CAPS_VSYNC)&&(!(g_pRLX->Video.Config&RLXVIDEO_Windowed)))
 		SYS_DXTRACE(g_lpDD->WaitForVerticalBlank(DDWAITVB_BLOCKBEGIN, NULL));
     SYS_DXTRACE(g_lpDDPalette->SetEntries(0, firstReg, numRegs, (PALETTEENTRY*)pe));
-    return;
 }
 
 static void SetPrimitive(void)
@@ -1198,7 +1201,7 @@ static void SetPrimitive(void)
     GET_GX()->gi.waitDrawing = DX_Idle;
     if (GET_GX()->View.BitsPerPixel==8)
 		GET_GX()->gi.setPalette = (g_pRLX->Video.Config&RLXVIDEO_Windowed) ? DIB_setPalette : DX_setPalette;
-      
+
     if ((GET_GX()->View.Flags&GX_CAPS_BACKBUFFERINVIDEO)&&((g_pRLX->Video.Config&RLXVIDEO_Windowed)==0))
     {
         GET_GX()->gi.clearBackBuffer = DX_Clear;
@@ -1206,8 +1209,8 @@ static void SetPrimitive(void)
         if ((GET_GX()->View.Flags&GX_CAPS_FBINTERLEAVED)==0)
 			GET_GX()->gi.drawFilledRect = DX_filledRect;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void GetDisplayInfo(int mode)
@@ -1216,14 +1219,13 @@ static void SetPrimitive(void)
 *
 */
 static void GetDisplayInfo(int mode)
-{	
+{
     if (g_pRLX->Video.Config&RLXVIDEO_Windowed)
     {
 		g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, g_lx, g_ly, g_bpp);
 		SetPrimitive();
 		if (g_pRLX->V3X.Id)
 		{
-
 			GET_GX()->View.Flip = DX_WinDBlt;
 		}
 
@@ -1233,7 +1235,7 @@ static void GetDisplayInfo(int mode)
 		GXDISPLAYMODEINFO *ls = g_lpDisplayModeInfo;
 		while (ls->mode!=0)
 		{
-			if (ls->mode == mode) 
+			if (ls->mode == mode)
 				break;
 			ls++;
 		}
@@ -1245,10 +1247,8 @@ static void GetDisplayInfo(int mode)
 		g_lx = ls->lWidth;
 		g_ly = ls->lHeight;
 		g_bpp = ls->BitsPerPixel;
-    }    
-    return;
+    }
 }
-
 
 static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)
 {
@@ -1262,14 +1262,14 @@ static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)
 *
 * PROTOTYPE  :  int Open(void *hwnd)
 *
-* Description :  
+* Description :
 *
 */
 static int Open(void *hwnd)
 {
 	g_hWnd = (HWND)hwnd;
-    
-	if (g_pRLX->V3X.Id == 0) 
+
+	if (g_pRLX->V3X.Id == 0)
 		return 1;
 
     if (!DX_Install(0))
@@ -1277,6 +1277,7 @@ static int Open(void *hwnd)
 
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : GXCLIENTDRIVER DX_SubSystem
@@ -1285,33 +1286,34 @@ static int Open(void *hwnd)
 *
 */
 GXCLIENTDRIVER GX_DDraw = {
-    Lock, 
-    Unlock, 
-    EnumDisplayList, 
-    GetDisplayInfo, 
-    SetDisplayMode, 
-    SearchDisplayMode, 
-    CreateSurface, 
-    ReleaseSurfaces, 
-    UploadSprite, 
-    ReleaseSprite, 
-    UpdateSprite, 
-    RegisterMode, 
-    Shutdown, 
-    Open, 
+    Lock,
+    Unlock,
+    EnumDisplayList,
+    GetDisplayInfo,
+    SetDisplayMode,
+    SearchDisplayMode,
+    CreateSurface,
+    ReleaseSurfaces,
+    UploadSprite,
+    ReleaseSprite,
+    UpdateSprite,
+    RegisterMode,
+    Shutdown,
+    Open,
     NotifyEvent,
 	"Direct3D"
 };
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void GET_GX()->ClientEntryPoint(void)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void GX_EntryPoint(struct RLXSYSTEM *p)
 {
-	g_pRLX = p; 
+	g_pRLX = p;
 	GET_GX()->Client = &GX_DDraw;
-    return;
 }
+

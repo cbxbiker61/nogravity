@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -44,32 +45,32 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
    #define _MAX_PATH 256
 #endif
 
-struct file_find_t 
+struct file_find_t
 {
     char reserved[21];      /* reserved for use           */
     char attrib;            /* attribute byte for file    */
     unsigned short wr_time; /* time of last write to file */
     unsigned short wr_date; /* date of last write to file */
-    u_int32_t  size;    /* length of file in bytes    */
+    uint32_t  size;    /* length of file in bytes    */
     char name[256];         /* null-terminated filename   */
 };
 
 // Memory manager
 typedef struct _sys_memory
 {
-    void    	*(*malloc)(size_t size);
-    void    	 (*free)(void *block);
-    void    	*(*realloc)(void *block, size_t size);
-    void    	 (*heapalloc)(void *block, size_t size);
+    void	*(*malloc)(size_t size);
+    void	 (*free)(void *block);
+    void	*(*realloc)(void *block, size_t size);
+    void	 (*heapalloc)(void *block, size_t size);
     unsigned	 (*push)(void);
-    void    	 (*pop)(int32_t id);
-    void    	 (*reset)(void);
-    u_int8_t     *heapAddress;
-    u_int32_t     Size;
-    u_int32_t     PreviousAddress;
-    u_int32_t     CurrentAddress;
-    u_int32_t     TotalAllocated;
-    u_int32_t     Stack;
+    void	 (*pop)(int32_t id);
+    void	 (*reset)(void);
+    uint8_t     *heapAddress;
+    uint32_t     Size;
+    uint32_t     PreviousAddress;
+    uint32_t     CurrentAddress;
+    uint32_t     TotalAllocated;
+    uint32_t     Stack;
     unsigned	  active;
 }SYS_MEMORYMANAGER;
 
@@ -91,8 +92,8 @@ _RLXEXPORTFUNC    void    RLXAPI   array_free(char **tt);
 _RLXEXPORTFUNC    char    RLXAPI  **array_loadtext(SYS_FILEHANDLE in, int maxy, int maxx);
 
     // Lsb Motorola/Intel conversion
-_RLXEXPORTFUNC    void    RLXAPI   BSWAP16(u_int16_t *val, int n);
-_RLXEXPORTFUNC    void    RLXAPI   BSWAP32(u_int32_t *val, int n);
+_RLXEXPORTFUNC    void    RLXAPI   BSWAP16(uint16_t *val, int n);
+_RLXEXPORTFUNC    void    RLXAPI   BSWAP32(uint32_t *val, int n);
 
     // File operations
 _RLXEXPORTFUNC    int      RLXAPI  file_exists(const char *filename);
@@ -107,7 +108,7 @@ _RLXEXPORTDATA    extern    SYS_MEMORYMANAGER MM_std, MM_heap, MM_audio;
 
 
 __end_extern_c
- 
+
 #define sysMemSet memset
 #define sysMemCpy memcpy
 #define sysStrCpy strcpy
@@ -117,8 +118,8 @@ __end_extern_c
 #define sysRand(a)  (rand()%(a))
 
 #ifndef min
-#define min(a,b) ((a)<(b) ? a : b) 
-#define max(a,b) ((a)>(b) ? a : b) 
+#define min(a,b) ((a)<(b) ? a : b)
+#define max(a,b) ((a)>(b) ? a : b)
 #endif
 
 #define randomf(i_max) ((i_max) * (float)rand() / (float)RAND_MAX)
@@ -129,3 +130,4 @@ __end_extern_c
 #define MM_CALLOC(n, type) (type*)MM_heap.malloc( (n) * sizeof(type))
 
 #endif
+

@@ -9,7 +9,7 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -26,72 +26,59 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #include "dummy_v3x.h"
 
-static void CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+static void CALLING_C drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
-    return;
 }
 
-static void CALLING_C drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t colour)
+static void CALLING_C drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t colour)
 {
-    return;
 }
 
-static void CALLING_C drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t colour)
+static void CALLING_C drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t colour)
 {
-    return;
 }
 
-static void CALLING_C drawWiredRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+static void CALLING_C drawWiredRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
-    return;
 }
 
 static void CALLING_C drawShadedRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, void *palette)
 {
-    return;
 }
 
-static void CALLING_C drawMeshedRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+static void CALLING_C drawMeshedRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
-    return;
 }
 
-static void CALLING_C drawFilledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+static void CALLING_C drawFilledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
-    return;
 }
 
-static void CALLING_C drawPixel(int32_t x, int32_t y, u_int32_t colour)
+static void CALLING_C drawPixel(int32_t x, int32_t y, uint32_t colour)
 {
-    return;
 }
 
 static void CALLING_C clearBackBuffer(void)
 {
-    return;
 }
 
 static void CALLING_C clearVideo(void)
 {
-    return;
 }
 
 static void CALLING_C waitDrawing(void)
 {
-    return;
 }
 
-static void CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
+static void CALLING_C setPalette(uint32_t a, uint32_t b, void * pal)
 {
-    return;
 }
 
-static u_int32_t CALLING_C getPixel(int32_t x, int32_t y)
+static uint32_t CALLING_C getPixel(int32_t x, int32_t y)
 {
-    return 0;
 }
 
-static void CALLING_C blit(u_int32_t dest, u_int32_t src)
+static void CALLING_C blit(uint32_t dest, uint32_t src)
 {
 }
 
@@ -100,13 +87,12 @@ static void CALLING_C setCursor(int32_t x, int32_t y)
 
 }
 
-static void CALLING_C copyCursor(u_int8_t *pImage)
+static void CALLING_C copyCursor(uint8_t *pImage)
 {
 }
 
 static void DrawSpritePoly(int32_t x, int32_t y, GXSPRITE *sp, int mode)
 {
-    return;
 }
 
 static void CALLING_C gl_cspput(int32_t x, int32_t y, GXSPRITE *sp)
@@ -141,7 +127,6 @@ static void CALLING_C gl_cspalpha(int32_t x, int32_t y, GXSPRITE *sp)
 
 static void DrawSpritePolyZoom(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly, int mode)
 {
-    return;
 }
 
 static void CALLING_C gl_cspput_zoom(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly)
@@ -177,38 +162,36 @@ static void CALLING_C gl_cspalpha_zoom(GXSPRITE *sp, int32_t x, int32_t y, int32
 
 static void RLXAPI UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 {
-    return;
 }
 
 static void RLXAPI FreeSprite(GXSPRITE *sp)
 {
-    return;
 }
 
-static unsigned RLXAPI UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+static unsigned RLXAPI UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 {
     return 0;
 }
 
 GXGRAPHICINTERFACE GI_GS =
 {
-    drawAnyLine, 
-	drawAnyLine, 
-    drawHorizontalLine, 
-    drawVerticalLine, 
-    drawWiredRect, 
-    drawShadedRect, 
-    drawMeshedRect, 
-    drawFilledRect, 
-    drawPixel, 
-	drawPixel, 
-    getPixel, 
-    clearBackBuffer, 
-    clearVideo, 
+    drawAnyLine,
+	drawAnyLine,
+    drawHorizontalLine,
+    drawVerticalLine,
+    drawWiredRect,
+    drawShadedRect,
+    drawMeshedRect,
+    drawFilledRect,
+    drawPixel,
+	drawPixel,
+    getPixel,
+    clearBackBuffer,
+    clearVideo,
     blit,
-    waitDrawing, 
-    setPalette, 
-    setCursor, 
+    waitDrawing,
+    setPalette,
+    setCursor,
     copyCursor
 };
 
@@ -243,3 +226,4 @@ void SetPrimitiveSprites()
 void V3X_EntryPoint(struct RLXSYSTEM *p)
 {
 }
+

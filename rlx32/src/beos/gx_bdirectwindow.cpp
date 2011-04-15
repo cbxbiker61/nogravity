@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -64,7 +64,6 @@ GX_BDirectWindow::GX_BDirectWindow(BRect window_rect, const char *pTitle)
 	if (m_DrawThread<0)
 	{
 		printf("Can't spawn drawing thread, bailing out...\n" );
-		
 	}
 	Center();
 
@@ -83,12 +82,10 @@ void GX_BDirectWindow::Center()
 	BRect bounds = b.Frame();
 	float32_t w = bounds.right, h = bounds.bottom;
 	MoveTo( (w - (rect.right - rect.left)) / 2, (h - (rect.bottom - rect.top)) / 2 );
-	return;
 }
 
 void GX_BDirectWindow::Create()
 {
-    return;
 }
 
 void GX_BDirectWindow::MessageReceived(BMessage *msg)
@@ -99,17 +96,17 @@ void GX_BDirectWindow::MessageReceived(BMessage *msg)
 			printf("Close thread BDirectWindow\n");
 			g_pApp->Kill();
 		break;
-	
+
 		case MSG_SYSAPPLICATION_OPEN:
 			printf("Resume thread BDirectWindow\n");
 			resume_thread(m_DrawThread);
-			
+
 		break;
 		case MSG_SYSAPPLICATION_SWITCHFS:
 			printf("Toggle fullscreen BDirectWindow\n");
 			SetFullScreen(!IsFullScreen());
 		break;
-	
+
 		default:
 			g_pApp->WindowMessage(msg);
 			BDirectWindow::MessageReceived(msg);
@@ -118,13 +115,12 @@ void GX_BDirectWindow::MessageReceived(BMessage *msg)
 }
 
 void GX_BDirectWindow::WindowActivated(bool active)
-{	
+{
 	BDirectWindow::WindowActivated(active);
 }
 
 void GX_BDirectWindow::ForceRedraw()
 {
-     return;
 }
 
 void GX_BDirectWindow::Quit(void)
@@ -144,7 +140,7 @@ void GX_BDirectWindow::Quit(void)
 
 bool GX_BDirectWindow::QuitRequested()
 {
- 	if (!g_pApp->IsStopped())
+	if (!g_pApp->IsStopped())
 	{
 		g_pApp->Stop();
 		g_pApp->SetActive(false);
@@ -164,8 +160,8 @@ void GX_BDirectWindow::DirectConnected(direct_buffer_info *info)
 		{
 			m_pBits = (uint8 *) info->bits;
 			fRowBytes = info->bytes_per_row;
-			GET_GX()->View.BitsPerPixel = 
-			GX_BDirectWindow::m_pInstance->BitsPerPixel = info->bits_per_pixel;
+			GET_GX()->View.BitsPerPixel =
+				GX_BDirectWindow::m_pInstance->BitsPerPixel = info->bits_per_pixel;
 			GET_GX()->View.BytePerPixel = GET_GX()->View.BitsPerPixel >> 3;
 			fFormat = info->pixel_format;
 			fBounds = info->window_bounds;
@@ -179,5 +175,5 @@ void GX_BDirectWindow::DirectConnected(direct_buffer_info *info)
 		}
 		break;
 	}
-	return;
 }
+

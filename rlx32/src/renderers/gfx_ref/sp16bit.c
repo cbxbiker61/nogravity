@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -38,18 +38,18 @@ extern struct RLXSYSTEM *g_pRLX;
 
 #include "sp.h"
 
-static u_int8_t m32[32][32];
-static u_int8_t a32[32][32];
-static u_int8_t s32[32][32];
-static u_int8_t a64[64][64];
-static u_int8_t s64[64][64];
-static u_int8_t m64[64][64];
+static uint8_t m32[32][32];
+static uint8_t a32[32][32];
+static uint8_t s32[32][32];
+static uint8_t a64[64][64];
+static uint8_t s64[64][64];
+static uint8_t m64[64][64];
 
-#define Tsize u_int16_t
+#define Tsize uint16_t
 
 static __inline Tsize RGB_ADD(Tsize a, Tsize b)
 {
-   u_int32_t cR, cG, cB;
+   uint32_t cR, cG, cB;
 	cB = a32[a&31][b&31]; a>>=5; b>>=5;
 	cG = a64[a&63][b&63]; a>>=6; b>>=6;
 	cR = a32[a&31][b&31];
@@ -62,7 +62,7 @@ __end_extern_c
 
 Tsize RGB_MUL16(Tsize a, Tsize b)
 {
-	u_int32_t cR, cG, cB;
+	uint32_t cR, cG, cB;
 	cB = m32[a&31][b&31]; a>>=5; b>>=5;
 	cG = m64[a&63][b&63]; a>>=6; b>>=6;
 	cR = m32[a&31][b&31];
@@ -77,22 +77,22 @@ static __inline Tsize RGB_ALPHA(Tsize r0, Tsize r1)
 		     ((r1)&g_pRLX->pGX->View.RGB_Magic))>>1);
 }
 
-static __inline void PUT(u_int8_t *v, Tsize c)
+static __inline void PUT(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_MUL16(c, (Tsize)g_pRLX->pGX->csp_cfg.color);
 }
 
-static __inline void PSET(u_int8_t *v, Tsize c)
+static __inline void PSET(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_MUL16(c, (Tsize)g_pRLX->pGX->csp_cfg.color);
 }
 
-static __inline void ADD(u_int8_t *v, Tsize c)
+static __inline void ADD(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_ADD(*(Tsize*)v, RGB_MUL16(c, (Tsize)g_pRLX->pGX->csp_cfg.color));
 }
 
-static __inline void ALPHA(u_int8_t *v, Tsize c)
+static __inline void ALPHA(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_ALPHA(*(Tsize*)v, RGB_MUL16(c, (Tsize)g_pRLX->pGX->csp_cfg.color));
 }
@@ -100,7 +100,7 @@ static __inline void ALPHA(u_int8_t *v, Tsize c)
 static void CALLING_C pset (int32_t x, int32_t y, GXSPRITE *sp)
 {
 	GXSPRITESW *p = (GXSPRITESW*)sp->handle;
-    u_int8_t *v;    
+    uint8_t *v;
     int32_t oy=0, ox=0, lx=sp->LX, ly=sp->LY;
 	int d;
     /*=============================================================*/
@@ -122,29 +122,28 @@ static void CALLING_C pset (int32_t x, int32_t y, GXSPRITE *sp)
 	else
 	if (p->bpp == 1)
 	{
-		u_int8_t *u = (u_int8_t*)sp->data + oy * (int32_t)sp->LX + ox;
+		uint8_t *u = (uint8_t*)sp->data + oy * (int32_t)sp->LX + ox;
 		int i;
 		for (i=0;i<ly;i++,v+=d, u+=sp->LX)
 		{
 			int j;
-			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 
+			for (j=0;j<lx;j++,v+=sizeof(Tsize))
 				PSET(v, (Tsize)p->palette[u[j]]);
 		}
 	}
-    return;
-   
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CALLING_C put (int32_t x, int32_t y, GXSPRITE *sp)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static void CALLING_C put (int32_t x, int32_t y, GXSPRITE *sp)
 {
     GXSPRITESW *p = (GXSPRITESW*)sp->handle;
-    u_int8_t *v;    
+    uint8_t *v;
 	int d = 0;
     int32_t oy=0, ox=0, lx=sp->LX, ly=sp->LY;
     /*=============================================================*/
@@ -159,7 +158,7 @@ static void CALLING_C put (int32_t x, int32_t y, GXSPRITE *sp)
 		for (i=0;i<ly;i++,v+=d, u+=sp->LX)
 		{
 			int j;
-			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 
+			for (j=0;j<lx;j++,v+=sizeof(Tsize))
 				if (u[j])
 					PUT(v, u[j]);
 		}
@@ -167,30 +166,29 @@ static void CALLING_C put (int32_t x, int32_t y, GXSPRITE *sp)
 	else
 	if (p->bpp == 1)
 	{
-		u_int8_t *u = (u_int8_t*)sp->data + oy * (int32_t)sp->LX + ox;
+		uint8_t *u = (uint8_t*)sp->data + oy * (int32_t)sp->LX + ox;
 		int i;
 		for (i=0;i<ly;i++,v+=d, u+=sp->LX)
 		{
 			int j;
-			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 				
+			for (j=0;j<lx;j++,v+=sizeof(Tsize))
 				if (u[j])
 					PUT(v, (Tsize)p->palette[u[j]]);
 		}
 	}
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CALLING_C TrspADDbit (int32_t x, int32_t y, GXSPRITE *sp)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-
 static void CALLING_C Trsp50 (int32_t x, int32_t y, GXSPRITE *sp)
 {
     GXSPRITESW *p = (GXSPRITESW*)sp->handle;
-    u_int8_t *v;    
+    uint8_t *v;
     int32_t oy=0, ox=0, lx=sp->LX, ly=sp->LY;
 	int d = 0;
     /*=============================================================*/
@@ -205,30 +203,28 @@ static void CALLING_C Trsp50 (int32_t x, int32_t y, GXSPRITE *sp)
 		for (i=0;i<ly;i++,v+=d, u+=sp->LX)
 		{
 			int j;
-			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 
+			for (j=0;j<lx;j++,v+=sizeof(Tsize))
 				ALPHA(v, u[j]);
 		}
 	}
 	else
 	if (p->bpp == 1)
 	{
-		u_int8_t *u = (u_int8_t*)sp->data + oy * (int32_t)sp->LX + ox;
+		uint8_t *u = (uint8_t*)sp->data + oy * (int32_t)sp->LX + ox;
 		int i;
 		for (i=0;i<ly;i++,v+=d, u+=sp->LX)
 		{
 			int j;
-			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 
+			for (j=0;j<lx;j++,v+=sizeof(Tsize))
 				ALPHA(v, (Tsize)p->palette[u[j]]);
 		}
 	}
-  
-    return;
 }
 
 static void CALLING_C TrspADD (int32_t x, int32_t y, GXSPRITE *sp)
 {
     GXSPRITESW *p = (GXSPRITESW*)sp->handle;
-    u_int8_t *v;    
+    uint8_t *v;
     int32_t oy=0, ox=0, lx=sp->LX, ly=sp->LY;
 	int d = 0;
     /*=============================================================*/
@@ -243,23 +239,22 @@ static void CALLING_C TrspADD (int32_t x, int32_t y, GXSPRITE *sp)
 		for (i=0;i<ly;i++,v+=d, u+=sp->LX)
 		{
 			int j;
-			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 				
+			for (j=0;j<lx;j++,v+=sizeof(Tsize))
 				ADD(v, u[j]);
 		}
 	}
 	else
 	if (p->bpp == 1)
 	{
-		u_int8_t *u = (u_int8_t*)sp->data + oy * (int32_t)sp->LX + ox;
+		uint8_t *u = (uint8_t*)sp->data + oy * (int32_t)sp->LX + ox;
 		int i;
 		for (i=0;i<ly;i++,v+=d, u+=sp->LX)
 		{
 			int j;
-			for (j=0;j<lx;j++,v+=sizeof(Tsize)) 
+			for (j=0;j<lx;j++,v+=sizeof(Tsize))
 				ADD(v, (Tsize)p->palette[u[j]]);
 		}
 	}
-    return;
 }
 
 /*------------------------------------------------------------------------
@@ -269,10 +264,9 @@ static void CALLING_C TrspADD (int32_t x, int32_t y, GXSPRITE *sp)
 * DESCRIPTION :
 *
 */
-
 static void CALLING_C zoom_pset(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly)
 {
-    u_int8_t *v = g_pRLX->pGX->View.lpBackBuffer + x * sizeof(Tsize) + g_pRLX->pGX->View.lPitch * y;   
+    uint8_t *v = g_pRLX->pGX->View.lpBackBuffer + x * sizeof(Tsize) + g_pRLX->pGX->View.lPitch * y;
 	int d = g_pRLX->pGX->View.lPitch - lx*sizeof(Tsize);
 
 	GXSPRITESW *p = (GXSPRITESW*)sp->handle;
@@ -288,8 +282,8 @@ static void CALLING_C zoom_pset(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, 
 			for (;Y<ey;Y+=dy, v+=d)
 			{
 				int X=0;
-				const Tsize *w = (Tsize*)sp->data + (Y>>16) * sp->LX ;			
-				for (; X<ex ;X+=dx, v+=sizeof(Tsize)) 
+				const Tsize *w = (Tsize*)sp->data + (Y>>16) * sp->LX ;
+				for (; X<ex ;X+=dx, v+=sizeof(Tsize))
 				{
 					const Tsize *t = w + (X>>16);
 					PSET(v, *t);
@@ -303,31 +297,29 @@ static void CALLING_C zoom_pset(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, 
 			for (;Y<ey;Y+=dy, v+=d)
 			{
 				int X=0;
-				const u_int8_t *w = (u_int8_t*)sp->data + (Y>>16) * sp->LX;		
-				
-				for (; X<ex; X+=dx, v+=sizeof(Tsize)) 
+				const uint8_t *w = (uint8_t*)sp->data + (Y>>16) * sp->LX;
+
+				for (; X<ex; X+=dx, v+=sizeof(Tsize))
 				{
-					const u_int8_t *t = w + (X>>16);
+					const uint8_t *t = w + (X>>16);
 					PSET(v, p->palette[*t]);
 				}
 			}
 		}
 	}
-	
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CALLING_C zoom_put(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-
 static void CALLING_C zoom_put(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly)
 {
-    GXSPRITESW *p = (GXSPRITESW*)sp->handle; 
-    u_int8_t *v;
+    GXSPRITESW *p = (GXSPRITESW*)sp->handle;
+    uint8_t *v;
     int32_t j;
     int32_t oy=0, ox=0, dx, dy, d;
     //=============================================================
@@ -345,11 +337,11 @@ static void CALLING_C zoom_put(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, i
 			for (;Y<ey;Y+=dy, v+=d)
 			{
 				int X = ox;
-				const Tsize *w = (Tsize*)sp->data + (Y>>16) * sp->LX ;			
-				for (; X<ex ;X+=dx, v+=sizeof(Tsize)) 
+				const Tsize *w = (Tsize*)sp->data + (Y>>16) * sp->LX ;
+				for (; X<ex ;X+=dx, v+=sizeof(Tsize))
 				{
 					const Tsize *t = w + (X>>16);
-					if (*t)				
+					if (*t)
 						PUT(v, *t);
 				}
 			}
@@ -361,32 +353,30 @@ static void CALLING_C zoom_put(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, i
 			for (;Y<ey;Y+=dy, v+=d)
 			{
 				int X = ox;
-				const u_int8_t *w = (u_int8_t*)sp->data + (Y>>16) * sp->LX;		
-				
-				for (; X<ex; X+=dx, v+=sizeof(Tsize)) 
+				const uint8_t *w = (uint8_t*)sp->data + (Y>>16) * sp->LX;
+
+				for (; X<ex; X+=dx, v+=sizeof(Tsize))
 				{
-					const u_int8_t *t = w + (X>>16);
-					if (*t)				
+					const uint8_t *t = w + (X>>16);
+					if (*t)
 						PUT(v, p->palette[*t]);
 				}
 			}
 		}
 	}
-    return;
 }
 
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C zoom_TrspAdd(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly, u_int8_t **real)
+* PROTOTYPE  :  void CALLING_C zoom_TrspAdd(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly, uint8_t **real)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-
 static void CALLING_C zoom_TrspADD(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly)
-{    
+{
     GXSPRITESW *p = (GXSPRITESW*)sp->handle;
-	u_int8_t *v;
+	uint8_t *v;
     int32_t j;
     int32_t oy=0, ox=0, dx, dy, d;
       //=============================================================
@@ -405,11 +395,11 @@ static void CALLING_C zoom_TrspADD(GXSPRITE *sp, int32_t x, int32_t y, int32_t l
 			for (;Y<ey;Y+=dy, v+=d)
 			{
 				int X = ox;
-				const Tsize *w = (Tsize*)sp->data + (Y>>16) * sp->LX ;			
-				for (; X<ex ;X+=dx, v+=sizeof(Tsize)) 
+				const Tsize *w = (Tsize*)sp->data + (Y>>16) * sp->LX ;
+				for (; X<ex ;X+=dx, v+=sizeof(Tsize))
 				{
 					const Tsize *t = w + (X>>16);
-					if (*t)				
+					if (*t)
 						ADD(v, *t);
 				}
 			}
@@ -421,24 +411,23 @@ static void CALLING_C zoom_TrspADD(GXSPRITE *sp, int32_t x, int32_t y, int32_t l
 			for (;Y<ey;Y+=dy, v+=d)
 			{
 				int X = ox;
-				const u_int8_t *w = (u_int8_t*)sp->data + (Y>>16) * sp->LX;		
-				
-				for (; X<ex; X+=dx, v+=sizeof(Tsize)) 
+				const uint8_t *w = (uint8_t*)sp->data + (Y>>16) * sp->LX;
+
+				for (; X<ex; X+=dx, v+=sizeof(Tsize))
 				{
-					const u_int8_t *t = w + (X>>16);
-					if (*t)				
+					const uint8_t *t = w + (X>>16);
+					if (*t)
 						ADD(v, p->palette[*t]);
 				}
 			}
 		}
 	}
-    return;
 }
 
 static void CALLING_C zoom_Trsp50(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx, int32_t ly)
 {
     GXSPRITESW *p = (GXSPRITESW*)sp->handle;
-    u_int8_t *v;
+    uint8_t *v;
     int32_t j;
     int32_t oy=0, ox=0, dx, dy, d;
       //=============================================================
@@ -458,12 +447,11 @@ static void CALLING_C zoom_Trsp50(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx
 			for (;Y<ey;Y+=dy, v+=d)
 			{
 				int X = ox;
-				const Tsize *w = (Tsize*)sp->data + (Y>>16) * sp->LX ;			
-				for (; X<ex ;X+=dx, v+=sizeof(Tsize)) 
+				const Tsize *w = (Tsize*)sp->data + (Y>>16) * sp->LX ;
+				for (; X<ex ;X+=dx, v+=sizeof(Tsize))
 				{
 					const Tsize *t = w + (X>>16);
-					
-						ALPHA(v, *t);
+					ALPHA(v, *t);
 				}
 			}
 		}
@@ -474,35 +462,32 @@ static void CALLING_C zoom_Trsp50(GXSPRITE *sp, int32_t x, int32_t y, int32_t lx
 			for (;Y<ey;Y+=dy, v+=d)
 			{
 				int X = ox;
-				const u_int8_t *w = (u_int8_t*)sp->data + (Y>>16) * sp->LX;		
-				
-				for (; X<ex; X+=dx, v+=sizeof(Tsize)) 
+				const uint8_t *w = (uint8_t*)sp->data + (Y>>16) * sp->LX;
+
+				for (; X<ex; X+=dx, v+=sizeof(Tsize))
 				{
-					const u_int8_t *t = w + (X>>16);
-					
-						ALPHA(v, p->palette[*t]);
+					const uint8_t *t = w + (X>>16);
+					ALPHA(v, p->palette[*t]);
 				}
 			}
-		}	
+		}
 	}
-  
-    return;
 }
 
 static GXSPRITEINTERFACE g_gi={
-    0, 
-    put, 
-    pset, 
-    pset, 
-    Trsp50, 
-    TrspADD, 
-    Trsp50, 
-    Trsp50, 
-    zoom_pset, 
-    zoom_put, 
-    zoom_Trsp50, 
-    zoom_TrspADD, 
-    zoom_TrspADD, 
+    0,
+    put,
+    pset,
+    pset,
+    Trsp50,
+    TrspADD,
+    Trsp50,
+    Trsp50,
+    zoom_pset,
+    zoom_put,
+    zoom_Trsp50,
+    zoom_TrspADD,
+    zoom_TrspADD,
     zoom_Trsp50
 };
 
@@ -510,12 +495,11 @@ void GX_GetSpriteInterfaceRef16(struct GXSYSTEM *pGX, GXSPRITEINTERFACE *p)
 {
 	int i, j;
 	*p = g_gi;
-	
 
 	for (i=0;i<32;i++)
 	for (j=0;j<32;j++)
 	{
-		m32[i][j]=(u_int8_t)((i*j)>>5);
+		m32[i][j]=(uint8_t)((i*j)>>5);
 		a32[i][j]=min(i+j, 31);
 		s32[i][j]=max(i-j, 0);
 	}
@@ -523,8 +507,9 @@ void GX_GetSpriteInterfaceRef16(struct GXSYSTEM *pGX, GXSPRITEINTERFACE *p)
 	for (i=0;i<64;i++)
 	for (j=0;j<64;j++)
 	{
-		m64[i][j]=(u_int8_t)((i*j)>>6);
+		m64[i][j]=(uint8_t)((i*j)>>6);
 		a64[i][j]=min(i+j, 63);
 		s64[i][j]=max(i-j, 0);
 	}
 }
+

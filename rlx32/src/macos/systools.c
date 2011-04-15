@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -23,7 +23,6 @@ Original Source: 1996 - Stephane Denis
 Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 */
 //-------------------------------------------------------------------------
-
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -52,7 +51,7 @@ SYS_FILEIO FIO_std= {fopen, fclose, fseek, fread, fgetc, fwrite, ftell, feof, fg
 
 char *file_searchpath(const char *name)
 {
-    if (file_exists((char*)name)) 
+    if (file_exists((char*)name))
 		return (char*)name;
     return NULL;
 }

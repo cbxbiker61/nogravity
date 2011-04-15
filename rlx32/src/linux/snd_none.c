@@ -87,7 +87,7 @@ static int ChannelGetStatus(int channel)
 static void ChannelSetParms(int channel, V3XVECTOR *pos,
 			 V3XVECTOR *velocity,
 			 V3XRANGE *fRange
-		 	   )
+			   )
 {
 }
 
@@ -177,8 +177,8 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
     Enum,
     Detect,
     Initialize,
-    Release, 
-    SetVolume, 
+    Release,
+    SetVolume,
     Start,
     Stop,
     Poll,
@@ -186,27 +186,27 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
     UserSetParms,
 
     ChannelOpen,
-    ChannelPlay, 
-    ChannelStop, 
+    ChannelPlay,
+    ChannelStop,
 
-    ChannelSetVolume, 
-    ChannelSetPanning, 
+    ChannelSetVolume,
+    ChannelSetPanning,
     ChannelSetSamplingRate,
 
     ChannelGetStatus,
 
     ChannelSetParms,
-    ChannelSetEnvironment, 
+    ChannelSetEnvironment,
 
-    ChannelGetFree, 
-    ChannelFlushAll, 
+    ChannelGetFree,
+    ChannelFlushAll,
     ChannelInvalidate,
     ChannelGetSample,
 
-    StreamRelease, 
+    StreamRelease,
     StreamInitialize,
-    StreamGetChannel, 
-    StreamGetPosition, 
+    StreamGetChannel,
+    StreamGetPosition,
     StreamPoll,
     StreamSetVolume,
     StreamLoad,
@@ -218,7 +218,5 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
   };
 
   V3XA.Client = &CoreAudio_Client;
-
-  return;
 }
 

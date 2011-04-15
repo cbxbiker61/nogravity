@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -43,14 +44,14 @@ enum {
     V3XCMODE_DISPLAY = 0x100, // Draw collision mesh
     V3XCMODE_INVALIDATE = 0x200, // Disable collision system (not treated)
     V3XCMODE_CALLBACKONLY = 0x400, // If collision, call callback, don't compute displacement
-    V3XCMODE_REFLEX = 0x800, // If collision, call callback, don't compute displacement	
+    V3XCMODE_REFLEX = 0x800, // If collision, call callback, don't compute displacement
 	V3XCMODE_REPLACEONPRJ = 0x1000
 };
 
 typedef struct _v3xcl_faceitem{
-    u_int8_t			   type;
-    u_int8_t			   numEdges;
-    u_int16_t			   sectorID;
+    uint8_t			   type;
+    uint8_t			   numEdges;
+    uint16_t			   sectorID;
     V3XVECTOR          normal;    // face normal
     V3XVECTOR         *edges;     // edges position (unXformed)
     union {
@@ -63,12 +64,12 @@ typedef struct _v3xcl_mesh{                  // 64b
    int32_t               type;      // type (first field)
     V3XVECTOR          center;    // center
     V3XVECTOR          prev_center;   // center after XForming (very rare)
-    u_int32_t              numFaces;  // number of faces
+    uint32_t              numFaces;  // number of faces
     V3XCL_FACE        *face;      // face array
-    u_int16_t	      *sectorList;// Sector list
-    u_int32_t	       maxsectors; // maxSectors
+    uint16_t	      *sectorList;// Sector list
+    uint32_t	       maxsectors; // maxSectors
     V3XMESH	      *mesh_ref;
-    u_int32_t              pad[4];    // pad
+    uint32_t              pad[4];    // pad
 
 }V3XCL_MESH;
 
@@ -77,14 +78,14 @@ typedef struct _v3x_cl_sphere{                  // 64b
     V3XVECTOR          center;    // center
     V3XVECTOR          _center;   // center after XForming
     V3XSCALAR           radius;     // radius
-    u_int32_t              pad;       //
+    uint32_t              pad;       //
 }V3XCL_SPHERE;
 
 typedef struct _v3x_cl_box{                  // 64b
     int32_t               type;      // type (first field)
     V3XVECTOR          center;    // center
     V3XVECTOR          _center;   // center after XForming
-    u_int32_t              pad[3];    // pad
+    uint32_t              pad[3];    // pad
     V3XVECTOR          min;       // min coordinates
     V3XVECTOR          max;       // max coordinates
 }V3XCL_BOX;
@@ -97,20 +98,20 @@ typedef union _v3x_cl_item{
 }V3XCL_ITEM;
 
 typedef struct _v3x_cl{
-    u_int32_t              numItem;   // numbers of items
-    u_int32_t              weight;    // weight (for collision inertia)
+    uint32_t              numItem;   // numbers of items
+    uint32_t              weight;    // weight (for collision inertia)
     V3XCL_ITEM        *item;      // item array
     V3XCL_SPHERE       global;    // global sphere
     V3XVECTOR          velocity;  // velocity vector
     V3XMESH           *mesh_ref;   // reference mesh
-    u_int32_t              flags;     // flags
-    u_int32_t              ID;        // Collision ID
+    uint32_t              flags;     // flags
+    uint32_t              ID;        // Collision ID
     union {
-	  u_int32_t      (*callback)(void *context); // callback when hitted
-	  u_int8_t        old[4];    // compatibility with V3X'97 (old[0]) Cs->flags|=V3XCMODE_INVERTCONDITION;
+	  uint32_t      (*callback)(void *context); // callback when hitted
+	  uint8_t        old[4];    // compatibility with V3X'97 (old[0]) Cs->flags|=V3XCMODE_INVERTCONDITION;
     };
-    u_int16_t             hitCount;
-    u_int16_t             hitID;
+    uint16_t             hitCount;
+    uint16_t             hitID;
     V3XSCALAR           reaction;
 	V3XCL_ITEM        *last_hit;
 }V3XCL;
@@ -138,3 +139,4 @@ _RLXEXPORTFUNC    void   RLXAPI  V3XCL_Draw(V3XCL *cs);
 __end_extern_c
 
 #endif
+

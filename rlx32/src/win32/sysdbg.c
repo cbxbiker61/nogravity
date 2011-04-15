@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -32,12 +32,12 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void SYS_Msg(char *fmt, ...)
+* PROTOTYPE  :  void SYS_Msg(const char *fmt, ...)
 *
 * DESCRIPTION :
 *
 */
-void SYS_Msg(char *fmt, ...)
+void SYS_Msg(const char *fmt, ...)
 {
     char buffer[8192];
     va_list argptr;
@@ -45,16 +45,16 @@ void SYS_Msg(char *fmt, ...)
     vsprintf(buffer, fmt, argptr);
     va_end(argptr);
     MessageBox(GetActiveWindow(), buffer, "Warning", MB_OK);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void SYS_Debug(char *fmt, ...)
+* PROTOTYPE  :  void SYS_Debug(const char *fmt, ...)
 *
 * DESCRIPTION :
 *
 */
-void SYS_Debug(char *fmt, ...)
+void SYS_Debug(const char *fmt, ...)
 {
     FILE *in;
     in = fopen("debug.txt", "a+t");
@@ -69,16 +69,16 @@ void SYS_Debug(char *fmt, ...)
         va_end(argptr);
         fclose(in);
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void SYS_Error(char *fmt, ...)
+* PROTOTYPE  :  void SYS_Error(const char *fmt, ...)
 *
 * DESCRIPTION :
 *
 */
-void SYS_Error(char *fmt, ...)
+void SYS_Error(const char *fmt, ...)
 {
     char buffer[8192];
     va_list argptr;
@@ -89,3 +89,4 @@ void SYS_Error(char *fmt, ...)
     va_end(argptr);
     MessageBox(GetActiveWindow(), buffer, "Error", MB_OK|MB_ICONERROR);
 }
+

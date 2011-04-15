@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -30,19 +31,19 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 // Message type
 typedef unsigned NET_PID;
 enum {
-      NET_DATA =0x1, 
-      NET_SAFEDATA, 
+      NET_DATA =0x1,
+      NET_SAFEDATA,
       NET_CHAT
 };
 #define NET_PutBuffer(dta, size) {*(size*)lpNet->data = (size)(dta); lpNet->data+=sizeof(size);}
 #define NET_GetBuffer(dta, size) {dta = *(size*)lpNet->data; lpNet->data+=sizeof(size);}
 
-#define NET_PutString(dta) { u_int8_t _l = (u_int8_t)strlen(dta); NET_PutBuffer(_l, u_int8_t); sysMemCpy(lpNet->data, dta, _l); lpNet->data+=_l; }
-#define NET_GetString(dta) { u_int8_t _l; NET_GetBuffer(_l, u_int8_t); sysMemCpy(dta, lpNet->data, _l); lpNet->data+=_l; }
+#define NET_PutString(dta) { uint8_t _l = (uint8_t)strlen(dta); NET_PutBuffer(_l, uint8_t); sysMemCpy(lpNet->data, dta, _l); lpNet->data+=_l; }
+#define NET_GetString(dta) { uint8_t _l; NET_GetBuffer(_l, uint8_t); sysMemCpy(dta, lpNet->data, _l); lpNet->data+=_l; }
 
 // Message mode
 enum {
-      NET_EVERYBODY=0xff, 
+      NET_EVERYBODY=0xff,
       NET_HOST =0xffff
 };
 
@@ -69,11 +70,11 @@ typedef struct _net_playername{
      unsigned connected;
 }NET_PlayerName;
 
-typedef struct _net_informations{    
+typedef struct _net_informations{
     char               wPlayerName[NET_MAXPLAYERLEN];
     char               wSessionName[NET_MAXPLAYERLEN];
     char               domain[16];
-    u_int8_t              *data, *lpBuffer, *lpzBuffer, *lpRecBuffer;
+    uint8_t              *data, *lpBuffer, *lpzBuffer, *lpRecBuffer;
     NET_SessionName    *lpSessionName;
     NET_PlayerName     *lpPlayerName;
     NET_ConnectionType *lpConnectionType;
@@ -109,11 +110,12 @@ typedef struct _sysnet_driver {
 	void			     (*ReleaseSessionList)(void);
 }NET_ClientDriver;
 
-__extern_c 
+__extern_c
 	_RLXEXPORTFUNC NET_ClientDriver RLXAPI *NET_GetDirectPlayInterface(void *, const void *);
 	extern NET_ClientDriver *sNET;
-	
+
 __end_extern_c
 
 
 #endif
+

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -39,15 +39,15 @@ struct GXSYSTEM   GX;
 *
 * PROTOTYPE  :  void GX_SetupDefaultViewport(int x, int y, int bbp)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void GX_SetupDefaultViewport(int x, int y, int bbp)
 {
 	SYS_ASSERT(x);
 	SYS_ASSERT(y);
-    GX.View.BitsPerPixel = (u_int8_t)bbp;
-    GX.View.BytePerPixel = (u_int8_t)((GX.View.BitsPerPixel+1)>>3);
+    GX.View.BitsPerPixel = (uint8_t)bbp;
+    GX.View.BytePerPixel = (uint8_t)((GX.View.BitsPerPixel+1)>>3);
     GX.View.lPitch = x * GX.View.BytePerPixel;
     GX.View.lSurfaceSize = GX.View.lPitch * y;
     // Windows
@@ -62,27 +62,21 @@ void GX_SetupDefaultViewport(int x, int y, int bbp)
     if ((GX.View.Flags&GX_CAPS_BACKBUFFERINVIDEO)
     &&(GX.View.Flags&GX_CAPS_FBLINEAR))
     GX.View.State|=GX_STATE_BACKBUFFERPAGE;
-    return;
 }
-
-
-
 
 void RLXAPI GX_SetupViewport(struct _gx_viewport *pView, int x, int y, int bpp)
 {
     GX_SetupDefaultViewport(x, y>>((pView->Flags&GX_CAPS_FBINTERLEAVED)!=0 ? 1 : 0), bpp);
     // Taille
-    pView->BitsPerPixel = (u_int8_t)bpp;
+    pView->BitsPerPixel = (uint8_t)bpp;
     // Direct Video
     if (pView->Flags&GX_CAPS_FBINTERLEAVED)
     {
         if ((pView->Flags&GX_CAPS_BACKBUFFERINVIDEO)||(RLX.Video.Config&RLXVIDEO_Windowed))
         pView->lPitch<<=1;
-    }    
+    }
     pView->State &= ~GX_STATE_BACKBUFFERPAGE;
-    return;
 }
-
 
 void GX_KernelAlloc()
 {

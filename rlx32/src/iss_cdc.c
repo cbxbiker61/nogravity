@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -157,14 +157,14 @@ extern int SFX_DecodeOGG(SYS_FILEHANDLE in, int options, V3XA_HANDLE *sinfo);
 #define WAVE_FORMAT_XBOX_ADPCM		WAVE_FORMAT_VOXWARE_BYTE_ALIGNED
 #endif
 
-typedef struct	_wave_format 
+typedef struct	_wave_format
 {
-	u_int16_t		wFormatTag;
-	u_int16_t		nChannels;
+	uint16_t		wFormatTag;
+	uint16_t		nChannels;
 	int			nSamplesPerSec;
 	int			nAvgBytesPerSec;
-	u_int16_t		nBlockAlign;
-	u_int16_t		wBitsPerSample;
+	uint16_t		nBlockAlign;
+	uint16_t		wBitsPerSample;
 }WAVEFORMAT;
 
 typedef struct _wave_chunk
@@ -175,7 +175,7 @@ typedef struct _wave_chunk
 
 void static *V3XA_PCM_Depack(SYS_FILEHANDLE fp, int length)
 {
-	u_int8_t *sample = (u_int8_t*) MM_heap.malloc(length);
+	uint8_t *sample = (uint8_t*) MM_heap.malloc(length);
 	if (sample)
 	{
         FIO_cur->fread(sample, 1, length, fp);
@@ -193,7 +193,7 @@ static size_t read_chunk(SYS_FILEHANDLE fp, WAVCHUNK *chunk, int tagOnly)
 	{
 		size_t ret = FIO_cur->fread(chunk, 1, sizeof(WAVCHUNK), fp);
 #ifdef __BIG_ENDIAN__
-		BSWAP32((u_int32_t*)&chunk->ckSize, 1);
+		BSWAP32((uint32_t*)&chunk->ckSize, 1);
 #endif
 		return ret;
 	}
@@ -208,7 +208,7 @@ static int SFX_DecodeWAV(SYS_FILEHANDLE fp, int options, V3XA_HANDLE *pHandle)
 	WAVCHUNK chunk;
 	if (!read_chunk(fp, &chunk, 0))
 		goto failed;
-	
+
 	if (memcmp(chunk.ckID, "RIFF", 4))
 		goto failed;
 
@@ -221,32 +221,32 @@ static int SFX_DecodeWAV(SYS_FILEHANDLE fp, int options, V3XA_HANDLE *pHandle)
 	read_chunk(fp, &chunk, 0);
 
 	while(1)
-	{			
+	{
 		if (!memcmp(chunk.ckID, "fmt ", 4))
 			break;
-		
+
 		if (!memcmp(chunk.ckID, "fact", 4))
 		{
 			FIO_cur->fread(&dwSampleLength, sizeof(int), 1, fp);
 			FIO_cur->fseek(fp, chunk.ckSize - 4, SEEK_CUR);
 		}
-		else		
+		else
 			FIO_cur->fseek(fp, chunk.ckSize, SEEK_CUR);
 
 		read_chunk(fp, &chunk, 0);
 
 	}
-	FIO_cur->fread(&format, sizeof(WAVEFORMAT), 1, fp);	
+	FIO_cur->fread(&format, sizeof(WAVEFORMAT), 1, fp);
 
 #ifdef __BIG_ENDIAN__
-	BSWAP16((u_int16_t*)&format.wFormatTag, 2);
-	BSWAP32((u_int32_t*)&format.nSamplesPerSec, 2);
-	BSWAP16((u_int16_t*)&format.nBlockAlign, 2);	
+	BSWAP16((uint16_t*)&format.wFormatTag, 2);
+	BSWAP32((uint32_t*)&format.nSamplesPerSec, 2);
+	BSWAP16((uint16_t*)&format.nBlockAlign, 2);
 #endif
 
-	FIO_cur->fseek(fp, chunk.ckSize - sizeof(WAVEFORMAT), SEEK_CUR);		
+	FIO_cur->fseek(fp, chunk.ckSize - sizeof(WAVEFORMAT), SEEK_CUR);
 	while(1)
-	{			
+	{
 		read_chunk(fp, &chunk, 0);
 		if (!memcmp(chunk.ckID, "data", 4))
 			break;
@@ -266,30 +266,26 @@ static int SFX_DecodeWAV(SYS_FILEHANDLE fp, int options, V3XA_HANDLE *pHandle)
 	{
 		pHandle->sample = V3XA_PCM_Depack(fp, chunk.ckSize);
 	}
-    
+
 	return 0;
 
 failed:
 	return -11;
 }
 
-
-
-// Codec format 
+// Codec format
 static V3XA_FILECODEC fileCodecs[]={
     {".WAV", SFX_DecodeWAV}, // WAV
-    {".OGG", SFX_DecodeOGG}, // OGG 
+    {".OGG", SFX_DecodeOGG}, // OGG
     {NULL , NULL           }
 };
-
-
 
  V3XA_FILECODEC *V3XA_CodecFind(char *filename)
 {
      V3XA_FILECODEC *upk = fileCodecs;
     while (upk->ext!=NULL)
     {
-        if (!*upk->ext) 
+        if (!*upk->ext)
 			break;
 		// TODO :unicode support
         if (strstr(filename, upk->ext))
@@ -305,7 +301,6 @@ const V3XA_FILECODEC *V3XA_CodecGetByIndex(int i)
 {
     return *fileCodecs[i].ext ? fileCodecs+i : 0;
 }
-
 
 void static *V3XA_PCM_setup(size_t size, SYS_FILEIO *fl, SYS_MEMORYMANAGER *_cMem)
 {
@@ -329,12 +324,12 @@ int static V3XA_PCM_decode(void *context, const void *indata, size_t size, void 
 
 int static V3XA_SPCM8_decode(void *context, const void *indata, size_t size, void **outdata, size_t *sizePcm)
 {
-	u_int8_t *s = (u_int8_t*)indata;
-	u_int8_t *d;
+	uint8_t *s = (uint8_t*)indata;
+	uint8_t *d;
 	*sizePcm = size;
 	if (!indata)
 		return 0;
-	d = (u_int8_t *)indata;
+	d = (uint8_t *)indata;
 	*outdata = d;
 
 	while (size>0)
@@ -350,18 +345,18 @@ int static V3XA_SPCM8_decode(void *context, const void *indata, size_t size, voi
 // PCM
 int static V3XA_SPCM16_decode(void *context, const void *indata, size_t size, void **outdata, size_t *sizePcm)
 {
-	u_int16_t *s = (u_int16_t*)indata;
-	u_int16_t *d;
-	d = (u_int16_t *)indata;
+	uint16_t *s = (uint16_t*)indata;
+	uint16_t *d;
+	d = (uint16_t *)indata;
 	*sizePcm = size;
 	if (!indata)
 		return 0;
-		
-	*outdata = d;	
+
+	*outdata = d;
 	while (size>0)
 	{
-		u_int8_t *p = (u_int8_t*)s;
-		*d = ((u_int16_t)p[1]) | (((u_int16_t)p[0])<<8);
+		uint8_t *p = (uint8_t*)s;
+		*d = ((uint16_t)p[1]) | (((uint16_t)p[0])<<8);
 		size-=2;
 		s++;
 		d++;
@@ -369,7 +364,7 @@ int static V3XA_SPCM16_decode(void *context, const void *indata, size_t size, vo
 	return 0;
 }
 
-V3XA_AUDIOCODEC V3XA_Codec_SPCM8 = 
+V3XA_AUDIOCODEC V3XA_Codec_SPCM8 =
 {
 	V3XA_PCM_setup,
 	V3XA_PCM_release,
@@ -377,7 +372,7 @@ V3XA_AUDIOCODEC V3XA_Codec_SPCM8 =
 	V3XA_SPCM8_decode
 };
 
-V3XA_AUDIOCODEC V3XA_Codec_SPCM16 = 
+V3XA_AUDIOCODEC V3XA_Codec_SPCM16 =
 {
 	V3XA_PCM_setup,
 	V3XA_PCM_release,
@@ -385,14 +380,13 @@ V3XA_AUDIOCODEC V3XA_Codec_SPCM16 =
 	V3XA_SPCM16_decode
 };
 
-V3XA_AUDIOCODEC V3XA_Codec_PCM = 
+V3XA_AUDIOCODEC V3XA_Codec_PCM =
 {
 	V3XA_PCM_setup,
 	V3XA_PCM_release,
 	NULL,
 	V3XA_PCM_decode
 };
-
 
 // Detect codec from sample info
 V3XA_AUDIOCODEC *V3XA_Handle_GetCodec( V3XA_HANDLE *pHandle)

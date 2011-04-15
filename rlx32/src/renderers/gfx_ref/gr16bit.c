@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -34,27 +34,29 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "gx_csp.h"
 #include "gx_c.h"
 #include "_rlx.h"
+
 extern struct RLXSYSTEM *g_pRLX;
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C psetPixel_16bit(int32_t x, int32_t y, u_int32_t color)
+* PROTOTYPE  :  void CALLING_C psetPixel_16bit(int32_t x, int32_t y, uint32_t color)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-void CALLING_C psetPixel_16bit(int32_t x, int32_t y, u_int32_t color)
+void CALLING_C psetPixel_16bit(int32_t x, int32_t y, uint32_t color)
 {
     GFX_word(g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2, color);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C H_Line_16bit(int32_t x, int32_t y, int32_t l, u_int32_t color)
+* PROTOTYPE  :  void CALLING_C H_Line_16bit(int32_t x, int32_t y, int32_t l, uint32_t color)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-void CALLING_C H_Line_16bit(int32_t x, int32_t y, int32_t l, u_int32_t color)
+void CALLING_C H_Line_16bit(int32_t x, int32_t y, int32_t l, uint32_t color)
 {
     if (l<0)
     {
@@ -62,45 +64,45 @@ void CALLING_C H_Line_16bit(int32_t x, int32_t y, int32_t l, u_int32_t color)
         l=-l;
     }
     GFX_memset2(g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2, color, l );
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C V_Line_16bit(int32_t x, int32_t y, int32_t l, u_int32_t color)
+* PROTOTYPE  :  void CALLING_C V_Line_16bit(int32_t x, int32_t y, int32_t l, uint32_t color)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-void CALLING_C V_Line_16bit(int32_t x, int32_t y, int32_t l, u_int32_t color)
+void CALLING_C V_Line_16bit(int32_t x, int32_t y, int32_t l, uint32_t color)
 {
-    u_int8_t *v = g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2;
+    uint8_t *v = g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2;
     if (l<0)
     {
         v+=l*g_pRLX->pGX->View.lPitch;
         l=-l;
     }
     for (;l!=0;v+=g_pRLX->pGX->View.lPitch, l--)  GFX_word(v, color);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C filledRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, u_int32_t color)
+* PROTOTYPE  :  void CALLING_C filledRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, uint32_t color)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-void CALLING_C filledRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, u_int32_t color)
+void CALLING_C filledRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, uint32_t color)
 {
     int32_t lx=abs(x2-x), ly=abs(y2-y);
-    u_int8_t *v = g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2;
+    uint8_t *v = g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2;
     for (;ly!=0;v+=g_pRLX->pGX->View.lPitch, ly--) GFX_memset2(v, color, lx);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CALLING_C shadedRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, void *pal)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 #define RGB_Luminance(a, b)        ((((a)&g_pRLX->pGX->View.RGB_Magic)+((b)&g_pRLX->pGX->View.RGB_Magic))>>1)
@@ -108,75 +110,75 @@ void CALLING_C filledRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, u_
 void CALLING_C shadedRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, void *pal)
 {
     int32_t lx=abs(x2-x)+1, ly=abs(y2-y)+1, l;
-    u_int8_t *v, *w;
+    uint8_t *v, *w;
     v = g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2;
     for (;ly!=0;v+=g_pRLX->pGX->View.lPitch, ly--)
-    for (w=v, l=lx;l!=0;w+=2, l--) GFX_word(w, RGB_Luminance(*(u_int16_t*)w, g_pRLX->pGX->csp_cfg.color));
+    for (w=v, l=lx;l!=0;w+=2, l--) GFX_word(w, RGB_Luminance(*(uint16_t*)w, g_pRLX->pGX->csp_cfg.color));
     UNUSED(pal);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  u_int32_t CALLING_C getPixel_16bit (int32_t x, int32_t y)
+* PROTOTYPE  :  uint32_t CALLING_C getPixel_16bit (int32_t x, int32_t y)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-u_int32_t CALLING_C getPixel_16bit (int32_t x, int32_t y)
+uint32_t CALLING_C getPixel_16bit (int32_t x, int32_t y)
 {
     return GFX_read(g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2);
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C wiredRect_16bit(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+* PROTOTYPE  :  void CALLING_C wiredRect_16bit(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-void CALLING_C wiredRect_16bit(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+void CALLING_C wiredRect_16bit(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
     H_Line_16bit(x1, y1, x2-x1, colour);
     H_Line_16bit(x1, y2, x2-x1, colour);
     V_Line_16bit(x1, y1, y2-y1, colour);
     V_Line_16bit(x2, y1, y2-y1, colour);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C meshedRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, u_int32_t colour)
+* PROTOTYPE  :  void CALLING_C meshedRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, uint32_t colour)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-void CALLING_C meshedRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, u_int32_t colour)
+void CALLING_C meshedRect_16bit(int32_t x, int32_t y, int32_t x2, int32_t y2, uint32_t colour)
 {
-    int32_t lx=abs(x2-x)+1, 
+    int32_t lx=abs(x2-x)+1,
     ly=abs(y2-y)+1;
-    u_int8_t *v = g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2;
+    uint8_t *v = g_pRLX->pGX->View.lpBackBuffer + g_pRLX->pGX->View.lPitch * y + x*2;
     for (;ly!=0;
-    v+=g_pRLX->pGX->View.lPitch, 
+    v+=g_pRLX->pGX->View.lPitch,
     ly--)
     {
-        u_int16_t *w=(u_int16_t*)v+(ly&1);
+        uint16_t *w=(uint16_t*)v+(ly&1);
         int32_t l=lx>>1;
         for (;l!=0;
-        w+=2, 
+        w+=2,
         l--) GFX_word(w, colour);
     }
-    return;
 }
 
 static GXGRAPHICINTERFACE GXDrv_16bit={
-    B_Line_8bit, 
-    A_Line_8bit, 
-	H_Line_16bit, 
-    V_Line_16bit, 
-    wiredRect_16bit, 
-    shadedRect_16bit, 
-    meshedRect_16bit, 
-    filledRect_16bit, 
-    psetPixel_16bit, 
-	psetPixel_16bit, 
+    B_Line_8bit,
+    A_Line_8bit,
+	H_Line_16bit,
+    V_Line_16bit,
+    wiredRect_16bit,
+    shadedRect_16bit,
+    meshedRect_16bit,
+    filledRect_16bit,
+    psetPixel_16bit,
+	psetPixel_16bit,
     getPixel_16bit
 };
 
@@ -184,3 +186,4 @@ void GX_GetGraphicInterfaceRef16(struct GXSYSTEM *pGX, GXGRAPHICINTERFACE *p)
 {
 	*p = GXDrv_16bit;
 }
+

@@ -34,6 +34,3 @@ NET_ClientDriver *NET_SystemGetInterface_STD(void)
      return NULL;
 }
 
-
-
-

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -33,7 +33,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "_rlx32.h"
 #include "_rlx.h"
 
-void SYS_Debug(char *fmt, ...)
+void SYS_Debug(const char *fmt, ...)
 {
     FILE *fp = fopen("/boot/debug.txt", "a+t");
 	char buffer[8192];
@@ -41,22 +41,19 @@ void SYS_Debug(char *fmt, ...)
     va_list argptr;
     va_start(argptr, fmt);
 	vsprintf(buffer, fmt, argptr);
-    
+
 	if (fp)
         fprintf(fp, "%s\n", buffer);
-	
+
 	printf("%s\n", buffer);
 
     va_end(argptr);
 
 	if (fp)
 		fclose(fp);
-    
-    return;
 }
 
-
-void SYS_Msg(char *fmt, ...)
+void SYS_Msg(const char *fmt, ...)
 {
     char buffer[8192];
     va_list argptr;
@@ -88,7 +85,6 @@ void SYS_Msg(char *fmt, ...)
 				break;
 			}
 		}
-
 	}
 	else
 	{
@@ -106,10 +102,9 @@ void SYS_Msg(char *fmt, ...)
 			box->Go();
 		}
 	}
-    return;
 }
 
-void SYS_Error(char *fmt, ...)
+void SYS_Error(const char *fmt, ...)
 {
 	char tmp[1024];
     va_list argptr;
@@ -118,5 +113,5 @@ void SYS_Error(char *fmt, ...)
     va_end(argptr);
     SYS_Debug(tmp);
 	SYS_Msg("*%s\nPress Retry to debug application\n",tmp);
-	return;
 }
+

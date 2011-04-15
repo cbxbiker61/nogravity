@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -38,24 +38,22 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 static LPDIRECTINPUTDEVICE8		g_pMouse;
 static DIMOUSESTATE2				sState;
 
-static void SetPosition(u_int32_t x, u_int32_t y)
+static void SetPosition(uint32_t x, uint32_t y)
 {
     SetCursorPos(x, y);
-    return;
 }
 
 static void Show(void)
 {
     ShowCursor(TRUE);
-    return;
 }
 
 static void Hide(void)
 {
     ShowCursor(FALSE);
-    return;
 }
-static int Open(void *hwnd) 			// Return non-zero if error
+
+static int Open(void *hwnd)			// Return non-zero if error
 {
 	if (SYS_DXTRACE(g_lpDI->CreateDevice(GUID_SysMouse, &g_pMouse, NULL)))
        return -2;
@@ -74,7 +72,7 @@ static int Open(void *hwnd) 			// Return non-zero if error
 	DIDEVCAPS caps;
 	caps.dwSize = sizeof(caps);
 	g_pMouse->GetCapabilities(&caps);
-		
+
 	if (!SYS_DXTRACE(g_pMouse->GetCapabilities(&caps)))
 	{
 		sMOU->numButtons = caps.dwButtons;
@@ -93,7 +91,6 @@ static void Release(void)
 		g_pMouse = NULL;
 	}
 }
-
 
 static unsigned long Update(void *device)
 {
@@ -120,7 +117,7 @@ static unsigned long Update(void *device)
 	POINT point;
 	GetCursorPos(&point);
 
-	if (point.x < 0) 
+	if (point.x < 0)
 		point.x = 0;
 
 	if (point.y < 0)
@@ -132,19 +129,17 @@ static unsigned long Update(void *device)
 	return 0;
 }
 
-
 _RLXEXPORTFUNC MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
 {
 	static MSE_ClientDriver driver = {
-		Open, 
+		Open,
 		Release,
 		Show,
-		Hide, 
+		Hide,
 		SetPosition,
 		Update
 	};
 	sMOU = &driver;
     return &driver;
 }
-
 

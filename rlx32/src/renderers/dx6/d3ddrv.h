@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,34 +29,34 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define D3DMAX_TMU  2
 
 typedef struct {
-    DDPIXELFORMAT       	pfd;
-    u_int8_t               	bPalettized, IndexBPP;
-    u_int8_t               	RedMaskSize, RedFieldPosition;
-    u_int8_t               	BlueMaskSize, BlueFieldPosition;
-    u_int8_t               	GreenMaskSize, GreenFieldPosition;
-    u_int8_t               	RsvdMaskSize, RsvdFieldPosition;
+    DDPIXELFORMAT	pfd;
+    uint8_t	bPalettized, IndexBPP;
+    uint8_t	RedMaskSize, RedFieldPosition;
+    uint8_t	BlueMaskSize, BlueFieldPosition;
+    uint8_t	GreenMaskSize, GreenFieldPosition;
+    uint8_t	RsvdMaskSize, RsvdFieldPosition;
 }D3D_TextureFormat;
 
 typedef struct {
-    char                	szDeviceDesc[64];
-    char                	szDeviceName[64];
-    GUID                	guidDevice;
-    D3DDEVICEDESC       	d3dSWDeviceDesc;
-    D3DDEVICEDESC       	d3dHWDeviceDesc;
-    DDPIXELFORMAT       	ddpfZBuffer;
-    LPD3DDEVICEDESC     	desc;
-    BOOL                	fIsHardware;
-    BOOL                	bIsPrimary;
-    int                 	NumTextureFormats;
-    D3D_TextureFormat 		TextureFormat[63];
+    char	szDeviceDesc[64];
+    char	szDeviceName[64];
+    GUID	guidDevice;
+    D3DDEVICEDESC	d3dSWDeviceDesc;
+    D3DDEVICEDESC	d3dHWDeviceDesc;
+    DDPIXELFORMAT	ddpfZBuffer;
+    LPD3DDEVICEDESC	desc;
+    BOOL	fIsHardware;
+    BOOL	bIsPrimary;
+    int	NumTextureFormats;
+    D3D_TextureFormat		TextureFormat[63];
 }D3DHARDRIVER;
 
 typedef struct {
-    LPDIRECT3DTEXTURE2   	lpTexture;
-    LPDIRECTDRAWSURFACE4 	lpTextureSurf;    
-    LPDIRECTDRAWSURFACE4 	lpSurface3D;
-    u_int32_t                	offsetSwap;
-    unsigned             	option;
+    LPDIRECT3DTEXTURE2	lpTexture;
+    LPDIRECTDRAWSURFACE4	lpTextureSurf;
+    LPDIRECTDRAWSURFACE4	lpSurface3D;
+    uint32_t	offsetSwap;
+    unsigned	option;
 }V3XD3DHANDLE;
 
 typedef struct _D3DTLVERTEX2 {
@@ -120,11 +121,12 @@ __extern_c
 
  _RLXEXPORTFUNC void RLXAPI V3XDRV_Load_D3D(void);
  _RLXEXPORTFUNC void  D3D_TextureSwapReset(void);
- _RLXEXPORTFUNC u_int32_t D3D_TextureSwapPut(u_int8_t *buffer, u_int32_t size);
- _RLXEXPORTFUNC void  D3D_TextureSwapGet(u_int8_t *dest, u_int32_t offset, u_int32_t size);
+ _RLXEXPORTFUNC uint32_t D3D_TextureSwapPut(uint8_t *buffer, uint32_t size);
+ _RLXEXPORTFUNC void  D3D_TextureSwapGet(uint8_t *dest, uint32_t offset, uint32_t size);
 
 #define D3DFVF_TLVERTEX2 ( D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_SPECULAR | (2<<D3DFVF_TEXCOUNT_SHIFT))
 
 __end_extern_c
 
 extern  V3X_GXSystem   V3X_Direct3D;
+

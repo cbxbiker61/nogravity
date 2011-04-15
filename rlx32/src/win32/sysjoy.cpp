@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -59,17 +59,17 @@ static int Open(void *hwnd, int bForceFeedback)
     {
         return FALSE;
     }
-    
+
     if (SYS_DXTRACE(g_pJoystick->SetDataFormat(&c_dfDIJoystick2)))
     {
         return FALSE;
     }
-    
+
     if (SYS_DXTRACE(g_pJoystick->SetCooperativeLevel((HWND)hwnd, DISCL_EXCLUSIVE | DISCL_BACKGROUND)))
     {
         return FALSE;
     }
-    
+
     if (bForceFeedback)
     {
         DIPROPDWORD dipdw;
@@ -84,7 +84,7 @@ static int Open(void *hwnd, int bForceFeedback)
 	DIDEVCAPS caps;
 	caps.dwSize = sizeof(caps);
 	g_pJoystick->GetCapabilities(&caps);
-		
+
 	if (!SYS_DXTRACE(g_pJoystick->GetCapabilities(&caps)))
 	{
 		sJOY->numButtons = caps.dwButtons;
@@ -104,13 +104,13 @@ static void Release(void)
         g_pEffect[0]->Release();
         g_pEffect[0] = NULL;
     }
+
     if (g_pJoystick)
     {
         SYS_DXTRACE(g_pJoystick->Unacquire());
         g_pJoystick->Release();
         g_pJoystick = NULL;
     }
-    return;
 }
 
 _RLXEXPORTFUNC int Acquire(void)
@@ -120,8 +120,10 @@ _RLXEXPORTFUNC int Acquire(void)
         SYS_DXTRACE(g_pJoystick->Acquire());
         acquired = 1;
     }
+
     if (g_pEffect[0])
         g_pEffect[0]->Start(1, 0);
+
     return 1;
 }
 
@@ -132,8 +134,10 @@ _RLXEXPORTFUNC int Unacquire(void)
         g_pJoystick->Unacquire();
         acquired = 0;
     }
-    if (g_pEffect[0]) 
+
+    if (g_pEffect[0])
         g_pEffect[0]->Stop();
+
     return 1;
 }
 
@@ -143,21 +147,21 @@ static unsigned long Update(void *device)
 	if (!g_pJoystick)
 		return -1;
 
-    HRESULT hr = g_pJoystick->Poll(); 
-    if(FAILED(hr))  
+    HRESULT hr = g_pJoystick->Poll();
+    if(FAILED(hr))
     {
         // DInput is telling us that the input stream has been
         // interrupted. We aren't tracking any state between polls, so
         // we don't have any special reset that needs to be done. We
         // just re-acquire and try again.
         hr = SYS_DXTRACE(g_pJoystick->Acquire());
-        while( hr == DIERR_INPUTLOST ) 
+        while( hr == DIERR_INPUTLOST )
             hr = SYS_DXTRACE(g_pJoystick->Acquire());
 
         // hr may be DIERR_OTHERAPPHASPRIO or other errors.  This
-        // may occur when the app is minimized or in the process of 
-        // switching, so just try again later 
-        return S_OK; 
+        // may occur when the app is minimized or in the process of
+        // switching, so just try again later
+        return S_OK;
     }
 
     // Get the input's device state
@@ -174,7 +178,7 @@ static unsigned long Update(void *device)
 // TODO:  lRx = lZ and lRy = lRx with PS2 pad
 
 	sJOY->rglSlider[0] = sJOY->rglSlider[0];
-	sJOY->rglSlider[1] = sJOY->rglSlider[1];	
+	sJOY->rglSlider[1] = sJOY->rglSlider[1];
 	sysMemCpy(sJOY->rgdwPOV, g_sJOY.rgdwPOV, 4 * 4);
 	sysMemCpy(sJOY->steButtons, sJOY->rgbButtons, 128);
 	sysMemCpy(sJOY->rgbButtons, g_sJOY.rgbButtons, 128);
@@ -206,9 +210,7 @@ static unsigned long Update(void *device)
 	sJOY->rglFSlider[1] = g_sJOY.rglFSlider[1];
 #endif
 	return 0;
-
 }
-
 
 JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
 {
@@ -220,3 +222,4 @@ JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
 
     return &driver;
 }
+

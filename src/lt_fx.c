@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -73,17 +73,15 @@ void NG_FXCreate(void)
         pExpl->fce.uvTab = (V3XUV**)MM_heap.malloc(sizeof(V3XUV*));   // 1 fois
         pExpl->fce.uvTab[0] = (V3XUV*) MM_heap.malloc(4*sizeof(V3XUV));  // 1 fois
         sysMemZero(&pExpl->material, sizeof(V3XMATERIAL));
-        
+
 		pExpl->fce.Mat = &pExpl->material;
         pExpl->material.info.Texturized = 1;
         pExpl->material.info.Sprite = 1;
         pExpl->material.info.Opacity  = 1;
         pExpl->material.Render  = V3XRCLASS_bitmap_transp;
 		pExpl->material.alpha = (V3X.Client->Capabilities&GXSPEC_ALPHABLENDING_ADD) ? 200 : 128;
-    }    
-    return;
+    }
 }
-
 
 void NG_FXDraw(void)
 {
@@ -91,27 +89,27 @@ void NG_FXDraw(void)
     SGEffect *p;
     for (p=g_SGGame.pExpl, i=g_SGGame.numEffects;i!=0;p++, i--)
     {
-      	if (p->fce.visible)
-      	{            
+		if (p->fce.visible)
+		{
 			int j;
             for (j=0;j<2;j++)
-            {       
+            {
 				GXSPRITE *sp = p->Sprite->item + p->Step[j];
 
                 CSP_Color(RGB_PixelFormat(
 					p->material.diffuse.r/(j+1),
-					p->material.diffuse.g/(j+1), 
+					p->material.diffuse.g/(j+1),
 					p->material.diffuse.b/(j+1)
 				));
 
 				GX.csp.zoom_TrspADD(sp,
                         (int32_t)(p->pos2D[j].x - p->size2D[j].x/2),
                         (int32_t)(p->pos2D[j].y - p->size2D[j].y/2),
-                        (int32_t)p->size2D[j].x, 
+                        (int32_t)p->size2D[j].x,
 						(int32_t)p->size2D[j].y
 				);
             }
-        }         
+        }
     }
 }
 
@@ -192,7 +190,7 @@ void NG_FXUpdate(void)
             }
             if (!p->Dispo)
             {
-				int j;           		
+				int j;
 				for (j=0;j<2;j++)
 				{
 
@@ -205,7 +203,7 @@ void NG_FXUpdate(void)
 						if (j == 0)
 						p->fce.visible = 1;
 					}
-					else 
+					else
 					{
 						if (j == 0)
 						p->fce.visible = 0;
@@ -215,7 +213,6 @@ void NG_FXUpdate(void)
             }
         }
     }
-    return;
 }
 
 // Explosion sphere
@@ -245,20 +242,19 @@ void NG_FXUpdateEx(void)
 					Mat->diffuse.g = 255;
 					Mat->diffuse.b = 255;
 					Mat->info.Transparency = V3XBLENDMODE_ALPHA;
-					Mat->alpha = (u_int8_t)(256.f- pExpl->radius);
+					Mat->alpha = (uint8_t)(256.f- pExpl->radius);
 				}
 			}
 		}
 	}
-    return;
 }
 
 
 void NG_FXLoadData(void)
 {
-	int i;    
+	int i;
 	if (V3X.Client->Capabilities&GXSPEC_HARDWARE)
-    {            
+    {
         GXSPRITE *sp;
 		g_pspFlares = MM_CALLOC(1, GXSPRITEGROUP);
         g_pspFlares->maxItem = 12;
@@ -282,16 +278,16 @@ void NG_FXLoadData(void)
 	i = 0;
 	while (g_pszAnimList[i]!=NULL)
     {
-		char tex[256]; 
+		char tex[256];
 		sprintf(tex, ".\\anim\\%s", g_pszAnimList[i]);
         g_pspFX[i] = FLI_LoadToSpriteGroup(tex, 0);
 		SYS_ASSERT(g_pspFX[i]);
         i++;
-    }    
+    }
 
 	{
 		SGEffect *pExpl;
-	   
+
 		for (pExpl=g_SGGame.pExpl, i=g_SGGame.numEffects;i!=0;pExpl++, i--)
 		{
 			pExpl->Dispo = 1;
@@ -299,7 +295,6 @@ void NG_FXLoadData(void)
 			V3XMaterial_Register(&pExpl->material);
 		}
 	}
-    return;
 }
 
 void NG_FXReleaseData()
@@ -319,8 +314,8 @@ void NG_FXReleaseData()
 	if (g_pspFlares2)
 		CSPG_Release(g_pspFlares2);
 	g_pspFlares2 = 0;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NG_FXRelease(void)
@@ -338,7 +333,6 @@ void NG_FXRelease(void)
 		MM_heap.free(pExpl->fce.uvTab[0]);
 		MM_heap.free(pExpl->fce.uvTab);
     }
-    return;
 }
 
 #define MAXLENZ 12
@@ -351,17 +345,17 @@ typedef struct
 }FlareInfo;
 
 static const FlareInfo Flare[16]={
-    {-.4f, 3, 0}, 
-    { .4f, 3, 0}, 
-    { .5f, 8, 0}, 
+    {-.4f, 3, 0},
+    { .4f, 3, 0},
+    { .5f, 8, 0},
     { .6f, 4, 0},
-    { .8f, 3, 0}, 
-    { .9f, 1, 0}, 
+    { .8f, 3, 0},
+    { .9f, 1, 0},
     {1.3f, 2, 0},
-    {1.4f, 5, 0}, 
-    {1.5f, 8, 0}, 
-    {1.6f, 16, 1}, 
-    {1.8f, 10, 0}, 
+    {1.4f, 5, 0},
+    {1.5f, 8, 0},
+    {1.6f, 16, 1},
+    {1.8f, 10, 0},
 	{2.0f, 4, 0}
 };
 
@@ -384,9 +378,9 @@ void NG_FXFlare(void)
         lensSize.z = V3X.ViewPort.Focal* .025f * it;
         if (light->flags&V3XLIGHTCAPS_LENZFLARE)
         {
-            V3XVECTOR light2cam;   
+            V3XVECTOR light2cam;
 			V3XVector_Set(&light2cam, 0, 0, 0);
-            switch (light->type) 
+            switch (light->type)
 			{
                 case V3XLIGHTTYPE_OMNI:
                 case V3XLIGHTTYPE_DIRECTIONAL:
@@ -408,7 +402,7 @@ void NG_FXFlare(void)
                     V3XVECTOR direction;
                     V3XVECTOR lenzOnView;
                     const FlareInfo *F = Flare;
-                    if (alphaLevel> CST_ONE) 
+                    if (alphaLevel> CST_ONE)
 						alphaLevel = CST_ONE;
 
                     if (alphaLevel>=0.98f)
@@ -443,7 +437,7 @@ void NG_FXFlare(void)
                         if (lensSize.x<0) lensSize.x=-lensSize.x;
                         if (lensSize.y<0) lensSize.y=-lensSize.y;
                         x = (int32_t)(lenzOnView.x - (lensSize.x/2));
-                        y = (int32_t)(lenzOnView.y - (lensSize.y/2));    
+                        y = (int32_t)(lenzOnView.y - (lensSize.y/2));
                         GX.csp.zoom_TrspADD(sp, x, y, (int32_t)lensSize.x, (int32_t)lensSize.y);
                     }
                 }
@@ -451,7 +445,6 @@ void NG_FXFlare(void)
         }
     }
     V3X.Setup.flags = op;
-    return;
 }
 
 void NG_AddFaceMoreObjects(void)
@@ -460,9 +453,9 @@ void NG_AddFaceMoreObjects(void)
     SGEffect *pExpl;
 
     int i;
-    if (V3X.Setup.flags&V3XOPTION_DUPPOLY) 
+    if (V3X.Setup.flags&V3XOPTION_DUPPOLY)
 		return;
-	
+
     for (pExpl=g_SGGame.pExpl, i=g_SGGame.numEffects;i!=0;pExpl++, i--)
     {
         if ((pExpl->fce.visible)&&(!pExpl->Dispo))
@@ -471,11 +464,10 @@ void NG_AddFaceMoreObjects(void)
             if ((p->visible)&&(V3X.Buffer.MaxFaces<V3X.Buffer.MaxFacesDisplay))
             {
                 V3X.Buffer.RenderedFaces[V3X.Buffer.MaxFaces++] = p;
-            }     
+            }
         }
     }
 	*/
-    return;
 }
 
 /*------------------------------------------------------------------------
@@ -488,7 +480,6 @@ void NG_AddFaceMoreObjects(void)
 void NG_FXImpact(int power)
 {
     g_SGGame.Shock=power<12 ? power : 12;
-    return;
 }
 
 
@@ -509,8 +500,7 @@ int NG_FXGetByName(char *s)
 
 void NG_FXLoadList()
 {
-	FILE *in;	   
-    in = FIO_cur->fopen(".\\anim\\anim.lst", "rb");
+	FILE *in = FIO_cur->fopen(".\\anim\\anim.lst", "rb");
 	SYS_ASSERT(in);
     g_pszAnimList = array_loadtext(in, 32, -1);
     FIO_cur->fclose(in);
@@ -552,8 +542,8 @@ void NG_FXAvary(V3XOVI *mOVI, SGScript *pInf)
                     if ((Cs)&&((Cs->flags&V3XCMODE_DONTMOVE)))
                     {
                         V3XVector_Madd(&Cs->velocity,
-                        &dist, 
-                        &Cs->velocity, 
+                        &dist,
+                        &Cs->velocity,
                         per);
                     }
                     dii = MULF32((V3XSCALAR)pInf->Avary, per);
@@ -590,8 +580,8 @@ void NG_FXAvary(V3XOVI *mOVI, SGScript *pInf)
             }
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NG_FXDebris(SGScript *pInf, V3XOVI *OVI)
@@ -605,8 +595,8 @@ void NG_FXDebris(SGScript *pInf, V3XOVI *OVI)
     SGEffect *p;
     V3XMESH *obj = OVI->mesh;
     V3XVECTOR v;
-    i = (int32_t)((xSHRD(OVI->ORI->global_rayon, 3))+2); 
-    if (i>MAX_DEBRIS) 
+    i = (int32_t)((xSHRD(OVI->ORI->global_rayon, 3))+2);
+    if (i>MAX_DEBRIS)
 		i=MAX_DEBRIS;
     for (;i!=0;i--)
     {
@@ -617,12 +607,12 @@ void NG_FXDebris(SGScript *pInf, V3XOVI *OVI)
         {
             p->Step[1] = p->Step[0]= sysRand(p->Sprite->maxItem);
             p->Size = OVI->ORI->global_rayon / 8;
-            if (p->Size < 256*g_SGSettings.WorldUnit) 
+            if (p->Size < 256*g_SGSettings.WorldUnit)
 				p->Size = 256*g_SGSettings.WorldUnit;
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NG_FXBlast(SGScript *pInf, V3XOVI *OVI)
@@ -636,14 +626,14 @@ void NG_FXBlast(SGScript *pInf, V3XOVI *OVI)
     SGEffect *p;
     V3XMESH *obj = OVI->mesh;
     V3XVECTOR v;
-    i = (int)(xSHRD(OVI->ORI->global_rayon, 3)+2); 
-	if (i>MAX_BLASTS) 
+    i = (int)(xSHRD(OVI->ORI->global_rayon, 3)+2);
+	if (i>MAX_BLASTS)
 		i=MAX_BLASTS;
     for (;i!=0;i--)
     {
         x = sysRand(obj->numVerts);
         V3XVector_ApplyMatrixTrans(v, obj->vertex[x], obj->matrix.Matrix);
-        if (!f) 
+        if (!f)
 			v = obj->matrix.v.Pos;
         p=  NG_FXNew(&v, FX_IMPACT, 4, pInf, 1, OVI);
         if (p)
@@ -658,8 +648,8 @@ void NG_FXBlast(SGScript *pInf, V3XOVI *OVI)
             p->Size = OVI->ORI->global_rayon / 2;
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  SGEffect *NG_FXNew(V3XVECTOR *pos, int type, int lop, SGScript *pInf, int kp, V3XOVI *OVI)
@@ -669,7 +659,7 @@ void NG_FXBlast(SGScript *pInf, V3XOVI *OVI)
 */
 SGEffect *NG_FXNew(V3XVECTOR *pos, int type, int lop, SGScript *pInf, int kp, V3XOVI *OVI)
 {
-   	int bAllowTrsp = 1; // (GX.View.Flags&GX_CAPS_BACKBUFFERINVIDEO)==0;
+	int bAllowTrsp = 1; // (GX.View.Flags&GX_CAPS_BACKBUFFERINVIDEO)==0;
     SGEffect *p, *EJ=NULL;
     int i, f=0;
     for (p=g_SGGame.pExpl, i=g_SGGame.numEffects;(i>0) && (f!=1);p++, i--)
@@ -700,12 +690,12 @@ SGEffect *NG_FXNew(V3XVECTOR *pos, int type, int lop, SGScript *pInf, int kp, V3
                     p->Size*=(float)(1<<(kp-1));
                 }
                 p->pos = &p->keep;
-            }  
-			else 
+            }
+			else
 				p->pos = pos;
             EJ = p;
             f = 1;
-            switch(p->type) 
+            switch(p->type)
 			{
                 case FX_FINISH:
 					p->FxCode = pInf->StartSound-1;
@@ -740,14 +730,14 @@ SGEffect *NG_FXNew(V3XVECTOR *pos, int type, int lop, SGScript *pInf, int kp, V3
 						p->Dispo = 1;
 						EJ = NULL;
 						transpa = 0;
-      					p->FadeStart = 0;
+						p->FadeStart = 0;
 					}
 					else
 					{
 						p->Sprite = g_pspFX[pInf->ExplodeMode-1];
 						SYS_ASSERT(p->Sprite);
 						p->FxCode = pInf->SoundExplode-1;
-      					p->FadeStart = p->Sprite->maxItem/2;
+						p->FadeStart = p->Sprite->maxItem/2;
 						p->Size/= 2;
 						transpa = 1;
 						p->Light = 128;
@@ -757,7 +747,7 @@ SGEffect *NG_FXNew(V3XVECTOR *pos, int type, int lop, SGScript *pInf, int kp, V3
 					p->FxCode = pInf->SoundAppear-1;
 					p->Sprite = g_pspFX[pInf->AppearMode-1];
 					SYS_ASSERT(p->Sprite);
-					if (p->OVI->state&V3XSTATE_HIDDEN) 
+					if (p->OVI->state&V3XSTATE_HIDDEN)
 						p->Size*=4;
 					p->OVI->state^=V3XSTATE_HIDDEN;
 					p->Light = 255;
@@ -788,7 +778,7 @@ SGEffect *NG_FXNew(V3XVECTOR *pos, int type, int lop, SGScript *pInf, int kp, V3
 				p->material.info.Transparency = (V3X.Client->Capabilities&GXSPEC_ALPHABLENDING_ADD)
 					                     ? (transpa==2 ? V3XBLENDMODE_SUB: V3XBLENDMODE_ADD)
 										 : V3XBLENDMODE_ALPHA;
-				p->material.Render = V3XRCLASS_bitmap_transp;				
+				p->material.Render = V3XRCLASS_bitmap_transp;
 				p->material.RenderID = V3XID_T_SPRITE+p->material.info.Transparency;
 				p->material.render_near = p->material.render_far =
 				p->material.render_clip  = V3XRENDER_SpriteAny;
@@ -815,8 +805,7 @@ void NG_FXChangeRenderObject(V3XMESH *obj, int nouv)
 {
     int i;
     for (i=0;i<obj->numMaterial;i++)
-     obj->material[i].Render=nouv;
-    return;
+        obj->material[i].Render=nouv;
 }
 
 void NG_ChangeGameDetail(void)
@@ -828,13 +817,13 @@ void NG_ChangeGameDetail(void)
 		Gs = V3X.Client->primitive->Linear256x256x8b;
     if (g_SGObjects.Sky)
     {
-        obj = g_SGObjects.Sky->mesh;  
+        obj = g_SGObjects.Sky->mesh;
         for (i=0;i<obj->numMaterial;i++)
         {
             V3XMATERIAL *mat = obj->material+i;
             mat->diffuse.r =  mat->diffuse.g =  mat->diffuse.b = 255;
             mat->info.Shade = 0;
-            switch(g_SGSettings.Sky) 
+            switch(g_SGSettings.Sky)
 			{
                 case 2:
                 if (Gs) mat->render_far = Gs->tex;
@@ -842,7 +831,7 @@ void NG_ChangeGameDetail(void)
                 mat->Render = V3XRCLASS_normal_mapping;
                 V3XMaterial_Register(mat);
                 V3X.Client->Capabilities|=GXSPEC_FORCEHWPERSPECTIVE;
-                break;               
+                break;
 				default:
                 g_SGGame.Scene->Layer.bg.flags &=~ V3XBG_COLOR|V3XBG_BLACK;
                 mat->Render = V3XRCLASS_normal_mapping;
@@ -854,9 +843,7 @@ void NG_ChangeGameDetail(void)
             }
         }
     }
-    return;
 }
-
 
 void NG_FXSetSceneShading(V3XSCENE *Scene, int limit)
 {
@@ -864,7 +851,7 @@ void NG_FXSetSceneShading(V3XSCENE *Scene, int limit)
     V3XORI    *ORI;
     V3XOVI    *OVI;
     V3XMESH *obj;
-    
+
     for (i=0, ORI=Scene->ORI;i<Scene->numORI;i++, ORI++)
     {
         if (ORI->type==V3XOBJ_MESH)
@@ -876,14 +863,13 @@ void NG_FXSetSceneShading(V3XSCENE *Scene, int limit)
                 k = Mat->info.Shade;
                 if (k)
                 {
-                   	Mat->info.Shade = max(k, limit);
+					Mat->info.Shade = max(k, limit);
 		            V3XMaterial_Register(Mat);
                 }
-        
-				if (Mat->info.Shade==2) 
+
+				if (Mat->info.Shade==2)
 					obj->flags&=~V3XMESH_FLATSHADE;
 
-				
             }
         }
     }
@@ -898,6 +884,5 @@ void NG_FXSetSceneShading(V3XSCENE *Scene, int limit)
 			}
 		}
 	}
-    return;
 }
 

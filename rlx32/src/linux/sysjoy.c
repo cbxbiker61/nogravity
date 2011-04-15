@@ -124,7 +124,7 @@ static unsigned long JoystickUpdate(void *dev)
   unsigned long ok = FALSE;
 
   // If we have a joystick device...
-  if (joy != NULL) 
+  if (joy != NULL)
   {
     // Copy the current button state to be the old button state.
     memcpy(sJOY->steButtons, sJOY->rgbButtons, sJOY->numButtons);
@@ -132,7 +132,7 @@ static unsigned long JoystickUpdate(void *dev)
     // For each button, record its new state.
     for (idx = 0; idx < sJOY->numButtons; idx ++)
     {
-      sJOY->rgbButtons[idx] = (u_int8_t)SDL_JoystickGetButton(joy, idx);
+      sJOY->rgbButtons[idx] = (uint8_t)SDL_JoystickGetButton(joy, idx);
     }
 
     // For each hat, record its new state.
@@ -179,3 +179,4 @@ _RLXEXPORTFUNC JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
 
   return sJOY;
 }
+

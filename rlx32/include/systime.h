@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -35,8 +36,8 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 // timer
 typedef struct _sys_timerhandle
 {
-	u_int32_t	flags;		   // Flags : 0x1:Accurate timer 0x2:immediate
-	u_int32_t	iFreq;		   // Internal (frequency)
+	uint32_t	flags;		   // Flags : 0x1:Accurate timer 0x2:immediate
+	uint32_t	iFreq;		   // Internal (frequency)
 	float		fFrameDelta;   // Min Frame Delta
 	float		fCounter;	   // <=) floating point coefficient
 	int			iCounter;	   // Fixed point counter
@@ -46,24 +47,24 @@ typedef struct _sys_timerhandle
 
 // Thread manager
 
-typedef u_int32_t  (CALLING_STD * PSYSTHREADFUNC)(void*);
+typedef uint32_t  (CALLING_STD * PSYSTHREADFUNC)(void*);
 
 typedef struct _sys_thread
 {
 	PSYSTHREADFUNC			pFunc;
 	void				*	pArgument;
-	u_int32_t				nStatus;
+	uint32_t				nStatus;
 	SYS_THREADHANDLE		hThread;
-}SYS_THREAD;		
+}SYS_THREAD;
 
 typedef struct _sys_mutex
 {
 	SYS_MUTEXHANDLE			hMutex;
-}SYS_MUTEX;	
+}SYS_MUTEX;
 
 
 #if defined __WATCOMC__
-void timer_rdtsc( u_int64_t *dest );
+void timer_rdtsc( uint64_t *dest );
 #pragma aux timer_rdtsc = \
 		"rdtsc"\
 		"mov [ebx], eax"\
@@ -72,7 +73,7 @@ void timer_rdtsc( u_int64_t *dest );
 
 #elif defined _MSC_VER && (!defined _WINCE)
 
-__inline void timer_rdtsc( u_int64_t *dest )
+__inline void timer_rdtsc( uint64_t *dest )
 {
 	__asm {
 		rdtsc
@@ -82,7 +83,7 @@ __inline void timer_rdtsc( u_int64_t *dest )
 	 }
 }
 #elif defined ( __DJGPP__ ) || (defined __BEOS__)
-extern __inline__ void timer_rdtsc( u_int64_t *dest )
+extern __inline__ void timer_rdtsc( uint64_t *dest )
 {
 	int dummy;
 	__asm__ __volatile__ (
@@ -126,15 +127,16 @@ _RLXEXPORTFUNC	void		timer_Reset(SYS_TIMER *tm);
 _RLXEXPORTFUNC	void		timer_Update(SYS_TIMER *tm);
 
 // Mutex
-_RLXEXPORTFUNC  int 		mutex_init(SYS_MUTEX *mutex);
-_RLXEXPORTFUNC  int 		mutex_destroy(SYS_MUTEX *mutex);
-_RLXEXPORTFUNC  int 		mutex_lock(SYS_MUTEX *mutex);
-_RLXEXPORTFUNC  int 		mutex_unlock(SYS_MUTEX *mutex);
+_RLXEXPORTFUNC  int		mutex_init(SYS_MUTEX *mutex);
+_RLXEXPORTFUNC  int		mutex_destroy(SYS_MUTEX *mutex);
+_RLXEXPORTFUNC  int		mutex_lock(SYS_MUTEX *mutex);
+_RLXEXPORTFUNC  int		mutex_unlock(SYS_MUTEX *mutex);
 
-_RLXEXPORTFUNC	u_int32_t	timer_sec(void);
-_RLXEXPORTFUNC	u_int32_t	timer_ms(void);
-_RLXEXPORTFUNC	void		timer_snooze(u_int32_t ms);
+_RLXEXPORTFUNC	uint32_t	timer_sec(void);
+_RLXEXPORTFUNC	uint32_t	timer_ms(void);
+_RLXEXPORTFUNC	void		timer_snooze(uint32_t ms);
 
 __end_extern_c
 
 #endif
+

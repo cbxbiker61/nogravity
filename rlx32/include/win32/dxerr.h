@@ -1,3 +1,4 @@
+#pragma once
 /*==========================================================================;
  *
  *
@@ -15,20 +16,20 @@ extern "C" {
 
 //
 //  DXGetErrorString
-//  
-//  Desc:  Converts a DirectX HRESULT to a string 
+//
+//  Desc:  Converts a DirectX HRESULT to a string
 //
 //  Args:  HRESULT hr   Can be any error code from
 //                      D3D D3DX DDRAW DPLAY DMUSIC DSOUND DINPUT DSHOW
 //
-//  Return: Converted string 
+//  Return: Converted string
 //
 #define DXGetErrorString(hr) #hr
 
 
 //
 //  DXGetErrorDescription
-//  
+//
 //  Desc:  Returns a string description of a DirectX HRESULT
 //
 //  Args:  HRESULT hr   Can be any error code from
@@ -43,7 +44,7 @@ const WCHAR* WINAPI DXGetErrorDescriptionW(HRESULT hr);
     #define DXGetErrorDescription DXGetErrorDescriptionW
 #else
     #define DXGetErrorDescription DXGetErrorDescriptionA
-#endif 
+#endif
 
 
 //
@@ -51,15 +52,15 @@ const WCHAR* WINAPI DXGetErrorDescriptionW(HRESULT hr);
 //
 //  Desc:  Outputs a formatted error message to the debug stream
 //
-//  Args:  CHAR* strFile   The current file, typically passed in using the 
+//  Args:  CHAR* strFile   The current file, typically passed in using the
 //                         __FILE__ macro.
-//         DWORD dwLine    The current line number, typically passed in using the 
+//         DWORD dwLine    The current line number, typically passed in using the
 //                         __LINE__ macro.
 //         HRESULT hr      An HRESULT that will be traced to the debug stream.
 //         CHAR* strMsg    A string that will be traced to the debug stream (may be NULL)
 //         BOOL bPopMsgBox If TRUE, then a message box will popup also containing the passed info.
 //
-//  Return: The hr that was passed in.  
+//  Return: The hr that was passed in.
 //
 HRESULT WINAPI DXTraceA( char* strFile, DWORD dwLine, HRESULT hr, char* strMsg, BOOL bPopMsgBox );
 HRESULT WINAPI DXTraceW( char* strFile, DWORD dwLine, HRESULT hr, WCHAR* strMsg, BOOL bPopMsgBox );
@@ -68,7 +69,7 @@ HRESULT WINAPI DXTraceW( char* strFile, DWORD dwLine, HRESULT hr, WCHAR* strMsg,
 #define DXTrace DXTraceW
 #else
 #define DXTrace DXTraceA
-#endif 
+#endif
 
 
 //
@@ -90,3 +91,4 @@ HRESULT WINAPI DXTraceW( char* strFile, DWORD dwLine, HRESULT hr, WCHAR* strMsg,
 #endif //__cplusplus
 
 #endif // _DXERR_H_
+

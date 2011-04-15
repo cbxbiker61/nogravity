@@ -86,7 +86,7 @@ static char *KeyboardNameScanCode(int scn)
 }
 
 static unsigned long KeyboardUpdate(void *dev)
-{  
+{
   return TRUE;
 }
 
@@ -105,3 +105,4 @@ _RLXEXPORTFUNC KEY_ClientDriver *KEY_SystemGetInterface_STD(void)
 
   return sKEY;
 }
+

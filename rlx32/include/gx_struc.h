@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -46,7 +47,7 @@ enum {
 
 enum
 {
-	GX_STATE_BACKBUFFERPAGE = 0x100,    // Internal (buffer page 0/1)      
+	GX_STATE_BACKBUFFERPAGE = 0x100,    // Internal (buffer page 0/1)
 	GX_STATE_LOCKED = 0x800,    // FB is locked (write is allowed)
     GX_STATE_SCENEBEGUN = 0x1000,   // 3D Scene has begun.
 	GX_STATE_MENUBAR = 0x2000,
@@ -73,44 +74,44 @@ typedef struct _gx_colormask {
 
 typedef struct _gx_viewport{
 
-    u_int8_t            *lpBackBuffer;      // Pointer to the back buffer
-    u_int8_t            *lpFrontBuffer;     // Pointer to the front buffer
-    u_int32_t            lPitch;            // Pitch in byte (byte per lines)
-    u_int32_t            lSurfaceSize;      // Surface size in bytes
+    uint8_t            *lpBackBuffer;      // Pointer to the back buffer
+    uint8_t            *lpFrontBuffer;     // Pointer to the front buffer
+    uint32_t            lPitch;            // Pitch in byte (byte per lines)
+    uint32_t            lSurfaceSize;      // Surface size in bytes
     int32_t              lWidth;            // Width size of the screen
     int32_t              lHeight;           // Height size of the screen
     int32_t              lRatio;            // Ratio
-    u_int32_t            lVideoSize;        // Video memory size
-    int32_t              xmin;              // Viewport coordinates 
+    uint32_t            lVideoSize;        // Video memory size
+    int32_t              xmin;              // Viewport coordinates
     int32_t              ymin;
     int32_t              xmax;
     int32_t              ymax;
     void CALLING_C  (*Flip)(void);   // Display page function
-    u_int32_t            RGB_Magic;         // RGB mask for alpha blending
-    u_int32_t           *RGB_Mask;          // RGB table
-    u_int32_t            Flags;             // Flags (see "Video Caps")
+    uint32_t            RGB_Magic;         // RGB mask for alpha blending
+    uint32_t           *RGB_Mask;          // RGB table
+    uint32_t            Flags;             // Flags (see "Video Caps")
 	int					 State;
-    u_int16_t            DisplayMode;       // Display mode ID
-    u_int8_t             BytePerPixel;      // Numbers of bytes per pixel
-    u_int8_t             BitsPerPixel;      // Numbers of bits per pixel
-    u_int8_t			 Multisampling;
-	u_int8_t             Reserved;
+    uint16_t            DisplayMode;       // Display mode ID
+    uint8_t             BytePerPixel;      // Numbers of bytes per pixel
+    uint8_t             BitsPerPixel;      // Numbers of bits per pixel
+    uint8_t			 Multisampling;
+	uint8_t             Reserved;
 	GXRGBCOMPONENT		 ColorMask;
 
 }GXVIEWPORT;
 
 // Extended GXSPRITE structure
 typedef struct {
-     u_int8_t U, V, Alpha, Mode;
+     uint8_t U, V, Alpha, Mode;
      void *Page;
 }GXSPRITEUV;
 
 // Offscreen informations (private)
 typedef struct _gx_offplain {
-    u_int8_t            *lpSurface[16];
+    uint8_t            *lpSurface[16];
     unsigned          maxSurface;
     unsigned          currentSurface;
-    u_int8_t             flags[16];
+    uint8_t             flags[16];
 }GXSCREENBUFFERS;
 
 // DOS and BeOS hardware chipset features
@@ -130,14 +131,14 @@ typedef struct {
     char             *Chipname;
     char              xdefault[8];
     int32_t              feature3D;
-    u_int8_t             Familly;
+    uint8_t             Familly;
 }GX_HardwareInfo;
 
 // Display mode informations (private)
 typedef struct _gx_display_mode_info {
     short             mode;
-    u_int16_t            lWidth, lHeight;
-    u_int16_t            BitsPerPixel;
+    uint16_t            lWidth, lHeight;
+    uint16_t            BitsPerPixel;
 }GXDISPLAYMODEINFO;
 
 typedef int GXDISPLAYMODEHANDLE;
@@ -148,22 +149,22 @@ enum GX_EVENT_MODE {
 
 // Video Driver
 typedef struct {
-    u_int8_t          *(* RLXAPI Lock)(void);
+    uint8_t          *(* RLXAPI Lock)(void);
     void               (* RLXAPI Unlock)(void);
     GXDISPLAYMODEINFO*(* RLXAPI EnumDisplayList)(int bpp);
     void               (* RLXAPI GetDisplayInfo)(GXDISPLAYMODEHANDLE mode);
     int	               (* RLXAPI SetDisplayMode)(GXDISPLAYMODEHANDLE mode);
     GXDISPLAYMODEHANDLE(* RLXAPI SearchDisplayMode)(int lx, int ly, int bpp);
     int                (* RLXAPI CreateSurface)(int numberOfSparePages);
-    void               (* RLXAPI ReleaseSurfaces)(void); 
+    void               (* RLXAPI ReleaseSurfaces)(void);
     void               (* RLXAPI UploadSprite)(GXSPRITE *sp, rgb24_t *colorTable, int bpp);
     void               (* RLXAPI ReleaseSprite)(GXSPRITE *sp);
-    unsigned           (* RLXAPI UpdateSprite)(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable);
+    unsigned           (* RLXAPI UpdateSprite)(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable);
     int                (* RLXAPI RegisterMode)(int bpp);
     void               (* RLXAPI Shutdown)(void);
     int                (* RLXAPI Open)(void *hwnd);
     unsigned           (* RLXAPI NotifyEvent)(enum GX_EVENT_MODE mode, int x, int y);
-  
+
 
     char               s_DrvName[64];
 	int				   Capabilities;
@@ -173,24 +174,24 @@ typedef struct {
 // Graphic driver
 typedef struct _gx_graphic_interface
 {
-    void  (* CALLING_C drawAnyLine)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
-	void  (* CALLING_C drawAliasedLine)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
-    void  (* CALLING_C drawHorizontalLine)(int32_t x1, int32_t y1, int32_t lx, u_int32_t colour);
-    void  (* CALLING_C drawVerticalLine)(int32_t x1, int32_t y1, int32_t lx, u_int32_t colour);
-    void  (* CALLING_C drawWiredRect)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
+    void  (* CALLING_C drawAnyLine)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour);
+	void  (* CALLING_C drawAliasedLine)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour);
+    void  (* CALLING_C drawHorizontalLine)(int32_t x1, int32_t y1, int32_t lx, uint32_t colour);
+    void  (* CALLING_C drawVerticalLine)(int32_t x1, int32_t y1, int32_t lx, uint32_t colour);
+    void  (* CALLING_C drawWiredRect)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour);
     void  (* CALLING_C drawShadedRect)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, void *palette);
-    void  (* CALLING_C drawMeshedRect)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
-    void  (* CALLING_C drawFilledRect)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
-    void  (* CALLING_C drawPixel)(int32_t x, int32_t y, u_int32_t colour);
-	void  (* CALLING_C TrspPixel)(int32_t x, int32_t y, u_int32_t colour);
-    u_int32_t (* CALLING_C getPixel)(int32_t x, int32_t y);
+    void  (* CALLING_C drawMeshedRect)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour);
+    void  (* CALLING_C drawFilledRect)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour);
+    void  (* CALLING_C drawPixel)(int32_t x, int32_t y, uint32_t colour);
+	void  (* CALLING_C TrspPixel)(int32_t x, int32_t y, uint32_t colour);
+    uint32_t (* CALLING_C getPixel)(int32_t x, int32_t y);
     void  (* CALLING_C clearBackBuffer)(void);
     void  (* CALLING_C clearVideo)(void);
-    void  (* CALLING_C blit)(u_int32_t dest, u_int32_t src);
+    void  (* CALLING_C blit)(uint32_t dest, uint32_t src);
     void  (* CALLING_C waitDrawing)(void);
-    void  (* CALLING_C setPalette)(u_int32_t a, u_int32_t b, void * pal);
+    void  (* CALLING_C setPalette)(uint32_t a, uint32_t b, void * pal);
     void  (* CALLING_C setCursor)(int32_t x, int32_t y);
-    void  (* CALLING_C copyCursor)(u_int8_t *map);
+    void  (* CALLING_C copyCursor)(uint8_t *map);
 	void  (* CALLING_C setGammaRamp)(const rgb24_t *ramp);
 }GXGRAPHICINTERFACE;
 
@@ -204,7 +205,7 @@ struct GXSYSTEM
 	GX_HardwareInfo		Accel;
 	GXCLIENTDRIVER *	Client;
 	GXSPRITEINTERFACE			csp;
-	CSP_Config			csp_cfg;	
+	CSP_Config			csp_cfg;
 	rgb24_t			 *  ColorClut;
 	rgb24_t				ColorTables[4][256];
 	rgb24_t				ColorTable[256];
@@ -219,14 +220,15 @@ extern struct GXSYSTEM	GX;
 
 __end_extern_c
 
-#define GFX_byte(dest, val)              *(u_int8_t*)(dest)=(u_int8_t)val
-#define GFX_word(dest, val)              *(u_int16_t*)(dest)=(u_int16_t)val
-#define GFX_dword(dest, val)             *(u_int32_t*)(dest)=(u_int32_t)val
+#define GFX_byte(dest, val)              *(uint8_t*)(dest)=(uint8_t)val
+#define GFX_word(dest, val)              *(uint16_t*)(dest)=(uint16_t)val
+#define GFX_dword(dest, val)             *(uint32_t*)(dest)=(uint32_t)val
 #define GFX_read(target)                *target
-#define GFX_memset2(target, val, size)    {int __i=size;u_int16_t *__a=(u_int16_t*)(target);for(;__i!=0;__a++, __i--) *__a=(u_int16_t)(val);}
-#define GFX_memset4(target, val, size)    {int __i=size;u_int32_t *__a=(u_int32_t*)(target);for(;__i!=0;__a++, __i--) *__a=(u_int32_t)(val);}
+#define GFX_memset2(target, val, size)    {int __i=size;uint16_t *__a=(uint16_t*)(target);for(;__i!=0;__a++, __i--) *__a=(uint16_t)(val);}
+#define GFX_memset4(target, val, size)    {int __i=size;uint32_t *__a=(uint32_t*)(target);for(;__i!=0;__a++, __i--) *__a=(uint32_t)(val);}
 
 #define GFX_memset(target, val, size)     sysMemSet(target, val, size)
 #define GFX_memcpy(target, source, size)  sysMemCpy(target, source, size)
 
 #endif
+

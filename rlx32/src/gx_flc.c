@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -52,43 +52,43 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define CT_FLC            0x00A1
 // Define
 #define memcpy_16(edi, esi, ecx) \
-for (;ecx!=0;edi+=2, esi+=2, ecx--) *(u_int16_t*)edi=*(u_int16_t*)esi;
+for (;ecx!=0;edi+=2, esi+=2, ecx--) *(uint16_t*)edi=*(uint16_t*)esi;
 // Define 2
 #define setmem_16(edi, ax, ecx) \
-for (;ecx!=0;edi+=2, ecx--) *(u_int16_t*)edi=ax;
+for (;ecx!=0;edi+=2, ecx--) *(uint16_t*)edi=ax;
 
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C Unpack_FLI_Chunk (u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *output, u_int32_t dwWidth, u_int32_t dwHeight)
+* PROTOTYPE  :  void CALLING_C Unpack_FLI_Chunk (uint8_t *Buffer, uint32_t Chunks, uint8_t *output, uint32_t dwWidth, uint32_t dwHeight)
 *
 * DESCRIPTION :
 *
 */
-void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *output, u_int32_t dwWidth, u_int32_t dwHeight, u_int8_t *ColorTable)
+void CALLING_C FLI_ChunkDecode(uint8_t *Buffer, uint32_t Chunks, uint8_t *output, uint32_t dwWidth, uint32_t dwHeight, uint8_t *ColorTable)
 {
 	char tex[256];
-    u_int8_t *esi, *edi, *oesi, *oedi;
-    u_int32_t chunk_size;
-    u_int16_t ax, bx;
+    uint8_t *esi, *edi, *oesi, *oedi;
+    uint32_t chunk_size;
+    uint16_t ax, bx;
     short cx, dx, dl;
     esi = Buffer;
     while (Chunks!=0)
     {
 	Chunks--;
-        chunk_size = *(u_int32_t*)Buffer;
-	ax = *(u_int16_t*)(esi+4);
+        chunk_size = *(uint32_t*)Buffer;
+	ax = *(uint16_t*)(esi+4);
         #ifdef __BIG_ENDIAN__
 	BSWAP32(&chunk_size, 1);
-	BSWAP16((u_int16_t*)&ax, 1);
+	BSWAP16((uint16_t*)&ax, 1);
 	#endif
 	oesi=esi;
 	esi+=6;
 	edi=output;
 	switch(ax) {
 	    case CT_FLI_SS2:
-	    bx = *(u_int16_t*)esi;
+	    bx = *(uint16_t*)esi;
 	    #ifdef __BIG_ENDIAN__
-	    BSWAP16((u_int16_t*)&bx, 1);
+	    BSWAP16((uint16_t*)&bx, 1);
 	    #endif
 	    esi+=2;
 	    while(bx!=0)
@@ -98,14 +98,14 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 		{
 		  dx = *(short*)esi;
 		  #ifdef __BIG_ENDIAN__
-		  BSWAP16((u_int16_t*)&dx, 1);
+		  BSWAP16((uint16_t*)&dx, 1);
 		  #endif
 		  esi+=2;
 		  if (dx<0) edi+=dwWidth*(-dx);
 		}while(dx<0);
 
 		{
-		    if (dx>(int)dwHeight) 
+		    if (dx>(int)dwHeight)
 				dx=0;
 		    oedi=edi;
 		    while (dx!=0)
@@ -117,9 +117,9 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 			if (cx<0)
 			{
 			    cx = -cx;
-			    ax = *(u_int16_t*)(esi+2);
+			    ax = *(uint16_t*)(esi+2);
 			    #ifdef __BIG_ENDIAN__
-			    BSWAP16((u_int16_t*)&ax, 1);
+			    BSWAP16((uint16_t*)&ax, 1);
 			    #endif
 			    esi+=4;
 			    setmem_16(edi, ax, cx);
@@ -135,15 +135,15 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	    }
 	    break;
 	    case CT_FLI_COLOR8BIT:
-	    bx = *(u_int16_t*)esi;
+	    bx = *(uint16_t*)esi;
 	    #ifdef __BIG_ENDIAN__
-	    BSWAP16((u_int16_t*)&bx, 1);
+	    BSWAP16((uint16_t*)&bx, 1);
 	    #endif
 	    esi+=2;
 	    for (;bx!=0;bx--)
 	    {
 		ax = *(esi+0);
-		edi = (u_int8_t*)(ColorTable+ax);
+		edi = (uint8_t*)(ColorTable+ax);
 		cx = *(esi+1);
 		if (cx==0) cx=256;
 		esi+=2;
@@ -152,15 +152,15 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	    tex[31]=127;
 	    break;
 	    case CT_FLI_COLOR6BIT:
-	    bx = *(u_int16_t*)esi;
+	    bx = *(uint16_t*)esi;
 	    #ifdef __BIG_ENDIAN__
-	    BSWAP16((u_int16_t*)&bx, 1);
+	    BSWAP16((uint16_t*)&bx, 1);
 	    #endif
 	    esi+=2;
 	    for (;bx!=0;bx--)
 	    {
 		ax = *(esi+0);
-		edi = (u_int8_t*)(ColorTable+ax);
+		edi = (uint8_t*)(ColorTable+ax);
 		cx = *(esi+1);
 		if (cx==0) cx=256;
 		esi+=2;
@@ -169,21 +169,21 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	    tex[31]=127;
 	    break;
 	    case CT_FLI_DELTA_FLI:
-	    ax = *(u_int16_t*)esi ;
+	    ax = *(uint16_t*)esi ;
 	    #ifdef __BIG_ENDIAN__
-	    BSWAP16((u_int16_t*)&ax, 1);
+	    BSWAP16((uint16_t*)&ax, 1);
 	    #endif
-	    ax*= (u_int16_t)dwWidth;
+	    ax*= (uint16_t)dwWidth;
 	    edi = output + ax;
-	    bx = *(u_int16_t*)(esi+2);
+	    bx = *(uint16_t*)(esi+2);
 	    #ifdef __BIG_ENDIAN__
-	    BSWAP16((u_int16_t*)&bx, 1);
+	    BSWAP16((uint16_t*)&bx, 1);
 	    #endif
 	    esi+= 4;
 	    while (bx!=0)
 	    {
 		bx--;
-		dl = *(u_int8_t*)esi;
+		dl = *(uint8_t*)esi;
 		esi++;
 		oesi=edi;
 		while (dl!=0)
@@ -194,7 +194,7 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 		    cx = *(signed char*)(esi+1);
 		    if (cx<0)
 		    {
-                        ax=*(u_int8_t*)(esi+2);
+                        ax=*(uint8_t*)(esi+2);
 			esi+=3;
                         cx=-cx;
 			sysMemSet(edi, ax, cx);
@@ -211,10 +211,10 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	    }
 	    break;
 	    case CT_FLI_BRUN:
-	    bx = (u_int16_t)dwHeight;
+	    bx = (uint16_t)dwHeight;
 	    do
 	    {
-		dl = *(u_int8_t*)esi;
+		dl = *(uint8_t*)esi;
 		esi++;
 		oedi = edi;
 		while(dl!=0)
@@ -223,7 +223,7 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 		    cx= *(signed char*)esi;
 		    if (cx>=0)
 		    {
-			ax = *(u_int8_t*)(esi+1);
+			ax = *(uint8_t*)(esi+1);
 			esi+=2;
 			sysMemSet(edi, ax, cx);
 		    }
@@ -251,23 +251,23 @@ void CALLING_C FLI_ChunkDecode(u_int8_t *Buffer, u_int32_t Chunks, u_int8_t *out
 	}
 	esi=oesi+chunk_size;
     }
-    return;
 }
 
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  int LOCAL DefaultDecode(unsigned id, void *data, u_int32_t size)
+* PROTOTYPE  :  int LOCAL DefaultDecode(unsigned id, void *data, uint32_t size)
 *
 * DESCRIPTION :
 *
 */
-u_int32_t static DefaultDecode(unsigned id, void *data, u_int32_t size)
+uint32_t static DefaultDecode(unsigned id, void *data, uint32_t size)
 {
     UNUSED(id);
     UNUSED(data);
     UNUSED(size);
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  FLI_STRUCT *FLI_Open(SYS_FILEHANDLE in, int md)
@@ -277,7 +277,7 @@ u_int32_t static DefaultDecode(unsigned id, void *data, u_int32_t size)
 */
 _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
 {
-    u_int32_t memleft, s;
+    uint32_t memleft, s;
     FLI_STRUCT *pAnim;
     pAnim = (FLI_STRUCT*) MM_heap.malloc(sizeof(FLI_STRUCT));
     pAnim->fli_stream = in;
@@ -285,10 +285,10 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
     pAnim->start = FIO_cur->ftell( pAnim->fli_stream ) + 128L;
     FIO_cur->fread(pAnim->Header.Raw, sizeof(char), 128, in);
     #ifdef __BIG_ENDIAN__
-    BSWAP32((u_int32_t*)&pAnim->Header.Struct.size, 1);
+    BSWAP32((uint32_t*)&pAnim->Header.Struct.size, 1);
     BSWAP16(&pAnim->Header.Struct.type, 6);
-    BSWAP32((u_int32_t*)&pAnim->Header.Struct.frame1, 2);
-    BSWAP32((u_int32_t*)&pAnim->Header.Struct.speed, 1);
+    BSWAP32((uint32_t*)&pAnim->Header.Struct.frame1, 2);
+    BSWAP32((uint32_t*)&pAnim->Header.Struct.speed, 1);
     #endif
     if (pAnim->Header.Struct.type!=0xAF11)  // FLI
     if (pAnim->Header.Struct.type!=0xAF12)  // FLC
@@ -297,7 +297,7 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
         return NULL;
     }
     s = pAnim->Header.Struct.width*pAnim->Header.Struct.height;
-    pAnim->decompBuffer = (u_int8_t*) MM_heap.malloc(s) ;
+    pAnim->decompBuffer = (uint8_t*) MM_heap.malloc(s) ;
     pAnim->MaximumFrame = pAnim->Header.Struct.Chunks;
     pAnim->bitmap.LY = pAnim->Header.Struct.height;
     pAnim->bitmap.LX = pAnim->Header.Struct.width;
@@ -305,9 +305,9 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
     pAnim->LastTime = timer_ms();
     pAnim->Flags       |= FLX_DECOMPRESSFRAME + FLX_LOOPANIMATION + FLX_ISPLAYING;
     pAnim->CurrentFrame = 0;
-   
+
     memleft = md&FLI_USEMEMORY ? 1<<31 : 0;
-    if (md&FLI_LZWPACKED) 
+    if (md&FLI_LZWPACKED)
 		memleft = 0;
     if (md&FLI_EXPANDED)
     {
@@ -316,21 +316,21 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
         pAnim->frames = MM_CALLOC(pAnim->MaximumFrame, GXSPRITE);
         for (i=pAnim->MaximumFrame, sp = pAnim->frames;i!=0;sp++, i--)
         {
-            sp->data = (u_int8_t*) MM_heap.malloc(pAnim->bitmap.LX*pAnim->bitmap.LY);
+            sp->data = (uint8_t*) MM_heap.malloc(pAnim->bitmap.LX*pAnim->bitmap.LY);
             sp->LX = pAnim->bitmap.LX;
             sp->LY = pAnim->bitmap.LY;
         }
         memleft = 0;
     }
-    if (memleft>(u_int32_t)(pAnim->Header.Struct.size+BUFFERSIZE))
+    if (memleft>(uint32_t)(pAnim->Header.Struct.size+BUFFERSIZE))
     {
-        pAnim->fileBuffer = (u_int8_t*)MM_heap.malloc(pAnim->Header.Struct.size);
+        pAnim->fileBuffer = (uint8_t*)MM_heap.malloc(pAnim->Header.Struct.size);
         pAnim->ReadMode = FLI_USEMEMORY;
         pAnim->start = 0;
     }
     else
     {
-        pAnim->fileBuffer = (u_int8_t*)MM_heap.malloc(BUFFERSIZE);
+        pAnim->fileBuffer = (uint8_t*)MM_heap.malloc(BUFFERSIZE);
         pAnim->ReadMode = (md&FLI_LZWPACKED) ? FLI_LZWPACKED : FLI_DIRECTFROMDISK;
     }
     if (pAnim->Header.Struct.type==0xAF12)
@@ -340,8 +340,8 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
     }
     if (pAnim->ReadMode==FLI_USEMEMORY)
     {
-        FIO_cur->fread(pAnim->fileBuffer, sizeof(u_int8_t), pAnim->Header.Struct.size-128L-pAnim->start, pAnim->fli_stream);
-        pAnim->start_buf = (u_int32_t)pAnim->fileBuffer;
+        FIO_cur->fread(pAnim->fileBuffer, sizeof(uint8_t), pAnim->Header.Struct.size-128L-pAnim->start, pAnim->fli_stream);
+        pAnim->start_buf = (uint32_t)pAnim->fileBuffer;
         FIO_cur->fclose(pAnim->fli_stream);
         pAnim->fli_stream = NULL;
     }
@@ -349,7 +349,7 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
     {
         int i;
         GXSPRITE *sp;
-        u_int8_t *temp = pAnim->decompBuffer;
+        uint8_t *temp = pAnim->decompBuffer;
         pAnim->Flags|=FLX_ISPLAYING;
         for (i=pAnim->MaximumFrame, sp= pAnim->frames;i!=0;sp++, i--)
         {
@@ -367,6 +367,7 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
     pAnim->Flags|=FLX_RESETPALETTE;
     return pAnim;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void FLI_Close(FLI_STRUCT *pAnim)
@@ -378,7 +379,7 @@ _RLXEXPORTFUNC void FLI_Close(FLI_STRUCT *pAnim)
 {
     switch(pAnim->ReadMode){
         case FLI_USEMEMORY:
-        pAnim->fileBuffer = (u_int8_t*)pAnim->start_buf;
+        pAnim->fileBuffer = (uint8_t*)pAnim->start_buf;
         pAnim->start = 0;
         break;
         case FLI_LZWPACKED:
@@ -402,8 +403,8 @@ _RLXEXPORTFUNC void FLI_Close(FLI_STRUCT *pAnim)
     MM_heap.free(pAnim->decompBuffer); //ok
     MM_heap.free(pAnim->fileBuffer); // ok
     MM_heap.free(pAnim);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void FLI_Rewind(FLI_STRUCT *pAnim)
@@ -423,7 +424,7 @@ _RLXEXPORTFUNC void FLI_Rewind(FLI_STRUCT *pAnim)
         FIO_gzip.fseek(pAnim->fli_stream, pAnim->start, SEEK_SET);
         break;
         case FLI_USEMEMORY:
-        pAnim->fileBuffer = (u_int8_t*)pAnim->start_buf;
+        pAnim->fileBuffer = (uint8_t*)pAnim->start_buf;
         if (pAnim->Header.Struct.type==0xAF12)
         {
             pAnim->start = pAnim->Header.Struct.frame1 - 128;
@@ -433,8 +434,8 @@ _RLXEXPORTFUNC void FLI_Rewind(FLI_STRUCT *pAnim)
         break;
     }
     pAnim->CurrentFrame = 1;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void FLI_Unpack(FLI_STRUCT *pAnim)
@@ -445,8 +446,8 @@ _RLXEXPORTFUNC void FLI_Rewind(FLI_STRUCT *pAnim)
 _RLXEXPORTFUNC void FLI_SetPalette(FLI_STRUCT *pAnim)
 {
 	static char __temp[2048];
-    int i;	
-    u_int32_t *b = (u_int32_t*)__temp;
+    int i;
+    uint32_t *b = (uint32_t*)__temp;
     rgb24_t *c = pAnim->ColorTable;
     for (i=256;i!=0;b++, c++, i--)
     {
@@ -454,13 +455,13 @@ _RLXEXPORTFUNC void FLI_SetPalette(FLI_STRUCT *pAnim)
         if (!*b) *b=1;
     }
     pAnim->bitmap.handle = __temp;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  _RLXEXPORTFUNC void FLI_Unpack(FLI_STRUCT *pAnim)
 *
-* Description :  
+* Description :
 *
 */
 _RLXEXPORTFUNC void FLI_Unpack(FLI_STRUCT *pAnim)
@@ -471,7 +472,7 @@ _RLXEXPORTFUNC void FLI_Unpack(FLI_STRUCT *pAnim)
         FLC_Header j;
         pAnim->Flags &= ~FLX_DECOMPRESSFRAME;
 
-        if (!(pAnim->Flags&FLX_ISPLAYING)) 
+        if (!(pAnim->Flags&FLX_ISPLAYING))
 			return;
 
         switch(pAnim->ReadMode)
@@ -494,7 +495,7 @@ _RLXEXPORTFUNC void FLI_Unpack(FLI_STRUCT *pAnim)
         if (pAnim->ReadMode!=FLI_EXPANDED)
         {
 #ifdef __BIG_ENDIAN__
-            BSWAP32((u_int32_t*)&j.Struct.size, 1);
+            BSWAP32((uint32_t*)&j.Struct.size, 1);
             BSWAP16(&j.Struct.type, 6);
 #endif
             j.Struct.size -= 16;
@@ -504,17 +505,17 @@ _RLXEXPORTFUNC void FLI_Unpack(FLI_STRUCT *pAnim)
                 switch(pAnim->ReadMode){
                     case FLI_LZWPACKED:
                     FIO_gzip.fread(pAnim->fileBuffer, sizeof(char), j.Struct.size, pAnim->fli_stream);
-					FLI_ChunkDecode(pAnim->fileBuffer, j.Struct.Chunks, pAnim->decompBuffer, pAnim->Header.Struct.width, pAnim->Header.Struct.height, (u_int8_t*)pAnim->ColorTable);
+					FLI_ChunkDecode(pAnim->fileBuffer, j.Struct.Chunks, pAnim->decompBuffer, pAnim->Header.Struct.width, pAnim->Header.Struct.height, (uint8_t*)pAnim->ColorTable);
                     break;
                     case FLI_DIRECTFROMDISK:
                     if (j.Struct.size<=BUFFERSIZE)
                     FIO_cur->fread(pAnim->fileBuffer, sizeof(char), j.Struct.size, pAnim->fli_stream);
                     else
                     FIO_cur->fseek(pAnim->fli_stream, j.Struct.size, SEEK_CUR);
-                    FLI_ChunkDecode(pAnim->fileBuffer, j.Struct.Chunks, pAnim->decompBuffer, pAnim->Header.Struct.width, pAnim->Header.Struct.height,(u_int8_t*)pAnim->ColorTable);
+                    FLI_ChunkDecode(pAnim->fileBuffer, j.Struct.Chunks, pAnim->decompBuffer, pAnim->Header.Struct.width, pAnim->Header.Struct.height,(uint8_t*)pAnim->ColorTable);
                     break;
                     case FLI_USEMEMORY:
-                    FLI_ChunkDecode(pAnim->fileBuffer, j.Struct.Chunks, pAnim->decompBuffer, pAnim->Header.Struct.width, pAnim->Header.Struct.height,(u_int8_t*)pAnim->ColorTable);
+                    FLI_ChunkDecode(pAnim->fileBuffer, j.Struct.Chunks, pAnim->decompBuffer, pAnim->Header.Struct.width, pAnim->Header.Struct.height,(uint8_t*)pAnim->ColorTable);
                     pAnim->fileBuffer+=j.Struct.size;
                     pAnim->start     +=j.Struct.size;
                     break;
@@ -547,14 +548,14 @@ _RLXEXPORTFUNC void FLI_Unpack(FLI_STRUCT *pAnim)
     pAnim->CurrentFrame++;
     if (pAnim->CurrentFrame>=pAnim->MaximumFrame)
     {
-        if (!(pAnim->Flags&FLX_LOOPANIMATION)) 
+        if (!(pAnim->Flags&FLX_LOOPANIMATION))
 			pAnim->Flags&=~FLX_ISPLAYING;
         else FLI_Rewind(pAnim);
     }
-    if (pAnim->Flags&FLX_FORMARD1FRAME) 
+    if (pAnim->Flags&FLX_FORMARD1FRAME)
 		pAnim->Flags&=~FLX_ISPLAYING;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -569,7 +570,7 @@ static GXSPRITEGROUP *Unpack_FLI_to_SpriteGroup(SYS_FILEHANDLE in, int diet)
     int32_t i, k;
     FLI_STRUCT *a ;
     a = FLI_Open(in, FLI_DIRECTFROMDISK);
-    if (!a) 
+    if (!a)
 		return NULL;
     pSpriteGroup = MM_CALLOC(1, GXSPRITEGROUP);
     pSpriteGroup->maxItem = a->MaximumFrame;
@@ -580,15 +581,16 @@ static GXSPRITEGROUP *Unpack_FLI_to_SpriteGroup(SYS_FILEHANDLE in, int diet)
         sp->LY = a->Header.Struct.height;
         sp->LX = a->Header.Struct.width;
         k = sp->LX * sp->LY;
-        sp->data = (u_int8_t*)MM_heap.malloc(k);
+        sp->data = (uint8_t*)MM_heap.malloc(k);
         sysMemCpy(sp->data, a->decompBuffer, k);
 		GX.Client->UploadSprite(sp, a->ColorTable, 1);
     }
 
-    pSpriteGroup->speed = (u_int16_t)a->Header.Struct.speed;
+    pSpriteGroup->speed = (uint16_t)a->Header.Struct.speed;
     FLI_Close(a);
     return pSpriteGroup;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GXSPRITEGROUP *FLI_LoadToSpriteGroup(char *filename, char *res, int diet)
@@ -600,10 +602,11 @@ _RLXEXPORTFUNC GXSPRITEGROUP *FLI_LoadToSpriteGroup(const char *filename, int di
 {
     SYS_FILEHANDLE in = FIO_cur->fopen(filename, "rb");
     GXSPRITEGROUP *f=NULL;
-    if (in) 
+    if (in)
 		f = Unpack_FLI_to_SpriteGroup(in, diet);
     return f;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -615,5 +618,5 @@ _RLXEXPORTFUNC void FLI_Draw(FLI_STRUCT *a, int xoff, int yoff)
 {
     FLI_Unpack(a);
     GX.csp.pset(xoff, yoff, &a->bitmap);
-    return;
 }
+

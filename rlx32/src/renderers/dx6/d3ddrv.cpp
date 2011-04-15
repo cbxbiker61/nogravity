@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -48,7 +48,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "v3xrend.h"
 #include "d3ddrv.h"
 
-void  (* CALLING_C old_drawAnyLine)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour);
+void  (* CALLING_C old_drawAnyLine)(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour);
 #define FLOATtoDWORD(a) (*(DWORD*)&(a))
 
 extern HWND g_hWnd;
@@ -70,7 +70,7 @@ extern GXCLIENTDRIVER GX_DDraw;
 
 static unsigned             pipe_iRender;
 static unsigned             pipe_iBlend;
-static u_int8_t               *pipe_pTex[4];
+static uint8_t               *pipe_pTex[4];
 
 static LPDIRECT3D3          g_lpD3D = NULL;
 static LPDIRECT3DDEVICE3    g_lpDevice = NULL;
@@ -78,12 +78,13 @@ static LPDIRECTDRAWSURFACE4 lpddZBuffer = NULL;
 static LPDIRECT3DVIEWPORT3  lpd3dViewport3 = NULL;
 
 static D3DHARDRIVER         g_cDeviceInfo;
-static u_int32_t                D3D_SpecularValue;
+static uint32_t                D3D_SpecularValue;
 static D3DVALUE             D3D_FogFactor, D3D_ClipFactor;
 static DDCOLORKEY           D3D_ColorKey;
 static LPD3DTLVERTEX2       g_lpVertexBuffer = NULL;
 
 static LPDIRECT3DMATERIAL3  g_lpBackgroundMaterial, g_lpLightingMaterial;
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void D3D_TextureSwapReset(void)
@@ -100,37 +101,38 @@ void D3D_TextureSwapReset(void)
 		GetTempFileName(szSwap, "vxswp", 1, szSwapPath);
     }
     DeleteFile(szSwapPath);
-    D3D_TextureSwapPut((u_int8_t*)szSwapPath, strlen(szSwapPath));
-    return;
+    D3D_TextureSwapPut((uint8_t*)szSwapPath, strlen(szSwapPath));
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  u_int32_t D3D_TextureSwapPut(u_int8_t *buffer, u_int32_t size)
+* PROTOTYPE  :  uint32_t D3D_TextureSwapPut(uint8_t *buffer, uint32_t size)
 *
 * DESCRIPTION :
 *
 */
-u_int32_t D3D_TextureSwapPut(u_int8_t *buffer, u_int32_t size)
+uint32_t D3D_TextureSwapPut(uint8_t *buffer, uint32_t size)
 {
     FILE *in = fopen(szSwapPath, "a+b");
-    u_int32_t offset=0;
+    uint32_t offset=0;
 	SYS_ASSERT(in);
     if (in)
     {
         offset = ftell(in);
         fwrite(buffer, sizeof(char), size, in);
 		fclose(in);
-    }    
+    }
     return offset;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void D3D_TextureSwapGet(u_int8_t *dest, u_int32_t offset)
+* PROTOTYPE  :  void D3D_TextureSwapGet(uint8_t *dest, uint32_t offset)
 *
 * DESCRIPTION :
 *
 */
-void D3D_TextureSwapGet(u_int8_t *dest, u_int32_t offset, u_int32_t size)
+void D3D_TextureSwapGet(uint8_t *dest, uint32_t offset, uint32_t size)
 {
     FILE *in=fopen(szSwapPath, "rb");
     if (in)
@@ -141,7 +143,6 @@ void D3D_TextureSwapGet(u_int8_t *dest, u_int32_t offset, u_int32_t size)
         }
     }
     fclose(in);
-    return;
 }
 
 static void ZbufferFree(void)
@@ -151,8 +152,8 @@ static void ZbufferFree(void)
         lpddZBuffer->Release();
         lpddZBuffer = NULL;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void ZbufferAlloc(void)
@@ -164,7 +165,7 @@ static int ZbufferAlloc(void)
 {
     DDSURFACEDESC2   ddsd;
     LPD3DDEVICEDESC lpd3dDeviceDesc = g_cDeviceInfo.fIsHardware ? &g_cDeviceInfo.d3dHWDeviceDesc : &g_cDeviceInfo.d3dSWDeviceDesc;
-    if (lpddZBuffer) 
+    if (lpddZBuffer)
 		return 0;
 
 	sysMemZero(&ddsd, sizeof(ddsd));
@@ -174,10 +175,10 @@ static int ZbufferAlloc(void)
     ddsd.dwWidth = g_pRLX->pGX->View.lWidth;
     ddsd.dwHeight = g_pRLX->pGX->View.lHeight;
     ddsd.ddpfPixelFormat = g_cDeviceInfo.ddpfZBuffer;
-    
+
     if (SYS_DXTRACE( g_lpDD->CreateSurface(&ddsd, &lpddZBuffer, NULL)))
     {
-        g_pRLX->pV3X->Client->Capabilities&=~GXSPEC_ENABLEZBUFFER;		
+        g_pRLX->pV3X->Client->Capabilities&=~GXSPEC_ENABLEZBUFFER;
         return 0;
     }
 
@@ -223,7 +224,7 @@ static void SetLightColor()
 	RGB_Set(material.diffuse, (D3DVALUE)1.0f, (D3DVALUE)1.0f, (D3DVALUE)1.0f);
 	RGB_Set(material.ambient, (D3DVALUE)1.0f, (D3DVALUE)1.0f, (D3DVALUE)1.0f);
 	RGB_Set(material.specular, (D3DVALUE)1.0f, (D3DVALUE)1.0f, (D3DVALUE)1.0f);
-	
+
 	SYS_DXTRACE( g_lpD3D->CreateMaterial(&g_lpLightingMaterial, NULL));
 	SYS_DXTRACE( g_lpLightingMaterial->SetMaterial(&material));
 	SYS_DXTRACE( g_lpLightingMaterial->GetHandle(g_lpDevice, &hLmat));
@@ -233,7 +234,7 @@ static void SetBackgroundColor(rgb24_t *color)
 {
 	DWORD hBmat;
 	D3DMATERIAL material;
-	sysMemZero(&material, sizeof(D3DMATERIAL));    
+	sysMemZero(&material, sizeof(D3DMATERIAL));
 	material.dwSize = sizeof(D3DMATERIAL);
 
 	material.power = 1.0f;
@@ -244,15 +245,13 @@ static void SetBackgroundColor(rgb24_t *color)
     RGB_Set(material.ambient, (D3DVALUE)color->r/255.f, (D3DVALUE)color->g/255.f, (D3DVALUE)color->b/255.f);
     RGB_Set(material.specular, (D3DVALUE)0.0f, (D3DVALUE)0.0f, (D3DVALUE)0.0f);
 
-	SYS_DXTRACE(g_lpD3D->CreateMaterial(&g_lpBackgroundMaterial, NULL));  
+	SYS_DXTRACE(g_lpD3D->CreateMaterial(&g_lpBackgroundMaterial, NULL));
 	SYS_DXTRACE(g_lpBackgroundMaterial->SetMaterial(&material));
     SYS_DXTRACE(g_lpBackgroundMaterial->GetHandle(g_lpDevice, &hBmat));
     SYS_DXTRACE(lpd3dViewport3->SetBackground(hBmat));
-
-    return;
 }
 
-static unsigned SetState(unsigned command, u_int32_t value)
+static unsigned SetState(unsigned command, uint32_t value)
 {
     switch(command) {
         case V3XCMD_SETBACKGROUNDCOLOR:
@@ -275,8 +274,10 @@ static unsigned SetState(unsigned command, u_int32_t value)
         }
         return 1;
     }
+
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void Reset(void)
@@ -286,8 +287,8 @@ static unsigned SetState(unsigned command, u_int32_t value)
 */
 void Reset(void)
 {
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : int  HardwareSetup(void)
@@ -296,11 +297,11 @@ void Reset(void)
 *
 */
 static long FAR PASCAL D3DAppDEVEnumDeviceCallback(
-LPGUID          lpGUID, 
-LPSTR           lpszDeviceDesc, 
-LPSTR           lpszDeviceName, 
-LPD3DDEVICEDESC lpd3dHWDeviceDesc, 
-LPD3DDEVICEDESC lpd3dSWDeviceDesc, 
+LPGUID          lpGUID,
+LPSTR           lpszDeviceDesc,
+LPSTR           lpszDeviceName,
+LPD3DDEVICEDESC lpd3dHWDeviceDesc,
+LPD3DDEVICEDESC lpd3dSWDeviceDesc,
 LPVOID          lpUserArg)
 {
     int pref=0;
@@ -308,12 +309,12 @@ LPVOID          lpUserArg)
     LPD3DDEVICEDESC lpd3dDeviceDesc = fIsHardware ? lpd3dHWDeviceDesc: lpd3dSWDeviceDesc;
     if (fIsHardware)
     {
-        if (lpd3dDeviceDesc->dpcTriCaps.dwTextureCaps) 
+        if (lpd3dDeviceDesc->dpcTriCaps.dwTextureCaps)
 			pref = 1;
     }
     else
     {
-        if (D3DCOLOR_MONO != lpd3dDeviceDesc->dcmColorModel) 
+        if (D3DCOLOR_MONO != lpd3dDeviceDesc->dcmColorModel)
 			pref = 2;
     }
     if (pref)
@@ -330,11 +331,12 @@ LPVOID          lpUserArg)
     // Otherwise, keep looking.
     return D3DENUMRET_OK;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static BOOL FAR PASCAL D3DAppIDDEnumCallback(GUID FAR* lpGUID, LPSTR lpDriverDesc, LPSTR lpDriverName, LPVOID lpContext)
 *
-* Description :  
+* Description :
 *
 */
 static BOOL FAR PASCAL D3DAppIDDEnumCallback(GUID FAR* lpGUID, LPSTR lpDriverDesc, LPSTR lpDriverName, LPVOID lpContext)
@@ -348,17 +350,17 @@ static BOOL FAR PASCAL D3DAppIDDEnumCallback(GUID FAR* lpGUID, LPSTR lpDriverDes
     if (lpGUID)
     {
         /*
-        * Create the DirectDraw device using this driver.  If it fails, 
+        * Create the DirectDraw device using this driver.  If it fails,
         * just move on to the next driver.
         */
         if (SYS_DXTRACE(DirectDrawCreate(lpGUID, &lpDD, NULL)))
-        {  
-            if (lpDD) 
+        {
+            if (lpDD)
 				lpDD->Release();
             return DDENUMRET_OK;
         }
         /*
-        * Get the capabilities of this DirectDraw driver.  If it fails, 
+        * Get the capabilities of this DirectDraw driver.  If it fails,
         * just move on to the next driver.
         */
         sysMemZero(&ddHwDesc, sizeof(DDCAPS));
@@ -376,7 +378,7 @@ static BOOL FAR PASCAL D3DAppIDDEnumCallback(GUID FAR* lpGUID, LPSTR lpDriverDes
             g_cDeviceInfo.bIsPrimary = FALSE;
             g_lpDDraw = lpDD;
             return DDENUMRET_CANCEL;
-        }        
+        }
         lpDD->Release();
         lpDD = NULL;
     }
@@ -386,11 +388,12 @@ static BOOL FAR PASCAL D3DAppIDDEnumCallback(GUID FAR* lpGUID, LPSTR lpDriverDes
     }
     return DDENUMRET_OK;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static BOOL WINAPI DDEnumCallback(GUID FAR *lpGUID, char const * lpDriverDesc, char const * lpDriverName, LPVOID lpContext)
 *
-* Description :  
+* Description :
 *
 */
 static BOOL WINAPI DDEnumCallback(GUID FAR *lpGUID, char const * lpDriverDesc, char const * lpDriverName, LPVOID lpContext)
@@ -405,18 +408,19 @@ static BOOL WINAPI DDEnumCallback(GUID FAR *lpGUID, char const * lpDriverDesc, c
     cx->index++;
     return TRUE;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int  HardwareSetup(void)
 *
-* Description :  
+* Description :
 *
 */
 static int HardwareSetup(void)
 {
     unsigned n;
 
-    if(g_lpDDraw) 
+    if(g_lpDDraw)
 	  g_lpDDraw->Release();
 
     g_lpDDraw = NULL;
@@ -432,18 +436,18 @@ static int HardwareSetup(void)
         DirectDrawEnumerate((LPDDENUMCALLBACKA)DDEnumCallback, &dx);
         SYS_DXTRACE( DirectDrawCreate(dx.lpGUID, &g_lpDDraw, NULL));
     }
-    if (DX_DrawSetup()==0) 
+    if (DX_DrawSetup()==0)
 		return -2;
 
-    if (SYS_DXTRACE(g_lpDD->QueryInterface(IID_IDirect3D3, (LPVOID*)&g_lpD3D))) 
+    if (SYS_DXTRACE(g_lpDD->QueryInterface(IID_IDirect3D3, (LPVOID*)&g_lpD3D)))
 		return -4;
 
-	if (SYS_DXTRACE(g_lpD3D->EnumDevices(D3DAppDEVEnumDeviceCallback, NULL))) 
+	if (SYS_DXTRACE(g_lpD3D->EnumDevices(D3DAppDEVEnumDeviceCallback, NULL)))
 		return -5;
     else
     {
         LPD3DDEVICEDESC lpd3dDeviceDesc = g_cDeviceInfo.fIsHardware ? &g_cDeviceInfo.d3dHWDeviceDesc : &g_cDeviceInfo.d3dSWDeviceDesc;
-        g_cDeviceInfo.desc = lpd3dDeviceDesc;        
+        g_cDeviceInfo.desc = lpd3dDeviceDesc;
         if (!g_cDeviceInfo.fIsHardware)
         {
             g_pRLX->V3X.Config|=RLX3D_FakeHardware;
@@ -464,20 +468,20 @@ static int HardwareSetup(void)
 		if ( lpd3dDeviceDesc->dpcTriCaps.dwRasterCaps & D3DPRASTERCAPS_WBUFFER )
             g_pRLX->pV3X->Client->Capabilities|=GXSPEC_WBUFFER;
 
-		n = lpd3dDeviceDesc->dwMaxTextureWidth;		
+		n = lpd3dDeviceDesc->dwMaxTextureWidth;
 		g_pRLX->pV3X->Client->texMaxSize = 0;
 		while (n!=0)  {g_pRLX->pV3X->Client->texMaxSize++;n>>=1;}
 		g_pRLX->pV3X->Client->texMaxSize--;
 
 		if (lpd3dDeviceDesc->dwDeviceZBufferBitDepth)
             g_pRLX->pV3X->Client->Capabilities|=GXSPEC_ZBUFFER;
-        
+
 		if (g_pRLX->V3X.Config&RLX3D_UseMultiTex)
         {
             if (lpd3dDeviceDesc->wMaxSimultaneousTextures>=2)
                 g_pRLX->pV3X->Client->Capabilities|= GXSPEC_MULTITEXTURING;
-            else 
-				g_pRLX->pV3X->Client->Capabilities&= ~GXSPEC_MULTITEXTURING;				
+            else
+				g_pRLX->pV3X->Client->Capabilities&= ~GXSPEC_MULTITEXTURING;
         }
 
 		if (g_pRLX->V3X.Config&RLX3D_UseAGP)
@@ -487,12 +491,12 @@ static int HardwareSetup(void)
                 g_pRLX->pV3X->Client->reduce = 0;
             }
         }
-        sprintf(g_pRLX->pV3X->Client->s_DrvName, "Direct3D 6/%s", 
+        sprintf(g_pRLX->pV3X->Client->s_DrvName, "Direct3D 6/%s",
 			g_cDeviceInfo.szDeviceName);
     }
     // Vertex temporaires pour les rendus D3D
     n = 256;
-    if (n < g_pRLX->pV3X->Ln.maxLines) 
+    if (n < g_pRLX->pV3X->Ln.maxLines)
 		n = g_pRLX->pV3X->Ln.maxLines;
     g_lpVertexBuffer = (D3DTLVERTEX2*) g_pRLX->mm_std->malloc((n+2)*sizeof(D3DTLVERTEX2));
     return 0;
@@ -522,11 +526,11 @@ static void HardwareShutdown(void)
 			g_lpDDraw = NULL;
 		}
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void  FreeTexture(u_int8_t *id)
+* PROTOTYPE  :  void  FreeTexture(uint8_t *id)
 *
 * DESCRIPTION : Free texture
 *
@@ -536,49 +540,49 @@ static void FreeTexture(void *id)
     V3XD3DHANDLE *handle = (V3XD3DHANDLE*)id;
     if (handle)
     {
-        if (handle->lpTextureSurf) 
+        if (handle->lpTextureSurf)
 			handle->lpTextureSurf->Release();
 
-        if (handle->lpTexture)     
+        if (handle->lpTexture)
 			handle->lpTexture->Release();
 
         g_pRLX->mm_heap->free(handle);
 
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static u_int8_t *RGB_ConvertToGrayScale( GXSPRITE *sp, int bp )
+* PROTOTYPE  :  static uint8_t *RGB_ConvertToGrayScale( GXSPRITE *sp, int bp )
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-static u_int8_t *RGB_ConvertToGrayScale( GXSPRITE *sp, int bp )
+static uint8_t *RGB_ConvertToGrayScale( GXSPRITE *sp, int bp )
 {
     unsigned size = sp->LX * sp->LY;
-    u_int8_t *Buffer = (u_int8_t*)g_pRLX->mm_std->malloc(size), *dest = Buffer;
+    uint8_t *Buffer = (uint8_t*)g_pRLX->mm_std->malloc(size), *dest = Buffer;
     if (!bp) bp = 1;
     size *= bp;
     switch(bp) {
         case 1:
         {
-            u_int8_t *src = (u_int8_t*) sp->data;
+            uint8_t *src = (uint8_t*) sp->data;
             for ( ;size!=0; dest++, src++, size--)
             {
                 rgb24_t *c = g_pRLX->pGX->ColorTable + (*src);
-                *dest = (u_int8_t)RGB_ToGray(c->r, c->g, c->b);
+                *dest = (uint8_t)RGB_ToGray(c->r, c->g, c->b);
             }
         }
         break;
         case 2:
         {
-            u_int16_t *src = (u_int16_t*) sp->data;
+            uint16_t *src = (uint16_t*) sp->data;
             for (;size!=0; dest++, src++, size--)
             {
                 rgb24_t c;
-                g_pRLX->pfGetPixelFormat(&c, (u_int32_t)*src);
-                *dest = (u_int8_t)RGB_ToGray(c.r, c.g, c.b);
+                g_pRLX->pfGetPixelFormat(&c, (uint32_t)*src);
+                *dest = (uint8_t)RGB_ToGray(c.r, c.g, c.b);
             }
         }
         break;
@@ -586,14 +590,14 @@ static u_int8_t *RGB_ConvertToGrayScale( GXSPRITE *sp, int bp )
         {
             rgb24_t *src = (rgb24_t*) sp->data;
             for ( ;size!=0; dest++, src++, size--)
-            *dest = (u_int8_t)RGB_ToGray(src->r, src->g, src->b);
+            *dest = (uint8_t)RGB_ToGray(src->r, src->g, src->b);
         }
         break;
         case 4:
         {
             rgb32_t *src = (rgb32_t*) sp->data;
             for ( ;size!=0; dest++, src++, size--)
-            *dest = (u_int8_t)RGB_ToGray(src->r, src->g, src->b);
+            *dest = (uint8_t)RGB_ToGray(src->r, src->g, src->b);
         }
         break;
     }
@@ -604,14 +608,14 @@ static u_int8_t *RGB_ConvertToGrayScale( GXSPRITE *sp, int bp )
 *
 * PROTOTYPE  :  LPDIRECTDRAWSURFACE4  D3D_CreateSurfaceFromSprite(GXSPRITE *sp, unsigned bpp)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static LPDIRECTDRAWSURFACE4 D3D_CreateSurfaceFromSprite(const GXSPRITE *sp, unsigned bpp, D3D_TextureFormat *pF)
 {
     DDSURFACEDESC2  ddsd;
     LPDIRECTDRAWSURFACE4 lpDDS = NULL;
-    u_int8_t  *src_buf = sp->data;
+    uint8_t  *src_buf = sp->data;
     unsigned i;
     int  lx = sp->LX;
     int32_t bs = (bpp+1)>>3;
@@ -624,20 +628,20 @@ static LPDIRECTDRAWSURFACE4 D3D_CreateSurfaceFromSprite(const GXSPRITE *sp, unsi
     ddsd.dwWidth = sp->LX;
     ddsd.dwHeight  = sp->LY;
     ddsd.ddpfPixelFormat= pF->pfd;
-    
+
 	if (pF->IndexBPP!=4)
     {
-        if (bpp==4) 
+        if (bpp==4)
 		{bpp=8;bs=1;}
     }
 
     if (pF->IndexBPP==4)
     {
-        u_int8_t *dest = sp->data, *src;
+        uint8_t *dest = sp->data, *src;
         i = (sp->LX*sp->LY)>>1;
-        src_buf = (u_int8_t*) g_pRLX->mm_std->malloc(i); src = src_buf;
-        for (;i!=0;dest+=2, src++, i--) 
-			*src = (u_int8_t)((dest[0]&15)+((dest[1]&15)<<4));
+        src_buf = (uint8_t*) g_pRLX->mm_std->malloc(i); src = src_buf;
+        for (;i!=0;dest+=2, src++, i--)
+			*src = (uint8_t)((dest[0]&15)+((dest[1]&15)<<4));
         lx>>=1;
     }
     else
@@ -650,12 +654,12 @@ static LPDIRECTDRAWSURFACE4 D3D_CreateSurfaceFromSprite(const GXSPRITE *sp, unsi
     {
         if (pF->IndexBPP==12)  // 4444 texture
         {
-            bp = 2;			
+            bp = 2;
         }
         // Hi-color texture
         if ((pF->IndexBPP>8)&&(pF->IndexBPP<=16))
         {
-            u_int8_t c[8];
+            uint8_t c[8];
             c[0] = g_pRLX->pGX->View.ColorMask.RedMaskSize;
             c[1] = g_pRLX->pGX->View.ColorMask.RedFieldPosition;
             c[2] = g_pRLX->pGX->View.ColorMask.GreenMaskSize;
@@ -674,7 +678,7 @@ static LPDIRECTDRAWSURFACE4 D3D_CreateSurfaceFromSprite(const GXSPRITE *sp, unsi
             g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = pF->RsvdFieldPosition;
             if (bs!=bp)
             {
-                src_buf = (u_int8_t*) g_pRLX->mm_std->malloc(sp->LX*sp->LY*bp);
+                src_buf = (uint8_t*) g_pRLX->mm_std->malloc(sp->LX*sp->LY*bp);
                 if (!src_buf)
                 {
                     return NULL;
@@ -684,19 +688,18 @@ static LPDIRECTDRAWSURFACE4 D3D_CreateSurfaceFromSprite(const GXSPRITE *sp, unsi
             }
             else
             {
-				
                 if ((bs==2)&&(c[2] != g_pRLX->pGX->View.ColorMask.GreenMaskSize))
                 {
                     unsigned szx = sp->LX*sp->LY;
-                    u_int16_t *tb2 = (u_int16_t*)src_buf;
-				
+                    uint16_t *tb2 = (uint16_t*)src_buf;
+
                     while(szx!=0)
                     {
                         unsigned char r, g, b;
-                        r = (u_int8_t)(((tb2[0]>>c[1] ) & ((1<<c[0]) -1)) << (8-c[0] ));
-                        g = (u_int8_t)(((tb2[0]>>c[3] ) & ((1<<c[2]) -1)) << (8-c[2] ));
-                        b = (u_int8_t)(((tb2[0]>>c[5] ) & ((1<<c[4]) -1)) << (8-c[4] ));
-						tb2[0] = (u_int16_t)(g_pRLX->pfSetPixelFormat(r, g, b));
+                        r = (uint8_t)(((tb2[0]>>c[1] ) & ((1<<c[0]) -1)) << (8-c[0] ));
+                        g = (uint8_t)(((tb2[0]>>c[3] ) & ((1<<c[2]) -1)) << (8-c[2] ));
+                        b = (uint8_t)(((tb2[0]>>c[5] ) & ((1<<c[4]) -1)) << (8-c[4] ));
+						tb2[0] = (uint16_t)(g_pRLX->pfSetPixelFormat(r, g, b));
                         szx--;tb2++;
                     }
                 }
@@ -719,13 +722,13 @@ static LPDIRECTDRAWSURFACE4 D3D_CreateSurfaceFromSprite(const GXSPRITE *sp, unsi
 
     sysMemZero(&ddsd, sizeof(DDSURFACEDESC2));
     ddsd.dwSize = sizeof(DDSURFACEDESC2);
-    if (SYS_DXTRACE(lpDDS->Lock( NULL, &ddsd, 0, NULL))) 
+    if (SYS_DXTRACE(lpDDS->Lock( NULL, &ddsd, 0, NULL)))
 		return NULL;
 
     for (i=0;i<ddsd.dwHeight;i++)
     {
-        u_int8_t *ds=(u_int8_t*)ddsd.lpSurface+ddsd.lPitch*i;
-        u_int8_t *sr=src_buf+i*lx;
+        uint8_t *ds=(uint8_t*)ddsd.lpSurface+ddsd.lPitch*i;
+        uint8_t *sr=src_buf+i*lx;
         if ((bs!=bp)&&(bp>2))
         {
             int j;
@@ -738,12 +741,12 @@ static LPDIRECTDRAWSURFACE4 D3D_CreateSurfaceFromSprite(const GXSPRITE *sp, unsi
         }
         else sysMemCpy(ds, sr, lx);
     }
-    if (SYS_DXTRACE(lpDDS->Unlock(NULL))) 
+    if (SYS_DXTRACE(lpDDS->Unlock(NULL)))
 		return NULL;
 
-    if (sp->data!=src_buf)  
+    if (sp->data!=src_buf)
 		g_pRLX->mm_std->free(src_buf);
-    
+
 	if (pF->IndexBPP<=8)
     { // Create la palette source
         DWORD pcaps = 0;
@@ -777,7 +780,6 @@ static LPDIRECTDRAWSURFACE4 D3D_CreateSurfaceFromSprite(const GXSPRITE *sp, unsi
     return lpDDS;
 }
 
-
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  LPDIRECT3DTEXTURE2  D3D_UploadTextureFromSurface(V3XD3DHANDLE *handle, unsigned option)
@@ -800,15 +802,15 @@ LPDIRECT3DTEXTURE2  D3D_UploadTextureFromSurface(V3XD3DHANDLE *handle, unsigned 
         ddsd.dwSize = sizeof(DDSURFACEDESC2);
         SYS_DXTRACE(lpSrcTextureSurf->GetSurfaceDesc(&ddsd));
         // Format
-        handle->offsetSwap = D3D_TextureSwapPut((u_int8_t*)&ddsd, ddsd.dwSize);
+        handle->offsetSwap = D3D_TextureSwapPut((uint8_t*)&ddsd, ddsd.dwSize);
         // Palette
-        D3D_TextureSwapPut((u_int8_t*)g_pRLX->pGX->ColorTable, 768);
+        D3D_TextureSwapPut((uint8_t*)g_pRLX->pGX->ColorTable, 768);
         // Datas
         SYS_DXTRACE(lpSrcTextureSurf->Lock(NULL, &ddsd, DDLOCK_WAIT|DDLOCK_READONLY, NULL));
-        D3D_TextureSwapPut((u_int8_t*)ddsd.lpSurface, ddsd.lPitch*ddsd.dwHeight);
+        D3D_TextureSwapPut((uint8_t*)ddsd.lpSurface, ddsd.lPitch*ddsd.dwHeight);
         SYS_DXTRACE(lpSrcTextureSurf->Unlock(NULL));
     }
-    if (SYS_DXTRACE(lpSrcTextureSurf->QueryInterface(IID_IDirect3DTexture2, (LPVOID*)&lpSrcTexture))) 
+    if (SYS_DXTRACE(lpSrcTextureSurf->QueryInterface(IID_IDirect3DTexture2, (LPVOID*)&lpSrcTexture)))
 		return NULL;
 
 	ddsd.dwSize = sizeof(DDSURFACEDESC2);
@@ -827,7 +829,7 @@ LPDIRECT3DTEXTURE2  D3D_UploadTextureFromSurface(V3XD3DHANDLE *handle, unsigned 
         ddsd.ddsCaps.dwCaps2 |= DDSCAPS2_HINTDYNAMIC;
     }
 
-    if (SYS_DXTRACE(g_lpDD->CreateSurface(&ddsd, &lpTextureSurf, NULL))) 
+    if (SYS_DXTRACE(g_lpDD->CreateSurface(&ddsd, &lpTextureSurf, NULL)))
 		return NULL;
 
     pcaps = 0;
@@ -856,10 +858,10 @@ LPDIRECT3DTEXTURE2  D3D_UploadTextureFromSurface(V3XD3DHANDLE *handle, unsigned 
         lpDstPalette->Release();
     }
     // Convertit les surfaces en TEXTURE
-    if (SYS_DXTRACE(lpTextureSurf->QueryInterface(IID_IDirect3DTexture2, (LPVOID*)&lpTexture))) 
+    if (SYS_DXTRACE(lpTextureSurf->QueryInterface(IID_IDirect3DTexture2, (LPVOID*)&lpTexture)))
 		return NULL;
 
-    if (SYS_DXTRACE(lpTexture->Load(lpSrcTexture))) 
+    if (SYS_DXTRACE(lpTexture->Load(lpSrcTexture)))
 		return NULL;
 
 	// Check
@@ -872,7 +874,7 @@ LPDIRECT3DTEXTURE2  D3D_UploadTextureFromSurface(V3XD3DHANDLE *handle, unsigned 
 	handle->lpTextureSurf = lpTextureSurf;
     handle->lpTexture = lpTexture;
     handle->option = option;
-	
+
     if ((option&V3XTEXDWNOPTION_DYNAMIC)&&(!handle->lpSurface3D))
     {
         int32_t lx = ddsd.dwWidth, ly = ddsd.dwHeight;
@@ -887,6 +889,7 @@ LPDIRECT3DTEXTURE2  D3D_UploadTextureFromSurface(V3XD3DHANDLE *handle, unsigned 
     }
     return lpTexture;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int  D3DSelectTextureFormat(int prefBpp)
@@ -910,7 +913,7 @@ static int D3DSelectTextureFormat(int prefBpp, D3D_TextureFormat **pF)
         }
         else
         if ((prefBpp>8)&&(pTexFormat->RedMaskSize+pTexFormat->BlueMaskSize+pTexFormat->GreenMaskSize==prefBpp))
-        {            
+        {
 			if (((prefBpp==12)&&(pTexFormat->bPalettized & 2))||(prefBpp!=12))
 				*pF = pTexFormat;
 
@@ -923,6 +926,7 @@ static int D3DSelectTextureFormat(int prefBpp, D3D_TextureFormat **pF)
     }
 	return !!(*pF);
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int D3D_ChooseBestTexFormat(int bpp)
@@ -937,35 +941,36 @@ static int D3D_ChooseBestTexFormat(int bpp, D3D_TextureFormat **pF)
 
 	if (g_pRLX->V3X.Config&RLX3D_FullQualityTex)
 	{
-		if (D3DSelectTextureFormat(bpp, pF)) 
+		if (D3DSelectTextureFormat(bpp, pF))
 			return bpp;
-	}    
+	}
 	switch(bpp) {
         case 4:
-        if (D3DSelectTextureFormat(4, pF)) return 4;		
+        if (D3DSelectTextureFormat(4, pF)) return 4;
         case 8:
-        if (D3DSelectTextureFormat(8, pF)) return 8;		
+        if (D3DSelectTextureFormat(8, pF)) return 8;
         case 15:
-        if (D3DSelectTextureFormat(15, pF)) return 15;		
+        if (D3DSelectTextureFormat(15, pF)) return 15;
         case 16:
         if (D3DSelectTextureFormat(16, pF)) return 16;
         if (D3DSelectTextureFormat(15, pF)) return 15;
         case 24:
 		if (D3DSelectTextureFormat(16, pF)) return 16;
-        if (D3DSelectTextureFormat(24, pF)) return 24;        		
+        if (D3DSelectTextureFormat(24, pF)) return 24;
         if (D3DSelectTextureFormat(15, pF)) return 15;
-        case 32:      
-        if (D3DSelectTextureFormat(12, pF)) return 12; 
-		if (D3DSelectTextureFormat(32, pF)) return 32;        
-        break;		
+        case 32:
+        if (D3DSelectTextureFormat(12, pF)) return 12;
+		if (D3DSelectTextureFormat(32, pF)) return 32;
+        break;
     }
 	if (D3DSelectTextureFormat(bpp, pF)) return bpp;
-	
+
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  u_int8_t  *TextureUpload(GXSPRITE *sp, int bpp)
+* PROTOTYPE  :  uint8_t  *TextureUpload(GXSPRITE *sp, int bpp)
 *
 * DESCRIPTION :
 *
@@ -973,14 +978,14 @@ static int D3D_ChooseBestTexFormat(int bpp, D3D_TextureFormat **pF)
 static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable, int bpp, unsigned options)
 {
 	D3D_TextureFormat *pF = 0;
-    V3XD3DHANDLE *handle = (V3XD3DHANDLE*) g_pRLX->mm_heap->malloc(sizeof(V3XD3DHANDLE));    
+    V3XD3DHANDLE *handle = (V3XD3DHANDLE*) g_pRLX->mm_heap->malloc(sizeof(V3XD3DHANDLE));
     if (options & V3XTEXDWNOPTION_DYNAMIC)
         D3D_ChooseBestTexFormat(g_pRLX->pGX->View.ColorMask.RedMaskSize+g_pRLX->pGX->View.ColorMask.GreenMaskSize+g_pRLX->pGX->View.ColorMask.BlueMaskSize, &pF);
     else
         D3D_ChooseBestTexFormat(bpp, &pF);
 
     handle->lpTextureSurf = D3D_CreateSurfaceFromSprite(sp, bpp, pF);
-    if (!handle->lpTextureSurf) 
+    if (!handle->lpTextureSurf)
 		return NULL;
 
 	handle->lpTexture = D3D_UploadTextureFromSurface(handle, options);
@@ -989,8 +994,9 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
         FreeTexture(handle);
         return NULL;
     }
-    return (u_int8_t*)handle;
+    return (uint8_t*)handle;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void  RestoreTexture(V3XD3DHANDLE *handle)
@@ -1007,22 +1013,21 @@ static void RestoreTexture(V3XD3DHANDLE *handle, int fromDisk)
         if (handle->lpTextureSurf) handle->lpTextureSurf->Release();
         handle->lpTextureSurf = NULL;
     }
-    if (handle->lpTexture)     
+    if (handle->lpTexture)
 		handle->lpTexture->Release();
 	handle->lpTexture = NULL;
     if (fromDisk&1)
     {
-        D3D_TextureSwapGet((u_int8_t*)&ddsd, handle->offsetSwap, sizeof(DDSURFACEDESC2));
+        D3D_TextureSwapGet((uint8_t*)&ddsd, handle->offsetSwap, sizeof(DDSURFACEDESC2));
         SYS_DXTRACE( SYS_DXTRACE(g_lpDD->CreateSurface(&ddsd, &handle->lpTextureSurf, NULL)));
 			return;
-        D3D_TextureSwapGet((u_int8_t*)g_pRLX->pGX->ColorTable, handle->offsetSwap+sizeof(DDSURFACEDESC2), 768);
+        D3D_TextureSwapGet((uint8_t*)g_pRLX->pGX->ColorTable, handle->offsetSwap+sizeof(DDSURFACEDESC2), 768);
         SYS_DXTRACE(handle->lpTextureSurf->Lock(NULL, &ddsd, DDLOCK_WAIT|DDLOCK_WRITEONLY, NULL));
-        D3D_TextureSwapGet((u_int8_t*)ddsd.lpSurface, handle->offsetSwap+sizeof(DDSURFACEDESC2)+768, ddsd.lPitch*ddsd.dwHeight);
+        D3D_TextureSwapGet((uint8_t*)ddsd.lpSurface, handle->offsetSwap+sizeof(DDSURFACEDESC2)+768, ddsd.lPitch*ddsd.dwHeight);
         SYS_DXTRACE(handle->lpTextureSurf->Unlock(NULL));
     }
     // Reload la texture
     handle->lpTexture = D3D_UploadTextureFromSurface(handle, handle->option);
-    return;
 }
 
 /*------------------------------------------------------------------------
@@ -1032,32 +1037,29 @@ static void RestoreTexture(V3XD3DHANDLE *handle, int fromDisk)
 * DESCRIPTION :
 *
 */
-
-
 void V3XRGB_Composing(rgb32_t *dest, V3XPOLY *fce)
 {
     V3XMATERIAL *Mat = (V3XMATERIAL*)fce->Mat;
     int i = ( Mat->info.Shade == 1 )  ? 1 : fce->numEdges;
     rgb32_t *cl = fce->rgb;
-    u_int32_t ra = Mat->ambient.r>>2;
-    u_int32_t rb = Mat->ambient.g>>2;
-    u_int32_t rc = Mat->ambient.b>>2;
+    uint32_t ra = Mat->ambient.r>>2;
+    uint32_t rb = Mat->ambient.g>>2;
+    uint32_t rc = Mat->ambient.b>>2;
 	if (!cl)
 		return;
 
     for (;i!=0;dest++, cl++, i--)
     {
-        u_int32_t
-        r = ra + xMUL8(cl->r, Mat->diffuse.r), 
-        g = rb + xMUL8(cl->g, Mat->diffuse.g), 
+        uint32_t
+        r = ra + xMUL8(cl->r, Mat->diffuse.r),
+        g = rb + xMUL8(cl->g, Mat->diffuse.g),
         b = rc + xMUL8(cl->b, Mat->diffuse.b) ;
 
-		dest->r = r<Mat->specular.r ? (u_int8_t)r : Mat->specular.r;
-        dest->g = g<Mat->specular.g ? (u_int8_t)g : Mat->specular.g;
-        dest->b = b<Mat->specular.b ? (u_int8_t)b : Mat->specular.b;
-		dest->a = cl->a;		
+		dest->r = r<Mat->specular.r ? (uint8_t)r : Mat->specular.r;
+        dest->g = g<Mat->specular.g ? (uint8_t)g : Mat->specular.g;
+        dest->b = b<Mat->specular.b ? (uint8_t)b : Mat->specular.b;
+		dest->a = cl->a;
     }
-	return;
 }
 
 static void RenderWPoly(V3XPOLY **fe, int count)
@@ -1068,10 +1070,10 @@ static void RenderWPoly(V3XPOLY **fe, int count)
     {
         V3XPOLY     *fce = *fe;
         V3XMATERIAL *pMat = (V3XMATERIAL*)fce->Mat;
-        LPD3DTLVERTEX  v, v0 = (LPD3DTLVERTEX)g_lpVertexBuffer;		
+        LPD3DTLVERTEX  v, v0 = (LPD3DTLVERTEX)g_lpVertexBuffer;
         int i;
         rgb24_t c = pMat->diffuse;
-        if (pMat->info.Shade) 
+        if (pMat->info.Shade)
 			V3XRGB_Composing(g_pRLX->pV3X->Buffer.rgb, fce);
         g_lpVertexBuffer->color = RGBA_MAKE(c.r, c.g, c.b, 255);
         for (v=v0, i=0;i<fce->numEdges;i++, v++)
@@ -1097,10 +1099,9 @@ static void RenderWPoly(V3XPOLY **fe, int count)
 		*v = *v0;
         // Affiche le polygone avec Direct Primitive
         SYS_DXTRACE( g_lpDevice->DrawPrimitive(
-        D3DPT_LINESTRIP, D3DFVF_TLVERTEX, (LPVOID)g_lpVertexBuffer, 
+        D3DPT_LINESTRIP, D3DFVF_TLVERTEX, (LPVOID)g_lpVertexBuffer,
         1+fce->numEdges, D3DDP_DONOTCLIP|D3DDP_DONOTUPDATEEXTENTS|D3DDP_DONOTLIGHT));
     }
-    return;
 }
 
 static void RenderPoly(V3XPOLY **fe, int count)
@@ -1113,23 +1114,23 @@ static void RenderPoly(V3XPOLY **fe, int count)
         LPD3DTLVERTEX2  v = g_lpVertexBuffer;
         D3DCOLOR spec;
         int i, flat=0, t=0;
-        rgb24_t c = pMat->diffuse;		  
-        if (pMat->Render==255) 
-            pMat->render_clip(fce); 
+        rgb24_t c = pMat->diffuse;
+        if (pMat->Render==255)
+            pMat->render_clip(fce);
         else
         {
-            if (pMat->info.Sprite==2) 
+            if (pMat->info.Sprite==2)
 				continue;
 			// Shade composer
-            if (pMat->info.Shade) 
+            if (pMat->info.Shade)
 				V3XRGB_Composing(g_pRLX->pV3X->Buffer.rgb, fce);
 
 			// Texture Cache
             if (pMat->info.Texturized)
-            {             
-				if (pipe_pTex[0] !=(u_int8_t*)pMat->texture[0].handle)
+            {
+				if (pipe_pTex[0] !=(uint8_t*)pMat->texture[0].handle)
                 {
-                    pipe_pTex[0] = (u_int8_t*)pMat->texture[0].handle;
+                    pipe_pTex[0] = (uint8_t*)pMat->texture[0].handle;
 					t|=1;
                     if (pipe_pTex[0])
                     {
@@ -1139,7 +1140,7 @@ static void RenderPoly(V3XPOLY **fe, int count)
                             h->option&=~V3XTEXDWNOPTION_REFRESH;
                         }
                         else
-                        {                            
+                        {
                             if (SYS_DXTRACE(h->lpTextureSurf->IsLost())==DDERR_SURFACELOST)
 								RestoreTexture(h, 1);
                         }
@@ -1152,53 +1153,52 @@ static void RenderPoly(V3XPOLY **fe, int count)
                     }
                     else
                     {
-                        int s = (u_int8_t)fce->Mat + (u_int8_t)fce->dispTab;
-                        c.r = (u_int8_t)xMUL8( s, pMat->diffuse.r );
-                        c.g = (u_int8_t)xMUL8( s, pMat->diffuse.g );
-                        c.b = (u_int8_t)xMUL8( s, pMat->diffuse.b );
+                        int s = (uint8_t)fce->Mat + (uint8_t)fce->dispTab;
+                        c.r = (uint8_t)xMUL8( s, pMat->diffuse.r );
+                        c.g = (uint8_t)xMUL8( s, pMat->diffuse.g );
+                        c.b = (uint8_t)xMUL8( s, pMat->diffuse.b );
                         t1 = NULL;
-                    }                    
+                    }
                 }
                 // Texture 2 (light map)
                 if (g_pRLX->pV3X->Client->Capabilities&GXSPEC_MULTITEXTURING)
                 {
-                    if (pipe_pTex[1] !=(u_int8_t*)pMat->texture[1].handle)
+                    if (pipe_pTex[1] !=(uint8_t*)pMat->texture[1].handle)
                     {
-                        pipe_pTex[1] = (u_int8_t*)pMat->texture[1].handle;
+                        pipe_pTex[1] = (uint8_t*)pMat->texture[1].handle;
 						t|=2;
                         if ((pipe_pTex[1])&&(pMat->info.Environment&V3XENVMAPTYPE_DOUBLE))
                         {
-                            V3XD3DHANDLE  *h = (V3XD3DHANDLE*)pipe_pTex[1];                            
-                            if (SYS_DXTRACE(h->lpTextureSurf->IsLost())==DDERR_SURFACELOST) 
+                            V3XD3DHANDLE  *h = (V3XD3DHANDLE*)pipe_pTex[1];
+                            if (SYS_DXTRACE(h->lpTextureSurf->IsLost())==DDERR_SURFACELOST)
 								RestoreTexture(h, 1);
                             t2 = h->lpTexture;
                         }
                         else
                         {
-                            t2 = NULL;                            
+                            t2 = NULL;
                         }
                     }
                 }
 				if ((t)&&(pipe_iRender==pMat->lod))
 				{
-					if (t&1) 
+					if (t&1)
 						SYS_DXTRACE(g_lpDevice->SetTexture( 0, t1 ));
-					if (t&4)						
+					if (t&4)
 						SYS_DXTRACE(g_lpDevice->SetTexture( 1, t3 ));
 
-					if (t&2) 
+					if (t&2)
 					{
 						unsigned s = t&4 ? 2 : 1;
 						SYS_DXTRACE(g_lpDevice->SetTexture( s, t2 ));
 					}
 				}
-                
             }
 			else
 			{
 				pipe_pTex[0] = NULL;
 				t1 = NULL;
-				if (pipe_iRender!=pMat->lod)	
+				if (pipe_iRender!=pMat->lod)
 					SYS_DXTRACE(g_lpDevice->SetTexture( 0, t1 ));
 				t|=1;
 			}
@@ -1213,17 +1213,17 @@ static void RenderPoly(V3XPOLY **fe, int count)
                     case 3:  ShadeModel = D3DSHADE_GOURAUD; break;
                     default: ShadeModel = D3DSHADE_FLAT; break;
                 }
-                SYS_DXTRACE(g_lpDevice->SetRenderState( D3DRENDERSTATE_EDGEANTIALIAS, pMat->Render==V3XRCLASS_wired ? TRUE : FALSE));    
+                SYS_DXTRACE(g_lpDevice->SetRenderState( D3DRENDERSTATE_EDGEANTIALIAS, pMat->Render==V3XRCLASS_wired ? TRUE : FALSE));
                 SYS_DXTRACE(g_lpDevice->SetRenderState( D3DRENDERSTATE_SHADEMODE, ShadeModel));
-                
+
                 // Blending mode
                 if ((g_cDeviceInfo.desc->dpcTriCaps.dwShadeCaps&D3DPSHADECAPS_ALPHAFLATBLEND)==0)
                 {
                     if ((g_cDeviceInfo.desc->dpcTriCaps.dwShadeCaps&D3DPSHADECAPS_ALPHAFLATSTIPPLED))
 						pipe_iBlend = pMat->info.Transparency ? V3XBLENDMODE_STIPPLE : 0;
-                    else 
+                    else
 						pipe_iBlend = 0;
-                } else 
+                } else
 					pipe_iBlend =  pMat->info.Transparency;
 
                 if (g_pRLX->pV3X->Client->Capabilities&(GXSPEC_ENABLEZBUFFER|GXSPEC_ENABLEWBUFFER))
@@ -1232,7 +1232,7 @@ static void RenderPoly(V3XPOLY **fe, int count)
 						SYS_DXTRACE(g_lpDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE));
                     else
 						SYS_DXTRACE(g_lpDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE));
-                }                    
+                }
                 switch(pipe_iBlend) {
                     case V3XBLENDMODE_ADD: // Additif
 						SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_ALPHABLENDENABLE, TRUE));
@@ -1257,13 +1257,13 @@ static void RenderPoly(V3XPOLY **fe, int count)
 						SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_ALPHABLENDENABLE, FALSE));
 						SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_STIPPLEDALPHA, FALSE));
                     break;
-                }      				
+                }
 
-                // Set Direct X 6 Stage State				
+                // Set Direct X 6 Stage State
                 if (  pMat->info.Texturized )
-                {                    
+                {
 					unsigned stage = 0;
-					SYS_DXTRACE(g_lpDevice->SetRenderState( D3DRENDERSTATE_TEXTUREPERSPECTIVE, 
+					SYS_DXTRACE(g_lpDevice->SetRenderState( D3DRENDERSTATE_TEXTUREPERSPECTIVE,
                     (
                     (pMat->info.Sprite) ||
                     (pMat->info.Perspective||(g_pRLX->pV3X->Client->Capabilities&GXSPEC_FORCEHWPERSPECTIVE)))
@@ -1273,18 +1273,18 @@ static void RenderPoly(V3XPOLY **fe, int count)
 					SYS_DXTRACE(g_lpDevice->SetTexture( 0, t1 ));
 					SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, 0 ));
                     SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE));
-                    SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE));                    
+                    SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE));
 					SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_COLOROP , D3DTOP_MODULATE));
-                    switch(pipe_iBlend) 
+                    switch(pipe_iBlend)
 					{
                         case V3XBLENDMODE_STIPPLE:
-                        case V3XBLENDMODE_ALPHA:                        
+                        case V3XBLENDMODE_ALPHA:
 						    SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE));
 	                        SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE));
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP , D3DTOP_MODULATE));
                         break;
                         case V3XBLENDMODE_ADD:
-                        case V3XBLENDMODE_NONE:                        
+                        case V3XBLENDMODE_NONE:
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE));
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE));
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP, D3DTOP_DISABLE));
@@ -1292,39 +1292,39 @@ static void RenderPoly(V3XPOLY **fe, int count)
                         default:
                         break;
                     }
-						
+
 					if ((g_pRLX->pV3X->Client->Capabilities&GXSPEC_DISABLEDUALTEX)==0)
 					{
-						if ((pipe_pTex[1])&&(pMat->info.Environment&V3XENVMAPTYPE_DOUBLE))					
+						if ((pipe_pTex[1])&&(pMat->info.Environment&V3XENVMAPTYPE_DOUBLE))
 						{
 							stage++;
 							SYS_DXTRACE(g_lpDevice->SetTexture( stage, t2 ));
-							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_TEXCOORDINDEX, 1 ));                        
+							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_TEXCOORDINDEX, 1 ));
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_COLORARG1, D3DTA_TEXTURE ));
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_COLORARG2, D3DTA_CURRENT ));
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_COLOROP, D3DTOP_ADD));
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_ALPHAARG1, D3DTA_TEXTURE));
 							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE));
-							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_ALPHAOP, D3DTOP_DISABLE));						
-						}			
+							SYS_DXTRACE(g_lpDevice->SetTextureStageState( stage, D3DTSS_ALPHAOP, D3DTOP_DISABLE));
+						}
 					}
-					
+
 					if (stage)
 					{
 						DWORD dwPasses;
 						if (SYS_DXTRACE(g_lpDevice->ValidateDevice(&dwPasses)))
-						{					
+						{
 							g_pRLX->pV3X->Client->Capabilities&=~GXSPEC_MULTITEXTURING;
 							SYS_DXTRACE( g_lpDevice->SetTextureStageState( 1, D3DTSS_COLOROP, D3DTOP_DISABLE ));
 							pipe_pTex[1] = NULL;
-						} 	return;
+						}
+						return;
 					}
 					else
 					{
 						SYS_DXTRACE(g_lpDevice->SetTextureStageState( 1, D3DTSS_COLOROP, D3DTOP_DISABLE ));
 						SYS_DXTRACE(g_lpDevice->SetTextureStageState( 2, D3DTSS_COLOROP, D3DTOP_DISABLE ));
 					}
-					
                 }
 				else
 				{
@@ -1336,7 +1336,7 @@ static void RenderPoly(V3XPOLY **fe, int count)
 					if (!t3)
 						SYS_DXTRACE( g_lpDevice->SetTextureStageState( 2, D3DTSS_COLOROP, D3DTOP_DISABLE ));
 				}
-            } 			
+            }
 
             if (pMat->Render == V3XRCLASS_wired )
             {
@@ -1363,9 +1363,9 @@ static void RenderPoly(V3XPOLY **fe, int count)
                         default:
                         v->color = v0->color;
                         break;
-                    }            
+                    }
                 }
-                SYS_DXTRACE( g_lpDevice->DrawPrimitive( D3DPT_LINESTRIP, D3DFVF_TLVERTEX, (LPVOID)v0, 
+                SYS_DXTRACE( g_lpDevice->DrawPrimitive( D3DPT_LINESTRIP, D3DFVF_TLVERTEX, (LPVOID)v0,
 					fce->numEdges, D3DDP_DONOTCLIP|D3DDP_DONOTUPDATEEXTENTS|D3DDP_DONOTLIGHT));
 				pipe_pTex[0] = NULL;
 				pipe_pTex[1] = NULL;
@@ -1386,12 +1386,12 @@ static void RenderPoly(V3XPOLY **fe, int count)
                 else
                 {
                     rgb32_t *ce = g_pRLX->pV3X->Buffer.rgb + 0;
-                    g_lpVertexBuffer->color = RGBA_MAKE(ce->r, ce->g, ce->b, pMat->info.AlphaComponent ? ce->a : pMat->alpha);
-					
+                    g_lpVertexBuffer->color = RGBA_MAKE(ce->r, ce->g, ce->b
+									, pMat->info.AlphaComponent ? ce->a : pMat->alpha);
                 }
 
                 // Build ngone g_lpVertexBuffer list
-                spec = (!pipe_iBlend) ? D3D_SpecularValue : 0;  
+                spec = (!pipe_iBlend) ? D3D_SpecularValue : 0;
                 for (v=g_lpVertexBuffer, i=0;i<fce->numEdges;i++, v++)
                 {
                     V3XPTS *pt = fce->dispTab + i;
@@ -1405,20 +1405,19 @@ static void RenderPoly(V3XPOLY **fe, int count)
                         case 2:
                         {
                             rgb32_t *ce = g_pRLX->pV3X->Buffer.rgb + i;
-                            v->color =  RGBA_MAKE(ce->r, ce->g, ce->b, pMat->info.AlphaComponent ? ce->a : pMat->alpha);							
+                            v->color =  RGBA_MAKE(ce->r, ce->g, ce->b, pMat->info.AlphaComponent ? ce->a : pMat->alpha);
 							v->specular = pMat->info.AlphaComponent ? spec :  RGBA_MAKE(
-											xMUL8(ce->a, pMat->specular.r), 
-											xMUL8(ce->a, pMat->specular.g), 
-											xMUL8(ce->a, pMat->specular.b), 
+											xMUL8(ce->a, pMat->specular.r),
+											xMUL8(ce->a, pMat->specular.g),
+											xMUL8(ce->a, pMat->specular.b),
 											128);
-							
                         }
                         break;
                         case 1:
                         default:
                         v->color = g_lpVertexBuffer->color;
                         break;
-                    }                    
+                    }
                     if (pMat->info.Texturized)
                     {
                         if (pMat->info.Perspective)
@@ -1441,41 +1440,40 @@ static void RenderPoly(V3XPOLY **fe, int count)
                     }
                     v->sz *= D3D_ClipFactor;
                 }
-                SYS_DXTRACE( g_lpDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_TLVERTEX2, (LPVOID)g_lpVertexBuffer, 
+                SYS_DXTRACE( g_lpDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, D3DFVF_TLVERTEX2, (LPVOID)g_lpVertexBuffer,
                 fce->numEdges, D3DDP_DONOTCLIP|D3DDP_DONOTUPDATEEXTENTS|D3DDP_DONOTLIGHT));
-                
+
 				if ((pMat->info.Environment&V3XENVMAPTYPE_DOUBLE)&&(!(g_pRLX->pV3X->Client->Capabilities&(GXSPEC_MULTITEXTURING|GXSPEC_DISABLEDUALTEX))))
-                {					
+                {
                     g_lpDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, 1 );
                     SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_ALPHABLENDENABLE, TRUE));
                     SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE));
-                    SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE));                    
-                    if ((pipe_pTex[0]!=(u_int8_t*)pMat->texture[1].handle))
+                    SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE));
+                    if ((pipe_pTex[0]!=(uint8_t*)pMat->texture[1].handle))
                     {
                         V3XD3DHANDLE *h;
-                        pipe_pTex[0] = (u_int8_t*)pMat->texture[1].handle;
+                        pipe_pTex[0] = (uint8_t*)pMat->texture[1].handle;
                         h =  (V3XD3DHANDLE*)pipe_pTex[0];
                         if (h)
                         {
-                            if (SYS_DXTRACE( h->lpTextureSurf->IsLost())==DDERR_SURFACELOST) 
+                            if (SYS_DXTRACE( h->lpTextureSurf->IsLost())==DDERR_SURFACELOST)
 								RestoreTexture(h, 1);
                             SYS_DXTRACE( g_lpDevice->SetTexture( 0, h->lpTexture));
                         }
                     }
-                    for (v=g_lpVertexBuffer, i=0;i<fce->numEdges;i++, v++) 
-						v->color = RGBA_MAKE(pMat->specular.r, pMat->specular.g, pMat->specular.b, pMat->alpha);		
-					
-					SYS_DXTRACE( g_lpDevice->DrawPrimitive( D3DPT_TRIANGLEFAN, D3DFVF_TLVERTEX2, (LPVOID)g_lpVertexBuffer, 
+                    for (v=g_lpVertexBuffer, i=0;i<fce->numEdges;i++, v++)
+						v->color = RGBA_MAKE(pMat->specular.r, pMat->specular.g, pMat->specular.b, pMat->alpha);
+
+					SYS_DXTRACE( g_lpDevice->DrawPrimitive( D3DPT_TRIANGLEFAN, D3DFVF_TLVERTEX2, (LPVOID)g_lpVertexBuffer,
                     fce->numEdges, D3DDP_DONOTCLIP|D3DDP_DONOTUPDATEEXTENTS|D3DDP_DONOTLIGHT));
                     SYS_DXTRACE( g_lpDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, 0));
                     pipe_iRender = -1;
                 }
-				
             }
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void  BeginList(void)
@@ -1487,7 +1485,7 @@ static void  BeginList(void)
 {
     if (g_pRLX->pGX->View.State&GX_STATE_SCENEBEGUN) return;
     int b = g_pRLX->pGX->View.State&GX_STATE_LOCKED;
-    if (b)  
+    if (b)
 		if (b) g_pRLX->pGX->Client->Unlock();
 
     g_pRLX->pGX->View.State|=GX_STATE_SCENEBEGUN;
@@ -1504,19 +1502,19 @@ static void  BeginList(void)
     if (g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEZBUFFER)
     {
         D3D_ClipFactor = -1.f / g_pRLX->pV3X->Clip.Far;
-        SYS_DXTRACE( g_lpDevice->SetRenderState(D3DRENDERSTATE_ZENABLE, 
+        SYS_DXTRACE( g_lpDevice->SetRenderState(D3DRENDERSTATE_ZENABLE,
         g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEWBUFFER ? D3DZB_USEW : D3DZB_TRUE ));
         SYS_DXTRACE( g_lpDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE));
         SYS_DXTRACE( g_lpDevice->SetRenderState(D3DRENDERSTATE_ZFUNC, D3DCMP_LESSEQUAL));
     }
     else D3D_ClipFactor = 1.f ;
-	SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_DITHERENABLE, 
+	SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_DITHERENABLE,
     (g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEDITHERING) ? TRUE : FALSE));
     SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_CULLMODE , D3DCULL_NONE));
     int i=0, m = ((g_pRLX->pV3X->Client->Capabilities&GXSPEC_MULTITEXTURING) ? 2 : 1);
     for (;i<m;i++)
     {
-        u_int32_t m = (g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEFILTERING) ?  D3DTFG_LINEAR : D3DTFG_POINT;
+        uint32_t m = (g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEFILTERING) ?  D3DTFG_LINEAR : D3DTFG_POINT;
         SYS_DXTRACE( g_lpDevice->SetTexture( i , NULL));
         SYS_DXTRACE( g_lpDevice->SetTextureStageState( i, D3DTSS_MAGFILTER, m));
         SYS_DXTRACE( g_lpDevice->SetTextureStageState( i, D3DTSS_MINFILTER, m));
@@ -1538,8 +1536,8 @@ static void  BeginList(void)
     SYS_DXTRACE( g_lpDevice->SetRenderState( D3DRENDERSTATE_ALPHABLENDENABLE, FALSE));
     D3D_ColorKey.dwColorSpaceLowValue = g_pRLX->pGX->csp_cfg.colorKey;
     D3D_ColorKey.dwColorSpaceHighValue = g_pRLX->pGX->csp_cfg.colorKey;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void  EndList(void)
@@ -1549,11 +1547,11 @@ static void  BeginList(void)
 */
 static void EndList(void)
 {
-    if (g_pRLX->pGX->View.State&GX_STATE_SCENEBEGUN) 
+    if (g_pRLX->pGX->View.State&GX_STATE_SCENEBEGUN)
 		SYS_DXTRACE( g_lpDevice->EndScene());
     g_pRLX->pGX->View.State&=~GX_STATE_SCENEBEGUN;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void  RenderDisplay(void)
@@ -1569,17 +1567,16 @@ static void RenderDisplay(void)
 		RenderWPoly(f, n);
     else
 		RenderPoly(f, n);
-    return;
 }
 
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  int  RLXAPI TextureModify(GXSPRITE *ptr, u_int8_t *newBuffer)
+* PROTOTYPE  :  int  RLXAPI TextureModify(GXSPRITE *ptr, uint8_t *newBuffer)
 *
 * DESCRIPTION :
 *
 */
-static int V3XAPI TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *colorTable)
+static int V3XAPI TextureModify(GXSPRITE *sp, uint8_t *bitmap, const rgb24_t *colorTable)
 {
     DDSURFACEDESC2 ddsd1;
     RECT RSource;
@@ -1598,14 +1595,14 @@ static int V3XAPI TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *c
     // Copy line per line
     if (lx)
     {
-        u_int8_t *a, *b;
+        uint8_t *a, *b;
         int i;
-        for (a = (u_int8_t*)bitmap, 
-        b = (u_int8_t*)ddsd1.lpSurface, 
+        for (a = (uint8_t*)bitmap,
+        b = (uint8_t*)ddsd1.lpSurface,
         i = RSource.top;
         i < RSource.bottom;
-        i++, 
-        a+= lPitch, 
+        i++,
+        a+= lPitch,
         b+= ddsd1.lPitch)
         {
             WORD *pSrc = (WORD*)b;
@@ -1616,14 +1613,15 @@ static int V3XAPI TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *c
     SYS_DXTRACE(pDst->Unlock(NULL));
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static void  RLXAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int mode, rgb32_t *cl)
+* PROTOTYPE  :  static void  RLXAPI DrawPrimitives(V3XVECTOR *vertexes, uint16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int mode, rgb32_t *cl)
 *
 * Description :
 *
 */
-static void  RLXAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int mode, rgb32_t *cl)
+static void  RLXAPI DrawPrimitives(V3XVECTOR *vertexes, uint16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int mode, rgb32_t *cl)
 {
     LPD3DTLVERTEX v = (LPD3DTLVERTEX)g_lpVertexBuffer;
     unsigned i = 0;
@@ -1652,38 +1650,38 @@ static void  RLXAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, uns
         v->specular = RGB_MAKE(0, 0, 0);
     }
     if (indexTab)
-    SYS_DXTRACE( g_lpDevice->DrawIndexedPrimitive( mode==V3XRCLASS_point ? D3DPT_POINTLIST : D3DPT_LINELIST, 
+    SYS_DXTRACE( g_lpDevice->DrawIndexedPrimitive( mode==V3XRCLASS_point ? D3DPT_POINTLIST : D3DPT_LINELIST,
 		D3DFVF_TLVERTEX, (LPVOID)g_lpVertexBuffer, NumVertexes, indexTab, NumIndexes, 0));
     else
-    SYS_DXTRACE( g_lpDevice->DrawPrimitive( mode==V3XRCLASS_point ? D3DPT_POINTLIST : D3DPT_LINELIST, 
+    SYS_DXTRACE( g_lpDevice->DrawPrimitive( mode==V3XRCLASS_point ? D3DPT_POINTLIST : D3DPT_LINELIST,
 		D3DFVF_TLVERTEX, (LPVOID)g_lpVertexBuffer, NumVertexes, 0));
-    return;
 }
 
 V3X_GXSystem V3X_Direct3D = {
-    NULL, 
-    RenderDisplay, 
-    UploadTexture, 
-    FreeTexture, 
-    TextureModify, 
-    HardwareSetup, 
-    HardwareShutdown, 
-    SetState, 
-    ZbufferClear, 
-    RenderPoly, 
-    BeginList, 
-    EndList, 
-    DrawPrimitives, 
-    "V3X/Direct 3D-6(tm)", 
-    256+10, 
+    NULL,
+    RenderDisplay,
+    UploadTexture,
+    FreeTexture,
+    TextureModify,
+    HardwareSetup,
+    HardwareShutdown,
+    SetState,
+    ZbufferClear,
+    RenderPoly,
+    BeginList,
+    EndList,
+    DrawPrimitives,
+    "V3X/Direct 3D-6(tm)",
+    256+10,
     GXSPEC_FOG+
     GXSPEC_SPRITEAREPOLY+
     GXSPEC_HARDWARE+
     GXSPEC_UVNORMALIZED+
-    GXSPEC_RESIZABLEMAP, 
-    0x000000, 
+    GXSPEC_RESIZABLEMAP,
+    0x000000,
     0
 };
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  HRESULT CALLBACK D3DAppFORMEnumDeviceCallback(LPDDSURFACEDESC2 lpDDSD, LPVOID lpContext)
@@ -1691,7 +1689,7 @@ V3X_GXSystem V3X_Direct3D = {
 * DESCRIPTION :
 *
 */
-void  DX_MaskToMAP(u_int32_t mask, u_int8_t *pos, u_int8_t *size)
+void  DX_MaskToMAP(uint32_t mask, uint8_t *pos, uint8_t *size)
 {
     *pos=0;
     while (!(  ((mask&1)==1) || (mask==0) ))
@@ -1705,8 +1703,8 @@ void  DX_MaskToMAP(u_int32_t mask, u_int8_t *pos, u_int8_t *size)
         (*size)++;
         mask>>=1;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  HRESULT CALLBACK D3DAppFORMEnumDeviceCallback(LPDDSURFACEDESC2 lpDDSD, LPVOID lpContext)
@@ -1743,23 +1741,24 @@ HRESULT CALLBACK D3DAppFORMEnumDeviceCallback(LPDDPIXELFORMAT lpPfD, LPVOID lpCo
         DX_MaskToMAP(lpPfD->dwGBitMask, &pTexFormat->GreenFieldPosition, &pTexFormat->GreenMaskSize);
         DX_MaskToMAP(lpPfD->dwBBitMask, &pTexFormat->BlueFieldPosition, &pTexFormat->BlueMaskSize);
         DX_MaskToMAP(lpPfD->dwRGBAlphaBitMask, &pTexFormat->RsvdFieldPosition, &pTexFormat->RsvdMaskSize);
-        pTexFormat->IndexBPP = (u_int8_t)((pTexFormat->RedMaskSize+pTexFormat->GreenMaskSize+pTexFormat->BlueMaskSize));
+        pTexFormat->IndexBPP = (uint8_t)((pTexFormat->RedMaskSize+pTexFormat->GreenMaskSize+pTexFormat->BlueMaskSize));
     }
     if (lpPfD->dwFlags & DDPF_ALPHAPIXELS)
         pTexFormat->bPalettized|=2;
 
-	if (lpPfD->dwBumpBitCount)    
+	if (lpPfD->dwBumpBitCount)
         pTexFormat->bPalettized|=4;
 
 	g_cDeviceInfo.NumTextureFormats++;
     UNUSED(lpContext);
     return DDENUMRET_OK;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static HRESULT WINAPI D3DAppZBUFnumDeviceCallback( DDPIXELFORMAT* pddpf, VOID* pddpfDesired )
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static HRESULT WINAPI D3DAppZBUFnumDeviceCallback( DDPIXELFORMAT* pddpf, VOID* pddpfDesired )
@@ -1770,14 +1769,15 @@ static HRESULT WINAPI D3DAppZBUFnumDeviceCallback( DDPIXELFORMAT* pddpf, VOID* p
         (( g_pRLX->pV3X->Client->Capabilities & GXSPEC_ENABLESTENCIL ) && ( pddpf->dwFlags & DDPF_STENCILBUFFER ) )
         || (( g_pRLX->pV3X->Client->Capabilities & GXSPEC_ENABLESTENCIL ) == 0)
  )
-        {        
-            sysMemCpy( pddpfDesired, pddpf, sizeof(DDPIXELFORMAT));			
-            if (pddpf->dwZBufferBitDepth==g_pRLX->pV3X->ViewPort.zDepth)			
+        {
+            sysMemCpy( pddpfDesired, pddpf, sizeof(DDPIXELFORMAT));
+            if (pddpf->dwZBufferBitDepth==g_pRLX->pV3X->ViewPort.zDepth)
             return D3DENUMRET_CANCEL;
         }
-    }    
+    }
     return D3DENUMRET_OK;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void  D3D_CheckTexture(void)
@@ -1790,8 +1790,8 @@ void D3D_CheckTexture(void)
     int StartFormat = -1;
     g_cDeviceInfo.NumTextureFormats = 0;
     SYS_DXTRACE( g_lpDevice->EnumTextureFormats(D3DAppFORMEnumDeviceCallback, (LPVOID)&StartFormat));
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void  D3D_SetViewPort(void)
@@ -1814,17 +1814,16 @@ void D3D_SetViewPort(void)
     viewData2.dvClipHeight = (float)viewData2.dwHeight;
     viewData2.dvMinZ  = 0.f;
     viewData2.dvMaxZ  = 1.f;
-    
+
 	SYS_DXTRACE( g_lpD3D->CreateViewport(&lpd3dViewport3, NULL));
     SYS_DXTRACE( g_lpDevice->AddViewport(lpd3dViewport3));
     SYS_DXTRACE( lpd3dViewport3->SetViewport2(&viewData2));
     SYS_DXTRACE( g_lpDevice->SetCurrentViewport(lpd3dViewport3));
-    
+
     SetBackgroundColor((rgb24_t*)&g_pRLX->pV3X->ViewPort.backgroundColor);
 	SetLightColor();
-    
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CALLING_C D3D_clearVideo(int32_t x1, int32_t x2, int32_t y1, int32_t y2)
@@ -1835,7 +1834,7 @@ void D3D_SetViewPort(void)
 static void CALLING_C clearSurfaces(void)
 {
     D3DRECT rc;
-    int b = g_pRLX->pGX->View.State&GX_STATE_LOCKED;    
+    int b = g_pRLX->pGX->View.State&GX_STATE_LOCKED;
     rc.x1 = g_pRLX->pGX->View.xmin;
     rc.y1 = g_pRLX->pGX->View.ymin;
     rc.x2 = g_pRLX->pGX->View.xmax+1;
@@ -1844,21 +1843,21 @@ static void CALLING_C clearSurfaces(void)
 	if (b) g_pRLX->pGX->Client->Unlock();
     SYS_DXTRACE( lpd3dViewport3->Clear2( 1, &rc, D3DCLEAR_TARGET, g_pRLX->pV3X->ViewPort.backgroundColor, 0, 0));
     if (b) g_pRLX->pGX->Client->Lock();
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CALLING_C D3D_DrawFilledRect(int32_t x1, int32_t x2, int32_t y1, int32_t y2, u_int32_t _color)
+* PROTOTYPE  :  void CALLING_C D3D_DrawFilledRect(int32_t x1, int32_t x2, int32_t y1, int32_t y2, uint32_t _color)
 *
 * DESCRIPTION :
 *
 */
-static void CALLING_C drawFilledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t _color)
+static void CALLING_C drawFilledRect(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t _color)
 {
     D3DRECT rc;
-	int b = g_pRLX->pGX->View.State&GX_STATE_LOCKED;    
+	int b = g_pRLX->pGX->View.State&GX_STATE_LOCKED;
     DWORD color;
-    rgb24_t c;    
+    rgb24_t c;
     rc.x1 = x1;
     rc.y1 = y1;
     rc.x2 = x2+1;
@@ -1868,16 +1867,16 @@ static void CALLING_C drawFilledRect(int32_t x1, int32_t y1, int32_t x2, int32_t
 	if (b) g_pRLX->pGX->Client->Unlock();
     SYS_DXTRACE(lpd3dViewport3->Clear2( 1, &rc, D3DCLEAR_TARGET, color, 0.f, 0));
     if (b) g_pRLX->pGX->Client->Lock();
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void  CALLING_C D3D_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+* PROTOTYPE  :  void  CALLING_C D3D_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 *
 * DESCRIPTION :
 *
 */
-void  CALLING_C D3D_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t colour)
+void  CALLING_C D3D_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t colour)
 {
     if (g_pRLX->pGX->View.State&GX_STATE_SCENEBEGUN)
     {
@@ -1895,31 +1894,31 @@ void  CALLING_C D3D_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, 
     }
     else
     {
-        if (g_pRLX->pGX->View.State&GX_STATE_LOCKED) 
+        if (g_pRLX->pGX->View.State&GX_STATE_LOCKED)
 			old_drawAnyLine(x1, y1, x2, y2, colour);
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void  CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
+* PROTOTYPE  :  void  CALLING_C setPalette(uint32_t a, uint32_t b, void * pal)
 *
 * DESCRIPTION :
 *
 */
-void  CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
+void  CALLING_C setPalette(uint32_t a, uint32_t b, void * pal)
 {
     rgb24_t D3D_SpecularColor;
     int c = RGB_ToGray((int32_t)g_pRLX->pGX->AmbientColor.r,  (int32_t)g_pRLX->pGX->AmbientColor.g,  (int32_t)g_pRLX->pGX->AmbientColor.b);
-    c-=128; 
+    c-=128;
 	if (c<0) c=0;
-    D3D_SpecularColor.r = D3D_SpecularColor.g = D3D_SpecularColor.b = (u_int8_t)c;
+    D3D_SpecularColor.r = D3D_SpecularColor.g = D3D_SpecularColor.b = (uint8_t)c;
     D3D_SpecularValue = RGB_MAKE(D3D_SpecularColor.r, D3D_SpecularColor.g, D3D_SpecularColor.b);
     UNUSED(a);
     UNUSED(b);
     UNUSED(pal);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void  CreateSurface(int pages)
@@ -1927,20 +1926,18 @@ void  CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
 * DESCRIPTION :
 *
 */
-
 static int CreateSurface(int pages)
 {
 	g_pRLX->pGX->Client->ReleaseSurfaces();
-    g_pRLX->pGX->View.Flags|=GX_CAPS_BACKBUFFERINVIDEO;	
+    g_pRLX->pGX->View.Flags|=GX_CAPS_BACKBUFFERINVIDEO;
 	GX_DDraw.CreateSurface(pages);
     if (g_pRLX->pGX->View.Flags&GX_CAPS_3DSYSTEM)
     {
         if ( g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEZBUFFER)
         {
             SYS_DXTRACE(g_lpD3D->EnumZBufferFormats(g_cDeviceInfo.guidDevice, D3DAppZBUFnumDeviceCallback, (LPVOID)&g_cDeviceInfo.ddpfZBuffer));
-			g_pRLX->pV3X->ViewPort.zDepth = (u_int8_t)g_cDeviceInfo.ddpfZBuffer.dwZBufferBitDepth;
-            ZbufferAlloc(); 
-			
+			g_pRLX->pV3X->ViewPort.zDepth = (uint8_t)g_cDeviceInfo.ddpfZBuffer.dwZBufferBitDepth;
+            ZbufferAlloc();
         }
         // Create Devices (on passle back buffer)
         SYS_DXTRACE(g_lpD3D->CreateDevice(g_cDeviceInfo.guidDevice, g_lpPrimarySurface, &g_lpDevice, NULL));
@@ -1983,47 +1980,46 @@ static void ReleaseSurfaces(void)
         g_lpDevice = NULL;
         lpd3dViewport3 = NULL;
     }
-    else  
+    else
 		GX_DDraw.ReleaseSurfaces();
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  _RLXEXPORTFUNC  void RLXAPI V3XDRV_Load_D3D(void)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static int RLXAPI Open(void *hWnd)
 {
 	SYS_ASSERT(hWnd);
 	g_hWnd = (HWND)hWnd;
-	SYS_ASSERT(IsWindow(g_hWnd));    
+	SYS_ASSERT(IsWindow(g_hWnd));
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  _RLXEXPORTFUNC void RLXAPI V3XDRV_Load_D3D(void)
 *
-* Description :  
+* Description :
 *
 */
 void RLXAPI V3X_EntryPoint(struct RLXSYSTEM *p)
 {
 	GX_EntryPoint(p);
-	
+
 	g_pRLX->pGX->Client = &GX_Direct3D;
-    g_pRLX->pV3X->Client = &V3X_Direct3D;	
+    g_pRLX->pV3X->Client = &V3X_Direct3D;
 
     GX_Direct3D = GX_DDraw;
     GX_Direct3D.Open = Open;
     GX_Direct3D.CreateSurface = CreateSurface;
     GX_Direct3D.ReleaseSurfaces = ReleaseSurfaces;
-
-    return;
 }
 
 void GX_GetGraphicInterface(struct GXSYSTEM *p)
 {
-	return;
 }
+

@@ -61,11 +61,9 @@ __end_extern_c
 * DESCRIPTION :
 *
 */
-
 static void CALLING_C Flip(void)
 {
   SDL_Flip(g_pSurface);
-  return;
 }
 
 /*------------------------------------------------------------------------
@@ -75,26 +73,24 @@ static void CALLING_C Flip(void)
 * DESCRIPTION :
 *
 */
-
 static void SetPrimitive(void)
 {
     GX_GetGraphicInterface(GET_GX());
     g_pRLX->pGX->View.Flip = Flip;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static u_int8_t *Lock(void)
+* PROTOTYPE  :  static uint8_t *Lock(void)
 *
 * DESCRIPTION :  Lock framebuffer. Returns a pointer to the framebuffer + fills information (pitch = bytes / row)
 *
 */
-
-static u_int8_t *Lock(void)
+static uint8_t *Lock(void)
 {
   SDL_LockSurface(g_pSurface);
   GET_GX()->View.lPitch = g_pSurface->pitch;;
-  GET_GX()->View.lpBackBuffer = (u_int8_t *)g_pSurface->pixels;
+  GET_GX()->View.lpBackBuffer = (uint8_t *)g_pSurface->pixels;
   return GET_GX()->View.lpBackBuffer;
 }
 
@@ -105,11 +101,9 @@ static u_int8_t *Lock(void)
 * DESCRIPTION : Unlock frame buffer
 *
 */
-
 static void Unlock(void)
 {
   SDL_UnlockSurface(g_pSurface);
-  return;
 }
 
 static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
@@ -153,7 +147,7 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
       fmts[2].BitsPerPixel = 32;
       fmts[2].BytesPerPixel = 4;
     }
-  
+
     for (fmt_idx = 0; fmt_idx < num_fmts; fmt_idx ++)
     {
       modes = SDL_ListModes(&fmts[fmt_idx], SDL_DOUBLEBUF | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
@@ -262,17 +256,14 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
     g_pRLX->pGX->View.ColorMask.BlueFieldPosition = 16;
     g_pRLX->pGX->View.ColorMask.RsvdFieldPosition = 24;
   }
-  
-#ifdef __BIG_ENDIAN__
 
+#ifdef __BIG_ENDIAN__
   int a = g_pRLX->pGX->View.ColorMask.BlueFieldPosition;
   g_pRLX->pGX->View.ColorMask.BlueFieldPosition =  g_pRLX->pGX->View.ColorMask.RedFieldPosition;
   g_pRLX->pGX->View.ColorMask.RedFieldPosition = a;
-  
 #endif
-  
+
   SetPrimitive();
-  return;
 }
 
 static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
@@ -340,7 +331,7 @@ static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
     // Use it.
     mode = 0;
   }
-  g_pRLX->pGX->View.DisplayMode = (u_int16_t)mode;
+  g_pRLX->pGX->View.DisplayMode = (uint16_t)mode;
   g_pRLX->pGX->Client->GetDisplayInfo(mode);
   V3XRef_HardwareRegister(GET_GX()->View.BytePerPixel);
   return g_pRLX->pGX->Client->SetDisplayMode(mode);
@@ -388,6 +379,7 @@ static int CreateSurface(int BackBufferCount)
 				SDL_DOUBLEBUF | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
   return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void UploadSprite(GXSPRITE *sp)
@@ -395,7 +387,6 @@ static int CreateSurface(int BackBufferCount)
 * DESCRIPTION :
 *
 */
-
 static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 {
 	GXSPRITESW *p = (GXSPRITESW*) g_pRLX->mm_heap->malloc(sizeof(GXSPRITESW));
@@ -405,13 +396,13 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	  int BytePerPixel = GET_GX()->View.BytePerPixel;
 	  int RedFieldPosition = GET_GX()->View.ColorMask.RedFieldPosition; // see gx_rgb.c: 465
 	  GET_GX()->View.ColorMask.RedFieldPosition = 8; // Force to BGR conversion
-	  u_int8_t * src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
+	  uint8_t * src_buf = (uint8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
 	  g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel,
 				   sp->data, colorTable, bpp, sp->LX*sp->LY);
 	  g_pRLX->mm_heap->free(sp->data);
 	  sp->data = src_buf;
 	  bpp = BytePerPixel;
-	  GET_GX()->View.ColorMask.RedFieldPosition = RedFieldPosition; // restore redfield 
+	  GET_GX()->View.ColorMask.RedFieldPosition = RedFieldPosition; // restore redfield
 	}
 	else
 	if (bpp == 1)
@@ -426,8 +417,8 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	sp->handle = p;
 	p->bpp = bpp;
     UNUSED(sp);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void ReleaseSprite(GXSPRITE *sp)
@@ -440,16 +431,16 @@ static void ReleaseSprite(GXSPRITE *sp)
 	GXSPRITESW *p = (GXSPRITESW*) sp->handle;
 	g_pRLX->mm_heap->free(p);
 	sp->data = NULL;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+* PROTOTYPE  :  unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 *
 * DESCRIPTION :
 *
 */
-static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+static unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 {
 	GXSPRITESW *p = (GXSPRITESW*) sp->handle;
 	int i;
@@ -458,6 +449,7 @@ static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t
 	sysMemCpy(sp->data, bitmap, sp->LX * sp->LY);
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void GET_GX()->ClientEntryPoint(void)
@@ -483,9 +475,9 @@ void GX_EntryPoint(struct RLXSYSTEM *p)
         Shutdown,
         Open,
         NotifyEvent,
-    	"SDL Software Renderer"
+		"SDL Software Renderer"
     };
 	g_pRLX = p;
 	GET_GX()->Client = &driver;
-    return;
 }
+

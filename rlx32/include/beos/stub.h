@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,7 +30,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #include <Be.h>
 
-class sysApplication : public BApplication 
+class sysApplication : public BApplication
 {
 public:
 		sysApplication();
@@ -64,3 +65,4 @@ static const uint32 MSG_SYSAPPLICATION_CLOSE = 'clos';
 static const uint32 MSG_SYSAPPLICATION_OPEN = 'open';
 
 #endif
+

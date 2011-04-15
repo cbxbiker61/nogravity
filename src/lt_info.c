@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -45,8 +45,7 @@ void NG_GetIniFilename(char *tex)
 
 static char *YesNo[]={"no", "yes"};
 
-
-char static *SaveKey(u_int8_t *table)
+char static *SaveKey(uint8_t *table)
 {
 	char tex[256];
     char *s=tex;
@@ -61,7 +60,7 @@ char static *SaveKey(u_int8_t *table)
     return s;
 }
 
-static int ReadKey(char *s, u_int8_t *table)
+static int ReadKey(char *s, uint8_t *table)
 {
     int i, d;
     for (i=0, d=0;i<LK_MAX;i++, s+=3)
@@ -121,7 +120,6 @@ static void ResetKey(void)
 
 	g_SGSettings.mou[9] = 1;
     g_SGSettings.mou[0] = 2;
-    return;
 }
 
 void NG_SaveGameInfo(void)
@@ -130,7 +128,7 @@ void NG_SaveGameInfo(void)
 #ifndef RLX_IOREADONLY
     SYS_FILEHANDLE in;
     char *Ctr[]={"Mouse", "Keyboard", "Joystick"};
-	NG_GetIniFilename(tex);    
+	NG_GetIniFilename(tex);
     in = fopen(tex, "wt");
     if ( in  )
     {
@@ -142,7 +140,7 @@ void NG_SaveGameInfo(void)
         fprintf(in, "Language=%d\n", (int)g_SGSettings.Language);
         fprintf(in, "Difficulty=%d\n", g_SGSettings.Difficulty);
         fprintf(in, "OS=%d\n", g_SGSettings.OS);
-        fprintf(in, "\n[Video]\n");        
+        fprintf(in, "\n[Video]\n");
         fprintf(in, "Dithering=%s\n", YesNo[ g_SGSettings.Dithering ]);
         fprintf(in, "TexFiltering=%s\n", YesNo[ g_SGSettings.TexFiltering ]);
 		fprintf(in, "TexPOT=%s\n", YesNo[ g_SGSettings.TexPOT ]);
@@ -153,7 +151,7 @@ void NG_SaveGameInfo(void)
 
         fprintf(in, "LensFX=%d\n", (int)g_SGSettings.LensFX);
         fprintf(in, "VisualsFx=%d\n", (int)g_SGSettings.VisualsFx);
-        
+
         fprintf(in, "Zbuffer=%s\n", YesNo[g_SGSettings.ZBuffer]);
 		fprintf(in, "ResolutionX=%d\n", (int)g_SGSettings.ResolutionX);
 		fprintf(in, "ResolutionY=%d\n", (int)g_SGSettings.ResolutionY);
@@ -189,12 +187,9 @@ void NG_SaveGameInfo(void)
 					RLX.Joy.J[0].MaxR
 					);
 
-		
-
         fclose(in);
     }
 #endif
-    return;
 }
 
 void NG_ReadGameConfig(void)
@@ -214,57 +209,57 @@ void NG_ReadGameConfig(void)
     {
         if(SelectConfigClass("Game", &iniFile))
         {
-            g_SGSettings.Intro = (u_int8_t)GetCF_bool("Intro", &iniFile);
-            g_SGSettings.Language = (u_int8_t)GetCF_long("Language", &iniFile);
-            g_SGSettings.Difficulty = (u_int8_t)GetCF_long("Difficulty", &iniFile);
-            g_SGSettings.OS = (u_int8_t)GetCF_long("OS", &iniFile);
-            if (!g_SGSettings.OS) 
+            g_SGSettings.Intro = (uint8_t)GetCF_bool("Intro", &iniFile);
+            g_SGSettings.Language = (uint8_t)GetCF_long("Language", &iniFile);
+            g_SGSettings.Difficulty = (uint8_t)GetCF_long("Difficulty", &iniFile);
+            g_SGSettings.OS = (uint8_t)GetCF_long("OS", &iniFile);
+            if (!g_SGSettings.OS)
 				g_SGSettings.OS=66;
         }
 
         if(SelectConfigClass("Video", &iniFile))
         {
-            g_SGSettings.ResolutionX = (u_int16_t)GetCF_long("ResolutionX", &iniFile);
-			g_SGSettings.ResolutionY = (u_int16_t)GetCF_long("ResolutionY", &iniFile);
-			g_SGSettings.ColorDepth = (u_int8_t)GetCF_long("ColorDepth", &iniFile);
+            g_SGSettings.ResolutionX = (uint16_t)GetCF_long("ResolutionX", &iniFile);
+			g_SGSettings.ResolutionY = (uint16_t)GetCF_long("ResolutionY", &iniFile);
+			g_SGSettings.ColorDepth = (uint8_t)GetCF_long("ColorDepth", &iniFile);
 
-            g_SGSettings.Dithering = (u_int8_t)GetCF_bool("Dithering", &iniFile);
-            g_SGSettings.TexFiltering = (u_int8_t)GetCF_bool("TexFiltering", &iniFile);
-			g_SGSettings.TexPOT = (u_int8_t)GetCF_bool("TexPOT", &iniFile);
-            g_SGSettings.VisualsFx = (u_int8_t)GetCF_long("VisualsFx", &iniFile);
-            g_SGSettings.LensFX = (u_int8_t)GetCF_bool("LensFX", &iniFile);
-            g_SGSettings.Sky = (u_int8_t)GetCF_long("Sky", &iniFile);
-            RLX.Video.Gamma = (u_int8_t)GetCF_long("Gamma", &iniFile);
-            g_SGSettings.ZBuffer = (u_int8_t)GetCF_bool("ZBuffer", &iniFile);            
-            g_SGSettings.FrameSkip = (u_int8_t)GetCF_long("FrameSkip", &iniFile);
+            g_SGSettings.Dithering = (uint8_t)GetCF_bool("Dithering", &iniFile);
+            g_SGSettings.TexFiltering = (uint8_t)GetCF_bool("TexFiltering", &iniFile);
+			g_SGSettings.TexPOT = (uint8_t)GetCF_bool("TexPOT", &iniFile);
+            g_SGSettings.VisualsFx = (uint8_t)GetCF_long("VisualsFx", &iniFile);
+            g_SGSettings.LensFX = (uint8_t)GetCF_bool("LensFX", &iniFile);
+            g_SGSettings.Sky = (uint8_t)GetCF_long("Sky", &iniFile);
+            RLX.Video.Gamma = (uint8_t)GetCF_long("Gamma", &iniFile);
+            g_SGSettings.ZBuffer = (uint8_t)GetCF_bool("ZBuffer", &iniFile);
+            g_SGSettings.FrameSkip = (uint8_t)GetCF_long("FrameSkip", &iniFile);
 
 			if (g_SGSettings.ResolutionX<=511)
 			{
 				g_SGSettings.ResolutionX = 640;
 				g_SGSettings.ResolutionY = 480;
 			}
-			g_SGSettings.Multisampling = (u_int8_t)GetCF_long("Multisampling", &iniFile);
-			g_SGSettings.VerticalSync = (u_int8_t)GetCF_long("VSync", &iniFile);
+			g_SGSettings.Multisampling = (uint8_t)GetCF_long("Multisampling", &iniFile);
+			g_SGSettings.VerticalSync = (uint8_t)GetCF_long("VSync", &iniFile);
         }
 
         if(SelectConfigClass("Sound", &iniFile))
         {
-            g_SGSettings.VolDIG = (u_int8_t)GetCF_long("VolDIG", &iniFile);
-            g_SGSettings.VolFX = (u_int8_t)GetCF_long("VolFX", &iniFile);
-            g_SGSettings.VolMusic = (u_int8_t)GetCF_long("VolMusic", &iniFile);
+            g_SGSettings.VolDIG = (uint8_t)GetCF_long("VolDIG", &iniFile);
+            g_SGSettings.VolFX = (uint8_t)GetCF_long("VolFX", &iniFile);
+            g_SGSettings.VolMusic = (uint8_t)GetCF_long("VolMusic", &iniFile);
         }
 
         if(SelectConfigClass("Control", &iniFile))
         {
-            g_SGSettings.MouseSensitivity = (u_int8_t)GetCF_long("Speed", &iniFile);
-            g_SGSettings.FlipYMouse = (u_int8_t)GetCF_bool("FlipY", &iniFile);
+            g_SGSettings.MouseSensitivity = (uint8_t)GetCF_long("Speed", &iniFile);
+            g_SGSettings.FlipYMouse = (uint8_t)GetCF_bool("FlipY", &iniFile);
             s = GetCF_str("Controller", &iniFile);
             if (s)
             {
-                if (strcmp(s, "Keyboard")==0) 
+                if (strcmp(s, "Keyboard")==0)
 					g_SGSettings.Ctrl = CTRL_Keyb;
                 else
-                if (strcmp(s, "Joystick")==0) 
+                if (strcmp(s, "Joystick")==0)
 					g_SGSettings.Ctrl = CTRL_Joystick;
                 else g_SGSettings.Ctrl = CTRL_Mouse;
             }
@@ -295,7 +290,6 @@ void NG_ReadGameConfig(void)
 			s = GetCF_str("JoyRollAxis", &iniFile);
             if (s) g_SGSettings.AxisRoll = GetCF_long("JoyRollAxis", &iniFile);
 			else g_SGSettings.AxisRoll = 0;
-			
 
         }
         DestroyConfig(&iniFile);
@@ -317,6 +311,7 @@ void NG_ReadGameConfig(void)
         g_SGSettings.OS = 0;
 		RLX.V3X.Id = RLX3D_DIRECT3D;
     }
+
     if (g_SGSettings.OS!=RLX.System.Id)
     {
         RLX.Video.Gamma = 1;
@@ -326,12 +321,12 @@ void NG_ReadGameConfig(void)
 		g_SGSettings.ResolutionX = 640;
 		g_SGSettings.ResolutionY = 480;
 		g_SGSettings.ColorDepth = 32;
-		
-        switch(RLX.V3X.Id) 
+
+        switch(RLX.V3X.Id)
 		{
             case RLX3D_3DFX:
             case RLX3D_DIRECT3D:
-            case RLX3D_OPENGL:	            
+            case RLX3D_OPENGL:
 		        g_SGSettings.TexFiltering = 1;
 			    g_SGSettings.VisualsFx = 4;
             break;
@@ -345,8 +340,8 @@ void NG_ReadGameConfig(void)
             g_SGSettings.TexFiltering = 0;
             break;
         }
-        g_SGSettings.OS = RLX.System.Id;        
+        g_SGSettings.OS = RLX.System.Id;
         NG_SaveGameInfo();
     }
-    return;
 }
+

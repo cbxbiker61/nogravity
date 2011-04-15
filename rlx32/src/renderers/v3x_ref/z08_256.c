@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -62,17 +62,17 @@ void CALLING_C Rend8bit_Fix_map_normal(V3XPOLY *fce)
 		       }
 		    ADD_MAPZ
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend8bit_Fix_map_norm_F(V3XPOLY *fce)
 {
-    u_int8_t *Shader;
+    uint8_t *Shader;
     int32_t *shade = (int32_t*)fce->shade;
     TRI_VAR
     VAR_MAPZ
-    
-    Shader = (u_int8_t*)g_MixTable[shade[0]];
+
+    Shader = (uint8_t*)g_MixTable[shade[0]];
     MASTER_1
 	   CALC_MAPZ
 	   CST_MAPZ
@@ -97,15 +97,15 @@ void CALLING_C Rend8bit_Fix_map_norm_F(V3XPOLY *fce)
 		       }
 		    ADD_MAPZ
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend8bit_Fix_map_norm_G(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_IT
     VAR_MAPZ
-    
+
     MASTER_1
      CALC_MAPZ
      CALC_IT
@@ -136,7 +136,6 @@ void CALLING_C Rend8bit_Fix_map_norm_G(V3XPOLY *fce)
 		    ADD_IT
 		    ADD_MAPZ
 		    FINAL
-    return;
 }
 
 // =========================================================================
@@ -158,8 +157,8 @@ void CALLING_C Rend8bit_Fix_map_sprite(V3XPOLY *fce)
 			/*  Trace d'un points*/
 			     CORRZ_LOOP
 			     {
-			       u_int16_t adr = (u_int16_t)MAPADR(u0, v0);
-			       u_int8_t   al= textureZ->texture[adr];
+			       uint16_t adr = (uint16_t)MAPADR(u0, v0);
+			       uint8_t   al= textureZ->texture[adr];
 			       if (al) GFX_byte(ptr, al);
 			       u0+=deX;
 			       v0+=deY;
@@ -168,17 +167,17 @@ void CALLING_C Rend8bit_Fix_map_sprite(V3XPOLY *fce)
 			}
 		    ADD_MAPZ
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend8bit_Fix_map_sprite_F(V3XPOLY *fce)
 {
-    u_int8_t *Shader;
+    uint8_t *Shader;
     int32_t *shade = (int32_t*)fce->shade;
     TRI_VAR
     VAR_MAPZ
-    
-    Shader = (u_int8_t*)g_MixTable[shade[0]];
+
+    Shader = (uint8_t*)g_MixTable[shade[0]];
     MASTER_1
     CALC_MAPZ
 	//if (abs(Xg.CRT)<65536L*16L) return;
@@ -193,8 +192,8 @@ void CALLING_C Rend8bit_Fix_map_sprite_F(V3XPOLY *fce)
 			/*  Trace d'un points*/
 			     CORRZ_LOOP
 			     {
-			       u_int16_t adr = (u_int16_t)MAPADR(u0, v0);
-			       u_int8_t al =textureZ->texture[adr];
+			       uint16_t adr = (uint16_t)MAPADR(u0, v0);
+			       uint8_t al =textureZ->texture[adr];
 			       if (al) GFX_byte(ptr, Shader[al]);
 			       u0+=deX;
 			       v0+=deY;
@@ -203,14 +202,13 @@ void CALLING_C Rend8bit_Fix_map_sprite_F(V3XPOLY *fce)
 			}
 		    ADD_MAPZ
 		    FINAL
-    return;
 }
 
 // =========================================================================
 void CALLING_C Rend8bit_Fix_tex_alpha(V3XPOLY *fce)
 {
     TRI_VAR
-    
+
     VAR_MAPZ
     MASTER_1
     CALC_MAPZ
@@ -228,7 +226,7 @@ void CALLING_C Rend8bit_Fix_tex_alpha(V3XPOLY *fce)
 			/*  Trace d'un points*/
 			     CORRZ_LOOP
 			     {
-			       u_int16_t adr = (u_int16_t)MAPADR(u0, v0);
+			       uint16_t adr = (uint16_t)MAPADR(u0, v0);
 			       GFX_byte(ptr, g_MixTable[textureZ->texture[adr]][GFX_read(ptr)]);
 
 			       u0+=deX;
@@ -239,5 +237,5 @@ void CALLING_C Rend8bit_Fix_tex_alpha(V3XPOLY *fce)
 			//Else Map normal
 		    ADD_MAPZ
 		    FINAL
-    return;
 }
+

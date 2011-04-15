@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -61,10 +61,10 @@ int NG_WaitForKeyPress(void)
 	sJOY->Update(0);
 	sMOU->Update(0);
 
-	if (sKEY_IsClicked(s_esc) || sJOY_IsClicked(1) || sMOU_IsClicked(1)) 
+	if (sKEY_IsClicked(s_esc) || sJOY_IsClicked(1) || sMOU_IsClicked(1))
 		a|=2;
 
-    if (sKEY_IsHeld(s_return) || sJOY_IsClicked(0) || sMOU_IsClicked(0)) 
+    if (sKEY_IsHeld(s_return) || sJOY_IsClicked(0) || sMOU_IsClicked(0))
 		a|=1;
 
     return a;
@@ -72,20 +72,19 @@ int NG_WaitForKeyPress(void)
 
 void NG_WaitForKeyWithDelay(int dt)
 {
-    u_int32_t t = timer_sec() + dt;
+    uint32_t t = timer_sec() + dt;
 
 	while(STUB_TaskControl() == 0)
     {
-		if (NG_WaitForKeyPress()) 
+		if (NG_WaitForKeyPress())
 			break;
 
-		if (timer_sec()>=t) 
+		if (timer_sec()>=t)
 			break;
     }
-    return;
 }
 
-u_int8_t SGJOY_ButtonKeys[128];
+uint8_t SGJOY_ButtonKeys[128];
 char SGPOV_ButtonKeys[128];
 char SGMOU_ButtonKeys[128];
 
@@ -125,14 +124,13 @@ int NG_SampleButtonMouse()
 #define isjoyzup    (sJOY->z<32767L-deadZone2)
 #define isjoyzdown  (sJOY->z>32767L+deadZone2)
 
-
 void SGJOY_ReadAxis(int *lpAxisX, int *lpAxisY, int *lpAxisRoll, int *lpAxisThrottle, int *status)
 {
 	int lZ = 0, lRz = 0;
 	*status = 0;
 
 
-	*lpAxisX = sJOY->lX - 32768;	
+	*lpAxisX = sJOY->lX - 32768;
 	if (abs(*lpAxisX)>deadZone2)
 	{
 		*status|=1;
@@ -173,16 +171,16 @@ void SGJOY_ReadAxis(int *lpAxisX, int *lpAxisY, int *lpAxisRoll, int *lpAxisThro
 		case 3:	lRz = sJOY->lRy; break;
 		case 4:	lRz = sJOY->lRz; break;
 	}
-		
+
 	if (g_SGSettings.AxisRoll)
 	{
-		*lpAxisRoll = lZ - 32768;	
+		*lpAxisRoll = lZ - 32768;
 		*status|=4;
 	}
 
 	if (g_SGSettings.AxisThrottle)
 	{
-		*lpAxisThrottle = 65535 - lRz;		
+		*lpAxisThrottle = 65535 - lRz;
 		*status|=8;
 	}
 }
@@ -191,11 +189,11 @@ void SGJOY_MapKeyboard()
 {
     // Remap buttons
     int i;
-    u_int8_t *buttonKeys = SGJOY_ButtonKeys;
+    uint8_t *buttonKeys = SGJOY_ButtonKeys;
     for (i=0;i<sJOY->numButtons;i++)
     {
-       u_int8_t b = SGJOY_ButtonKeys[i];
-       u_int8_t v = sJOY_IsHeld(i)?0x80:0;
+       uint8_t b = SGJOY_ButtonKeys[i];
+       uint8_t v = sJOY_IsHeld(i)?0x80:0;
 	   if (!sKEY_IsHeld(b))
 			SKEY_SET_BIT(sKEY->rgbButtons, b, v);
         buttonKeys++;
@@ -204,7 +202,6 @@ void SGJOY_MapKeyboard()
     SKEY_SET_BIT(sKEY->rgbButtons, LK_DOWN, isjoydown);
     SKEY_SET_BIT(sKEY->rgbButtons, LK_LEFT, isjoyleft);
     SKEY_SET_BIT(sKEY->rgbButtons, LK_RIGHT, isjoyright);
-    return;
 }
 
 void SGMOU_MapKeyboard()
@@ -212,14 +209,13 @@ void SGMOU_MapKeyboard()
     int i;
 	for (i=0;i<sMOU->numButtons;i++)
     {
-        u_int8_t b = SGMOU_ButtonKeys[i];
-		u_int8_t v = sMOU_IsHeld(i) ? 0x80 : 0;
+        uint8_t b = SGMOU_ButtonKeys[i];
+		uint8_t v = sMOU_IsHeld(i) ? 0x80 : 0;
 	    if (!sKEY_IsHeld(b))
 		{
 			SKEY_SET_BIT(sKEY->rgbButtons, b, v);
 		}
     }
-    return;
 }
 
 void NG_ResetKey(void)
@@ -229,7 +225,7 @@ void NG_ResetKey(void)
 		return;
 
     sysMemZero(SGJOY_ButtonKeys, 32);
-    
+
 	for (i=0;i<LK_MAX;i++)
     {
         if (g_SGSettings.joy[i])
@@ -239,7 +235,7 @@ void NG_ResetKey(void)
     }
 
 	sysMemZero(SGMOU_ButtonKeys, 32);
-    
+
 	for (i=0;i<LK_MAX;i++)
     {
 		if (g_SGSettings.mou[i])
@@ -253,6 +249,5 @@ void NG_ResetKey(void)
         if (g_SGSettings.joyPOV[i])
 	        SGPOV_ButtonKeys[ g_SGSettings.joyPOV[i]-1] = g_SGSettings.key[i];
     }
-    return;
 }
 

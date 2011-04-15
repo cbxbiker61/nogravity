@@ -55,7 +55,7 @@ static void MouseHide()
   // Just call through into SDL.
 }
 
-static void MouseSetPosition(u_int32_t x, u_int32_t y)
+static void MouseSetPosition(uint32_t x, uint32_t y)
 {
   // Just call through into SDL.
 }
@@ -69,3 +69,4 @@ _RLXEXPORTFUNC MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
 {
   return sMOU;
 }
+

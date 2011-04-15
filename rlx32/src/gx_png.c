@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -88,10 +88,10 @@ static void pngx_warning(png_structp png_ptr, png_const_charp message)
 	UNUSED(png_ptr);
 }
 
-u_int8_t *PNG_unpack(SYS_FILEHANDLE infile, u_int32_t *LX, u_int32_t *LY, int *dwBitsPerPixel, rgb24_t *pClut, int options)
+uint8_t *PNG_unpack(SYS_FILEHANDLE infile, uint32_t *LX, uint32_t *LY, int *dwBitsPerPixel, rgb24_t *pClut, int options)
 {
-    u_int8_t *out_buffer;
-	u_int32_t i;
+    uint8_t *out_buffer;
+	uint32_t i;
 	unsigned char sig[8];
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -126,10 +126,9 @@ if (!pClut)
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		return NULL;
 	}
-	
-	out_buffer = 0;	
-	
-	
+
+	out_buffer = 0;
+
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_PLTE))
 	{
 		png_colorp palette;
@@ -141,9 +140,9 @@ if (!pClut)
 	else
 	{
 		for (i=0;i<256;i++)
-			pClut[i].r = pClut[i].g = pClut[i].b = (u_int8_t)i;
+			pClut[i].r = pClut[i].g = pClut[i].b = (uint8_t)i;
 	}
-	
+
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_gAMA))
 	{
 		double gamma;
@@ -155,7 +154,7 @@ if (!pClut)
 		png_uint_32 width, height;
 		int bit_depth, rowbytes;
 		int color_type;
-		u_int8_t **row_pointers = NULL;
+		uint8_t **row_pointers = NULL;
 
 		png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
 
@@ -168,8 +167,8 @@ if (!pClut)
 		png_read_update_info(png_ptr, info_ptr);
 		rowbytes = png_get_rowbytes(png_ptr, info_ptr);
 
-		out_buffer	 = (u_int8_t*) MM_heap.malloc(height * rowbytes);
-		row_pointers = (u_int8_t**) MM_std.malloc(sizeof(char*)*height);
+		out_buffer	 = (uint8_t*) MM_heap.malloc(height * rowbytes);
+		row_pointers = (uint8_t**) MM_std.malloc(sizeof(char*)*height);
 		SYS_ASSERT(row_pointers!=0);
 		for (i=0;i<height;i++)
 			row_pointers[i] = out_buffer + i * rowbytes;

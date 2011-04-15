@@ -1,19 +1,20 @@
+#pragma once
 /****************************************************************************
-; * 																		
-; * 	File		:	w32_dx.h                                           
-; * 																	    
-; * 	Description :	Win32 Direct X Detection
-; * 				                                                        
-; * 	Copyright © Realtech VR 1995 - 2003 - http://www.v3x.net									
-; * 																		
-; * 	Permission to use, copy, modify, distribute and sell this software	
-; * 	and its documentation for any purpose is hereby granted without fee,
-; * 	provided that the above copyright notice appear in all copies and	
-; * 	that both that copyright notice and this permission notice appear	
-; * 	in supporting documentation.  Realtech makes no representations 	
-; * 	about the suitability of this software for any purpose. 			
-; * 	It is provided "as is" without express or implied warranty. 		
-; * 																		
+; *
+; *	File		:	w32_dx.h
+; *
+; *	Description :	Win32 Direct X Detection
+; *
+; *	Copyright © Realtech VR 1995 - 2003 - http://www.v3x.net
+; *
+; *	Permission to use, copy, modify, distribute and sell this software
+; *	and its documentation for any purpose is hereby granted without fee,
+; *	provided that the above copyright notice appear in all copies and
+; *	that both that copyright notice and this permission notice appear
+; *	in supporting documentation.  Realtech makes no representations
+; *	about the suitability of this software for any purpose.
+; *	It is provided "as is" without express or implied warranty.
+; *
 ; ***************************************************************************/
 
 #ifndef __W32_DX_HH
@@ -40,15 +41,15 @@
 #ifdef __SYSDBG_HH
 #define SYS_DBG SYS_Debug
 #else
-#define SYS_DBG 
+#define SYS_DBG
 #endif
 
 #endif
 
 __inline int __SYS_DXTRACE(const char *file, int line, HRESULT hr)
-{	
+{
 	if (hr)
-	{		
+	{
 		char tmp[1024];
 		sprintf(tmp, "%s(%d) : %s\n", file, line, DXGetErrorDescription(hr));
 		OutputDebugString(tmp);
@@ -63,7 +64,7 @@ __inline int __SYS_DXTRACE(const char *file, int line, HRESULT hr)
 #define SYS_DXTRACE(hr) (hr)
 #endif
 
-struct DX_DisplayMode 
+struct DX_DisplayMode
 {
 	int					lWidth;
 	int					lHeight;
@@ -72,3 +73,4 @@ struct DX_DisplayMode
 };
 
 #endif
+

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -71,13 +71,11 @@ static void V3XScene_PushList(void)
     V3X.Buffer.MaxClippedFaces -= g_TmpBuffer.MaxClipped;
     V3X.Buffer.MaxTmpMaterials     -= g_TmpBuffer.MaxMat;
     V3X.Buffer.MaxFaces = V3X.Buffer.MaxClipped = V3X.Buffer.MaxMat = 0;
-    return;
 }
 
 static void V3XScene_PopList(void)
 {
     V3X.Buffer = g_TmpBuffer;
-    return;
 }
 
 static void v3x_RenderOneObject(V3XSCENE *Scene, V3XOVI *OVI)
@@ -90,7 +88,6 @@ static void v3x_RenderOneObject(V3XSCENE *Scene, V3XOVI *OVI)
         OVIf++;
     }
     if (((OVI->state&V3XSTATE_HIDDEN)==0)) V3XScene_ObjectBuild(OVI, 0);
-    return;
 }
 
 void NG_RenderDisplayBox(RW_Button *but, V3XMATRIX *Mat, V3XOVI *OVI)
@@ -118,7 +115,7 @@ void NG_RenderDisplayBox(RW_Button *but, V3XMATRIX *Mat, V3XOVI *OVI)
         V3XScene_Viewport_Build(g_SGGame.Scene, NULL);
         v3x_RenderOneObject(g_SGGame.Scene, OVI);
     }
-    else 
+    else
 		V3XScene_Viewport_Build(g_SGGame.Scene, &GX.View);
     V3XScene_Viewport_Clear(g_SGGame.Scene);
     V3XScene_Viewport_Render(g_SGGame.Scene);
@@ -130,7 +127,6 @@ void NG_RenderDisplayBox(RW_Button *but, V3XMATRIX *Mat, V3XOVI *OVI)
     V3X.Camera.M = Cam;
     V3X.Camera.matrix_Method = m;
     V3XViewport_Setup(&V3X.Camera, GX.View);
-    return;
 }
 
 void NG_DrawTicker(void)
@@ -149,7 +145,6 @@ void NG_DrawTicker(void)
     sprintf(tex, "%d fps %d pps",(int) pf->fps, (int)pf->pps);
 	CSP_Color(g_SGGame.CI_WHITE);
     CSP_WriteCenterText(tex, GX.View.ymax-20, g_pSmallFont);
-    return;
 }
 
 void NG_HudDisplayRear(void)
@@ -159,7 +154,6 @@ void NG_HudDisplayRear(void)
     V3XVector_Neg(&Cam.v.K);
     V3XVector_CrossProduct(&Cam.v.I, &Cam.v.J, &Cam.v.K);
     NG_RenderDisplayBox(b, &Cam, NULL);
-    return;
 }
 
 int NG_HudDisplayLocked(V3XOVI *OVI)
@@ -194,7 +188,7 @@ int NG_HudDisplayLocked(V3XOVI *OVI)
 void NG_HudDisplayCamera(void)
 {
     int p = 0;
-    if (g_SGSettings.rearview) 
+    if (g_SGSettings.rearview)
 		p|=1;
 
     if (g_pLockTarget)
@@ -230,5 +224,5 @@ void NG_HudDisplayCamera(void)
         }
     }
     g_SGSettings.bClearView = 0;
-    return;
 }
+

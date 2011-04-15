@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,7 +29,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #if defined __GNU_ || __BEOS__
 #include <unistd.h>
 #endif
-#if defined _MSC_VER 
+#if defined _MSC_VER
 #include <direct.h>
 #endif
 #ifndef _MAX_PATH
@@ -43,13 +43,12 @@ SYS_WAD		*	FIO_wad;
 
 extern void *lib_gzfopen (SYS_FILEHANDLE fd, const char *mode);
 
-
 // Private definition
 void		MakePathUUU(char *dest, const char *path, const char *lpFilename);
 int			filewad_closeFP(SYS_WAD *pWad, SYS_FILEHANDLE fp);
 
 static void AppendTrail(char *p)
-{	
+{
 	if (*p)
 	{
 		while(p[1]!=0)
@@ -63,6 +62,7 @@ static void AppendTrail(char *p)
 		}
 	}
 }
+
 void MakePathUUU(char *dest, const char *path, const char *lpFilename)
 {
 	sysStrnCpy(dest, path, _MAX_PATH);
@@ -70,10 +70,9 @@ void MakePathUUU(char *dest, const char *path, const char *lpFilename)
 	strcat(dest, lpFilename);
 }
 
-
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :	u_int32_t filewad_fsize(SYS_FILEHANDLE   fp)
+* PROTOTYPE  :	int filewad_fsize(SYS_FILEHANDLE   fp)
 *
 * DESCRIPTION :
 *
@@ -81,10 +80,11 @@ void MakePathUUU(char *dest, const char *path, const char *lpFilename)
 static int CALLING_C filewad_fsize(SYS_FILEHANDLE   fp)
 {
 	SYS_WAD *pWad = filewad_getcurrent();
-	return ((pWad->mode&SYS_WAD_STATUS_ENABLED)==0) 
-		? (int32_t)FIO_std.fsize(fp) 
+	return ((pWad->mode&SYS_WAD_STATUS_ENABLED)==0)
+		? (int32_t)FIO_std.fsize(fp)
 		: (int32_t)((SYS_WADREF*)fp)->file->size;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  SYS_WAD *filewad_open(char *lpFilename, int flags)
@@ -99,14 +99,14 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 	struct _sys_wadentry *file;
 	size_t i;
 	int32_t dataOffset = 0, overlayOffset = 0;
-	
+
 	// Override pWad ptr
 	if (!lpFilename)
 		return NULL;
 
 	filewad_setcurrent( pWad );
 	sysStrnCpy(pWad->s_FileName, lpFilename, _MAX_PATH);
-	pWad->mode |= (u_int8_t) flags;
+	pWad->mode |= (uint8_t) flags;
 	pWad->mode &= ~SYS_WAD_STATUS_ENABLED;
 
 	// Read hash table
@@ -120,35 +120,35 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 	if (pWad->mode & SYS_WAD_STATUS_OVERLAY)
 	{
         FIO_std.fseek( fdata, -4, SEEK_END);
-        FIO_std.fread(&overlayOffset, sizeof(u_int32_t), 1, fdata);
+        FIO_std.fread(&overlayOffset, sizeof(uint32_t), 1, fdata);
 #ifdef __BIG_ENDIAN__
-		BSWAP32((u_int32_t*)&overlayOffset, 1);
+		BSWAP32((uint32_t*)&overlayOffset, 1);
 #endif
         FIO_std.fseek(fdata, -overlayOffset, SEEK_END);
         overlayOffset = FIO_std.ftell(fdata);
 	}
 
 	// Table offset
-    FIO_std.fread(&dataOffset, sizeof(u_int32_t), 1, fdata);
+    FIO_std.fread(&dataOffset, sizeof(uint32_t), 1, fdata);
 #ifdef __BIG_ENDIAN__
-	BSWAP32((u_int32_t*)&dataOffset, 1);
+	BSWAP32((uint32_t*)&dataOffset, 1);
 #endif
 	if (dataOffset < 0)
 	{
 		dataOffset = -dataOffset;
-		FIO_std.fread(&pWad->fat.numEntries, sizeof(u_int32_t), 1, fdata);
+		FIO_std.fread(&pWad->fat.numEntries, sizeof(uint32_t), 1, fdata);
 #ifdef __BIG_ENDIAN__
 		BSWAP32(&pWad->fat.numEntries, 1);
 #endif
 		SYS_ASSERT(pWad->fat.numEntries>0);
 		pWad->fat.entries = MM_CALLOC(pWad->fat.numEntries, struct _sys_wadentry);
 
-		FIO_std.fread(&pWad->fat.fatSize, sizeof(u_int32_t), 1, fdata);
+		FIO_std.fread(&pWad->fat.fatSize, sizeof(uint32_t), 1, fdata);
 #ifdef __BIG_ENDIAN__
 		BSWAP32(&pWad->fat.fatSize, 1);
 #endif
 
-		FIO_std.fread(&i, sizeof(u_int32_t), 1, fdata);
+		FIO_std.fread(&i, sizeof(uint32_t), 1, fdata);
 
         i = FIO_std.fread(pWad->fat.entries, sizeof(struct _sys_wadentry), pWad->fat.numEntries, fdata);
 		SYS_ASSERT(i==pWad->fat.numEntries);
@@ -157,23 +157,22 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 	}
 	else
 	{
-        
 		SYS_FILEHANDLE gz = (SYS_FILEHANDLE ) lib_gzfopen (fdata, "rb");
 		SYS_ASSERT(gz);
-	
-		FIO_gzip.fread(&pWad->fat.numEntries, sizeof(u_int32_t), 1, gz);
+
+		FIO_gzip.fread(&pWad->fat.numEntries, sizeof(uint32_t), 1, gz);
 #ifdef __BIG_ENDIAN__
 		BSWAP32(&pWad->fat.numEntries, 1);
 #endif
 		SYS_ASSERT(pWad->fat.numEntries>0);
 		pWad->fat.entries = MM_CALLOC(pWad->fat.numEntries, struct _sys_wadentry);
 
-		FIO_gzip.fread(&pWad->fat.fatSize, sizeof(u_int32_t), 1, gz);
+		FIO_gzip.fread(&pWad->fat.fatSize, sizeof(uint32_t), 1, gz);
 #ifdef __BIG_ENDIAN__
 		BSWAP32(&pWad->fat.fatSize, 1);
 #endif
 
-		FIO_gzip.fread(&i, sizeof(u_int32_t), 1, gz);
+		FIO_gzip.fread(&i, sizeof(uint32_t), 1, gz);
 
         i = FIO_gzip.fread(pWad->fat.entries, sizeof(struct _sys_wadentry), pWad->fat.numEntries, gz);
 		SYS_ASSERT(i==pWad->fat.numEntries);
@@ -181,7 +180,6 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
         FIO_gzip.fclose(gz);
 
     }
-  
 
 	// Reallocate offset
 	for (file = pWad->fat.entries, i = 0;i < pWad->fat.numEntries; i++, file++)
@@ -194,6 +192,7 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 	}
 	return pWad;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	SYS_FILEHANDLE   static *filewad_fopen(const char *lpFilename, const char *mode)
@@ -201,7 +200,6 @@ SYS_WAD *filewad_open(const char *lpFilename, int flags)
 * DESCRIPTION :
 *
 */
-
 static int CALLING_C filewad_fexist(const char *szFilename)
 {
 	SYS_WAD *pWad;
@@ -223,7 +221,7 @@ static int CALLING_C filewad_fexist(const char *szFilename)
 	else
 	{
 		char name[_MAX_PATH];
-		u_int32_t i;
+		uint32_t i;
 		struct _sys_wadentry *file = pWad->fat.entries;
 		sprintf(name, "%s%s", pWad->s_Path, szFilename);
 		for (i=0;i<pWad->fat.numEntries;file++, i++)
@@ -236,6 +234,7 @@ static int CALLING_C filewad_fexist(const char *szFilename)
 		return 0;
 	}
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	SYS_FILEHANDLE   static *filewad_fopen(const char *lpFilename, const char *mode)
@@ -246,8 +245,8 @@ static int CALLING_C filewad_fexist(const char *szFilename)
 static SYS_FILEHANDLE  CALLING_C filewad_fopen(const char *lpFilename, const char *mode)
 {
 	char name[_MAX_PATH];
-    SYS_WAD *pWad = filewad_getcurrent();	
-	
+    SYS_WAD *pWad = filewad_getcurrent();
+
 	if (!pWad)
 	{
 		SYS_FILEHANDLE  fp = FIO_std.fopen(lpFilename, mode);
@@ -284,14 +283,12 @@ static SYS_FILEHANDLE  CALLING_C filewad_fopen(const char *lpFilename, const cha
 				SYS_WADREF *ref = &pWad->hFileHandles[i];
 				if (!ref->handle)
 				{
-					
 					ref->file = pWad->fat.entries + index - 1;
 					ref->handle = FIO_std.fopen(pWad->s_FileName, "rb");
-
 #ifdef _DEBUG
 					SYS_Debug("%s: %s (%s) (%d)\n", pWad->s_FileName, lpFilename, mode, i);
-#endif		
-   				FIO_std.fseek( ref->handle, ref->file->offset, SEEK_SET);
+#endif
+					FIO_std.fseek( ref->handle, ref->file->offset, SEEK_SET);
 					return (SYS_FILEHANDLE )ref;
 				}
 			}
@@ -306,6 +303,7 @@ static SYS_FILEHANDLE  CALLING_C filewad_fopen(const char *lpFilename, const cha
 		}
 	}
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	static int filewad_fclose(SYS_FILEHANDLE   fp)
@@ -325,6 +323,7 @@ static int CALLING_C filewad_closeFlush(void)
 	}
 	return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void filewad_close(SYS_WAD *Res)
@@ -337,8 +336,8 @@ void filewad_close(SYS_WAD *pWad)
 	filewad_closeFlush();
 	MM_heap.free( pWad->fat.entries );
 	MM_heap.free( pWad );
-	return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	int filewad_closeall(void)
@@ -357,6 +356,7 @@ int filewad_closeall(SYS_WAD *pWad)
 		return filewad_closeFlush();
 	}
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :	static int filewad_closeFP(SYS_FILEHANDLE   fp)
@@ -364,9 +364,8 @@ int filewad_closeall(SYS_WAD *pWad)
 * Description : Close file handle
 *
 */
-
 int filewad_closeFP(SYS_WAD *pWad, SYS_FILEHANDLE  fp)
-{	
+{
 	int i;
 	for (i=0;i<MAX_WAD_OPEN_FILE;i++)
 	{
@@ -428,11 +427,9 @@ static int CALLING_C filewad_fseek(SYS_FILEHANDLE  stream, long offset, int when
 			SYS_ASSERT(0);
 			break;
 		}
-		
 	}
 	return 1;
 }
-
 
 static long CALLING_C filewad_ftell(SYS_FILEHANDLE  stream)
 {
@@ -468,7 +465,6 @@ static int CALLING_C filewad_eof(SYS_FILEHANDLE  stream)
 	}
 }
 
-
 static int CALLING_C filewad_fgetc(SYS_FILEHANDLE  stream)
 {
     SYS_WAD *pWad = filewad_getcurrent();
@@ -486,7 +482,6 @@ static int CALLING_C filewad_fgetc(SYS_FILEHANDLE  stream)
 	}
 }
 
-
 static size_t CALLING_C filewad_fread(void *ptr, size_t size, size_t nitems, SYS_FILEHANDLE  stream)
 {
     SYS_WAD *pWad = filewad_getcurrent();
@@ -501,7 +496,7 @@ static size_t CALLING_C filewad_fread(void *ptr, size_t size, size_t nitems, SYS
 	{
 		SYS_WADREF *ref = (SYS_WADREF*)stream;
 		if (ref)
-		{		
+		{
 			long f = FIO_std.ftell(ref->handle) - ref->file->offset;
 			size_t bytes = nitems * size;
 			if (f + bytes > ref->file->size)
@@ -515,7 +510,7 @@ static size_t CALLING_C filewad_fread(void *ptr, size_t size, size_t nitems, SYS
 		}
 		SYS_ASSERT(ref);
 		return 0;
-	}	
+	}
 }
 
 static char * CALLING_C filewad_fgets(char *s, int n, SYS_FILEHANDLE  stream)
@@ -554,7 +549,6 @@ SYS_FILEHANDLE  filewad_get(SYS_FILEHANDLE  fp)
 	}
 }
 
-
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -562,7 +556,6 @@ SYS_FILEHANDLE  filewad_get(SYS_FILEHANDLE  fp)
 * DESCRIPTION :
 *
 */
-
 void filewad_makepath(SYS_WAD *pWad, char *dest, const char *fname, int nLen)
 {
 	if (!pWad)
@@ -586,7 +579,6 @@ void filewad_getcwd(const SYS_WAD *pWad, char *curpath, int len)
 	else
 		getcwd(curpath, len);
 #endif
-	return;
 }
 
 void filewad_chdir(SYS_WAD *pWad, const char *szNewPath)
@@ -624,7 +616,6 @@ void filewad_chdir(SYS_WAD *pWad, const char *szNewPath)
 			chdir(szNewPath);
 	}
 #endif
-	return;
 }
 
 
@@ -647,5 +638,5 @@ SYS_FILEIO FIO_res =
 
 void sysInitFS()
 {
-  
 }
+

@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -57,7 +57,7 @@ void STUB_Down(void)
  #ifdef _DEBUG
      SYS_Debug("Release input devices..\n");
  #endif
-  	if (sKEY)
+	if (sKEY)
 		sKEY->Release();
 
 	if (sJOY)
@@ -69,8 +69,8 @@ void STUB_Down(void)
  #ifdef _DEBUG
      SYS_Debug("Release audio device..\n");
  #endif
- 	V3XA.Client->Release();
- 	
+	V3XA.Client->Release();
+
  #ifdef _DEBUG
      SYS_Debug("Release 3d engine..\n");
  #endif
@@ -83,8 +83,6 @@ void STUB_Down(void)
 
     if (GX.Client)
 		GX.Client->Shutdown();
-
-    return;
 }
 
 static int STUB_CheckAudio(void *hwnd)
@@ -123,20 +121,17 @@ static void STUB_CheckControl(void *hwnd)
  #endif
     sKEY = KEY_SystemGetInterface_STD();
     sKEY->Open(hwnd);
-    
+
     sMOU = MSE_SystemGetInterface_STD();
     sMOU->Open(hwnd);
-    
+
     sJOY = JOY_SystemGetInterface_STD();
     sJOY->Open(hwnd, 0);
 
 	RLX.Control.mouse = sMOU;
 	RLX.Control.joystick = sJOY;
 	RLX.Control.keyboard = sKEY;
-
-	return;
 }
-
 
 static void STUB_Check3D(void *hwnd)
 {
@@ -151,11 +146,11 @@ static void STUB_Check3D(void *hwnd)
 }
 
 static void STUB_CheckSystem(void *hwnd)
-{                       
+{
  #ifdef _DEBUG
      SYS_Debug("init system engine..\n");
  #endif
- 	RLX.mm_heap = &MM_heap;
+	RLX.mm_heap = &MM_heap;
 	RLX.mm_std = &MM_std;
 	RLX.pfGetPixelFormat = RGB_GetPixelFormat;
 	RLX.pfSetPixelFormat = RGB_SetPixelFormat;
@@ -169,8 +164,6 @@ static void STUB_CheckSystem(void *hwnd)
 	sNET = NET_GetDirectPlayInterface(hwnd, &STUB_GUID);
 	SYS_ASSERT(sNET);
 #endif
-	
-    return;
 }
 
 void STUB_CheckUp(void *hwnd)
@@ -191,7 +184,5 @@ void STUB_CheckUp(void *hwnd)
 	sNET = NET_GetDirectPlayInterface();
 #endif
 #endif
-
-
-    return;
 }
+

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -23,7 +23,7 @@ Original Source: 1996 - Stephane Denis
 Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 Linux/SDL Port: 2005 - Matt Williams
 */
-//------------------------------------------------------------------------- 
+//-------------------------------------------------------------------------
 #include <stdio.h>
 #include <SDL/SDL.h>
 
@@ -32,21 +32,21 @@ Linux/SDL Port: 2005 - Matt Williams
 #include "systime.h"
 
 // Time in millisecond
-u_int32_t timer_ms(void)
+uint32_t timer_ms(void)
 {
   // Return the value from SDL_GetTicks(), which returns time in ms.
-  return (u_int32_t)SDL_GetTicks();
+  return (uint32_t)SDL_GetTicks();
 }
 
 // Time in seconds
-u_int32_t timer_sec(void)
+uint32_t timer_sec(void)
 {
   // Return the value from SDL_GetTicks(), converting to seconds.
-  return (u_int32_t)(SDL_GetTicks() / 1000);
+  return (uint32_t)(SDL_GetTicks() / 1000);
 }
 
 // Snooze (wait + release CPU)
-void timer_snooze(u_int32_t t)
+void timer_snooze(uint32_t t)
 {
   // Just call through into SDL.
   SDL_Delay(t);
@@ -62,7 +62,6 @@ static const int64_t g_iFreq = 1000000;
 void timer_Stop(SYS_TIMER *tm)
 {
     tm->flags &= ~SYS_TIMER_FLAGS_START;
-    return;
 }
 
 // clear timer
@@ -70,7 +69,6 @@ void timer_Reset(SYS_TIMER *tm)
 {
     tm->iCounter = 0;
     tm->fCounter = 0.f;
-    return;
 }
 
 void timer_Update(SYS_TIMER *tm)
@@ -83,7 +81,7 @@ void timer_Update(SYS_TIMER *tm)
     do
     {
         GET_TICK(&tm->tEnd);
-    	ticks_passed = tm->tEnd - tm->tStart;
+		ticks_passed = tm->tEnd - tm->tStart;
 		ticks_left = (int64_t)ticks_to_wait - (int64_t)ticks_passed;
 		if (ticks_left > ticks_min)
 			timer_snooze(1);
@@ -105,7 +103,6 @@ void timer_Update(SYS_TIMER *tm)
     tm->iCounter = (int32_t)(tm->fCounter * 65535.f);
 
     GET_TICK(&tm->tStart);
-    return;
 }
 
 void timer_Start(SYS_TIMER *tm, int iFreq, int iMinFrame)
@@ -115,7 +112,6 @@ void timer_Start(SYS_TIMER *tm, int iFreq, int iMinFrame)
 
     GET_TICK(&tm->tStart);
     timer_Update(tm);
-    return;
 }
 
 int32_t thread_begin(SYS_THREAD *pThread, enum SYS_THREAD_PRIORITY_ENUM priority)
@@ -135,13 +131,11 @@ void thread_end(SYS_THREAD *pThread)
 {
   SDL_WaitThread(pThread->hThread, NULL);
   pThread->nStatus = 0;
-  return;
 }
 
 void thread_exit(int code)
 {
   // TODO: Implement. However, this function is not actually necessary for No Gravity.
-  return;
 }
 
 int mutex_init(SYS_MUTEX *mutex)
@@ -191,3 +185,4 @@ int mutex_unlock(SYS_MUTEX *mutex)
   SDL_mutexV((SDL_mutex *)mutex->hMutex);
   return 0;
 }
+

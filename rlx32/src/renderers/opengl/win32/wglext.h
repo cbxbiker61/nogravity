@@ -1,3 +1,4 @@
+#pragma once
 #ifndef	__glext_h_
 #define	__glext_h_
 
@@ -811,7 +812,7 @@ WGLEXTERN PFNGLUNIFORM2IVARBPROC glUniform2ivARB;
 WGLEXTERN PFNGLUNIFORM3IVARBPROC glUniform3ivARB;
 WGLEXTERN PFNGLUNIFORM4IVARBPROC glUniform4ivARB;
 
-#endif 
+#endif
 
 /*
 ** GL_ARB_fragment_shader
@@ -833,7 +834,7 @@ WGLEXTERN PFNGLUNIFORM4IVARBPROC glUniform4ivARB;
 #define	GL_MAX_TEXTURE_COORDS_ARB				0x8871
 #define	GL_MAX_TEXTURE_IMAGE_UNITS_ARB			0x8872
 
-#endif 
+#endif
 
 /*
 ** GL_ARB_vertex_shader
@@ -848,12 +849,12 @@ WGLEXTERN PFNGLUNIFORM4IVARBPROC glUniform4ivARB;
 #ifndef	GL_ARB_vertex_shader
 #define	GL_ARB_vertex_shader 1
 
-#define	GL_VERTEX_SHADER_ARB					 0x8B31	 
+#define	GL_VERTEX_SHADER_ARB					 0x8B31
 #define	GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB	 0x8B4A
-#define	GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB	 0x8B4C	
+#define	GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB	 0x8B4C
 #define	GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS_ARB	 0x8B4D
 
-#endif 
+#endif
 
 /*
 ** GL_ARB_shading_language_100
@@ -867,7 +868,7 @@ WGLEXTERN PFNGLUNIFORM4IVARBPROC glUniform4ivARB;
 
 #ifndef	GL_ARB_shading_language_100
 #define	GL_ARB_shading_language_100	1
-#endif 
+#endif
 
 /*
 ** GL_ARB_point_sprite
@@ -882,7 +883,7 @@ WGLEXTERN PFNGLUNIFORM4IVARBPROC glUniform4ivARB;
 #define	GL_ARB_point_sprite			1
 #define	GL_POINT_SPRITE_ARB						  0x8861
 #define	GL_COORD_REPLACE_ARB					  0x8862
-#endif 
+#endif
 
 
 /*
@@ -3771,3 +3772,4 @@ void					glxQueryDisplayModes(DEVMODE **ppmode, GLint *pNumModes);
 #endif
 
 #endif /* __glext_h_ */
+

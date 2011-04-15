@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -27,7 +28,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #ifndef __FIXOPCODE
 #define __FIXOPCODE
 
-#define xMUL8(a, b) ((u_int32_t)(((u_int32_t)(a)*(u_int32_t)(b))>>8))
+#define xMUL8(a, b) ((uint32_t)(((uint32_t)(a)*(uint32_t)(b))>>8))
 #define SHL16(x)         ((int32_t)(x)<<16)
 #define SHR16(x)         ((int32_t)(x)>>16)
 #define SHLD(x)          ((int32_t)(x)<<16)
@@ -118,7 +119,7 @@ extern __inline__ int32_t VMUL(int32_t x, int32_t y)
     "shrdl $16, %%edx, %%eax\n"
     "popl  %%edx"
     :"=a" (rv)
-    :"a"  (x), 
+    :"a"  (x),
     "c"  (y)
     );
     return rv;
@@ -145,7 +146,7 @@ extern __inline__ int32_t VDIV(int32_t x, int32_t y)
     "sarl  $16, %%edx      \n"
     "idivl %%ecx          \n"
     :"=a" (rv)
-    :"d"  (x), 
+    :"d"  (x),
     "c"  (y)
     );
     return rv;
@@ -159,14 +160,14 @@ extern __inline__ int32_t VMUL_DIV (int32_t x, int32_t y, int32_t z)
     "idivl  %%ecx\n"
     "popl   %%edx"
     :"=a" (rv)
-    :"a"  (x), 
-    "b"  (y), 
+    :"a"  (x),
+    "b"  (y),
     "c"  (z)
     );
     return rv;
 }
 #else
- 
+
   #define fMUL(x, y)        (((float)(x)*(float)(y))*(1.f/65536.f))
   #define fDIV(x, y)        (((float)(x)*65536.f)/(float)(y))
   #define VMUL(x, y)        (int32_t)fMUL(x, y)
@@ -177,3 +178,4 @@ extern __inline__ int32_t VMUL_DIV (int32_t x, int32_t y, int32_t z)
 #endif
 
 #endif
+

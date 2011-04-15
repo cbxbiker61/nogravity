@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -32,8 +32,10 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "gx_flc.h"
 #include "iss_av.h"
 #include "iss_defs.h"
+
 static int FLZ_time, FLZ_rate, FLZ_mode, FLZ_SkipFrame;
 static V3XA_STREAM FLZ_hnd;
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int32_t FLZ_AVCheck(void *data)
@@ -44,8 +46,8 @@ static V3XA_STREAM FLZ_hnd;
 int32_t FLZ_AVCheck(void *data)
 {
     FLI_STRUCT *fli = (FLI_STRUCT*)data;
-    u_int32_t temps = timer_ms();
-    if ( ((V3XA.State & 1)) || (temps>=(u_int32_t)(FLZ_time+fli->Header.Struct.speed)) )
+    uint32_t temps = timer_ms();
+    if ( ((V3XA.State & 1)) || (temps>=(uint32_t)(FLZ_time+fli->Header.Struct.speed)) )
     {
 		FLI_Unpack(fli);
 		FLZ_time = temps;
@@ -53,6 +55,7 @@ int32_t FLZ_AVCheck(void *data)
     }
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void FLZ_AVStop(FLI_STRUCT *fli)
@@ -63,11 +66,11 @@ int32_t FLZ_AVCheck(void *data)
 void FLZ_AVStop(void *fli)
 {
     V3XA.Client->StreamSetVolume(FLZ_hnd, 0);
-    if ((V3XA.State & 1)) 
+    if ((V3XA.State & 1))
 		V3XA.Client->StreamRelease(FLZ_hnd);
     FLI_Close((FLI_STRUCT *)fli);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  FLI_STRUCT *FLZ_AVInit(char *filename)
@@ -88,3 +91,4 @@ void *FLZ_AVInit(char *filename)
     FLZ_rate = 22050;
     return fli;
 }
+

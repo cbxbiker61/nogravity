@@ -100,11 +100,11 @@ GLint ChoosePixelFormatEx(HDC pHdc, GLint *pBpp, GLint *pDepth, GLint *pStencil,
 		bool opengl = (pfd.dwFlags & PFD_SUPPORT_OPENGL) ? true :false;
 		bool window = (pfd.dwFlags & PFD_DRAW_TO_WINDOW) ? true :false;
 		bool bitmap = (pfd.dwFlags & PFD_DRAW_TO_BITMAP) ? true :false;
-		bool dbuff	= (pfd.dwFlags & PFD_DOUBLEBUFFER);		
+		bool dbuff	= (pfd.dwFlags & PFD_DOUBLEBUFFER);
 
 		GLuint q = 0;
 		if(opengl && window)
-			q += 0x10000;		
+			q += 0x10000;
 		if(wdepth == -1 || (wdepth > 0 && depth > 0))
 			q += 0x8000;
 		if(wstencil == -1 || (wstencil > 0 && stencil > 0))
@@ -127,14 +127,14 @@ GLint ChoosePixelFormatEx(HDC pHdc, GLint *pBpp, GLint *pDepth, GLint *pStencil,
 			q += 0x0008;
 		if(wdepth == -1 || (wdepth == depth))
 			q += 0x0400;
-		
+
 		if(depth >= 16)
 			q += 0x0010;
 		if(depth == 16)
 			q += 0x0004;
 		if(!pal)
 			q += 0x0080;
-		
+
 		if(q > maxqual)
 		{
 			maxqual = q;
@@ -175,7 +175,7 @@ void wglQueryDisplayModes(DEVMODE **ppmode, GLint *pNumModes)
 	while (EnumDisplaySettings(NULL, n, &devmode))
 		n++;
 
-	if (pNumModes) 
+	if (pNumModes)
 		*pNumModes = n;
 
 	/* fill an array with all the devmodes so we don't have to keep
@@ -192,10 +192,8 @@ void wglQueryDisplayModes(DEVMODE **ppmode, GLint *pNumModes)
 			p[n].dmSize = sizeof(DEVMODE);
 		}
 		*ppmode = p;
-	}	
-	return;
+	}
 }
-
 
 // ARB Pixel Format
 GLint wglIsExtensionSupportedARB(HDC hdc, const char *extension)
@@ -238,14 +236,14 @@ int wglGetProcAddressesARB(HDC hDC)
 	WGLGETPROCNOFAIL(PFNWGLGETEXTENSIONSSTRINGEXTPROC, wglGetExtensionsStringEXT);
 
 	if (wglGetExtensionsStringARB)
-	{		
+	{
 		if (wglIsExtensionSupportedARB(hDC, "WGL_ARB_pixel_format"))
 		{
 			WGLGETPROC( PFNWGLGETPIXELFORMATATTRIBIVARBPROC, wglGetPixelFormatAttribivARB);
 			WGLGETPROC( PFNWGLGETPIXELFORMATATTRIBFVARBPROC, wglGetPixelFormatAttribfvARB);
 			WGLGETPROC( PFNWGLCHOOSEPIXELFORMATARBPROC,	wglChoosePixelFormatARB);
 		}
-		
+
 		if (wglIsExtensionSupportedARB(hDC, "WGL_ARB_pbuffer"))
 		{
 			WGLGETPROC( PFNWGLCREATEPBUFFERARBPROC, wglCreatePbufferARB);
@@ -258,10 +256,10 @@ int wglGetProcAddressesARB(HDC hDC)
 		if (wglIsExtensionSupportedARB(hDC, "WGL_ARB_render_texture"))
 		{
 			WGLGETPROC( PFNWGLBINDTEXIMAGEARBPROC, wglBindTexImageARB);
-			WGLGETPROC( PFNWGLRELEASETEXIMAGEARBPROC, wglReleaseTexImageARB);		
+			WGLGETPROC( PFNWGLRELEASETEXIMAGEARBPROC, wglReleaseTexImageARB);
 			WGLGETPROC( PFNWGLSETPBUFFERATTRIBARBPROC, wglSetPbufferAttribARB);
 		}
-		
+
 		if (wglIsExtensionSupportedARB(hDC, "WGL_ARB_multisample"))
 		{
 			WGLGETPROC( PFNGLSAMPLECOVERAGEARBPROC,	glSampleCoverageARB);
@@ -274,9 +272,9 @@ int wglGetProcAddressesARB(HDC hDC)
 		{
 			WGLGETPROC( PFNWGLGETPIXELFORMATATTRIBIVEXT, wglGetPixelFormatAttribivEXT);
 			WGLGETPROC( PFNWGLGETPIXELFORMATATTRIBFVEXT, wglGetPixelFormatAttribfvEXT);
-			WGLGETPROC( PFNWGLCHOOSEPIXELFORMATEXT,	wglChoosePixelFormatEXT);		
+			WGLGETPROC( PFNWGLCHOOSEPIXELFORMATEXT,	wglChoosePixelFormatEXT);
 		}
-		
+
 		if (wglIsExtensionSupported("WGL_EXT_pbuffer"))
 		{
 			WGLGETPROC( PFNWGLCREATEPBUFFEREXT, wglCreatePbufferEXT);
@@ -286,9 +284,8 @@ int wglGetProcAddressesARB(HDC hDC)
 			WGLGETPROC( PFWGLQUERYPBUFFEREXT, wglQueryPbufferEXT);
 		}
 	}
-	return -1;	
+	return -1;
 }
-
 
 #endif // __WIN32__
 
@@ -341,12 +338,11 @@ static void APIENTRY glMultiDrawElements(GLenum	mode, const	GLsizei	*count,	GLen
 	}
 }
 
-static GLvoid APIENTRY glDrawRangeElements(GLenum mode, GLuint start, GLuint end, GLsizei count, GLenum type, 	const GLvoid *indices
-)
+static GLvoid APIENTRY glDrawRangeElements(GLenum mode, GLuint start, GLuint end
+				, GLsizei count, GLenum type, const GLvoid *indices)
 {
 	return glDrawElements(mode, count, type, indices);
 }
-
 
 void wglGetProcAddresses()
 {
@@ -355,14 +351,14 @@ void wglGetProcAddresses()
 	if (wglIsExtensionSupported("WGL_EXT_swap_control"))
 	{
 		WGLGETPROC( PFNWGLSWAPINTERVALEXTPROC, wglSwapIntervalEXT);
-		WGLGETPROC( PFNWGLGETSWAPINTERVALEXTPROC, wglGetSwapIntervalEXT);		
+		WGLGETPROC( PFNWGLGETSWAPINTERVALEXTPROC, wglGetSwapIntervalEXT);
 	}
 
 	if (wglIsExtensionSupported("GL_WIN_swap_hint"))
 	{
 		WGLGETPROC( PFNGLADDSWAPHINTRECTWINPROC, glAddSwapHintRectWIN);
 	}
-		
+
 #elif defined macintosh
 	glGetPointerv(GL_MAC_GET_PROC_ADDRESS_NV, (GLvoid*) &glMacGetProcAddressNV);
 	if (!glMacGetProcAddressNV)
@@ -377,13 +373,13 @@ void wglGetProcAddresses()
 		 WGLGETPROC( PGNGLTBUFFERMASK3DFX, glTbufferMask3DFX);
 	}
 
-		
+
 	// ATI
 	if (wglIsExtensionSupported("GL_ATI_vertex_array_object"))
 	{
          WGLGETPROC( PFNGLNEWOBJECTBUFFERATIPROC, glNewObjectBufferATI);
 		 WGLGETPROC( PFNGLISOBJECTBUFFERATIPROC, glIsObjectBufferATI);
-		 WGLGETPROC( PFNGLUPDATEOBJECTBUFFERATIPROC, glUpdateObjectBufferATI); 
+		 WGLGETPROC( PFNGLUPDATEOBJECTBUFFERATIPROC, glUpdateObjectBufferATI);
 		 WGLGETPROC( PFNGLGETOBJECTBUFFERFVATIPROC, glGetObjectBufferfvATI);
 		 WGLGETPROC( PFNGLGETOBJECTBUFFERIVATIPROC, glGetObjectBufferivATI);
 		 WGLGETPROC( PFNGLFREEOBJECTBUFFERATIPROC, glFreeObjectBufferATI);
@@ -398,16 +394,16 @@ void wglGetProcAddresses()
 		{
 			WGLGETPROC( PFNGLELEMENTPOINTERATIPROC,	glElementPointerATI);
 			WGLGETPROC( PFNGLDRAWELEMENTARRAYATIPROC, glDrawElementArrayATI);
-			WGLGETPROC( PFNGLDRAWRANGEELEMENTARRAYATIPROC, glDrawRangeElementArrayATI);			
+			WGLGETPROC( PFNGLDRAWRANGEELEMENTARRAYATIPROC, glDrawRangeElementArrayATI);
 		}
-	
+
 		if (wglIsExtensionSupported("GL_ATI_map_object_buffer"))
 		{
 			WGLGETPROC( PFNGLMAPOBJECTBUFFERATI, glMapObjectBufferATI);
 			WGLGETPROC( PFNGLUNMAPOBJECTBUFFERATI, glUnmapObjectBufferATI);
 		}
 	}
-	
+
 	if (wglIsExtensionSupported("GL_ATI_fragment_shader"))
 	{
 	     WGLGETPROC( PFNGLGENFRAGMENTSHADERSATIPROC, glGenFragmentShadersATI);
@@ -443,12 +439,12 @@ void wglGetProcAddresses()
 	// EXT
 	if (wglIsExtensionSupported("GL_EXT_separate_specular_color"))
 	{
-		WGLGETPROC( PFNGLSECONDARYCOLOR3UBVEXTPROC, glSecondaryColor3ubvEXT);		
+		WGLGETPROC( PFNGLSECONDARYCOLOR3UBVEXTPROC, glSecondaryColor3ubvEXT);
 	}
 
 	if (wglIsExtensionSupported("GL_EXT_fog_coord"))
 	{
-		WGLGETPROC ( PFNGLFOGCOORDFEXTPROC, glFogCoordfEXT);		
+		WGLGETPROC ( PFNGLFOGCOORDFEXTPROC, glFogCoordfEXT);
 	}
 
 	if (wglIsExtensionSupported("GL_EXT_paletted_texture"))
@@ -457,7 +453,7 @@ void wglGetProcAddresses()
 	}
 
 #ifndef GL_VERSION_1_2
-    if (wglIsExtensionSupported("GL_EXT_compiled_vertex_array")) 
+    if (wglIsExtensionSupported("GL_EXT_compiled_vertex_array"))
 	{
         WGLGETPROC( PFNGLLOCKARRAYSEXTPROC,	glLockArraysEXT);
 		WGLGETPROC( PFNGLUNLOCKARRAYSEXTPROC, glUnlockArraysEXT);
@@ -475,7 +471,7 @@ void wglGetProcAddresses()
 		glMultiDrawElementsEXT = glMultiDrawElements;
 	}
 
-	if (wglIsExtensionSupported("GL_EXT_draw_range_elements")) 
+	if (wglIsExtensionSupported("GL_EXT_draw_range_elements"))
 	{
 		WGLGETPROC( PFNGLDRAWRANGEELEMENTSEXTPROC, glDrawRangeElementsEXT);
 	}
@@ -492,7 +488,7 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLGENVERTEXSHADERSEXTPROC, glGenVertexShadersEXT);
 		WGLGETPROC( PFNGLDELETEVERTEXSHADEREXTPROC, glDeleteVertexShaderEXT);
 		WGLGETPROC( PFNGLSHADEROP1EXTPROC, glShaderOp1EXT);
-		WGLGETPROC( PFNGLSHADEROP2EXTPROC, glShaderOp2EXT); 
+		WGLGETPROC( PFNGLSHADEROP2EXTPROC, glShaderOp2EXT);
 		WGLGETPROC( PFNGLSHADEROP3EXTPROC, glShaderOp3EXT);
 		WGLGETPROC( PFNGLSWIZZLEEXTPROC, glSwizzleEXT);
 		WGLGETPROC( PFNGLWRITEMASKEXTPROC, glWriteMaskEXT);
@@ -528,7 +524,7 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLGETLOCALCONSTANTBOOLEANVEXTPROC, glGetLocalConstantBooleanvEXT);
 		WGLGETPROC( PFNGLGETLOCALCONSTANTINTEGERVEXTPROC, glGetLocalConstantIntegervEXT);
 		WGLGETPROC( PFNGLGETLOCALCONSTANTFLOATVEXTPROC, glGetLocalConstantFloatvEXT);
-	}	
+	}
 
 	if (wglIsExtensionSupported("GL_EXT_vertex_weighting"))
 	{
@@ -538,7 +534,7 @@ void wglGetProcAddresses()
 	}
 
 	if (wglIsExtensionSupported("GL_EXT_point_parameters"))
-	{	
+	{
 		WGLGETPROC( PFNGLPOINTPARAMETERFEXTPROC, glPointParameterfEXT);
 		WGLGETPROC( PFNGLPOINTPARAMETERFVEXTPROC, glPointParameterfvEXT);
 	}
@@ -551,7 +547,7 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLMULTITEXCOORD4FARBPROC, glMultiTexCoord4fARB);
 		WGLGETPROC( PFNGLMULTITEXCOORD2FVARBPROC, glMultiTexCoord2fvARB);
 		WGLGETPROC( PFNGLMULTITEXCOORD4FVARBPROC, glMultiTexCoord4fvARB);
-		WGLGETPROC( PFNGLCLIENTACTIVETEXTUREARBPROC, glClientActiveTextureARB);	
+		WGLGETPROC( PFNGLCLIENTACTIVETEXTUREARBPROC, glClientActiveTextureARB);
 	}
 
 	if (wglIsExtensionSupported("GL_ARB_texture_compression"))
@@ -559,17 +555,17 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLCOMPRESSEDTEXIMAGE1DARB, glCompressedTexImage1DARB);
 		WGLGETPROC( PFNGLCOMPRESSEDTEXIMAGE2DARB, glCompressedTexImage2DARB);
 		WGLGETPROC( PFNGLCOMPRESSEDTEXIMAGE3DARB, glCompressedTexImage3DARB);
-		WGLGETPROC( PFNGLGETCOMPRESSEDTEXIMAGEARB, glGetCompressedTexImageARB);		
+		WGLGETPROC( PFNGLGETCOMPRESSEDTEXIMAGEARB, glGetCompressedTexImageARB);
 	}
 
 	if (wglIsExtensionSupported("GL_ARB_transpose_matrix"))
 	{
 		WGLGETPROC( PFNGLLOADTRANSPOSEMATRIXFARB, glLoadTransposeMatrixfARB);
-		WGLGETPROC( PFNGLMULTTRANSPOSEMATRIXFARB, glMultTransposeMatrixfARB);	
+		WGLGETPROC( PFNGLMULTTRANSPOSEMATRIXFARB, glMultTransposeMatrixfARB);
 	}
 
 	if (wglIsExtensionSupported("GL_ARB_point_parameters"))
-	{	
+	{
 		WGLGETPROC( PFNGLPOINTPARAMETERFARBPROC, glPointParameterfARB);
 		WGLGETPROC( PFNGLPOINTPARAMETERFVARBPROC, glPointParameterfvARB);
 	}
@@ -586,7 +582,7 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLWEIGHTUIVARBPROC, glWeightuivARB);
 		WGLGETPROC( PFNGLWEIGHTPOINTERARBPROC, glWeightPointerARB);
 		WGLGETPROC( PFNGLVERTEXBLENDARBPROC, glVertexBlendARB);
-	}		
+	}
 
 	if (wglIsExtensionSupported("GL_ARB_vertex_program"))
 	{
@@ -606,7 +602,7 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLVERTEXATTRIB1SVARBPROC, glVertexAttrib1svARB);
 		WGLGETPROC( PFNGLVERTEXATTRIB1FVARBPROC, glVertexAttrib1fvARB);
 		WGLGETPROC( PFNGLVERTEXATTRIB1DVARBPROC, glVertexAttrib1dvARB);
-		WGLGETPROC( PFNGLVERTEXATTRIB2SVARBPROC, glVertexAttrib2svARB); 
+		WGLGETPROC( PFNGLVERTEXATTRIB2SVARBPROC, glVertexAttrib2svARB);
 		WGLGETPROC( PFNGLVERTEXATTRIB2FVARBPROC, glVertexAttrib2fvARB);
 		WGLGETPROC( PFNGLVERTEXATTRIB2DVARBPROC, glVertexAttrib2dvARB);
 		WGLGETPROC( PFNGLVERTEXATTRIB3SVARBPROC, glVertexAttrib3svARB);
@@ -652,7 +648,6 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLGETVERTEXATTRIBIVARBPROC, glGetVertexAttribivARB);
 		WGLGETPROC( PFNGLGETVERTEXATTRIBPOINTERVARBPROC, glGetVertexAttribPointervARB);
 		WGLGETPROC( PFNGLISPROGRAMARBPROC, glIsProgramARB);
-
 	}
 
 	if (wglIsExtensionSupported("GL_ARB_vertex_buffer_object"))
@@ -672,7 +667,7 @@ void wglGetProcAddresses()
 
 	// NV
 	if (wglIsExtensionSupported("GL_NV_vertex_program"))
-	{ 
+	{
 		WGLGETPROC( PFNGLBINDPROGRAMNVPROC, glBindProgramNV);
 		WGLGETPROC( PFNGLDELETEPROGRAMSNVPROC, glDeleteProgramsNV);
 		WGLGETPROC( PFNGLEXECUTEPROGRAMNVPROC, glExecuteProgramNV);
@@ -697,7 +692,7 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLPROGRAMPARAMETERS4DVNVPROC, glProgramParameters4dvNV);
 		WGLGETPROC( PFNGLPROGRAMPARAMETERS4FVNVPROC, glProgramParameters4fvNV);
 		WGLGETPROC( PFNGLTRACKMATRIXNVPROC, glTrackMatrixNV);
-		WGLGETPROC( PFNGLVERTEXATTRIBPOINTERNVPROC, glVertexAttribPointerNV);	
+		WGLGETPROC( PFNGLVERTEXATTRIBPOINTERNVPROC, glVertexAttribPointerNV);
 		WGLGETPROC( PFNGLVERTEXATTRIB1FNVPROC, glVertexAttrib1fNV);
 		WGLGETPROC( PFNGLVERTEXATTRIB2FNVPROC, glVertexAttrib2fNV);
 		WGLGETPROC( PFNGLVERTEXATTRIB3FNVPROC, glVertexAttrib3fNV);
@@ -713,7 +708,7 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLVERTEXATTRIBS3FVNVPROC, glVertexAttribs3fvNV);
 		WGLGETPROC( PFNGLVERTEXATTRIBS4FVNVPROC, glVertexAttribs4fvNV);
 		WGLGETPROC( PFNGLVERTEXATTRIBS4UBVNVPROC, glVertexAttribs4ubvNV);
-	}	 
+	}
 
 	if (wglIsExtensionSupported("GL_NV_register_combiners"))
 	{
@@ -732,14 +727,14 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLGETFINALCOMBINERINPUTPARAMETERIVNVPROC, glGetFinalCombinerInputParameterivNV);
 	}
 
-    if (wglIsExtensionSupported("GL_NV_vertex_array_range")) 
-	{   
+    if (wglIsExtensionSupported("GL_NV_vertex_array_range"))
+	{
 		WGLGETPROC( PFNGLFLUSHVERTEXARRAYRANGENVPROC, glFlushVertexArrayRangeNV);
 		WGLGETPROC( PFNGLVERTEXARRAYRANGENVPROC, glVertexArrayRangeNV);
 		WGLGETPROC( PFNWGLALLOCATEMEMORYNVPROC, wglAllocateMemoryNV);
 		WGLGETPROC( PFNWGLFREEMEMORYNVPROC, wglFreeMemoryNV);
 
-		if (wglIsExtensionSupported("GL_NV_fence")) 
+		if (wglIsExtensionSupported("GL_NV_fence"))
 		{
 			WGLGETPROC( PFNGLGENFENCESNVPROC, glGenFencesNV);
 			WGLGETPROC( PFNGLDELETEFENCESNVPROC, glDeleteFencesNV);
@@ -747,10 +742,10 @@ void wglGetProcAddresses()
 			WGLGETPROC( PFNGLTESTFENCENVPROC, glTestFenceNV);
 			WGLGETPROC( PFNGLFINISHFENCENVPROC,	glFinishFenceNV);
 			WGLGETPROC( PFNGLISFENCENVPROC,	glIsFenceNV);
-			WGLGETPROC( PFNGLGETFENCEIVNVPROC, glGetFenceivNV);		
+			WGLGETPROC( PFNGLGETFENCEIVNVPROC, glGetFenceivNV);
 		}
 	}
-	if (wglIsExtensionSupported("GL_NV_occlusion_query")) 
+	if (wglIsExtensionSupported("GL_NV_occlusion_query"))
 	{
 		WGLGETPROC( PFNGLGENOCCLUSIONQUERIESNV, glGenOcclusionQueriesNV);
 		WGLGETPROC( PFNGLDELETEOCCLUSIONQUERIESNV, glDeleteOcclusionQueriesNV);
@@ -799,6 +794,5 @@ void wglGetProcAddresses()
 		WGLGETPROC( PFNGLUNIFORM3IVARBPROC, glUniform3ivARB);
 		WGLGETPROC( PFNGLUNIFORM4IVARBPROC, glUniform4ivARB);
 	}
-
-	return;
 }
+

@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -42,15 +43,15 @@ typedef struct _RClientDriver_Joystick
     int		lY;  // Y-axis, usually the forward-backward movement of a stick.
     int		lZ;  // Z-axis, often the throttle control. If the joystick does not have this axis, the value is 0.
     int		lRx; // X-axis rotation. If the joystick does not have this axis, the value is 0.
-    int		lRy; // Y-axis rotation. If the joystick does not have this axis, the value is 0. 
+    int		lRy; // Y-axis rotation. If the joystick does not have this axis, the value is 0.
     int		lRz; // Z-axis rotation (often called the rudder). If the joystick does not have this axis, the value is 0.
     int		rglSlider[2]; // Two additional axis values
-    unsigned	rgdwPOV[4]; // Direction controllers, such as point-of-view hats. The position is indicated in hundredths of a degree clockwise from north (away from the user). The center position is normally reported as –1; but see Remarks. For indicators that have only five positions, the value for a controller is –1, 0, 9,000, 18,000, or 27,000. 
-    u_int8_t	rgbButtons[128]; // Array of buttons. The high-order bit of the byte is set if button is set.
-	u_int8_t	steButtons[128]; // Array of previous buttons.
-    int		lVX; // X-axis velocity. 
-    int		lVY; // Y-axis velocity. 
-    int		lVZ; // Z-axis velocity. 
+    unsigned	rgdwPOV[4]; // Direction controllers, such as point-of-view hats. The position is indicated in hundredths of a degree clockwise from north (away from the user). The center position is normally reported as –1; but see Remarks. For indicators that have only five positions, the value for a controller is –1, 0, 9,000, 18,000, or 27,000.
+    uint8_t	rgbButtons[128]; // Array of buttons. The high-order bit of the byte is set if button is set.
+	uint8_t	steButtons[128]; // Array of previous buttons.
+    int		lVX; // X-axis velocity.
+    int		lVY; // Y-axis velocity.
+    int		lVZ; // Z-axis velocity.
     int		lVRx; // X-axis angular velocity.
     int		lVRy; // Y-axis angular velocity.
     int		lVRz; //Z-axis angular velocity
@@ -69,7 +70,7 @@ typedef struct _RClientDriver_Joystick
     int		lFRy; // Y-axis torque.
     int		lFRz; // Z-axis torque.
     int		rglFSlider[2]; // Extra axis forces.
-    
+
 }JOY_ClientDriver;
 
 #define sJOY_GetValue(b) sJOY->rgbButtons[b]
@@ -88,9 +89,9 @@ __end_extern_c
 
 enum s_keymap
 {
-    s_none=0, s_esc=1, s_f1, s_f2, s_f3, s_f4, s_f5, s_f6, s_f7, s_f8, s_f9, s_f10, s_f11, s_f12, 
-    s_tilda=0x11, s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_0, s_minus, s_equals, s_backslash=0x33, 
-    s_backspace=0x1e, s_tab=0x26, s_q, s_w, s_e, s_r, s_t, s_y, s_u, s_i, s_o, s_p, s_opensquare, s_closequare, 
+    s_none=0, s_esc=1, s_f1, s_f2, s_f3, s_f4, s_f5, s_f6, s_f7, s_f8, s_f9, s_f10, s_f11, s_f12,
+    s_tilda=0x11, s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_0, s_minus, s_equals, s_backslash=0x33,
+    s_backspace=0x1e, s_tab=0x26, s_q, s_w, s_e, s_r, s_t, s_y, s_u, s_i, s_o, s_p, s_opensquare, s_closequare,
     s_capslock=0x3b, s_a, s_s, s_d, s_f, s_g, s_h, s_j, s_k, s_l, s_semicolon, s_quote, s_return,
     s_leftshift=0x4b, s_z, s_x, s_c, s_v, s_b, s_n, s_m, s_coma, s_period, s_slash, s_rightshift,
     s_ctrl1=0x5c, s_alt1, s_space, s_alt, s_ctrl,
@@ -112,14 +113,14 @@ enum s_keymap
 #define SKEY_SCANTABLESIZE 16
 enum s_keymap
 {
-	s_a=0x00, s_s, s_d, s_f, s_g, s_h, s_z, s_x, s_c, s_v, s_unka, s_unkb, s_q, s_w, s_e, s_r, 
-	s_y=0x10, s_t, s_1, s_2, s_3, s_4, s_6, s_5, s_equals, s_9, s_7, s_minus, s_8, s_0, s_closesquare, s_o, 
-	s_u=0x20, s_opensquare, s_i, s_p, s_return, s_l, s_j, s_quote, s_k, semicolon, s_backslash, s_coma, s_slash, s_n, s_m, s_period, 
-	s_tab=0x30, s_space, s_tilda, s_backspace, s_unk34, s_esc, s_unk36, s_unk37, s_rightshift, s_winleft, s_capslock, s_alt, s_ctrl, s_unk3d, s_unk3e, s_unk3f, 
-	s_unk6=0x40, s_numdelete, s_unk42, s_numstar, s_unk44, s_numplus, s_unk46, s_numlock, s_unk48, s_unk49, s_unk4a, s_numslash, s_numreturn, s_unk4d, s_numminus, 
-	s_unk5=0x50, s_numslash2, s_numinsert, s_numend, s_numdown, s_numpagedown, s_numleft, s_num5, s_numright, s_numhome, s_unk5a, s_numup, s_numpageup, 
-	s_f5=0x60, s_f6, s_f7, s_f3, s_f8, s_f9, s_unk66, s_f11, s_unk68, s_f13, s_unk6a, s_f14, s_unk6c, s_f10, s_unk6e, s_f12, 
-	s_unk70=0x70, s_pause, s_insert, s_home, s_pageup, s_delete, s_f4, s_end, s_f2, s_pagedown, s_f1, s_left, s_right, s_down, s_up, 
+	s_a=0x00, s_s, s_d, s_f, s_g, s_h, s_z, s_x, s_c, s_v, s_unka, s_unkb, s_q, s_w, s_e, s_r,
+	s_y=0x10, s_t, s_1, s_2, s_3, s_4, s_6, s_5, s_equals, s_9, s_7, s_minus, s_8, s_0, s_closesquare, s_o,
+	s_u=0x20, s_opensquare, s_i, s_p, s_return, s_l, s_j, s_quote, s_k, semicolon, s_backslash, s_coma, s_slash, s_n, s_m, s_period,
+	s_tab=0x30, s_space, s_tilda, s_backspace, s_unk34, s_esc, s_unk36, s_unk37, s_rightshift, s_winleft, s_capslock, s_alt, s_ctrl, s_unk3d, s_unk3e, s_unk3f,
+	s_unk6=0x40, s_numdelete, s_unk42, s_numstar, s_unk44, s_numplus, s_unk46, s_numlock, s_unk48, s_unk49, s_unk4a, s_numslash, s_numreturn, s_unk4d, s_numminus,
+	s_unk5=0x50, s_numslash2, s_numinsert, s_numend, s_numdown, s_numpagedown, s_numleft, s_num5, s_numright, s_numhome, s_unk5a, s_numup, s_numpageup,
+	s_f5=0x60, s_f6, s_f7, s_f3, s_f8, s_f9, s_unk66, s_f11, s_unk68, s_f13, s_unk6a, s_f14, s_unk6c, s_f10, s_unk6e, s_f12,
+	s_unk70=0x70, s_pause, s_insert, s_home, s_pageup, s_delete, s_f4, s_end, s_f2, s_pagedown, s_f1, s_left, s_right, s_down, s_up,
 	s_none=0x7f
 };
 #define s_winright    s_winleft
@@ -134,21 +135,21 @@ enum s_keymap
 #else
 
 #define SKEY_SCANTABLESIZE 256
-enum s_keymap 
+enum s_keymap
 {
-	s_none=0,  s_esc=1, s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_0, s_minus, s_equals, 
-	s_backspace, s_tab, s_q, s_w, s_e, s_r, s_t, s_y, s_u, s_i, s_o, s_p, 
-	s_opensquare, s_closesquare, s_return, s_ctrl, s_a, s_s, s_d, s_f, s_g, 
-	s_h, s_j, s_k, s_l, s_semicolon, s_quote, s_tilda, s_leftshift, 
-	s_backslash, s_z, s_x, s_c, s_v, s_b, s_n, s_m, s_coma, s_period, s_slash, 
-	s_rightshift, s_printscreen, s_alt, s_space, s_capslock, 
-	s_f1, s_f2, s_f3, s_f4, s_f5, s_f6, s_f7, s_f8, s_f9, s_f10, 
-	s_numlock, s_scrolllock, s_numhome, s_numup, s_numpageup, s_numminus, s_numleft, 
-	s_num5, s_numright, s_numplus, s_numend, s_numdown, s_numpagedown, s_numinsert, 
-	s_numdelete, s_f11=87, s_f12=88, s_winleft=91, s_winright=92, s_winapp=93, 
-	s_joyleft=110, s_joyright, s_joyup, s_joydown, 
-	s_joybut1=120, s_joybut2=121, s_joybut3=122, s_joybut4=123, 
-	s_home=199, s_up=200, s_pageup=201, s_right=205, s_left=203, s_end=207, 
+	s_none=0,  s_esc=1, s_1, s_2, s_3, s_4, s_5, s_6, s_7, s_8, s_9, s_0, s_minus, s_equals,
+	s_backspace, s_tab, s_q, s_w, s_e, s_r, s_t, s_y, s_u, s_i, s_o, s_p,
+	s_opensquare, s_closesquare, s_return, s_ctrl, s_a, s_s, s_d, s_f, s_g,
+	s_h, s_j, s_k, s_l, s_semicolon, s_quote, s_tilda, s_leftshift,
+	s_backslash, s_z, s_x, s_c, s_v, s_b, s_n, s_m, s_coma, s_period, s_slash,
+	s_rightshift, s_printscreen, s_alt, s_space, s_capslock,
+	s_f1, s_f2, s_f3, s_f4, s_f5, s_f6, s_f7, s_f8, s_f9, s_f10,
+	s_numlock, s_scrolllock, s_numhome, s_numup, s_numpageup, s_numminus, s_numleft,
+	s_num5, s_numright, s_numplus, s_numend, s_numdown, s_numpagedown, s_numinsert,
+	s_numdelete, s_f11=87, s_f12=88, s_winleft=91, s_winright=92, s_winapp=93,
+	s_joyleft=110, s_joyright, s_joyup, s_joydown,
+	s_joybut1=120, s_joybut2=121, s_joybut3=122, s_joybut4=123,
+	s_home=199, s_up=200, s_pageup=201, s_right=205, s_left=203, s_end=207,
 	s_down=208, s_pagedown=209, s_insert=210, s_delete=211
 };
 
@@ -157,19 +158,19 @@ enum s_keymap
 
 #endif
 
-typedef struct _RClientDriver_Keybrd 
+typedef struct _RClientDriver_Keybrd
 {
     int		(* RLXAPI Open)(void *);
     void	(* RLXAPI Release)(void);
     char *	(* RLXAPI NameScanCode)(int scan);
     unsigned long (* RLXAPI Update)(void *device);
 	void *		device;
-	u_int8_t	scanCode; // scancode (see /scancode.h for values)
+	uint8_t	scanCode; // scancode (see /scancode.h for values)
 	char		charCode; // ASCII char code
-	u_int8_t	rgbButtons[SKEY_SCANTABLESIZE]; // keys
-	u_int8_t	steButtons[SKEY_SCANTABLESIZE]; // push buffers
+	uint8_t	rgbButtons[SKEY_SCANTABLESIZE]; // keys
+	uint8_t	steButtons[SKEY_SCANTABLESIZE]; // push buffers
 	int		numControllers;
-	
+
 }KEY_ClientDriver;
 
 
@@ -188,10 +189,10 @@ __end_extern_c
 typedef struct _RClientDriver_Mouse
 {
 	int    (* RLXAPI Open)(void *);
-    void   (* RLXAPI Release)(void);	
+    void   (* RLXAPI Release)(void);
     void   (* RLXAPI Show)(void);
 	void   (* RLXAPI Hide)(void);
-	void   (* RLXAPI SetPosition)(u_int32_t x, u_int32_t y);
+	void   (* RLXAPI SetPosition)(uint32_t x, uint32_t y);
 	unsigned long (* RLXAPI Update)(void *device);
 
 	int		numButtons;
@@ -204,8 +205,8 @@ typedef struct _RClientDriver_Mouse
     int		lX;  // X-axis. (relative)
     int		lY;  // Y-axis.
     int		lZ;  // Z-axis, typically a wheel. If the mouse does not have a z-axis, the value is 0.
-    u_int8_t	rgbButtons[8]; // Array of buttons. The high-order bit of the byte is set if button is set.
-	u_int8_t	steButtons[8]; // Array of previous buttons.	
+    uint8_t	rgbButtons[8]; // Array of buttons. The high-order bit of the byte is set if button is set.
+	uint8_t	steButtons[8]; // Array of previous buttons.
 
 }MSE_ClientDriver;
 
@@ -222,3 +223,4 @@ _RLXEXPORTDATA    extern MSE_ClientDriver *sMOU;
 __end_extern_c
 
 #endif
+

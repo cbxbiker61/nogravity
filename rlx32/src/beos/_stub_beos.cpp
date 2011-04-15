@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -40,7 +40,7 @@ static status_t POSTMESSAGE(BLooper *p, BMessage *m)
     return p->PostMessage(m);
 #else
 	BMessenger messenger(p);
-	return messenger.SendMessage(*m);	
+	return messenger.SendMessage(*m);
 #endif
 }
 
@@ -48,15 +48,12 @@ class sysView : public BView
 {
 public :
 	sysView();
-	
 };
 
 sysView::sysView()
 	 :BView(BRect(0, 0, 640, 480),(const char*) "subview", B_FOLLOW_ALL_SIDES, 0)
 {
-
 }
-
 
 sysApplication * sysApplication::m_pInstance;
 
@@ -81,7 +78,7 @@ int STUB_TaskControl(void)
 #endif
 			return -1;
 		}
-		snooze((bigtime_t)2e5);		
+		snooze((bigtime_t)2e5);
     }
     return 0;
 }
@@ -92,7 +89,7 @@ long sysApplication::RunApplication(void *param)
 #ifdef _DEBUG
 	SYS_Debug("Run application thread\n");
 #endif
-	RLX.System.Running = true;		
+	RLX.System.Running = true;
     STUB_ReadyToRun();
     STUB_MainCode();
 #ifdef _DEBUG
@@ -102,7 +99,7 @@ long sysApplication::RunApplication(void *param)
 	RLX.System.Running = false;
 	{
 		BMessage msg(MSG_SYSAPPLICATION_CLOSE);
-		POSTMESSAGE(m_hWnd, &msg);	
+		POSTMESSAGE(m_hWnd, &msg);
 	}
 	be_app->Lock();
 	be_app->Quit();
@@ -112,7 +109,7 @@ long sysApplication::RunApplication(void *param)
 
 sysApplication::sysApplication (): BApplication (STUB_SIG)
 {
- 	m_pInstance = this;
+	m_pInstance = this;
 	m_bActive = false;
 	m_bStopped = false;
 	m_hWnd = 0;
@@ -120,7 +117,6 @@ sysApplication::sysApplication (): BApplication (STUB_SIG)
 	SYS_Debug("OsStartup\n");
 #endif
 	STUB_OsStartup("");
-	return;
 }
 
 bool sysApplication::QuitRequested()
@@ -139,22 +135,21 @@ void sysApplication::ReadyToRun ()
 #endif
 	RLX.pApplication = this;
 	STUB_Default();
-	STUB_CheckUp(NULL); 
-	SYS_ASSERT(m_hWnd);	
+	STUB_CheckUp(NULL);
+	SYS_ASSERT(m_hWnd);
 
 	// If got a m_hWnd, show it
 	if (m_hWnd)
 	{
 		m_hWnd->Show();
-		BMessage m(MSG_SYSAPPLICATION_OPEN);		
+		BMessage m(MSG_SYSAPPLICATION_OPEN);
 		POSTMESSAGE(m_hWnd, &m);
 	}
 	else
-	{	
+	{
 		BMessage m(B_QUIT_REQUESTED);
 		POSTMESSAGE(this, &m);
-	}	
-	return;
+	}
 }
 
 BView * sysApplication::CreateSubview(BWindow *h)
@@ -166,8 +161,7 @@ BView * sysApplication::CreateSubview(BWindow *h)
 	return m_hView;
 }
 
-void 
-sysApplication::StartDrawing()
+void sysApplication::StartDrawing()
 {
 #ifdef _DEBUG
 	SYS_Debug("Start drawing\n");
@@ -175,8 +169,7 @@ sysApplication::StartDrawing()
 	SetActive(true);
 }
 
-void 
-sysApplication::StopDrawing()
+void sysApplication::StopDrawing()
 {
 #ifdef _DEBUG
 	SYS_Debug("Stop drawing\n");
@@ -184,8 +177,7 @@ sysApplication::StopDrawing()
 	SetActive(false);
 }
 
-void
-sysApplication::Stop()
+void sysApplication::Stop()
 {
 #ifdef _DEBUG
 	SYS_Debug("Stop\n");
@@ -194,37 +186,31 @@ sysApplication::Stop()
 	m_bStopped = true;
 }
 
-void 
-sysApplication::SetActive(bool active)
+void sysApplication::SetActive(bool active)
 {
 	m_bActive = active;
 }
 
-void 
-sysApplication::SetWindowHandle(BWindow *h)
-{ 
+void sysApplication::SetWindowHandle(BWindow *h)
+{
 #ifdef _DEBUG
 	SYS_Debug("Set application window: %x\n", h);
 #endif
 
 	m_hWnd = h;
-	return;
 }
 
-bool
-sysApplication::IsStopped()
+bool sysApplication::IsStopped()
 {
 	return m_bStopped;
 }
 
-bool 
-sysApplication::IsFocused()
+bool sysApplication::IsFocused()
 {
 	return m_bActive;
 }
 
-void
-sysApplication::Kill()
+void sysApplication::Kill()
 {
 #ifdef _DEBUG
 	SYS_Debug("Kill application\n");
@@ -235,19 +221,18 @@ sysApplication::Kill()
 	return;
 }
 
-void 
-sysApplication::WindowMessage(BMessage *msg)
+void sysApplication::WindowMessage(BMessage *msg)
 {
-	switch (msg->what) 
+	switch (msg->what)
 	{
 	    case B_MOUSE_WHEEL_CHANGED:
-     	{
-     	 	float32_t dy;
+		{
+			float32_t dy;
 	        msg->FindFloat("be:wheel_delta_y", &dy);
 	        sMOU->lZ = (int)dy;
 		}
 		break;
- 	    case B_KEY_UP:
+	    case B_KEY_UP:
 		{
 			sKEY->charCode = 0;
 			sKEY->scanCode = 0;
@@ -260,7 +245,7 @@ sysApplication::WindowMessage(BMessage *msg)
 			msg->FindInt32("raw_char", &raw_char);
 			const char *bytes = msg->FindString("bytes");
 			size_t byteslen = strlen(bytes);
-			switch (raw_char) 
+			switch (raw_char)
 			{
 				case B_ESCAPE: sKEY->charCode  = '\033'; break;
 				case B_RETURN: sKEY->charCode  = '\r'; break; // CR sux, LF rulz
@@ -276,19 +261,19 @@ sysApplication::WindowMessage(BMessage *msg)
 				case B_INSERT: sKEY->scanCode = s_insert; break;
 				case B_DELETE: sKEY->scanCode = s_delete; break;
 				default:
-				if (byteslen == 1) 
+				if (byteslen == 1)
 				{
 					sKEY->charCode  = bytes[0];
 					//sKEY->scanCode = raw_char;
-				} 
-				else if (byteslen == 2 && bytes[0] == B_FUNCTION_KEY) 
+				}
+				else if (byteslen == 2 && bytes[0] == B_FUNCTION_KEY)
 				{
-					if (bytes[1] >= B_F1_KEY && bytes[1] < B_PRINT_KEY) 
+					if (bytes[1] >= B_F1_KEY && bytes[1] < B_PRINT_KEY)
 					{
 						//sKEY->scanCode = s_f1 + bytes[1] - B_F1_KEY;
-					} 
-					else 
-					if (bytes[1] < B_PAUSE_KEY) 
+					}
+					else
+					if (bytes[1] < B_PAUSE_KEY)
 					{
 						//sKEY->scanCode = s_pause;
 					}
@@ -296,7 +281,6 @@ sysApplication::WindowMessage(BMessage *msg)
 				break;
 			}
 			// printf("charCode=%c scanCode:0x%x\n", (int)sKEY->charCode, (int)sKEY->scanCode);
-		
 		}
 		break;
 
@@ -304,10 +288,9 @@ sysApplication::WindowMessage(BMessage *msg)
     return;
 }
 
-void 
-sysApplication::MessageReceived(BMessage *msg)
+void sysApplication::MessageReceived(BMessage *msg)
 {
-	switch (msg->what) 
+	switch (msg->what)
 	{
 		case MSG_SYSAPPLICATION_CLOSE:
 		{
@@ -325,9 +308,9 @@ sysApplication::MessageReceived(BMessage *msg)
 			{
 				snooze(10000);
 			}
-			
-			POSTMESSAGE(this, &m);	
-		}		
+
+			POSTMESSAGE(this, &m);
+		}
 		break;
 
 		default:
@@ -335,7 +318,6 @@ sysApplication::MessageReceived(BMessage *msg)
 			BApplication::MessageReceived(msg);
 		break;
 	}
-    return;
 }
 
 // Main C.
@@ -346,7 +328,7 @@ int main()
 #endif
 	STUB_OsCustom("");
     sysApplication *p = new sysApplication();
-    p->Run();   
+    p->Run();
     delete p;
 
     return 0;

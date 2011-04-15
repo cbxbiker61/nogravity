@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -73,9 +73,10 @@ static char               *MenuPlayer[16];
 static NET_ConnectionType *g_pConnectionType;
 static NET_SessionName    *g_pSession;
 static NET_PlayerName     *g_pNetPlayer;
-u_int8_t                      g_szNetPacket[4096];
+uint8_t                      g_szNetPacket[4096];
 static LPNET_Informations  lpNet;
 static int                 g_nConnectionType, g_nNumConnectionType;
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NG_NetInitialize(void)
@@ -89,11 +90,12 @@ void NG_NetInitialize(void)
 		lpNet = sNET->Initialize(8, 0);
     return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NG_NetRelease(void)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void NG_NetRelease(void)
@@ -102,8 +104,8 @@ void NG_NetRelease(void)
 		return;
     sNET->ReleaseConnectionList();
 	sNET->Release(lpNet);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void SGNet_ConnectionList(void)
@@ -115,7 +117,7 @@ static void SGNet_ConnectionList(void)
 {
     unsigned y=0;
     NET_ConnectionType *list;
-    if (g_pConnectionType) 
+    if (g_pConnectionType)
        return;
     list = sNET->CreateConnectionList();
     g_pConnectionType = list;
@@ -131,8 +133,8 @@ static void SGNet_ConnectionList(void)
     g_nNumConnectionType = y-1;
     MenuProto[y++]=g_szGmT[118];
     MenuProto[y]=NULL;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static int SGNet_SelectConnection(int numero)
@@ -142,15 +144,12 @@ static void SGNet_ConnectionList(void)
 */
 static int SGNet_SelectConnection(int numero)
 {
-    if (!g_pConnectionType) 
+    if (!g_pConnectionType)
        return 0;
     g_nConnectionType = numero;
-    if (sNET->SelectConnection(g_pConnectionType[numero].ID)==0)
-    {
-        return 1;
-    }
-    return 0 ;
+    return ( sNET->SelectConnection(g_pConnectionType[numero].ID) == 0 ) ? 1 : 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void SGNet_CreateSessionList(void)
@@ -162,7 +161,7 @@ static void SGNet_CreateSessionList(void)
 {
     NET_SessionName *Session = sNET->CreateSessionList(0);
     int y = 0;
-    if (!g_pConnectionType) 
+    if (!g_pConnectionType)
        return;
     g_pSession = Session;
     g_szMenuSessions[y++]=g_szGmT[177+1];
@@ -181,7 +180,6 @@ static void SGNet_CreateSessionList(void)
     }
     g_SGGame.Session = y-2;
     g_szMenuSessions[y++]=0;
-    return;
 }
 
 static void SGNet_PlayerList(void)
@@ -211,7 +209,6 @@ static void SGNet_PlayerList(void)
     }
     MenuPlayer[y++]=0;
     g_SGGame.PlayersName = MenuPlayer+1;
-    return;
 }
 #endif
 
@@ -223,7 +220,7 @@ int NG_NetSelectMode(void)
         switch(NG_ExecMainMenu(MenuGameType, 0, 0xffffffff, 0))
 		{
             case 1:
-            if (g_pConnectionType) 
+            if (g_pConnectionType)
 				return 1;
             SGNet_ConnectionList();
             if (g_pConnectionType)
@@ -231,11 +228,11 @@ int NG_NetSelectMode(void)
                 while(1)
                 {
                     int but = NG_ExecMainMenu(MenuProto, 0, 0xffffffff, 2);
-                    if (but<0) 
+                    if (but<0)
 						return -1;
                     if ((but<g_nNumConnectionType)&&(but>=0))
                     {
-                        if (SGNet_SelectConnection(but)) 
+                        if (SGNet_SelectConnection(but))
 							return 1;
                         NG_MenuMessage(g_szGmT[177+8]);
                     }
@@ -270,9 +267,9 @@ void NG_NetRender()
 		if (x)
 		{
 			int s = x-1;
-			if (s==g_SGGame.Session) 
-				CSP_Color(jaune); 
-			else 
+			if (s==g_SGGame.Session)
+				CSP_Color(jaune);
+			else
 				CSP_Color((GX.View.BytePerPixel > 1 ? RGBA_PixelFormat(255, 255, 255, 0) : 255));
 		}
 		CSP_WriteText(g_szMenuSessions[x], x1, y, g_pFontMenuSml);
@@ -280,7 +277,7 @@ void NG_NetRender()
 		x++;
 	}
 	CSP_Color((GX.View.BytePerPixel > 1 ? RGBA_PixelFormat(255, 255, 255, 0) : 255));
-	if (g_SGGame.Session>=x-1) 
+	if (g_SGGame.Session>=x-1)
 		g_SGGame.Session=0;
 
 	if (x==g_SGGame.Session+1)
@@ -300,15 +297,15 @@ void NG_NetRender()
 		CSP_WriteText(g_szGmT[177+11], x2, y, g_pFontMenuSml);
 		y+=g_pFontMenuSml->item[0].LY;
 	}
-	y = y0; 
+	y = y0;
 	x = 0;
 }
 
 void NG_NetDisplay(int force)
 {
-	static u_int32_t tim2;
-    u_int32_t temps;
-    if (!g_pConnectionType) 
+	static uint32_t tim2;
+    uint32_t temps;
+    if (!g_pConnectionType)
 		return;
 
     temps = timer_ms();
@@ -319,19 +316,19 @@ void NG_NetDisplay(int force)
         SGNet_CreateSessionList(); // View delock‚ avant par securit‚...
         SGNet_PlayerList();
     }
-    return;
 }
+
 enum {
-    NGNETp_STEALTH =  1, 
-    NGNETp_FROZEN =  2, 
-    NGNETp_NOSHIELD =  4, 
-    NGNETp_ISSHOT =  8, 
-    NGNETp_ISAPPEAR = 16, 
-    NGNETp_VECTOR = 32, 
+    NGNETp_STEALTH =  1,
+    NGNETp_FROZEN =  2,
+    NGNETp_NOSHIELD =  4,
+    NGNETp_ISSHOT =  8,
+    NGNETp_ISAPPEAR = 16,
+    NGNETp_VECTOR = 32,
     NGNETp_POSITION = 64
 };
 
-typedef struct 
+typedef struct
 {
     unsigned  id;
     V3XVECTOR vect;
@@ -339,10 +336,10 @@ typedef struct
     unsigned  shield;
 }PacketShip;
 
-u_int8_t *NG_NetTranslateShip(u_int8_t *buffer)
+uint8_t *NG_NetTranslateShip(uint8_t *buffer)
 {
 #ifndef RLX_IOREADONLY
-    u_int32_t i;
+    uint32_t i;
     unsigned   *numPacket = (unsigned  *) buffer;
     PacketShip *packet = (PacketShip*)(buffer+sizeof(int32_t));
     for (i=*numPacket;i!=0;i--)
@@ -372,11 +369,10 @@ u_int8_t *NG_NetTranslateShip(u_int8_t *buffer)
         packet++;
     }
 #endif
-    return (u_int8_t*)packet;
+    return (uint8_t*)packet;
 }
 
-
-u_int8_t *NG_NetDispatchShip(u_int8_t *buffer)
+uint8_t *NG_NetDispatchShip(uint8_t *buffer)
 {
 #ifndef RLX_IOREADONLY
     int i;
@@ -413,29 +409,30 @@ u_int8_t *NG_NetDispatchShip(u_int8_t *buffer)
             }
         }
     }
-    return (u_int8_t*)packet;
+    return (uint8_t*)packet;
 #else
     return 0;
 #endif
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void NG_NetTranslate(SGPlayer *pInf)
 *
-* DESCRIPTION : 
+* DESCRIPTION :
 *
 */
-unsigned NG_NetTranslate(SGPlayer *pInf, u_int8_t *be)
+unsigned NG_NetTranslate(SGPlayer *pInf, uint8_t *be)
 {
     unsigned length = 0;
 #ifndef RLX_IOREADONLY
-    u_int8_t *buffer;
+    uint8_t *buffer;
     if (!be) be = g_szNetPacket;
     buffer = be;
-    *(u_int8_t*)buffer = '$'; buffer++;
-    *(u_int8_t*)buffer = g_SGGame.IdPlayer ; buffer++;
-    *(u_int32_t*)buffer = g_SGGame.Count; buffer+=sizeof(int32_t);
-    *(u_int32_t*)buffer = pInf->Notify; buffer+=sizeof(int32_t);
+    *(uint8_t*)buffer = '$'; buffer++;
+    *(uint8_t*)buffer = g_SGGame.IdPlayer ; buffer++;
+    *(uint32_t*)buffer = g_SGGame.Count; buffer+=sizeof(int32_t);
+    *(uint32_t*)buffer = pInf->Notify; buffer+=sizeof(int32_t);
     pInf->J.pInf.ModeX |= 2;
     if (g_SGSettings.SerialGame)
     {
@@ -444,7 +441,7 @@ unsigned NG_NetTranslate(SGPlayer *pInf, u_int8_t *be)
             sysMemCpy(buffer, &pInf->Rot->pos, sizeof(V3XVECTOR));
             buffer+=sizeof(V3XVECTOR);
         }
-        
+
         if (pInf->Notify&SGNET_HASTURN)
         {
             sysMemCpy(buffer, pInf->Mat, sizeof(V3XMATRIX));
@@ -456,11 +453,11 @@ unsigned NG_NetTranslate(SGPlayer *pInf, u_int8_t *be)
             // Locker
             if (g_pLockTarget)
             {
-                *(u_int16_t*)buffer = g_pLockTarget - g_SGGame.Scene->OVI;
+                *(uint16_t*)buffer = g_pLockTarget - g_SGGame.Scene->OVI;
             }
             else
-            *(u_int16_t*)buffer = 0;
-            buffer+= sizeof(u_int16_t);
+            *(uint16_t*)buffer = 0;
+            buffer+= sizeof(uint16_t);
             // Type de tir
             *buffer = pInf->J.pInf.Attack;
             buffer++;
@@ -468,7 +465,7 @@ unsigned NG_NetTranslate(SGPlayer *pInf, u_int8_t *be)
 
         if (pInf->Notify&SGNET_UPDATEAIM)
         {
-            *(u_int8_t*)buffer = g_SGGame.MaxAim[g_SGObjects.NAV];
+            *(uint8_t*)buffer = g_SGGame.MaxAim[g_SGObjects.NAV];
             buffer++;
         }
         if (pInf->Notify&SGNET_SHIELDCHANGE)
@@ -478,7 +475,7 @@ unsigned NG_NetTranslate(SGPlayer *pInf, u_int8_t *be)
         }
         if (pInf->Notify&SGNET_COMMUNICATE)
         {
-            *buffer = (u_int8_t)g_SGSettings.ComNumber;
+            *buffer = (uint8_t)g_SGSettings.ComNumber;
             g_SGSettings.ComTime = MAX_COM_DELAY;
             buffer++;
         }
@@ -513,24 +510,25 @@ unsigned NG_NetTranslate(SGPlayer *pInf, u_int8_t *be)
     #endif
     return length;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  : static void NG_NetDispatchPlayer(unsigned playerId, u_int8_t *buffer)
+* PROTOTYPE  : static void NG_NetDispatchPlayer(unsigned playerId, uint8_t *buffer)
 *
 * DESCRIPTION : Recoie l'info et interprete
 *
 */
-u_int32_t NG_NetDispatchPlayer(unsigned playerId, u_int8_t *buffer)
+uint32_t NG_NetDispatchPlayer(unsigned playerId, uint8_t *buffer)
 {
-    u_int32_t frame;
-    u_int8_t *be = buffer;
+    uint32_t frame;
+    uint8_t *be = buffer;
 #ifndef RLX_IOREADONLY
     SGPlayer *pInf = g_SGGame.pPlayer + playerId;
     pInf->dispatched = 1;
     pInf->NetRetry = 128;
     if( !g_SGSettings.SerialGame) buffer+=2;
-    frame  = *(u_int32_t*)buffer; buffer+=sizeof(int32_t);
-    pInf->Notify = *(u_int32_t*)buffer; buffer+=sizeof(int32_t);
+    frame  = *(uint32_t*)buffer; buffer+=sizeof(int32_t);
+    pInf->Notify = *(uint32_t*)buffer; buffer+=sizeof(int32_t);
     pInf->J.pInf.ModeX |= 2;
     if (g_SGSettings.SerialGame)
     {
@@ -546,10 +544,10 @@ u_int32_t NG_NetDispatchPlayer(unsigned playerId, u_int8_t *buffer)
         }
         if (pInf->Notify&SGNET_NEWSHOOT)
         {
-            u_int16_t target=*(u_int16_t*)buffer;
+            uint16_t target=*(uint16_t*)buffer;
             V3XOVI *OVI = target ? g_SGGame.Scene->OVI + target : NULL;
             if ((pInf!=g_pPlayer)&&(!pInf->J.pInf.ShootOk)) NG_WeaponFire(&pInf->J, buffer[2], OVI);
-            buffer+=sizeof(u_int16_t)+sizeof(u_int8_t);
+            buffer+=sizeof(uint16_t)+sizeof(uint8_t);
         }
         if (pInf->Notify&SGNET_HASWARP)
         {
@@ -570,20 +568,20 @@ u_int32_t NG_NetDispatchPlayer(unsigned playerId, u_int8_t *buffer)
             // Cache le player
             g_SGSettings.ComNumber = COM_Chat;
             g_SGSettings.ComTime = MAX_COM_DELAY;
-            g_SGSettings.ComPlayer = (u_int8_t)(1+playerId);
+            g_SGSettings.ComPlayer = (uint8_t)(1+playerId);
             sysStrCpy(g_szCOM[COM_Chat], "has leaved the game...");
             pInf->J.pInf.ModeX &= ~2;
         }
         if (pInf->Notify&SGNET_UPDATEAIM)
         {
-            g_SGGame.MaxAim[g_SGObjects.NAV]=*(u_int8_t*)buffer; buffer++;
+            g_SGGame.MaxAim[g_SGObjects.NAV]=*(uint8_t*)buffer; buffer++;
             NG_DisplayWarp();
         }
         if (pInf->Notify&SGNET_HASDIE)
         {
             pInf->J.pInf.AfterDeath = 4;
             pInf->J.pInf.Shield = 0;
-            // Cach‚ le g_pPlayer, 
+            // Cach‚ le g_pPlayer,
             g_SGSettings.ComNumber = COM_Chat;
             g_SGSettings.ComTime = MAX_COM_DELAY;
             g_SGSettings.ComPlayer = 1+playerId;
@@ -643,6 +641,7 @@ u_int32_t NG_NetDispatchPlayer(unsigned playerId, u_int8_t *buffer)
     #endif
     return buffer - be;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void NG_NetDispatch(void)
@@ -668,7 +667,7 @@ void NG_NetDispatch(void)
         {
             if (g_szNetPacket[0]=='$') // Id Dispatcher
             {
-                NG_NetDispatchPlayer(g_szNetPacket[1], (u_int8_t*)(g_szNetPacket+2));
+                NG_NetDispatchPlayer(g_szNetPacket[1], (uint8_t*)(g_szNetPacket+2));
             }
             if (g_szNetPacket[0]=='&') // Id Resynchronise
             {
@@ -700,5 +699,5 @@ void NG_NetDispatch(void)
     }
     */
     #endif
-    return;
 }
+

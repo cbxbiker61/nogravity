@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -37,8 +37,8 @@ static GLuint pipe_iRender, pipe_prm;
 static GLint gl_lx, gl_ly;
 
 GLbyte gl_EXT_paletted_texture,
-	   gl_SGIS_generate_mipmap, 
-	   gl_EXT_texture_rectangle, 
+	   gl_SGIS_generate_mipmap,
+	   gl_EXT_texture_rectangle,
 	   gl_ARB_texture_non_power_of_two,
 	   gl_APPLE_client_storage;
 
@@ -64,7 +64,7 @@ static GLboolean _glewStrSame (const GLubyte* a, const GLubyte* b, GLuint n)
 }
 
 GLboolean glewGetExtension (const char* name, GLubyte *s)
-{    
+{
   GLubyte* p;
   GLubyte* end;
   GLuint len = _glewStrLen((const GLubyte*)name);
@@ -80,7 +80,7 @@ GLboolean glewGetExtension (const char* name, GLubyte *s)
   return GL_FALSE;
 }
 
-int GL_IsSupported(const char *extension) 
+int GL_IsSupported(const char *extension)
 {
 	int ret = 0;
 	// Extended features
@@ -89,8 +89,8 @@ int GL_IsSupported(const char *extension)
 	if (extension)
 	{
 #ifdef _DEBUG
-    	if (ret)
-    		SYS_Debug("...using %s", extension);
+		if (ret)
+			SYS_Debug("...using %s", extension);
         else
             SYS_Debug("X..%s not found", extension);
 #endif
@@ -102,12 +102,12 @@ void GL_InstallExtensions()
 {
     GLint n;
     GLint g_nTextureMaxSize = 0;
-	
+
 	if (GL_IsSupported("GL_ARB_multitexture"))
     {
 #ifdef GL_VERSION_1_3
-        glGetIntegerv( GL_MAX_TEXTURE_UNITS, &n);  
-		if (n>1)  
+        glGetIntegerv( GL_MAX_TEXTURE_UNITS, &n);
+		if (n>1)
 			g_pRLX->pV3X->Client->Capabilities|= GXSPEC_MULTITEXTURING;
 #endif
     }
@@ -139,9 +139,7 @@ void GL_InstallExtensions()
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glShadeModel(GL_FLAT);
 	glDisable(GL_LIGHTING);
-	
-}   
-
+}
 
 typedef unsigned long (*PFMOUSECALLBACK)(void *);
 static PFMOUSECALLBACK pMouseCallback;
@@ -152,10 +150,9 @@ static unsigned long Update(void *device)
 	unsigned long ret;
 	ret = pMouseCallback(device);
 	m->x = m->x * g_pRLX->pGX->View.lWidth / gl_lx;
-	m->y = m->y * g_pRLX->pGX->View.lHeight / gl_ly; 	
+	m->y = m->y * g_pRLX->pGX->View.lHeight / gl_ly;
 	return ret;
 }
-
 
 void GL_FakeViewPort()
 {
@@ -176,7 +173,6 @@ void GL_FakeViewPort()
 	g_pRLX->pGX->View.xmax = g_pRLX->pGX->View.lWidth-1;
 	g_pRLX->pGX->View.ymax = g_pRLX->pGX->View.lHeight-1;
 
-	
 	if (m->Update!=Update)
 	{
 		pMouseCallback= m->Update;
@@ -192,24 +188,23 @@ static int V3XAPI HardwareSetup(void)
 
 static void V3XAPI HardwareShutdown(void)
 {
-    return;
 }
 
 static unsigned V3XAPI ZbufferClear(rgb24_t *color, V3XSCALAR z, void *bitmap)
 {
-	return 0; 
+	return 0;
     UNUSED(color);
     UNUSED(z);
     UNUSED(bitmap);
     if (bitmap)
-		glDrawPixels(g_pRLX->pGX->View.lWidth, 
+		glDrawPixels(g_pRLX->pGX->View.lWidth,
 					 g_pRLX->pGX->View.lHeight, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, bitmap);
     else
 		glClear(GL_DEPTH_BUFFER_BIT);
     return 1;
 }
 
-static unsigned V3XAPI SetState(unsigned command, u_int32_t value)
+static unsigned V3XAPI SetState(unsigned command, uint32_t value)
 {
     switch(command) {
         case V3XCMD_SETBACKGROUNDCOLOR:
@@ -232,17 +227,17 @@ static unsigned V3XAPI SetState(unsigned command, u_int32_t value)
     return 0;
 }
 
-static int V3XAPI TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *colorTable)
+static int V3XAPI TextureModify(GXSPRITE *sp, uint8_t *bitmap, const rgb24_t *colorTable)
 {
 	GL_TexHandle *pSprite = (GL_TexHandle *)sp->handle;
-    
-	u_int8_t *src_buf = (u_int8_t *)pSprite->tmpbuf;
+
+	uint8_t *src_buf = (uint8_t *)pSprite->tmpbuf;
 
     GLenum texture_fmt =
 #ifdef __BIG_ENDIAN__
 		GL_RGBA
 #else
- 		GL_BGRA_EXT
+		GL_BGRA_EXT
 #endif
         ;
     GLenum texture_type = GL_UNSIGNED_BYTE;
@@ -253,19 +248,19 @@ static int V3XAPI TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *c
 	}
 
 #ifdef USE_ARGB_TEXTURE
-   	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 8;
-   	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 16;
-   	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 24;
-   	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 0;
+	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 8;
+	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 16;
+	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 24;
+	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 0;
 #endif
 
 	g_pRLX->pfSmartConverter(src_buf, NULL, 4, (void*)bitmap, (rgb24_t*)colorTable, 1, sp->LX*sp->LY);
 
 #ifdef USE_ARGB_TEXTURE
-   	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 0;
-   	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
-   	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
-   	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
+	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 0;
+	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
+	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
+	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
     texture_type = GL_UNSIGNED_INT_8_8_8_8_REV;
     texture_fmt = GL_BGRA_EXT; // Assume all renderers support this ..
 #endif
@@ -287,7 +282,6 @@ static void V3XAPI FreeTexture(void *sp)
 		hnd->tmpbuf = 0;
 	}
 	g_pRLX->mm_std->free(hnd);
-    return;
 }
 
 static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable, int bpp, unsigned options)
@@ -299,32 +293,32 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
     int32_t bp = 0;
     GLenum texture_type = GL_UNSIGNED_BYTE;
 	GL_TexHandle *hnd;
-    u_int8_t *src_buf;
+    uint8_t *src_buf;
     GLuint handle;
 	hnd = (GL_TexHandle *)g_pRLX->mm_std->malloc(sizeof(GL_TexHandle));
 	hnd->palette = NULL;
-    src_buf = sp->data;  
+    src_buf = sp->data;
 	SYS_ASSERT(src_buf);
 
     if ((!gl_EXT_paletted_texture) && (bpp<=8))
     {
         bpp = options & V3XTEXDWNOPTION_COLORKEY ? 32 : 24;
         bp = (bpp+1)>>3;
-        
+
 #ifdef USE_ARGB_TEXTURE
 
         if (bp == 4 && (!(g_pRLX->pV3X->Client->Capabilities & GXSPEC_ENABLECOMPRESSION)))
         {
-         	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 8;
-         	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 16;
-         	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 24;
-         	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 0;
+			g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 8;
+			g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 16;
+			g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 24;
+			g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 0;
         }
 #endif
 
         src_buf = g_pRLX->pfSmartConverter(
-			NULL, (rgb24_t*)colorTable, bp, 
-			sp->data, (rgb24_t*)colorTable, bs, 
+			NULL, (rgb24_t*)colorTable, bp,
+			sp->data, (rgb24_t*)colorTable, bs,
 			sp->LX*sp->LY
 		);
 
@@ -338,10 +332,10 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 #ifdef USE_ARGB_TEXTURE
         if (bp == 4 && (!(g_pRLX->pV3X->Client->Capabilities & GXSPEC_ENABLECOMPRESSION)))
         {
-        	g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 0;
-        	g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
-        	g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
-        	g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
+			g_pRLX->pGX->View.ColorMask.RedFieldPosition   = 0;
+			g_pRLX->pGX->View.ColorMask.GreenFieldPosition = 8;
+			g_pRLX->pGX->View.ColorMask.BlueFieldPosition  = 16;
+			g_pRLX->pGX->View.ColorMask.RsvdFieldPosition  = 24;
             texture_type = GL_UNSIGNED_INT_8_8_8_8_REV;
             texture_fmt = GL_BGRA_EXT;
         }
@@ -356,7 +350,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 				texture_fmt = GL_COLOR_INDEX;
 				num_colors = 256;
 			break;
-	
+
 			case 24:
 				internal_fmt = 3;
 	#ifdef __BIG_ENDIAN__
@@ -364,7 +358,7 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 	#else
 				texture_fmt = GL_BGR_EXT;
 	#endif
-				
+
 			break;
 			case 32:
 				internal_fmt = 4;
@@ -377,9 +371,9 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 		}
 	}
 
-    glGenTextures(1, &handle); 
-    glBindTexture(GL_TEXTURE_2D, handle );    
-	
+    glGenTextures(1, &handle);
+    glBindTexture(GL_TEXTURE_2D, handle );
+
 #ifdef GL_VERSION_1_4
 	if (gl_SGIS_generate_mipmap)
 	{
@@ -400,17 +394,17 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 	{
 		if (g_pRLX->pV3X->Client->Capabilities & GXSPEC_ENABLECOMPRESSION)
 		{
-    		if (texture_fmt == GL_RGB)
+			if (texture_fmt == GL_RGB)
 				internal_fmt = GL_COMPRESSED_RGB_S3TC_DXT1_EXT;
-			else	
+			else
 			if (texture_fmt == GL_RGBA)
 				internal_fmt = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 		}
-		hnd->tmpbuf = 0;		
+		hnd->tmpbuf = 0;
 	}
 	else
 	{
-		hnd->tmpbuf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*4);
+		hnd->tmpbuf = (uint8_t*)g_pRLX->mm_std->malloc(sp->LX*sp->LY*4);
 		if (gl_APPLE_client_storage)
 		{
 			glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, TRUE);
@@ -420,18 +414,18 @@ static void V3XAPI *UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable,
 
 #ifdef GL_VERSION_1_2
     if (num_colors)
-    {      
-		hnd->palette = (rgb24_t*)g_pRLX->mm_std->malloc(1024);		
+    {
+		hnd->palette = (rgb24_t*)g_pRLX->mm_std->malloc(1024);
 		if (hnd->palette)
 		{
 			sysMemCpy(hnd->palette, colorTable, 768);
 			glColorTable(GL_TEXTURE_2D, GL_RGB, 256, GL_RGB,GL_UNSIGNED_BYTE, hnd->palette);
 		}
-	} 
+	}
 #endif
 
 	glTexImage2D( GL_TEXTURE_2D, 0, internal_fmt, sp->LX, sp->LY, 0, texture_fmt, texture_type,	(options & V3XTEXDWNOPTION_DYNAMIC) && hnd->tmpbuf ? hnd->tmpbuf : src_buf);
-	hnd->handle = handle;	 
+	hnd->handle = handle;
 
 	if (src_buf!=sp->data)
 	{
@@ -452,12 +446,12 @@ static void ChangeRender(const V3XMATERIAL *pMat)
     if (pipe_prm&PIPE_OPEN)
 	{
 		glEnd();
-		pipe_prm&=~PIPE_OPEN;                
+		pipe_prm&=~PIPE_OPEN;
 	}
 
     switch(pMat->info.Transparency)
 	{
-        case V3XBLENDMODE_SUB: 
+        case V3XBLENDMODE_SUB:
 			glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
 			glEnable(GL_BLEND);
         break;
@@ -475,12 +469,12 @@ static void ChangeRender(const V3XMATERIAL *pMat)
     }
 
 	if (g_pRLX->pV3X->Client->Capabilities&(GXSPEC_ENABLEZBUFFER|GXSPEC_ENABLEWBUFFER))
-	{			
+	{
 		if (pMat->info.Transparency)
 			glDepthMask(GL_FALSE);
 		else
 			glDepthMask(GL_TRUE);
-	}	
+	}
 
 	glShadeModel(pMat->info.Shade>1 ? GL_SMOOTH : GL_FLAT );
 
@@ -491,13 +485,13 @@ static void SetTexture(GL_TexHandle *hnd, int tmu)
 	GLuint handle = hnd->handle;
     if (handle)
 	{
-	    if (pipe_prm&PIPE_OPEN)  
+	    if (pipe_prm&PIPE_OPEN)
 		{
 			glEnd();
-			pipe_prm&=~PIPE_OPEN;                
+			pipe_prm&=~PIPE_OPEN;
 		}
-		
-		glEnable(GL_TEXTURE_2D);		
+
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, handle );
 
 #ifdef GL_VERSION_1_2
@@ -525,39 +519,39 @@ static const V3XMATERIAL *pipe_pMat;
 
 static void render(const V3XPOLY *fce, int i)
 {
-	SET_VTX();	
+	SET_VTX();
 }
 
 static void render_s(const V3XPOLY *fce, int i)
 {
 	SET_DIFFUSE(i);
-	SET_VTX();	
+	SET_VTX();
 }
 
 static void render_1t(const V3XPOLY *fce, int i)
-{	
+{
 	SET_UV(0);
-	SET_VTX();	
+	SET_VTX();
 }
 
 static void render_1tc(const V3XPOLY *fce, int i)
-{	
+{
 	SET_UVC(0);
-	SET_VTX();	
+	SET_VTX();
 }
 
 static void render_1ts(const V3XPOLY *fce, int i)
-{	
+{
 	SET_DIFFUSE(i);
-	SET_UV(0);	
-	SET_VTX();	
+	SET_UV(0);
+	SET_VTX();
 }
 
 static void render_1tcs(const V3XPOLY *fce, int i)
-{	
+{
 	SET_DIFFUSE(i);
 	SET_UVC(0);
-	SET_VTX();	
+	SET_VTX();
 }
 
 typedef void (*PFRENDERFUNC)(const V3XPOLY *fce, int i);
@@ -565,7 +559,6 @@ static PFRENDERFUNC func;
 
 static void ChangeMaterial(const V3XMATERIAL *pMat)
 {
-	
 	if (pMat->info.Texturized)
 	{
 		GL_TexHandle *hnd = (GL_TexHandle*)pMat->texture[0].handle;
@@ -573,33 +566,32 @@ static void ChangeMaterial(const V3XMATERIAL *pMat)
 		{
 			if (hnd->handle != pipe_pTex[0])
 				SetTexture(hnd, 0);
-		}    
+		}
 		else
 			pipe_pTex[0] = 0;
-				
 	}
 	else
 	{
 		if (pipe_pTex[0])
 		{
-			if (pipe_prm&PIPE_OPEN)  
+			if (pipe_prm&PIPE_OPEN)
 			{
 				glEnd();
-				pipe_prm&=~PIPE_OPEN;                
+				pipe_prm&=~PIPE_OPEN;
 			}
 
 			glDisable( GL_TEXTURE_2D );
 			pipe_pTex[0] = 0;
 		}
 	}
-	
+
 	if (pMat->info.Texturized)
     {
 		if (pMat->info.Perspective)
-		{								
+		{
 			func = pMat->info.Shade>1 ? render_1tcs : render_1tc;
 		}
-		else							
+		else
 		{
 			func = pMat->info.Shade>1 ? render_1ts : render_1t;
 		}
@@ -613,7 +605,7 @@ static void ChangeMaterial(const V3XMATERIAL *pMat)
 static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
 {
 
-	pipe_pMat = 0; 
+	pipe_pMat = 0;
     pipe_prm = 0;
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -622,18 +614,18 @@ static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
     {
         V3XPOLY *fce = *fe;
         const V3XMATERIAL *pMat = (const V3XMATERIAL*)fce->Mat;
-        if (pMat->Render==255) 
+        if (pMat->Render==255)
         {
-            if (pipe_prm&PIPE_OPEN)  
+            if (pipe_prm&PIPE_OPEN)
 			{
 				glEnd();
-				pipe_prm&=~PIPE_OPEN;                
+				pipe_prm&=~PIPE_OPEN;
 			}
 			SYS_ASSERT(pMat->render_clip);
-            pMat->render_clip(fce); 
+            pMat->render_clip(fce);
         }
         else
-        {		
+        {
 			// Prepare shade value
 			if (pipe_pMat != pMat)
 			{
@@ -641,14 +633,14 @@ static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
 				ChangeMaterial(pMat);
 				if (pMat->lod!=pipe_iRender)
 					ChangeRender(pMat);
-			}          		   
-			
+			}
+
             if (!(pipe_prm&PIPE_OPEN))
             {
                 if ((pMat->Render == V3XRCLASS_wired))
-					glBegin( GL_LINE_LOOP );						
+					glBegin( GL_LINE_LOOP );
 				else
-					glBegin(GL_TRIANGLES); 
+					glBegin(GL_TRIANGLES);
                 pipe_prm|=PIPE_OPEN;
             }
 
@@ -681,11 +673,11 @@ static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
     if (pipe_prm&PIPE_OPEN)  glEnd();
 	glPopAttrib();
 
-	glDisable(GL_DEPTH_TEST);	
+	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 	glShadeModel(GL_FLAT);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void V3XAPI StartList(void)
@@ -696,7 +688,7 @@ static void V3XAPI RenderPoly(V3XPOLY **fe, int count)
 static void V3XAPI StartList(void)
 {
 	pipe_iRender = 0;
-    g_fInvZFar = 1.f / g_pRLX->pV3X->Clip.Far;	
+    g_fInvZFar = 1.f / g_pRLX->pV3X->Clip.Far;
     pipe_pTex[0] = 0;
     pipe_pTex[1] = 0;
     glPolygonMode(GL_FRONT_AND_BACK, g_pRLX->pV3X->Client->Capabilities&GXSPEC_FORCEWIREFRAME ?  GL_LINE : GL_FILL);
@@ -717,8 +709,8 @@ static void V3XAPI StartList(void)
 		glDisable( GL_DITHER );
 
 	g_pRLX->pGX->View.State|=GX_STATE_SCENEBEGUN;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void V3XAPI EndList(void)
@@ -728,34 +720,33 @@ static void V3XAPI StartList(void)
 */
 static void V3XAPI EndList(void)
 {
-    g_pRLX->pGX->View.State&=~GX_STATE_SCENEBEGUN;	
-    return;
+    g_pRLX->pGX->View.State&=~GX_STATE_SCENEBEGUN;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void V3XAPI RenderDisplay(void)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static void V3XAPI RenderDisplay(void)
 {
     int n = g_pRLX->pV3X->Buffer.MaxFaces;
     V3XPOLY **f = g_pRLX->pV3X->Buffer.RenderedFaces;
-    if (!n) 
+    if (!n)
 		return;
     RenderPoly(f, n);
-    return;
 }
 
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int option, rgb32_t *color)
+* PROTOTYPE  :  static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, uint16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int option, rgb32_t *color)
 *
 * DESCRIPTION :
 *
 */
-static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int option, rgb32_t *color)
+static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, uint16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int option, rgb32_t *color)
 {
 	return;
     if (option&256)
@@ -767,8 +758,8 @@ static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsi
 	glShadeModel( GL_SMOOTH );
     if (g_pRLX->pV3X->Client->Capabilities&GXSPEC_ENABLEZBUFFER)
 	{
-		glEnable(GL_DEPTH_TEST);						
-	}			
+		glEnable(GL_DEPTH_TEST);
+	}
     option&=255;
     glBegin( option == V3XRCLASS_point ? GL_POINTS : GL_LINES );
     if (indexTab)
@@ -776,8 +767,8 @@ static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsi
         for (;NumIndexes!=0;NumIndexes--, indexTab++)
         {
             V3XVECTOR *v = vertexes + (*indexTab);
-            V3XSCALAR ooz = 1.f - (v->z * g_fInvZFar);			
-            if (color)  
+            V3XSCALAR ooz = 1.f - (v->z * g_fInvZFar);
+            if (color)
 				glColor4ubv((const GLubyte *)(color + (*indexTab)));
             glVertex3f( v->x, v->y, ooz);
         }
@@ -792,32 +783,32 @@ static void V3XAPI DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsi
 				glColor4ubv((const GLubyte *)color);
                 color++;
             }
-			
+
             glVertex3f( vertexes->x, vertexes->y, ooz);
         }
     }
     glEnd();
     glDisable(GL_BLEND);
     glShadeModel(GL_FLAT);
-    return;
 }
+
 V3X_GXSystem V3X_OpenGL=
 {
-    NULL, 
-    RenderDisplay, 
+    NULL,
+    RenderDisplay,
     UploadTexture,
-    FreeTexture, 
-    TextureModify, 
+    FreeTexture,
+    TextureModify,
     HardwareSetup,
-    HardwareShutdown, 
-    SetState, 
-    ZbufferClear, 
-    RenderPoly, 
-    StartList, 
-    EndList, 
-    DrawPrimitives, 
-    "OpenGL", 
-    256+10, 
+    HardwareShutdown,
+    SetState,
+    ZbufferClear,
+    RenderPoly,
+    StartList,
+    EndList,
+    DrawPrimitives,
+    "OpenGL",
+    256+10,
     GXSPEC_ZBUFFER|
     GXSPEC_OPACITYTRANSPARENT|
     GXSPEC_SPRITEAREPOLY|
@@ -830,11 +821,10 @@ V3X_GXSystem V3X_OpenGL=
     GXSPEC_ENABLEFILTERING|
     GXSPEC_HARDWARE|
     GXSPEC_ENABLEPERSPECTIVE|
-    0, 
-    0x000000, 
+    0,
+    0x000000,
     1 // Texture en (256>>1)=128x128 par defaut
 };
-
 
 void GL_ResetViewport(void)
 {
@@ -844,5 +834,5 @@ void GL_ResetViewport(void)
     glOrtho(0, g_pRLX->pGX->View.lWidth, g_pRLX->pGX->View.lHeight, 0, -1, 1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    return;
 }
+

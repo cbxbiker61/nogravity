@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -39,8 +39,8 @@ static bool _bActive;
 static bool _bStopped;
 static Rect _rcWindow;
 static WindowPtr _hWnd;
-enum 
-{   
+enum
+{
 	kMenuApple = 128,
 	kMenuFile = 129,
 	kAppleAbout = 1,
@@ -51,7 +51,7 @@ static void SetDefaultDirectory(char *AppName, int shouldChdir, int useBundleFol
 {
     char parentdir[1024];
     char *c;
-    
+
     sysStrnCpy ( parentdir, AppName, sizeof(parentdir) );
     c = (char*) parentdir;
 
@@ -60,9 +60,9 @@ static void SetDefaultDirectory(char *AppName, int shouldChdir, int useBundleFol
 
     while (*c != '/')      /* back up to parent */
         c--;
-    
+
     *c++ = '\0';             /* cut off last part (binary name) */
-  
+
     if (shouldChdir || useBundleFolder)
     {
 		chdir (parentdir);   /* chdir to the binary app's parent */
@@ -141,24 +141,24 @@ static void OnInit(int argc, char *argv[])
 
 	/* Init toolbox */
 	InitCursor();
-	
-    err = AEInstallEventHandler( 
+
+    err = AEInstallEventHandler(
           kCoreEventClass,
           kAEQuitApplication,
           NewAEEventHandlerUPP(QuitAppleEventHandler), 0, false);
     if (err != noErr)
         ExitToShell();
-	
+
 	/* Copy the arguments into a global variable */
 	int i;
 
 	/* This is passed if we are launched by double-clicking */
-	if ( argc >= 2 && strncmp (argv[1], "-psn", 4) == 0 ) 
+	if ( argc >= 2 && strncmp (argv[1], "-psn", 4) == 0 )
 	{
 		_Argc = 1;
 		_bFinderLaunch = 1;
-	} 
-	else 
+	}
+	else
 	{
 		_Argc = argc;
 		_bFinderLaunch = 0;
@@ -171,7 +171,6 @@ static void OnInit(int argc, char *argv[])
 
 	/* Set Default Directory */
 	SetDefaultDirectory(_Argv[0], _bFinderLaunch, _bIsBundle);
-    return;
 }
 
 static void OnMenu (SInt32 menuResult)
@@ -214,35 +213,34 @@ static int32_t MessageHandler(EventRecord *msg)
 	SInt16 whatPart = 0;
     switch(msg->what)
     {
-    
         case mouseUp:
 		if (sMOU->u_id)
 		{
 			sMOU->rgbButtons[0] = 0;
 		}
 		break;
-     	case mouseDown:
-     	{
-     		WindowPtr whichWindow;
+		case mouseDown:
+		{
+			WindowPtr whichWindow;
 			if (sMOU->u_id)
 			{
 				sMOU->rgbButtons[0] = 1;
 			}
 			whatPart = FindWindow(msg->where, &whichWindow);
-    
+
 			switch(whatPart)
-     		{
+			{
 				case inContent:
 				   if (whichWindow != FrontWindow())
 					SelectWindow (whichWindow);
- 			    break;
+			    break;
 
 			    case inMenuBar: // Menu bar
 				{
 				   DrawMenuBar();
 				   menuResult = MenuSelect(msg->where);
 				   if (HiWord(menuResult) != 0)
-				   	   OnMenu(menuResult);
+					   OnMenu(menuResult);
 				}
 			    break;
 				case inDrag: // Track bar
@@ -258,17 +256,17 @@ static int32_t MessageHandler(EventRecord *msg)
 					{
 						_rcWindow.left &= ~7;
 						MoveWindow(whichWindow, _rcWindow.left, _rcWindow.top, true);
-    					OnMove(_rcWindow.left, _rcWindow.top);
+						OnMove(_rcWindow.left, _rcWindow.top);
                     }
 				}
 				break;
 
 			    case inGoAway:  // Close button (the red one)
 			    {
-			    	int hit = TrackGoAway(whichWindow, msg->where);
-			    	if (hit)
-			    	{
-                 	     Stop();
+					int hit = TrackGoAway(whichWindow, msg->where);
+					if (hit)
+					{
+						Stop();
                     }
                     break;
                 }
@@ -293,8 +291,8 @@ static int32_t MessageHandler(EventRecord *msg)
                 }
                 break;
              }
-     	}
-     	break;
+		}
+		break;
         case keyDown:
             sKEY->charCode = msg->message & charCodeMask;
         break;
@@ -302,7 +300,7 @@ static int32_t MessageHandler(EventRecord *msg)
             sKEY->charCode = 0;
             sKEY->scanCode = 0;
         break;
-        
+
         // OS events: generally suspend/resume
 		case osEvt:
 		if (msg->message & 0x01000000)  // Suspend/resume event
@@ -318,7 +316,7 @@ static int32_t MessageHandler(EventRecord *msg)
 		}
 		break;
 
-  	    break;
+	    break;
 
 		// high level events; let the AppleEvent Manager do the work
 		case kHighLevelEvent:
@@ -341,7 +339,7 @@ int STUB_TaskControl(void)
 	do
 	{
         if (WaitNextEvent(everyEvent, &msg, 0, nil))
-        	MessageHandler(&msg);
+			MessageHandler(&msg);
 
 		if (!IsFocused())
 		{
@@ -360,9 +358,9 @@ static WindowPtr CreateAppWindow()
 	SetRect(&rect, 0, 0, 640, 480);
 	CreateNewWindow (
           kDocumentWindowClass,
-  	      kWindowStandardDocumentAttributes|
+	      kWindowStandardDocumentAttributes|
           kWindowStandardHandlerAttribute,
-  		 &rect,
+		 &rect,
          &hWnd
      );
 
@@ -390,3 +388,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+

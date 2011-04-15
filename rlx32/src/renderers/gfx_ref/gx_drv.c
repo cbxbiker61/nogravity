@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -40,7 +40,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 extern struct RLXSYSTEM *g_pRLX;
 
-static void CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
+static void CALLING_C setPalette(uint32_t a, uint32_t b, void * pal)
 {
     a=a;
     b=b;
@@ -48,29 +48,25 @@ static void CALLING_C setPalette(u_int32_t a, u_int32_t b, void * pal)
     return;
 }
 
-static void CALLING_C blit(u_int32_t dest, u_int32_t src)
-{ 
-     u_int8_t *a = g_pRLX->pGX->Surfaces.lpSurface[dest];
-     u_int8_t *b = g_pRLX->pGX->Surfaces.lpSurface[src];
+static void CALLING_C blit(uint32_t dest, uint32_t src)
+{
+     uint8_t *a = g_pRLX->pGX->Surfaces.lpSurface[dest];
+     uint8_t *b = g_pRLX->pGX->Surfaces.lpSurface[src];
      sysMemCpy(a, b, g_pRLX->pGX->View.lSurfaceSize);
-     return;    
 }
 
 static void CALLING_C waitDrawing(void)
 {
-	 return;    
 }
 
 static void CALLING_C clearBackBuffer(void)
 {
      sysMemZero(g_pRLX->pGX->View.lpBackBuffer, g_pRLX->pGX->View.lSurfaceSize);
-	 return;
 }
 
 static void CALLING_C clearVideo(void)
 {
      sysMemZero(g_pRLX->pGX->View.lpBackBuffer, g_pRLX->pGX->View.lSurfaceSize);
-	 return;
 }
 
 /*------------------------------------------------------------------------
@@ -84,7 +80,7 @@ void RLXAPI GX_GetGraphicInterface(struct GXSYSTEM	*pGX)
 {
     switch(pGX->View.BitsPerPixel) {
 		case 15:
-		case 16:			
+		case 16:
 			GX_GetSpriteInterfaceRef16(pGX, &pGX->csp);
 			GX_GetGraphicInterfaceRef16(pGX, &pGX->gi);
 		break;
@@ -111,13 +107,12 @@ void RLXAPI GX_GetGraphicInterface(struct GXSYSTEM	*pGX)
     pGX->csp_cfg.put.fonct = pGX->csp.put;
     pGX->csp_cfg.pset.fonct = pGX->csp.pset;
     pGX->csp_cfg.transp.fonct = pGX->csp.Trsp50;
-    pGX->csp_cfg.op = pGX->csp.put;    
+    pGX->csp_cfg.op = pGX->csp.put;
 	sysStrCpy(pGX->csp_cfg.ext, "png");
 
 	pGX->View.RGB_Magic =
           (((1L<<pGX->View.ColorMask.RedMaskSize  )-2L) << pGX->View.ColorMask.RedFieldPosition   )
         | (((1L<<pGX->View.ColorMask.GreenMaskSize)-2L) << pGX->View.ColorMask.GreenFieldPosition )
         | (((1L<<pGX->View.ColorMask.BlueMaskSize )-2L) << pGX->View.ColorMask.BlueFieldPosition  );
-
-    return;
 }
+

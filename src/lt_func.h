@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -69,7 +70,7 @@ void NG_GameStart(void);
 void NG_GameStop(void);
 
 void NG_RenderView(void);
-void NG_DrawHelpFile(GXSPRITEGROUP *font, int color2, int xz);    
+void NG_DrawHelpFile(GXSPRITEGROUP *font, int color2, int xz);
 void NG_InstallHandlers(void);
 int NG_ColorToNAV(int x);
 void NG_CreateDisplayList(void);
@@ -122,11 +123,11 @@ void NG_NAVReset(int reset);
 void NG_NAVClear(void);
 
 void NG_StretchFont(GXSPRITEGROUP *pSpriteGroup, int fx, int fy);
-void NG_GamePlay(void);    
+void NG_GamePlay(void);
 void NG_DrawVideoSubtitles(FLI_STRUCT *);
 void NG_ReadLanguagePack(void);
 void NG_SetLanguage();
-int NG_ExecMainMenu(char **menu, int def, u_int32_t defColor, u_int8_t spacing);
+int NG_ExecMainMenu(char **menu, int def, uint32_t defColor, uint8_t spacing);
 
 // AI
 void NG_AIRandomAim(V3XVECTOR *a, V3XVECTOR *cent, V3XSCALAR r);
@@ -153,11 +154,11 @@ void NG_FXBlast(SGScript *pInf, V3XOVI *OVI);
 void NG_FXDebris(SGScript *pInf, V3XOVI *OVI);
 void NG_FXAvary(V3XOVI *mOVI, SGScript *pInf);
 V3XOVI *NG_SetSpherePos(V3XOVI *OVI, V3XMATRIX *Mat, V3XSCALAR scale, int status);
-void NG_FXSetSceneShading(V3XSCENE *Scene, int limit);    
+void NG_FXSetSceneShading(V3XSCENE *Scene, int limit);
 void NG_FXNoTextureScene(V3XSCENE *Scene);
 void NG_FXChangeRenderObject(V3XMESH *obj, int nouv);
 void NG_FXFlare(void);
-void NG_FXImpact(int power);    
+void NG_FXImpact(int power);
 void NG_FXLoadData();
 void NG_FXReleaseData();
 void NG_FXCreate();
@@ -204,10 +205,10 @@ int NG_NetSelectMode(void);
 void NG_NetDisplay(int force);
 void NG_NetRender();
 void NG_NetDispatch(void);
-u_int32_t NG_NetDispatchPlayer(unsigned playerId, u_int8_t *buffer);
-unsigned NG_NetTranslate(SGPlayer *pInf, u_int8_t *be);
+uint32_t NG_NetDispatchPlayer(unsigned playerId, uint8_t *buffer);
+unsigned NG_NetTranslate(SGPlayer *pInf, uint8_t *be);
 
 __end_extern_c
 
-#endif 
+#endif
 

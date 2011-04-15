@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,28 +29,28 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #include "poly.hpp"
 #include "rd_256.hpp"
+
 // =========================================================================
 void CALLING_C Rend32bit_C_glenzflat (V3XPOLY *fce)
 {
-    TRI_VAR    
+    TRI_VAR
     MASTER_1
 	/* ==================== BOUCLE PRINCIPALE ============================== */
 	MASTER_L
 		MASTER_2
 			INNER_LOOP
 			    {
-				   *(u_int32_t*)ptr = (u_int32_t)RGB_ALPHA50(g_DiffuseTable[GET_CONSTANT()], *(u_int32_t*)ptr);
+				   *(uint32_t*)ptr = (uint32_t)RGB_ALPHA50(g_DiffuseTable[GET_CONSTANT()], *(uint32_t*)ptr);
 			    }
 			}
 		    FINAL
-   return;
 }
 
 void CALLING_C Rend32bit_C_glenz (V3XPOLY *fce)
 {
     TRI_VAR
     VAR_IT
-    
+
     MASTER_1
     CALC_IT
 	CST_IT
@@ -63,21 +63,20 @@ void CALLING_C Rend32bit_C_glenz (V3XPOLY *fce)
 			/*  Trace d'un points*/
 			INNER_LOOP
 			    {
-				  *(u_int32_t*)ptr = (u_int32_t)RGB_ALPHA50(g_DiffuseTable[GET_DIFFUSE(It)], *(u_int32_t*)ptr);
+				  *(uint32_t*)ptr = (uint32_t)RGB_ALPHA50(g_DiffuseTable[GET_DIFFUSE(It)], *(uint32_t*)ptr);
 				  It += dIx;
 			    }
 			}
 		    ADD_IT
 		    FINAL
-
-   return;
 }
+
 // =========================================================================
 void CALLING_C Rend32bit_C_flat(V3XPOLY *fce)
 {
-    u_int32_t vx = g_DiffuseTable[GET_CONSTANT()];
-    TRI_VAR    
-    
+    uint32_t vx = g_DiffuseTable[GET_CONSTANT()];
+    TRI_VAR
+
     MASTER_1
 	/* ==================== BOUCLE PRINCIPALE ============================== */
 	MASTER_L
@@ -85,19 +84,19 @@ void CALLING_C Rend32bit_C_flat(V3XPOLY *fce)
 			/*  Trace d'un points*/
 			INNER_LOOP
 			    {
-				*(u_int32_t*)ptr = vx;
+				*(uint32_t*)ptr = vx;
 			    }
 			}
 		    FINAL
     Pper=Pper;
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend32bit_C_gouraud(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_IT
-    
+
     MASTER_1
     CALC_IT
 	CST_IT
@@ -109,14 +108,13 @@ void CALLING_C Rend32bit_C_gouraud(V3XPOLY *fce)
 			/*  Trace d'un points*/
 			INNER_LOOP
 			    {
-				*(u_int32_t*)ptr = g_DiffuseTable[GET_DIFFUSE(It)];
+				*(uint32_t*)ptr = g_DiffuseTable[GET_DIFFUSE(It)];
 				It += dIx;
 
 			    }
 			}
 		    ADD_IT
 		    FINAL
-    return;
 }
 
 // =========================================================================
@@ -124,7 +122,7 @@ void CALLING_C Rend32bit_C_map_normal(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -147,15 +145,15 @@ void CALLING_C Rend32bit_C_map_normal(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 // =========================================================================
 void CALLING_C Rend32bit_C_map_dualtex(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -178,8 +176,8 @@ void CALLING_C Rend32bit_C_map_dualtex(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 
 // =========================================================================
@@ -215,15 +213,14 @@ void CALLING_C Rend32bit_C_map_norm_G(V3XPOLY *fce)
 		    ADD_IT
 		    ADD_MAP
 		    FINAL
-    return;
 }
 
 // =========================================================================
 void CALLING_C Rend32bit_C_map_sprite(V3XPOLY *fce)
-{    
+{
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -239,8 +236,8 @@ void CALLING_C Rend32bit_C_map_sprite(V3XPOLY *fce)
 			/*  Trace d'un points*/
 			INNER_LOOP
 			    {
-					u_int8_t vx = texture->texture[MAPADR(U, V)];
-					if (vx) 
+					uint8_t vx = texture->texture[MAPADR(U, V)];
+					if (vx)
 						GFX_dword(ptr, texture->palette[vx]);
 					U  += dUx;
 					V  += dVx;
@@ -248,15 +245,14 @@ void CALLING_C Rend32bit_C_map_sprite(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
 
 // =========================================================================
 void CALLING_C Rend32bit_C_map_norm_F(V3XPOLY *fce)
 {
-	u_int32_t *palette = g_MixTable[GET_CONSTANT()];
+	uint32_t *palette = g_MixTable[GET_CONSTANT()];
     TRI_VAR
-    VAR_MAP   
+    VAR_MAP
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -279,14 +275,14 @@ void CALLING_C Rend32bit_C_map_norm_F(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend32bit_C_tex_alpha(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -301,22 +297,22 @@ void CALLING_C Rend32bit_C_tex_alpha(V3XPOLY *fce)
 
 			INNER_LOOP
 			    {
-   		        GFX_dword(ptr, RGB_ALPHA50(texture->palette[texture->texture[MAPADR(U, V)]], *(u_int32_t*)ptr));
+		        GFX_dword(ptr, RGB_ALPHA50(texture->palette[texture->texture[MAPADR(U, V)]], *(uint32_t*)ptr));
 				U  += dUx;
 				V  += dVx;
 			    }
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend32bit_C_map_sprite_F(V3XPOLY *fce)
 {
-	u_int32_t *palette = g_MixTable[GET_CONSTANT()];
+	uint32_t *palette = g_MixTable[GET_CONSTANT()];
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -332,7 +328,7 @@ void CALLING_C Rend32bit_C_map_sprite_F(V3XPOLY *fce)
 			/*  Trace d'un points*/
 			INNER_LOOP
 			    {
-					u_int8_t vx = texture->texture[MAPADR(U, V)];
+					uint8_t vx = texture->texture[MAPADR(U, V)];
 					if (vx)
 					{
 						GFX_dword(ptr, palette[vx]);
@@ -343,5 +339,5 @@ void CALLING_C Rend32bit_C_map_sprite_F(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -42,7 +42,7 @@ void CALLING_C Rend16bit_CS_map_normal(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -65,14 +65,14 @@ void CALLING_C Rend16bit_CS_map_normal(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend16bit_CS_map_dualtex(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -92,26 +92,25 @@ void CALLING_C Rend16bit_CS_map_dualtex(V3XPOLY *fce)
 			    ptr = off_ptr + x0*2;
 			    for (x=(XL+1)>>1;x!=0;ptr+=4, x--) //2 fois moins
 			    {
-				*(u_int16_t*)ptr =
-				*(u_int16_t*)(ptr+2) = (u_int16_t)texture->palette[texture->texture[MAPADR(U, V)]];
+				*(uint16_t*)ptr =
+				*(uint16_t*)(ptr+2) = (uint16_t)texture->palette[texture->texture[MAPADR(U, V)]];
 				U  += dUx<<1;
 				V  += dVx<<1;
 			    }
 			    // le point eventuellement restant
-			    if (!(XL&1)) *(u_int16_t*)ptr = (u_int16_t)texture->palette[texture->texture[MAPADR(U, V)]];
+			    if (!(XL&1)) *(uint16_t*)ptr = (uint16_t)texture->palette[texture->texture[MAPADR(U, V)]];
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend16bit_CS_map_norm_G(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_IT
     VAR_MAP
-    
-    
+
     MASTER_1
     CALC_IT
     CALC_MAP
@@ -141,16 +140,15 @@ void CALLING_C Rend16bit_CS_map_norm_G(V3XPOLY *fce)
 		    ADD_IT
 		    ADD_MAP
 		    FINAL
-    return;
 }
 
 // =========================================================================
 void CALLING_C Rend16bit_CS_map_sprite(V3XPOLY *fce)
 {
-    u_int16_t vx;
+    uint16_t vx;
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -166,7 +164,7 @@ void CALLING_C Rend16bit_CS_map_sprite(V3XPOLY *fce)
 			/*  Trace d'un points*/
 			INNER_LOOP
 			    {
-				vx = (u_int16_t)texture->palette[texture->texture[MAPADR(U, V)]];
+				vx = (uint16_t)texture->palette[texture->texture[MAPADR(U, V)]];
 				if (vx) GFX_word(ptr, vx);
 				U  += dUx;
 				V  += dVx;
@@ -174,18 +172,17 @@ void CALLING_C Rend16bit_CS_map_sprite(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
 
 // =========================================================================
 void CALLING_C Rend16bit_CS_map_norm_F(V3XPOLY *fce)
 {
-    u_int8_t *Shader;
+    uint8_t *Shader;
     int32_t *shade=(int32_t*)fce->shade;
     TRI_VAR
-    VAR_MAP    
-    
-    Shader = (u_int8_t*)g_MixTable[shade[0]];
+    VAR_MAP
+
+    Shader = (uint8_t*)g_MixTable[shade[0]];
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -208,14 +205,14 @@ void CALLING_C Rend16bit_CS_map_norm_F(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend16bit_CS_tex_alpha(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
-    
+
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -237,19 +234,18 @@ void CALLING_C Rend16bit_CS_tex_alpha(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend16bit_CS_map_sprite_F(V3XPOLY *fce)
 {
-    u_int8_t *Shader;
+    uint8_t *Shader;
     int32_t *shade=(int32_t*)fce->shade;
-    u_int8_t vx;
+    uint8_t vx;
     TRI_VAR
     VAR_MAP
-    
-    
-    Shader = (u_int8_t*)g_MixTable[(shade[0]+shade[1]+shade[2])/3];
+
+    Shader = (uint8_t*)g_MixTable[(shade[0]+shade[1]+shade[2])/3];
     MASTER_1
     CALC_MAP
 	CST_MAP
@@ -273,16 +269,15 @@ void CALLING_C Rend16bit_CS_map_sprite_F(V3XPOLY *fce)
 			}
 		    ADD_MAP
 		    FINAL
-    return;
 }
+
 // =========================================================================
 void CALLING_C Rend16bit_CS_map_phong(V3XPOLY *fce)
 {
     TRI_VAR
     VAR_MAP
     VAR_MAP2
-    
-    
+
     MASTER_1
     CALC_MAP
     CALC_MAP2
@@ -318,5 +313,5 @@ void CALLING_C Rend16bit_CS_map_phong(V3XPOLY *fce)
 		    ADD_MAP
 		    ADD_MAP2
 		    FINAL
-    return;
 }
+

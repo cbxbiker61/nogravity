@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -41,6 +41,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "v3xtrig.h"
 #include "v3xmaps.h"
 #include "v3xrend.h"
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -66,13 +67,13 @@ void V3XMatrix_Rotate_X(int32_t Theta, V3XSCALAR *Matrice)
     Matrice[6]=M[6];
     Matrice[7]=M[7];
     Matrice[8]=M[8];
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XMatrix_BuildFromVectorUP(V3XMATRIX *M0, V3XVECTOR *v, V3XVECTOR *Source)
 *
-* Description :  
+* Description :
 *
 */
 void V3XMatrix_BuildFromVectorUP(V3XMATRIX *M0, V3XVECTOR *v, V3XVECTOR *Source)
@@ -81,8 +82,8 @@ void V3XMatrix_BuildFromVectorUP(V3XMATRIX *M0, V3XVECTOR *v, V3XVECTOR *Source)
     V3XVector_ProjectOnVector(&M0->v.J, Source, &M0->v.K);
     V3XVector_Normalize (&M0->v.J, &M0->v.J);
     V3XVector_CrossProduct(&M0->v.I, &M0->v.J, &M0->v.K);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XMatrix_BuildFromVector(V3XMATRIX *M0, V3XVECTOR *v, int roll)
@@ -103,15 +104,15 @@ void V3XMatrix_BuildFromVector(V3XMATRIX *M0, V3XVECTOR *v, int roll)
 	else
 		V3XVector_Normalize (&M0->v.J, &M0->v.J);
     V3XVector_CrossProduct(&M0->v.I,& M0->v.J,& M0->v.K);
-    if (roll) 
+    if (roll)
 		V3XMatrix_Rotate_Z(roll, M0->Matrix);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XMatrix_BuildFromNVector(V3XMATRIX *M0, V3XVECTOR *v, int roll)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void V3XMatrix_BuildFromNVector(V3XMATRIX *M0, V3XVECTOR *v, int roll)
@@ -128,7 +129,6 @@ void V3XMatrix_BuildFromNVector(V3XMATRIX *M0, V3XVECTOR *v, int roll)
 		V3XVector_Set(&M0->v.J, 0, 1, 0);
     V3XVector_CrossProduct(&M0->v.I, &M0->v.J, &M0->v.K);
     if (roll) V3XMatrix_Rotate_Z(roll, M0->Matrix);
-    return;
 }
 
 /*------------------------------------------------------------------------
@@ -144,6 +144,7 @@ V3XSCALAR V3XVector_DistanceToPlane(V3XVECTOR *Point, V3XVECTOR *PlanePoint, V3X
     V3XVector_Dif( &point_to_plane, (Point), (PlanePoint));
     return V3XVector_DotProduct((PlaneNormal), &point_to_plane);
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XVector_IntersectPointPlane(V3XVECTOR *isect, V3XVECTOR *Point, V3XVECTOR *PlanePoint, V3XVECTOR *PlaneNormal)
@@ -157,6 +158,7 @@ V3XSCALAR V3XVector_IntersectPointPlane(V3XVECTOR *isect, V3XVECTOR *Point, V3XV
     V3XVector_Madd(isect, PlaneNormal, Point, k);
     return k;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int V3XVector_TransformProject_pts(V3XVECTOR *input, V3XVECTOR *result)
@@ -174,13 +176,14 @@ V3XSCALAR V3XVector_IntersectPointPlane(V3XVECTOR *isect, V3XVECTOR *Point, V3XV
 
 int V3XVector_TransformProject_pts(V3XVECTOR *input, V3XVECTOR *result)
 {
-    u_int8_t flag=0;
+    uint8_t flag=0;
     V3XVECTOR temp;
     V3X_TRANSFORM_CAMERA(temp, input, V3X.Camera);
     V3XVector_ProjectWithCenterAndTest((*result), temp, flag);
     result->z = temp.z;
     return flag==0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int V3XVector_Project(V3XVECTOR *result, V3XVECTOR *input)
@@ -193,6 +196,7 @@ int V3XVector_Project(V3XVECTOR *result, V3XVECTOR *input)
     V3XVector_ProjectWithoutCenter((*result), (*input));
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  V3XSCALAR V3XVector_ProjectPointLine(V3XVECTOR *res, V3XVECTOR *v, V3XVECTOR *e0, V3XVECTOR *e1)
@@ -217,11 +221,12 @@ int V3XVector_IntersectPlaneSegmentEx(V3XVECTOR * isect, V3XVECTOR * start, V3XV
     if (r < CST_ZERO || r > CST_ONE) return 0;
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int V3XVector_IntersectPlaneSegment(V3XVECTOR * isect, V3XVECTOR * start, V3XVECTOR * end, V3XVECTOR *normal, V3XVECTOR *point)
 *
-* Description :  
+* Description :
 *
 */
 int V3XVector_IntersectPlaneSegment(V3XVECTOR * isect, V3XVECTOR * start, V3XVECTOR * end, V3XVECTOR *normal, V3XVECTOR *point)
@@ -230,11 +235,12 @@ int V3XVector_IntersectPlaneSegment(V3XVECTOR * isect, V3XVECTOR * start, V3XVEC
     int r =V3XVector_IntersectPlaneSegmentEx(isect, start, end, normal, d, NULL);
     return r;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  V3XSCALAR V3XVector_ProjectPointLine(V3XVECTOR *res, V3XVECTOR *u, V3XVECTOR *e0, V3XVECTOR *e1)
 *
-* Description :  
+* Description :
 *
 */
 V3XSCALAR V3XVector_ProjectPointLine(V3XVECTOR *res, V3XVECTOR *u, V3XVECTOR *e0, V3XVECTOR *e1)
@@ -245,8 +251,8 @@ V3XSCALAR V3XVector_ProjectPointLine(V3XVECTOR *res, V3XVECTOR *u, V3XVECTOR *e0
     V3XVector_Dif(&w, e1, e0);
     wl = V3XVector_Normalize(&w, &w);
 	vl = V3XVector_Normalize(&v, &v);
-	
-    if (wl>CST_EPSILON) 
+
+    if (wl>CST_EPSILON)
 	{
 		if ((wl>CST_EPSILON)&&(vl>CST_EPSILON))
 		{
@@ -266,12 +272,13 @@ V3XSCALAR V3XVector_ProjectPointLine(V3XVECTOR *res, V3XVECTOR *u, V3XVECTOR *e0
 		}
 		else
 		{
-			*res = *e0;  
+			*res = *e0;
 			return vl;
 		}
 	}
 	return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int V3X_IntersectSphereSegment(V3XSCALAR radius, V3XVECTOR *center, V3XVECTOR *a, V3XVECTOR *b)
@@ -281,10 +288,11 @@ V3XSCALAR V3XVector_ProjectPointLine(V3XVECTOR *res, V3XVECTOR *u, V3XVECTOR *e0
 */
 int V3XVector_IntersectSphereSegment(V3XSCALAR radius, V3XVECTOR *center, V3XVECTOR *a, V3XVECTOR *b)
 {
-    V3XVECTOR res;    
-    V3XSCALAR  dist = V3XVector_ProjectPointLine(&res, center, a, b); 
+    V3XVECTOR res;
+    V3XSCALAR  dist = V3XVector_ProjectPointLine(&res, center, a, b);
     return (dist<=radius); //&&(dist!=CST_ZERO));
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XMatrix_Rotate_Y(int32_t Theta, V3XSCALAR *Matrice)
@@ -306,8 +314,8 @@ void V3XMatrix_Rotate_Y(int32_t Theta, V3XSCALAR *Matrice)
     M[8]=MULF32(sin, Matrice[2])+MULF32(cos, Matrice[8]);
     Matrice[0]=M[0];    Matrice[1]=M[1];    Matrice[2]=M[2];
     Matrice[6]=M[6];    Matrice[7]=M[7];    Matrice[8]=M[8];
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XMatrix_Rotate_Z(int32_t Theta, V3XSCALAR *Matrice)
@@ -329,8 +337,8 @@ void V3XMatrix_Rotate_Z(int32_t Theta, V3XSCALAR *Matrice)
     M[5]=MULF32(sin, Matrice[2])+MULF32(cos, Matrice[5]);
     Matrice[0]=M[0];    Matrice[1]=M[1];    Matrice[2]=M[2];
     Matrice[3]=M[3];    Matrice[4]=M[4];    Matrice[5]=M[5];
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XMatrix_Rotate_X_Local(int32_t Theta, V3XSCALAR *Matrice)
@@ -352,8 +360,8 @@ void V3XMatrix_Rotate_X_Local(int32_t Theta, V3XSCALAR *Matrice)
     M[8]=MULF32(sin, Matrice[7])+MULF32(cos, Matrice[8]);
     Matrice[1]=M[1];    Matrice[4]=M[4];    Matrice[7]=M[7];
     Matrice[2]=M[2];    Matrice[5]=M[5];    Matrice[8]=M[8];
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XMatrix_Rotate_Y_Local(int32_t Theta, V3XSCALAR *Matrice)
@@ -376,8 +384,8 @@ void V3XMatrix_Rotate_Y_Local(int32_t Theta, V3XSCALAR *Matrice)
     Matrice[0]=M[0];    Matrice[3]=M[3];
     Matrice[6]=M[6];    Matrice[2]=M[2];
     Matrice[5]=M[5];    Matrice[8]=M[8];
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XMatrix_Rotate_Z_Local(int32_t Theta, V3XSCALAR *Matrice)
@@ -400,8 +408,8 @@ void V3XMatrix_Rotate_Z_Local(int32_t Theta, V3XSCALAR *Matrice)
     Matrice[0]=M[0];    Matrice[3]=M[3];
     Matrice[6]=M[6];    Matrice[1]=M[1];
     Matrice[4]=M[4];    Matrice[7]=M[7];
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  V3XSCALAR V3XVector_AudioInfo(V3XVECTOR *v, V3XSCALAR *panning, V3XSCALAR *volume, V3XSCALAR maxDist)
@@ -440,8 +448,8 @@ void V3XBBox_Compute(V3XVECTOR *mini, V3XVECTOR *maxi, int numVerts, V3XVECTOR *
         if (vertex->y<mini->y) mini->y = vertex->y;
         if (vertex->z<mini->z) mini->z = vertex->z;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -459,6 +467,7 @@ int V3XBBox_Inside(V3XVECTOR *vertex, V3XVECTOR *mini, V3XVECTOR *maxi)
     if (vertex->z<mini->z) return 0;
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int V3X_IsV3XVECTORInPoly(V3XVECTOR * isect, int numVerts, V3XVECTOR *vertex)
@@ -468,11 +477,12 @@ int V3XBBox_Inside(V3XVECTOR *vertex, V3XVECTOR *mini, V3XVECTOR *maxi)
 */
 #define SUM_ANGLE
 #define xacos(v) (V3XSCALAR)acos((double)(v))
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int V3XVector_InPoly(V3XVECTOR * isect, int numVerts, V3XVECTOR *vertex, V3XVECTOR *normal)
 *
-* Description :  
+* Description :
 *
 */
 int V3XVector_InPoly(V3XVECTOR * isect, int numVerts, V3XVECTOR *vertex, V3XVECTOR *normal)
@@ -525,6 +535,7 @@ int V3XVector_InPoly(V3XVECTOR * isect, int numVerts, V3XVECTOR *vertex, V3XVECT
     UNUSED(normal);
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void CalculMatrixCamera(V3XREPERE *Cam)
@@ -550,8 +561,8 @@ void V3XMatrix_MeshTransform(V3XCAMERA *Cam)
         // (Cam->M.Matrix);
         break;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  Fonctions cliposaures
@@ -560,7 +571,8 @@ void V3XMatrix_MeshTransform(V3XCAMERA *Cam)
 *
 */
 #define LCLIPVALUE(r, a, b, t) {(r) = (a)+(V3XSCALAR)MULF32((b)-(a), t);}
-#define LCLIPVALUE2(r, a, b, t) {(r) = (u_int8_t)((a)+(V3XSCALAR)MULF32((b)-(a), t));}
+#define LCLIPVALUE2(r, a, b, t) {(r) = (uint8_t)((a)+(V3XSCALAR)MULF32((b)-(a), t));}
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void V3X_FaceCopy(V3XPOLY *clip, V3XPOLY *polygon)
@@ -574,7 +586,7 @@ static void V3X_FaceCopy(V3XPOLY *clip, V3XPOLY *polygon)
     // Transfer information from polygon structure to clipped polygon structure
     clip->Mat = polygon->Mat;
     clip->distance = polygon->distance;
-    sysMemCpy(&clip->numEdges, &polygon->numEdges, 4); 
+    sysMemCpy(&clip->numEdges, &polygon->numEdges, 4);
     sysMemCpy(clip->dispTab, polygon->dispTab, polygon->numEdges*sizeof(V3XPTS));
     if (Mat)
     {
@@ -589,14 +601,14 @@ static void V3X_FaceCopy(V3XPOLY *clip, V3XPOLY *polygon)
             {
                 sysMemCpy(clip->uvTab[1], polygon->uvTab[1], polygon->numEdges*sizeof(V3XUV));
             }
-        } 
+        }
         if (Mat->info.Shade)
         {
             sysMemCpy(clip->shade , polygon->shade , polygon->numEdges*sizeof(V3XSCALAR));
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static V3XPOLY *V3XPoly_Duplicate(V3XPOLY *clip)
@@ -606,7 +618,7 @@ static void V3X_FaceCopy(V3XPOLY *clip, V3XPOLY *polygon)
 */
 V3XPOLY *V3XPoly_Duplicate(V3XPOLY *clip)
 {
-    V3XPOLY *nouv = V3XPoly_QAlloc(); 
+    V3XPOLY *nouv = V3XPoly_QAlloc();
     if (V3XPoly_QExhausted())
     {
         clip->visible = 0;
@@ -614,16 +626,17 @@ V3XPOLY *V3XPoly_Duplicate(V3XPOLY *clip)
     }
     else
     {
-        V3X.Buffer.MaxClipped++;  
+        V3X.Buffer.MaxClipped++;
         V3X_FaceCopy(nouv, clip);
         if (clip->faceTab)
-        {   
+        {
             if (nouv->faceTab) sysMemCpy(nouv->faceTab, clip->faceTab, clip->numEdges*sizeof(int32_t));
             else nouv->faceTab = clip->faceTab;
-        }  
+        }
         return nouv;
     }
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void v3x_facedataCopy(V3XPOLY *clip, V3XPOLY *polygon, int32_t cp, int32_t v1)
@@ -652,8 +665,8 @@ static void v3x_facedataCopy(V3XPOLY *clip, V3XPOLY *polygon, int32_t cp, int32_
     {
         sysMemCpy(clip->shade+ cp, polygon->shade + v1, sizeof(V3XSCALAR));
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void v3x_facedataClip(V3XSCALAR t, V3XPOLY *clip, V3XPOLY *polygon, int32_t cp, int32_t v1, int32_t v2, V3XSCALAR z)
@@ -705,7 +718,7 @@ static void v3x_facedataClip(V3XSCALAR t, V3XPOLY *clip, V3XPOLY *polygon, int32
             }
             else
             LCLIPVALUE( clip->shade[ cp ], polygon->shade[v1], polygon->shade[v2], t);
-        }  
+        }
     }
     if (!z)
     {
@@ -716,8 +729,8 @@ static void v3x_facedataClip(V3XSCALAR t, V3XPOLY *clip, V3XPOLY *polygon, int32
         clip->dispTab[ cp ].z = CST_ONE/zf;
         //LCLIPVALUE( clip->dispTab[ cp ].z , polygon->dispTab[v1].z, polygon->dispTab[v2].z, t);
     } else  clip->dispTab[ cp ].z = z;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void V3XPoly_ZClip(V3XPOLY *clip)
@@ -738,14 +751,14 @@ V3XPOLY *V3XPoly_ZClipNear(V3XPOLY *polygon)
     // Test Maxclipped faces
     C.z =  V3X.Clip.Near;
     if ((v1>V3X.Buffer.MaxEdges)||(V3XPoly_QExhausted()))
-    {  
+    {
         polygon->visible = 0;
         return polygon;
     }
     clip = V3XPoly_QAlloc();
     // Transfer information from polygon structure to clipped polygon structure
     V3X_FaceCopy(clip, polygon);
-    // Loop through all edges of polygon  
+    // Loop through all edges of polygon
     for (v2=0; v2<ne; v2++)
     {
         V3XVECTOR *rv1;
@@ -798,11 +811,12 @@ V3XPOLY *V3XPoly_ZClipNear(V3XPOLY *polygon)
         v1=v2; // Advance to next vertex
     }
     // Put number of numVerts in clipped polygon structure:
-    clip->numEdges = (u_int8_t)cp;
+    clip->numEdges = (uint8_t)cp;
     if (cp<2) clip->visible = 0;
     else V3X.Buffer.MaxClipped ++;
     return clip;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  V3XPOLY static *V3XPoly_ZClipFar(V3XPOLY *polygon)
@@ -824,7 +838,7 @@ V3XPOLY *V3XPoly_ZClipFar(V3XPOLY *polygon)
     C.z =  V3X.Clip.Far;
     if ((v1>V3X.Buffer.MaxEdges)||(V3XPoly_QExhausted()))
     {
-        polygon->visible = 0;  
+        polygon->visible = 0;
         return polygon;
     }
     clip = V3XPoly_QAlloc();
@@ -880,11 +894,12 @@ V3XPOLY *V3XPoly_ZClipFar(V3XPOLY *polygon)
         v1=v2; // Advance to next vertex
     }
     // Put number of numVerts in clipped polygon structure:
-    clip->numEdges = (u_int8_t)cp;
+    clip->numEdges = (uint8_t)cp;
     if (cp<2) clip->visible = 0;
     else V3X.Buffer.MaxClipped ++;
     return clip;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void V3XPoly_XYClipping(V3XPOLY *clip)
@@ -952,7 +967,7 @@ V3XPOLY *V3XPoly_XYClipping(V3XPOLY *clip)
             if ((p1->x < xmin)
             &&  (p2->x < xmin))
             {
-                // Edge is entirely off left side of viewport, 
+                // Edge is entirely off left side of viewport,
                 //  so don't do anything
             }
             else
@@ -985,7 +1000,7 @@ V3XPOLY *V3XPoly_XYClipping(V3XPOLY *clip)
             }
             v1=v2;
         }
-        clip->numEdges = (u_int8_t)cp;
+        clip->numEdges = (uint8_t)cp;
         if (cp<2) return clip;
         //*****************************************************
         //*                                                    *
@@ -1011,7 +1026,7 @@ V3XPOLY *V3XPoly_XYClipping(V3XPOLY *clip)
             else
             if ((p1->x >  xmax)
             &&  (p2->x >  xmax)){
-                // Edge is entirely off right side of viewport, 
+                // Edge is entirely off right side of viewport,
                 //  so do nothing
             }
             else
@@ -1044,7 +1059,7 @@ V3XPOLY *V3XPoly_XYClipping(V3XPOLY *clip)
             }
             v1=v2;
         }
-        clip->numEdges = (u_int8_t)cp;
+        clip->numEdges = (uint8_t)cp;
         if (cp<2) return clip;
     }
     {
@@ -1073,7 +1088,7 @@ V3XPOLY *V3XPoly_XYClipping(V3XPOLY *clip)
             if ((p1->y < ymin)
             &&  (p2->y < ymin))
             {
-                // Edge is entirely off top of viewport, 
+                // Edge is entirely off top of viewport,
                 //  so don't do anything
             }
             else
@@ -1107,7 +1122,7 @@ V3XPOLY *V3XPoly_XYClipping(V3XPOLY *clip)
             }
             v1=v2;
         }
-        clip->numEdges = (u_int8_t)cp;
+        clip->numEdges = (uint8_t)cp;
         if (cp<2) return clip;
         //****************************************************
         //*                                                   *
@@ -1134,7 +1149,7 @@ V3XPOLY *V3XPoly_XYClipping(V3XPOLY *clip)
             if ((p1->y > ymax)
             &&  (p2->y > ymax))
             {
-                // Edge is entirely off bottom of viewport, 
+                // Edge is entirely off bottom of viewport,
                 //  so don't do anything
             }
             else
@@ -1168,10 +1183,11 @@ V3XPOLY *V3XPoly_XYClipping(V3XPOLY *clip)
             }
             v1=v2;
         }
-        clip->numEdges = (u_int8_t)cp;
+        clip->numEdges = (uint8_t)cp;
         if (cp<2) return clip;
     }
     V3X.Buffer.MaxClipped++;
     clip->visible=1;
     return clip;
 }
+

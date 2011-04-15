@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 Original Source: 1996 - Stephane Denis
 Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 */
-//------------------------------------------------------------------------- 
+//-------------------------------------------------------------------------
 #include <stdio.h>
 #include <time.h>
 #include <pthread.h>
@@ -33,7 +33,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "systime.h"
 
 // Time in millisecond
-u_int32_t timer_ms(void)
+uint32_t timer_ms(void)
 {
     UnsignedWide mt;
     Microseconds(&mt); // 10-06 sec
@@ -41,7 +41,7 @@ u_int32_t timer_ms(void)
 }
 
 // Time in seconds
-u_int32_t timer_sec(void)
+uint32_t timer_sec(void)
 {
     UnsignedWide mt;
     Microseconds(&mt); // 10-06 sec
@@ -49,12 +49,10 @@ u_int32_t timer_sec(void)
 }
 
 // Snooze (wait + release CPU)
-void timer_snooze(u_int32_t t)
+void timer_snooze(uint32_t t)
 {
     usleep(t * 1000);
-	return;
 }
-
 
 // 1 microsecond = 0.001 millisecond
 
@@ -66,7 +64,6 @@ static const int64_t g_iFreq = 1000000;
 void timer_Stop(SYS_TIMER *tm)
 {
     tm->flags &= ~SYS_TIMER_FLAGS_START;
-    return;
 }
 
 // clear timer
@@ -74,7 +71,6 @@ void timer_Reset(SYS_TIMER *tm)
 {
     tm->iCounter = 0;
     tm->fCounter = 0.f;
-    return;
 }
 
 void timer_Update(SYS_TIMER *tm)
@@ -87,7 +83,7 @@ void timer_Update(SYS_TIMER *tm)
     do
     {
         GET_TICK(&tm->tEnd);
-    	ticks_passed = tm->tEnd - tm->tStart;
+		ticks_passed = tm->tEnd - tm->tStart;
 		ticks_left = (int64_t)ticks_to_wait - (int64_t)ticks_passed;
 		if (ticks_left > ticks_min)
 			usleep(1000);
@@ -105,7 +101,6 @@ void timer_Update(SYS_TIMER *tm)
     tm->iCounter = (int32_t)(tm->fCounter * 65535.f);
 
     GET_TICK(&tm->tStart);
-    return;
 }
 
 void timer_Start(SYS_TIMER *tm, int iFreq, int iMinFrame)
@@ -115,7 +110,6 @@ void timer_Start(SYS_TIMER *tm, int iFreq, int iMinFrame)
 
     GET_TICK(&tm->tStart);
     timer_Update(tm);
-    return;
 }
 
 // http://www.yolinux.com/TUTORIALS/LinuxTutorialPosixThreads.html
@@ -137,13 +131,11 @@ void thread_end(SYS_THREAD *pThread)
 {
 	pthread_join(pThread->hThread, NULL);
 	pThread->nStatus = 0;   // pthread_cond_t ?
-	return;
 }
 
 void thread_exit(int code)
 {
     pthread_exit((void*)&code);   // pthread_cond_t ?
-    return;
 }
 
 // Unix
@@ -151,13 +143,13 @@ int mutex_init(SYS_MUTEX *mutex)
 {
 	/* Allocate mutex memory */
 	if ( mutex )
- 		 pthread_mutex_init((pthread_mutex_t*)&mutex->hMutex, NULL);
+		 pthread_mutex_init((pthread_mutex_t*)&mutex->hMutex, NULL);
 	return mutex ? 0 : -1;
 }
 
 int mutex_destroy(SYS_MUTEX *mutex)
 {
-   if ( mutex ) 
+   if ( mutex )
    {
 		pthread_mutex_destroy((pthread_mutex_t*)&mutex->hMutex);
 		return 0;
@@ -181,3 +173,4 @@ int mutex_unlock(SYS_MUTEX *mutex)
 	pthread_mutex_unlock((pthread_mutex_t*)&mutex->hMutex);
 	return 0;
 }
+

@@ -29,16 +29,16 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "sysctrl.h"
 
 static int JoystickOpen(void *hnd, int force_feedback)
-{  
+{
     return 0;
 }
 
 static void JoystickRelease()
-{  
+{
 }
 
 static unsigned long JoystickUpdate(void *dev)
-{ 
+{
   return 0;
 }
 
@@ -56,3 +56,4 @@ _RLXEXPORTFUNC JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
 
   return sJOY;
 }
+

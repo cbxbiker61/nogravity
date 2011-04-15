@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -34,7 +34,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 int STUB_OsStartup(char *parms)
 {
- 	BPath path;
+	BPath path;
 	app_info info;
 	// Change to current folder
 	if (be_app->GetAppInfo(&info)>= B_NO_ERROR)
@@ -59,3 +59,4 @@ int STUB_OsCustom(char *parms)
 {
     return 1;
 }
+

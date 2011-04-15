@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -65,11 +66,12 @@ _RLXEXPORTFUNC    V3XPOLY  RLXAPI *V3XPoly_NewFromPipeline(void);
     #define V3XPoly_QTemp()  V3X.Buffer.ClippedFaces + V3X.Buffer.MaxClippedFaces
     #define V3XPoly_QExhausted() (V3X.Buffer.MaxClipped>=V3X.Buffer.MaxClippedFaces)
     #define V3XPoly_QAllocated()  V3X.Buffer.MaxClipped++
-    
+
     #define V3XMaterial_QAlloc() V3X.Buffer.Mat + V3X.Buffer.MaxMat
 	#define V3XMaterial_QExhausted() (V3X.Buffer.MaxMat>= V3X.Buffer.MaxTmpMaterials)
     #define V3XMaterial_QAllocated()  V3X.Buffer.MaxMat++
-    
+
 __end_extern_c
 
 #endif
+

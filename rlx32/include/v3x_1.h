@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -51,16 +52,17 @@ _RLXEXPORTFUNC    int      RLXAPI V3XVector_InPoly(V3XVECTOR * isect, int numVer
    // Bounding boxes
 _RLXEXPORTFUNC    void     RLXAPI V3XBBox_Compute(V3XVECTOR *mini, V3XVECTOR *maxi, int numVerts, V3XVECTOR *vertex);
 _RLXEXPORTFUNC    int      RLXAPI V3XBBox_Inside(V3XVECTOR *vertex, V3XVECTOR *mini, V3XVECTOR *maxi);
-_RLXEXPORTFUNC    void     RLXAPI V3XBBox_Draw(V3XVECTOR *mini, V3XVECTOR *maxi, u_int32_t cl);
+_RLXEXPORTFUNC    void     RLXAPI V3XBBox_Draw(V3XVECTOR *mini, V3XVECTOR *maxi, uint32_t cl);
 
    // Transformation
 _RLXEXPORTFUNC    void     RLXAPI V3XVector_WorldPos(V3XMATRIX *Mat, V3XVECTOR *input, V3XVECTOR *result);
 _RLXEXPORTFUNC    int      RLXAPI V3XVector_TransformProject_pts(V3XVECTOR *input, V3XVECTOR *result);
 _RLXEXPORTFUNC    int      RLXAPI V3XVector_3Dto2D_pts(V3XMATRIX *Mat, V3XVECTOR *input, V3XVECTOR *result);
     // Primitive graphique
-_RLXEXPORTFUNC    void     RLXAPI V3X_DrawSphere(V3XMATRIX *mat, V3XVECTOR *centre, V3XSCALAR r, u_int32_t cl);
-_RLXEXPORTFUNC    void     RLXAPI V3X_DrawBox(V3XVECTOR *Min1, V3XVECTOR *Max1, u_int32_t cl);
+_RLXEXPORTFUNC    void     RLXAPI V3X_DrawSphere(V3XMATRIX *mat, V3XVECTOR *centre, V3XSCALAR r, uint32_t cl);
+_RLXEXPORTFUNC    void     RLXAPI V3X_DrawBox(V3XVECTOR *Min1, V3XVECTOR *Max1, uint32_t cl);
 
 __end_extern_c
 
 #endif
+

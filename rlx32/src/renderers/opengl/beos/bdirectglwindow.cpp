@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -45,14 +45,13 @@ struct RLXSYSTEM	*	g_pRLX;
 
 inline struct GXSYSTEM *GET_GX() { return g_pRLX->pGX; }
 
-static u_int8_t RLXAPI *Lock(void)
-{	
+static uint8_t RLXAPI *Lock(void)
+{
     return NULL;
 }
 
 static void RLXAPI Unlock(void)
 {
-    return;
 }
 
 extern GXGRAPHICINTERFACE GI_OpenGL;
@@ -76,7 +75,6 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
     GET_GX()->csp_cfg.transp.fonct = GET_GX()->csp.Trsp50;
     GET_GX()->csp_cfg.op = GET_GX()->csp.put;
 	UNUSED(mode);
-    return;
 }
 
 static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
@@ -97,24 +95,22 @@ static int RLXAPI CreateSurface(int numberOfSparePages)
 static void RLXAPI ReleaseSurfaces(void)
 {
 	GET_GX()->Surfaces.maxSurface = 0;
-    return;
 }
 
 static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
 {
     GET_GX()->View.DisplayMode = (uint16_t)mode;
-    GET_GX()->Client->GetDisplayInfo(mode);	
+    GET_GX()->Client->GetDisplayInfo(mode);
 	return GET_GX()->Client->SetDisplayMode(mode);
 }
 
 static void RLXAPI Shutdown(void)
 {
-    return;
 }
 
 static int Open(void * hwnd)
 {
- 	V3X_BDirectGLWindow::m_pInstance = new V3X_BDirectGLWindow( BRect(0, 0, 640, 480), g_pRLX->Dev.ApplicationName);
+	V3X_BDirectGLWindow::m_pInstance = new V3X_BDirectGLWindow( BRect(0, 0, 640, 480), g_pRLX->Dev.ApplicationName);
 	g_pApp->SetWindowHandle(V3X_BDirectGLWindow::m_pInstance);
     return 0;
 }
@@ -142,7 +138,7 @@ GXCLIENTDRIVER GX_OpenGL = {
     RegisterMode,
     Shutdown,
     Open,
-    NotifyEvent,    
+    NotifyEvent,
     "OpenGL"
 };
 
@@ -153,7 +149,6 @@ _RLXEXPORTFUNC void RLXAPI GX_EntryPoint(struct RLXSYSTEM *p)
     g_pRLX = p;
 	SetPrimitiveSprites();
 	GET_GX()->Client = &GX_OpenGL;
-    return;
 }
 
 extern V3X_GXSystem V3X_OpenGL;
@@ -163,5 +158,5 @@ _V3XEXPORTUNC void RLXAPI V3X_EntryPoint(struct RLXSYSTEM *p)
 	GX_EntryPoint(p);
     g_pRLX->pV3X->Client = &V3X_OpenGL;
 	g_pApp = (sysApplication*)g_pRLX->pApplication;
-    return;
 }
+

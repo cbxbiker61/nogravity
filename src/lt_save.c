@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -85,10 +85,9 @@ void NG_ReadLevelInfo(SGLevelItem *LI, ConfigFile *iniFile)
         else LI->tex[j][0]=0;
     }
     LI->WeaponMax=1;
-    LI->Bonus = (u_int16_t)GetCF_long("Bonus", iniFile);
-    LI->Time = (u_int16_t)GetCF_long("Time", iniFile);
-    LI->Level = (u_int16_t)GetCF_long("Level", iniFile);
-    return;
+    LI->Bonus = (uint16_t)GetCF_long("Bonus", iniFile);
+    LI->Time = (uint16_t)GetCF_long("Time", iniFile);
+    LI->Level = (uint16_t)GetCF_long("Level", iniFile);
 }
 
 void NG_ReadMissionData(char *name, SGEpisodeItem *EP)
@@ -110,7 +109,6 @@ void NG_ReadMissionData(char *name, SGEpisodeItem *EP)
         }
         DestroyConfig(&iniFile);// sinon ca pine
     }
-    return;
 }
 
 void NG_ReleaseMissionList()
@@ -134,7 +132,7 @@ void NG_ReadMissionList(void)
 	g_pGameItem->numEpisode = MAX_EPISODE;
 
 	for (k=0;k<MAX_EPISODE;k++)
-    {		
+    {
         SGEpisodeItem *EP = g_pGameItem->EI+k;
         EP->LI = MM_CALLOC(10, SGLevelItem);
 #ifdef LT_TRANSLATE
@@ -146,13 +144,12 @@ void NG_ReadMissionList(void)
         else
 #endif
         sprintf(tex, ".\\cmx\\%c_level%d.cmx", g_SGSettings.LangCode, k+1);
-        if (pe) 
+        if (pe)
 			FIO_cur=&FIO_std;
         NG_ReadMissionData(tex, EP);
-        if (pe) 
+        if (pe)
 			FIO_cur=g_pGameIO;
     }
-    return;
 }
 
 void NG_HighScoresReset(void)
@@ -163,13 +160,12 @@ void NG_HighScoresReset(void)
     {
         sprintf(g_pBestGames[i].name, "No Gravity");
         g_pBestGames[i].score=10000L*11-i*10000L;
-        for (j=0;j<MAX_SAVE_GAMES;j++) 		
+        for (j=0;j<MAX_SAVE_GAMES;j++)
 			g_pBestGames[i].level[j]=0;
         g_pBestGames[i].episode=0;
 		time(&g_pBestGames[i].last_time);
-		
+
     }
-    return;
 }
 
 void NG_HighScoresSave(void)
@@ -182,25 +178,25 @@ void NG_HighScoresSave(void)
     in = FIO_std.fopen(tex, "wb");
     if (in)
     {
-		int ver = sizeof(SGPlayerSave);		
+		int ver = sizeof(SGPlayerSave);
 #ifdef __BIG_ENDIAN__
-		BSWAP32((u_int32_t*)&ver, 1);
+		BSWAP32((uint32_t*)&ver, 1);
 #endif
 		FIO_std.fwrite(&ver, sizeof(int), 1, in);
 #ifdef __BIG_ENDIAN__
         int i;
         for (i=0;i<10;i++)
         {
-            BSWAP32((u_int32_t*)&g_pBestGames[i].episode, 5);
-            BSWAP16((u_int16_t*)&g_pBestGames[i].active, 2);
+            BSWAP32((uint32_t*)&g_pBestGames[i].episode, 5);
+            BSWAP16((uint16_t*)&g_pBestGames[i].active, 2);
         }
 #endif
         FIO_std.fwrite( g_pBestGames, sizeof(SGPlayerSave), MAX_SAVE_GAMES, in);
 #ifdef __BIG_ENDIAN__
         for (i=0;i<10;i++)
         {
-            BSWAP32((u_int32_t*)&g_pBestGames[i].episode, 5);
-            BSWAP16((u_int16_t*)&g_pBestGames[i].active, 2);
+            BSWAP32((uint32_t*)&g_pBestGames[i].episode, 5);
+            BSWAP16((uint16_t*)&g_pBestGames[i].active, 2);
         }
 #endif
         FIO_std.fclose(in);
@@ -221,7 +217,7 @@ void NG_HighScoresLoad(void)
 		int ver;
 		FIO_std.fread(&ver, 1, sizeof(int), in);
 #ifdef __BIG_ENDIAN__
-		BSWAP32((u_int32_t*)&ver, 1);
+		BSWAP32((uint32_t*)&ver, 1);
 #endif
 		if (ver!=sizeof(SGPlayerSave))
 		{
@@ -237,8 +233,8 @@ void NG_HighScoresLoad(void)
 				int i;
 				for (i=0;i<10;i++)
 				{
-					BSWAP32((u_int32_t*)&g_pBestGames[i].episode, 5);
-					BSWAP16((u_int16_t*)&g_pBestGames[i].active, 2);
+					BSWAP32((uint32_t*)&g_pBestGames[i].episode, 5);
+					BSWAP16((uint16_t*)&g_pBestGames[i].active, 2);
 				}
 			}
 #endif
@@ -253,7 +249,6 @@ void NG_HighScoresLoad(void)
 
     }
     FIO_wad->mode = mode;
-    return;
 }
 
 void NG_HighScoresUpdate(void)
@@ -269,16 +264,14 @@ void NG_HighScoresUpdate(void)
             f=1;
         }
     }
-    return;
 }
 //
 
 void NG_RosterSaveSlot(int i)
-{    
+{
     sysMemZero(g_pSaveGames+i, sizeof(SGPlayerSave));
     sprintf(g_pSaveGames[i].name, "No Gravity");
     g_pSaveGames[i].ship = 1;
-    return;
 }
 
 void NG_RosterSave(void)
@@ -294,7 +287,7 @@ void NG_RosterSave(void)
     {
 		int ver = sizeof(SGPlayerSave);
 #ifdef __BIG_ENDIAN__
-		BSWAP32((u_int32_t*)&ver, 1);
+		BSWAP32((uint32_t*)&ver, 1);
 #endif
 		FIO_std.fwrite(&ver, 1, sizeof(int), in);
 
@@ -302,24 +295,23 @@ void NG_RosterSave(void)
         int i;
         for (i=0;i<MAX_SAVE_GAMES;i++)
         {
-            BSWAP32((u_int32_t*)&g_pSaveGames[i].episode, 5);
-            BSWAP16((u_int16_t*)&g_pSaveGames[i].active, 2);
+            BSWAP32((uint32_t*)&g_pSaveGames[i].episode, 5);
+            BSWAP16((uint16_t*)&g_pSaveGames[i].active, 2);
         }
 #endif
         FIO_std.fwrite( g_pSaveGames, sizeof(SGPlayerSave), MAX_SAVE_GAMES, in);
 #ifdef __BIG_ENDIAN__
         for (i=0;i<MAX_SAVE_GAMES;i++)
         {
-			BSWAP32((u_int32_t*)&g_pSaveGames[i].episode, 5);
-            BSWAP16((u_int16_t*)&g_pSaveGames[i].active, 2);
+			BSWAP32((uint32_t*)&g_pSaveGames[i].episode, 5);
+            BSWAP16((uint16_t*)&g_pSaveGames[i].active, 2);
         }
 #endif
 		FIO_std.fclose(in);
     }
-    
+
     FIO_wad->mode = mode;
 #endif
-    return;
 }
 
 void NG_RosterLoad(void)
@@ -335,7 +327,7 @@ void NG_RosterLoad(void)
 		int ver;
 		FIO_std.fread(&ver, 1, sizeof(int), in);
 #ifdef __BIG_ENDIAN__
-		BSWAP32((u_int32_t*)&ver, 1);
+		BSWAP32((uint32_t*)&ver, 1);
 #endif
 		if (ver!=sizeof(SGPlayerSave))
 		{
@@ -352,10 +344,10 @@ void NG_RosterLoad(void)
 				int i;
 				for (i=0;i<MAX_SAVE_GAMES;i++)
 				{
-					BSWAP32((u_int32_t*)&g_pSaveGames[i].episode, 5);
-					BSWAP16((u_int16_t*)&g_pSaveGames[i].active, 2);
+					BSWAP32((uint32_t*)&g_pSaveGames[i].episode, 5);
+					BSWAP16((uint16_t*)&g_pSaveGames[i].active, 2);
 				}
-			}		
+			}
 #endif
 		}
         FIO_std.fclose(in);
@@ -367,15 +359,13 @@ void NG_RosterLoad(void)
 		sysConPrint("%s not found.", tex);
 	}
     FIO_wad->mode = mode;
-    return;
 }
 
 void NG_RosterReset(void)
 {
     int i;
-    for (i=0;i<MAX_SAVE_GAMES;i++) 
+    for (i=0;i<MAX_SAVE_GAMES;i++)
 		NG_RosterSaveSlot(i);
-    return;
 }
 
 void NG_ReplayStart(void)
@@ -384,18 +374,17 @@ void NG_ReplayStart(void)
     int k;
     g_pRecordData.version = 3;
     g_pRecordData.maxstep = g_SGSettings.RecTime*100;
-    g_pRecordData.startlevel = (u_int16_t)g_SGGame.Level;
+    g_pRecordData.startlevel = (uint16_t)g_SGGame.Level;
     g_pRecordData.step  = 0;
     g_pRecordData.pos = (SGNetData*)MM_heap.malloc(sizeof(SGNetData)*g_pRecordData.maxstep);
     g_pRecordData.rec = (SGRecordBuffer*)MM_std.malloc(sizeof(SGRecordBuffer)*g_pRecordData.maxstep);
     for (k=0;k<g_pRecordData.maxstep;k++)
     {
         SGRecordBuffer *rec = g_pRecordData.rec + k;
-        rec->buffer = (u_int8_t*) MM_std.malloc(2096);
+        rec->buffer = (uint8_t*) MM_std.malloc(2096);
         rec->length = 0;
     }
 #endif
-    return;
 }
 
 int NG_ReplayLoad(void)
@@ -414,7 +403,7 @@ int NG_ReplayLoad(void)
     sprintf(tex, "c:\\rt\\record0.dem");
     filewad_chdir("");
     FIO_wad->mode &=~SYS_WAD_STATUS_ENABLED;
-#else	
+#else
     sprintf(tex, ".\\menu\\record%d.dem", number);
 #endif
     pIO = &FIO_res;
@@ -425,10 +414,10 @@ int NG_ReplayLoad(void)
         pIO = &FIO_gzip;
         old = 1;
     }
-    else 
+    else
 		g_pRecordData.version = 3;
-    g_SGGame.Demo++; 
-	if (g_SGGame.Demo>5) 
+    g_SGGame.Demo++;
+	if (g_SGGame.Demo>5)
 		g_SGGame.Demo = 0;
     in = pIO->fopen(tex, "rb");
 	SYS_ASSERT(in);
@@ -437,14 +426,14 @@ int NG_ReplayLoad(void)
     pIO->fread(&g_pRecordData, sizeof(SGRecordReplay), 1, in);
 
 #ifdef __BIG_ENDIAN__
-	BSWAP16((u_int16_t*)&g_pRecordData.startlevel, 2);
-    BSWAP32((u_int32_t*)&g_pRecordData.maxstep, 2);
+	BSWAP16((uint16_t*)&g_pRecordData.startlevel, 2);
+    BSWAP32((uint32_t*)&g_pRecordData.maxstep, 2);
 #endif
     g_pRecordData.pos = (SGNetData*)MM_heap.malloc(sizeof(SGNetData)*g_pRecordData.step);
     pIO->fread(g_pRecordData.pos, sizeof(SGNetData), g_pRecordData.step, in);
 
 #ifdef __BIG_ENDIAN__
-    BSWAP32((u_int32_t*)g_pRecordData.pos, (g_pRecordData.step*sizeof(SGNetData))>>2);
+    BSWAP32((uint32_t*)g_pRecordData.pos, (g_pRecordData.step*sizeof(SGNetData))>>2);
 #endif
 
 #if (SGTARGET ==NG_FULL_VERSION)
@@ -459,8 +448,8 @@ int NG_ReplayLoad(void)
 #ifdef __BIG_ENDIAN__
 			BSWAP32(&rec->length, 1);
 #endif
-            rec->buffer = (u_int8_t *)MM_std.malloc(rec->length);
-            pIO->fread(rec->buffer, sizeof(u_int8_t), rec->length, in);
+            rec->buffer = (uint8_t *)MM_std.malloc(rec->length);
+            pIO->fread(rec->buffer, sizeof(uint8_t), rec->length, in);
         }
     }
 #endif
@@ -502,7 +491,6 @@ void NG_ReplaySave(void)
     FIO_wad->mode = res;
 #endif
 #endif
-    return;
 }
 
 void NG_ReplayRelease(void)
@@ -520,5 +508,5 @@ void NG_ReplayRelease(void)
     }
 #endif
     MM_heap.free(g_pRecordData.pos);
-    return;
 }
+

@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -28,9 +29,9 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 // Download GXSPRITE method
 enum {
-    CSPLOAD_POSTERIZE = 0x1, 
-    CSPLOAD_SURFACE = 0x2, 
-    CSPLOAD_HWSPRITE = 0x4, 
+    CSPLOAD_POSTERIZE = 0x1,
+    CSPLOAD_SURFACE = 0x2,
+    CSPLOAD_HWSPRITE = 0x4,
     CSPLOAD_FORCE8 = 0x8
 };
 
@@ -38,16 +39,16 @@ enum {
 enum {
     CSPM_CHARSET_32,  // 32 characters
     CSPM_CHARSET_128, // 128 characters
-    CSPM_CHARSET_255  // 255+ characters   
+    CSPM_CHARSET_255  // 255+ characters
 };
 
 enum {
-   DD_TTYPE_BOLD = 0x1, 
-   DD_TTYPE_ITALIC = 0x2, 
-   DD_TTYPE_UNDERLINE = 0x4, 
-   DD_TTYPE_STRIKEOUT = 0x8, 
-   DD_TTYPE_HDCOPENED = 0x10, 
-   DD_TTYPE_HDCCLOSE = 0x20, 
+   DD_TTYPE_BOLD = 0x1,
+   DD_TTYPE_ITALIC = 0x2,
+   DD_TTYPE_UNDERLINE = 0x4,
+   DD_TTYPE_STRIKEOUT = 0x8,
+   DD_TTYPE_HDCOPENED = 0x10,
+   DD_TTYPE_HDCCLOSE = 0x20,
    DD_TTYPE_GETWIDTH = 0x80
 };
 
@@ -60,11 +61,11 @@ typedef struct{
 typedef struct {
     GXSPRITE           *item;        // single GXSPRITE
     short int         maxItem;     // numbers of GXSPRITE in group
-    u_int16_t            speed;       // internal
-    u_int8_t             HSpacing;    // Horizontal spacing
-    u_int8_t             VSpacing;    // Vertical spacing
-    u_int8_t             Caps;        // Capabilities
-    u_int8_t             filler;
+    uint16_t            speed;       // internal
+    uint8_t             HSpacing;    // Horizontal spacing
+    uint8_t             VSpacing;    // Vertical spacing
+    uint8_t             Caps;        // Capabilities
+    uint8_t             filler;
 }GXSPRITEGROUP;
 
 // Sprite function pointer
@@ -73,15 +74,15 @@ typedef void (* CALLING_C CSP_STRFUNCTION)(GXSPRITE *sp, int32_t x, int32_t y, i
 
 typedef union {
 	CSP_STDFUNCTION fonct;
-	CSP_STRFUNCTION zoomf;    
+	CSP_STRFUNCTION zoomf;
 }CSP_FUNCTION;
 
 typedef struct {
-    u_int32_t             flags;      // Flags
-    u_int32_t             color;      // Color replaced by white
-    u_int32_t             colorKey;   // Colorkeying (transparency color)
-    u_int32_t             colorInv;   // inversed color
-    u_int32_t             alpha;      // Alpha component
+    uint32_t             flags;      // Flags
+    uint32_t             color;      // Color replaced by white
+    uint32_t             colorKey;   // Colorkeying (transparency color)
+    uint32_t             colorInv;   // inversed color
+    uint32_t             alpha;      // Alpha component
     void             *table;      // Table
     void CALLING_C  (*op)(int32_t x, int32_t y, GXSPRITE *sp); // Default operators
     CSP_FUNCTION      put, pset, transp;  // Main operators
@@ -90,18 +91,18 @@ typedef struct {
 
 // Sprite class
 typedef struct {
-    u_int32_t           caps;
+    uint32_t           caps;
     // Normal GXSPRITE drawer
     void CALLING_C  (*put)(      int32_t x, int32_t y, GXSPRITE *sp);
     void CALLING_C  (*pset)(     int32_t x, int32_t y, GXSPRITE *sp);
     void CALLING_C  (*flipAxisX)(int32_t x, int32_t y, GXSPRITE *sp);
-    
+
     // Blended GXSPRITE drawer (in the current depth color)
     void CALLING_C  (*Trsp50)(   int32_t x, int32_t y, GXSPRITE *sp);
     void CALLING_C  (*TrspADD)(  int32_t x, int32_t y, GXSPRITE *sp);
     void CALLING_C  (*TrspSUB)(  int32_t x, int32_t y, GXSPRITE *sp);
     void CALLING_C  (*TrspALPHA)(int32_t x, int32_t y, GXSPRITE *sp);
-    
+
     // Scalable GXSPRITE drawer
     void CALLING_C  (*zoom_pset)(   GXSPRITE *sp, int32_t x, int32_t y, int32_t new_lx, int32_t new_ly);
     void CALLING_C  (*zoom_put)(      GXSPRITE *sp, int32_t x, int32_t y, int32_t new_lx, int32_t new_ly);
@@ -117,7 +118,7 @@ struct _sys_fileio;
 __extern_c
     // Sprite
 _RLXEXPORTFUNC    GXSPRITE RLXAPI *CSP_GetFn(const char *filename, unsigned option);
-_RLXEXPORTFUNC    void   RLXAPI  CSP_Get(int32_t xx, int32_t yy, GXSPRITE *capt, u_int8_t *buf, int32_t width, int32_t byte);
+_RLXEXPORTFUNC    void   RLXAPI  CSP_Get(int32_t xx, int32_t yy, GXSPRITE *capt, uint8_t *buf, int32_t width, int32_t byte);
 _RLXEXPORTFUNC    void   RLXAPI  CSP_CaptureFrom(int32_t xx, int32_t yy, GXSPRITE *capt);
 _RLXEXPORTFUNC    void   RLXAPI  CSP_Resize(GXSPRITE *sp, int lx, int ly, int bpp);
 _RLXEXPORTFUNC    void   RLXAPI  CSP_DrawRect(int32_t x, int32_t y, int32_t lx, int32_t ly, GXSPRITE *sp);
@@ -146,3 +147,4 @@ __end_extern_c
 #define CSP_WriteText(texte, xx, yy, Fonte)          CSP_DrawText(texte, xx, yy, Fonte, GX.csp_cfg.put)
 #define CSP_WriteCenterText(texte, yy, Fonte)       CSP_DrawCenterText(texte, yy, Fonte, GX.csp_cfg.put)
 #endif
+

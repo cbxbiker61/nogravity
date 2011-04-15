@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -76,6 +76,7 @@ void NG_WeaponCreate(void)
     }
     return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int NG_WeaponFire(SGActor *Jj, int type, V3XOVI *target)
@@ -112,7 +113,7 @@ int NG_WeaponFire(SGActor *Jj, int type, V3XOVI *target)
             {
                 W->TargetLock = NULL;
             }
-            if ((W->pInf.Code==10)||(W->pInf.Code==21)||(W->pInf.Code==20)) 
+            if ((W->pInf.Code==10)||(W->pInf.Code==21)||(W->pInf.Code==20))
 				W->Camera=2;
             W->Available = 1;
             if ((Jj->pInf.Type==t_PLAYER)&&(W->Camera==1)&&(((SGScript*)g_pLockTarget->data)->LockTime<g_SGGame.LockMAX))
@@ -186,9 +187,9 @@ int NG_WeaponFire(SGActor *Jj, int type, V3XOVI *target)
                     if (Jj!=&g_pPlayer->J) ky=-ky;
                     {
                         V3XVector_Madd(
-                        &OVI->Tk->vinfo.pos, 
-                        &a, 
-                        &objAttacker->matrix.v.Pos, 
+                        &OVI->Tk->vinfo.pos,
+                        &a,
+                        &objAttacker->matrix.v.Pos,
                         ky);
                     }
                 }
@@ -214,9 +215,9 @@ void NG_WeaponUpdate(void)
     V3XSCALAR LockDist;
     for (j=g_SGGame.numWeapons, W=g_SGGame.pWea;j!=0;W++, j--)
     {
-        if (W->fTime>0) 
-			W->fTime-=g_cTimer.fCounter; 
-		else 
+        if (W->fTime>0)
+			W->fTime-=g_cTimer.fCounter;
+		else
 			W->fTime=0;
         if (W->Available)
         {
@@ -243,7 +244,7 @@ void NG_WeaponUpdate(void)
                 // MisMsile Correction ou tir corrig‚
                 if (W->TargetLock)
                 {
-                    if ((W->TargetLock->state&V3XSTATE_HIDDEN)&&(W->Camera)) 
+                    if ((W->TargetLock->state&V3XSTATE_HIDDEN)&&(W->Camera))
 						W->fTime=4;
                 }
                 /*
@@ -267,7 +268,7 @@ void NG_WeaponUpdate(void)
 					}
                     //
                     W->vel = d;
-                    switch(W->Camera) 
+                    switch(W->Camera)
 					{
                         case 2:
                         W->Camera=0;
@@ -298,7 +299,7 @@ void NG_WeaponUpdate(void)
                 //
                 {
                     V3XVector_Madd(&po, &W->vel, &po,  sp);
-                    if ((W->TagFX>=0) && (!NG_Audio3DUpdate(&po, &W->vel, W->TagFX, W->pInf.StartSound-1))) 
+                    if ((W->TagFX>=0) && (!NG_Audio3DUpdate(&po, &W->vel, W->TagFX, W->pInf.StartSound-1)))
 						W->TagFX = -1;
                     Mat->v.Pos = po; // because in ByCustom mode
                     Tir->Tk.vinfo.pos = po;
@@ -375,7 +376,7 @@ void NG_WeaponUpdate(void)
                                             if ((p->Type==t_ENEMY)
                                             || (p->Type==t_PIRAT))
                                             g_cGameStat.hitted++;
-                                            // AutoLock du vaisseau 
+                                            // AutoLock du vaisseau
                                             if ((g_pCurrentGame->ship==1)&&(p->ColorRadar))
                                             {
                                                 if (!p->Locked)
@@ -419,7 +420,7 @@ void NG_WeaponUpdate(void)
                                                     {
                                                         g_pPlayer->mode|=DOOMEDMODE;
                                                         //g_SGObjects.CallMode[t_ENEMY] = ORDER_Attack;
-                                                        if (sysRand(2)) 
+                                                        if (sysRand(2))
 															NG_AudioSay("mes01");
                                                     }
                                                     else
@@ -428,7 +429,7 @@ void NG_WeaponUpdate(void)
 														char tex[256];
                                                         g_cGameStat.killed_nmy ++;
                                                         sprintf(tex, "mes0%d", sysRand(4)+5);
-														if (sysRand(2)&&(p->Scoring>=100)) 
+														if (sysRand(2)&&(p->Scoring>=100))
 															NG_AudioSay(tex);
                                                     }
                                                 }
@@ -471,5 +472,5 @@ void NG_WeaponUpdate(void)
 
         } else W->OVI->state |= V3XSTATE_HIDDEN;
     }
-    return;
 }
+

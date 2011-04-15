@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -27,13 +28,13 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define __INI_H
 
 enum ConfigDataType {
-      T_BOOL, 
-      T_LONG, 
-      T_STR, 
+      T_BOOL,
+      T_LONG,
+      T_STR,
       T_HEX
 };
 typedef union {
-   u_int8_t   i_bool;
+   uint8_t   i_bool;
    int32_t    i_long;
    char    *i_str;
 } ConfigItemData;
@@ -65,14 +66,15 @@ _RLXEXPORTFUNC    int            RLXAPI  SelectConfigClass(char const *className
 _RLXEXPORTFUNC    ConfigClass    RLXAPI *GetConfigClass(char const *className, ConfigFile *c_file);
 _RLXEXPORTFUNC    int32_t           RLXAPI  GetCF_long(char *s, ConfigFile *ini);
 _RLXEXPORTFUNC    int32_t           RLXAPI  GetCF_bool(char *s, ConfigFile *ini);
-_RLXEXPORTFUNC    int            RLXAPI  GetCF_uchar2(char *s, ConfigFile *ini, u_int8_t *val);
+_RLXEXPORTFUNC    int            RLXAPI  GetCF_uchar2(char *s, ConfigFile *ini, uint8_t *val);
 _RLXEXPORTFUNC    int            RLXAPI  GetCF_hexa2(char *s, ConfigFile *ini, int32_t *val);
 _RLXEXPORTFUNC    char           RLXAPI *GetCF_str(char *s, ConfigFile *ini);
 _RLXEXPORTFUNC    char           RLXAPI *GetCF_str2(char *s, ConfigFile *ini);
 _RLXEXPORTFUNC    int            RLXAPI  GetCF_long2(char *s, ConfigFile *ini, int32_t *val);
-_RLXEXPORTFUNC    int            RLXAPI  GetCF_bool2(char *s, ConfigFile *ini, u_int8_t *val);
+_RLXEXPORTFUNC    int            RLXAPI  GetCF_bool2(char *s, ConfigFile *ini, uint8_t *val);
 _RLXEXPORTFUNC    int32_t           RLXAPI  GetCF_hexa(char *s, ConfigFile *ini);
 
 __end_extern_c
 
 #endif
+

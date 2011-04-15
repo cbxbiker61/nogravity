@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -64,22 +64,22 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define STUB_SIG "application/x-vnd.Realtech-nogravity"
 
 static char *Pname=APP_NAME, *Psig=STUB_SIG;
-static u_int8_t *g_HeapBuffer;
-static u_int32_t g_HeapSize = 0x800000;
+static uint8_t *g_HeapBuffer;
+static uint32_t g_HeapSize = 0x800000;
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NG_CleanUp(void)
 *
-* Description :  
+* Description :
 *
 */
 void NG_CleanUp(void)
 {
     NG_NetRelease();
-    if (g_HeapBuffer) 
+    if (g_HeapBuffer)
 		free(g_HeapBuffer);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NG_SetGameInfo(void)
@@ -99,9 +99,8 @@ void NG_SetGameInfo(void)
 	V3X.Client->Capabilities|=GXSPEC_RGBLIGHTING;
 	V3X.Client->Capabilities|=GXSPEC_ENABLEDITHERING;
 	V3X.Setup.flags|=V3XOPTION_TRUECOLOR;
-	
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -141,8 +140,8 @@ void NG_CheckSystems(void)
 		g_SGSettings.Ctrl = CTRL_Mouse;
 	if ((g_SGSettings.Ctrl == CTRL_Mouse) && (!sMOU->numControllers))
 		g_SGSettings.Ctrl = 0;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -150,9 +149,7 @@ void NG_CheckSystems(void)
 * DESCRIPTION :
 *
 */
-
-static 
-int OnStealth(char *parms)
+static int OnStealth(char *parms)
 {
 	if (!g_SGSettings.SerialGame)
 	{
@@ -163,8 +160,7 @@ int OnStealth(char *parms)
 	return 0;
 }
 
-static 
-int OnGod(char *parms)
+static int OnGod(char *parms)
 {
 	if (!g_SGSettings.SerialGame)
 	{
@@ -175,8 +171,7 @@ int OnGod(char *parms)
 	return 0;
 }
 
-static 
-int OnTicker(char *parms)
+static int OnTicker(char *parms)
 {
 	g_SGSettings.ticker^=1;
 	sysConPrint("ticker is %s", g_SGSettings.ticker ? "on" : "off");
@@ -184,38 +179,34 @@ int OnTicker(char *parms)
 	return 0;
 }
 
-static 
-int OnCheat(char *parms)
+static int OnCheat(char *parms)
 {
-	g_SGSettings.Cheater = 1 - g_SGSettings.Cheater; 
-	NG_AudioPlaySound(NG_AudioGetByName("bonus")-1, 0);	
+	g_SGSettings.Cheater = 1 - g_SGSettings.Cheater;
+	NG_AudioPlaySound(NG_AudioGetByName("bonus")-1, 0);
 	sysConPrint("cheat mode is %s", g_SGSettings.Cheater ? "on" : "off");
 	UNUSED(parms);
 	return 0;
 }
 
-static
-int OnWarp(char *parms)
+static int OnWarp(char *parms)
 {
 	g_SGGame.CameraMode=CAMERA_NEWNAV;
 	return 0;
 }
 
-static 
-int OnWin(char *parms)
+static int OnWin(char *parms)
 {
 	g_SGObjects.FinCode=GAMESTATE_WON;
-	NG_AudioPlaySound(NG_AudioGetByName("bonus")-1, 0);	
+	NG_AudioPlaySound(NG_AudioGetByName("bonus")-1, 0);
 	sysConPrint("Win");
 	UNUSED(parms);
 	return 0;
 }
 
-static 
-int OnLose(char *parms)
+static int OnLose(char *parms)
 {
 	g_SGObjects.FinCode=GAMESTATE_FAILED;
-	NG_AudioPlaySound(NG_AudioGetByName("bonus")-1, 0);	
+	NG_AudioPlaySound(NG_AudioGetByName("bonus")-1, 0);
 	sysConPrint("Lose");
 	UNUSED(parms);
 	return 0;
@@ -235,7 +226,7 @@ void STUB_MainCode(void)
 #if defined __BEOS__ || defined _DEBUG
 	RLX.Video.Config|=RLXVIDEO_Windowed;
 #else
- 	RLX.Video.Config&=~RLXVIDEO_Windowed;
+	RLX.Video.Config&=~RLXVIDEO_Windowed;
 #endif
 
 #ifdef _DEBUG
@@ -246,13 +237,13 @@ void STUB_MainCode(void)
 	{
 		int mode = GX.Client->SearchDisplayMode(g_SGSettings.ResolutionX, g_SGSettings.ResolutionY, g_SGSettings.ColorDepth);
 		GX.Client->GetDisplayInfo(mode);
-		NG_ChangeScreenMode(mode);	
+		NG_ChangeScreenMode(mode);
 	}
 
 	if (g_SGSettings.TexPOT)
 		V3X.Client->Capabilities&=~GXSPEC_NONPOWOF2;
 
-	g_HeapBuffer = (u_int8_t*) malloc(g_HeapSize);
+	g_HeapBuffer = (uint8_t*) malloc(g_HeapSize);
 	if (!g_HeapBuffer)
 		return;
 	SYS_ASSERT(g_HeapBuffer);
@@ -261,7 +252,7 @@ void STUB_MainCode(void)
     SYS_Debug("Allocate %x ...\n", g_HeapSize);
 #endif
 
-    MM_heap.heapalloc(g_HeapBuffer, g_HeapSize); 
+    MM_heap.heapalloc(g_HeapBuffer, g_HeapSize);
     MM_heap.active = 0;
 
 #ifdef _DEBUG
@@ -273,7 +264,7 @@ void STUB_MainCode(void)
 	sysConPrint("Welcome to No Gravity.");
 	sysConBindCmd("/cheat", OnCheat);
 	sysConBindCmd("/warp", OnWarp);
-	
+
 	sysConBindCmd("/lose", OnLose);
 	sysConBindCmd("/win", OnWin);
 	sysConBindCmd("/ticker", OnTicker);
@@ -281,7 +272,7 @@ void STUB_MainCode(void)
 	sysConBindCmd("stealth", OnStealth);
 
 	sysConPrint("System:");
-	   
+
 	sysConPrint( "3D driver : ~%s~", V3X.Client->s_DrvName);
     sysConPrint( "Display driver : ~%s~.", GX.Client->s_DrvName);
     if ((V3XA.State & 1))
@@ -306,18 +297,18 @@ void STUB_MainCode(void)
     NG_ReadLanguagePack();
     NG_RosterLoad();
     NG_HighScoresLoad();
-    
+
 	sysConPrint("Joystick calibration = [%d, %d], [%d, %d]",
 					RLX.Joy.J[0].MinX,
 					RLX.Joy.J[0].MaxX,
 					RLX.Joy.J[1].MinY,
 					RLX.Joy.J[1].MaxY);
-	
+
 	// Data
     NG_LoadGameData();
 	V3X.ViewPort.minTextureVisibleRadius = 6.f/200.f;
 	V3X.ViewPort.minVisibleRadius = 12.f/300.f;
-    	
+
     MM_heap.reset();
 
     if (V3XA.State & 1)
@@ -344,12 +335,12 @@ void STUB_MainCode(void)
     SYS_Debug("Load network preferences...\n");
 #endif
     NG_NetInitialize();
-    
+
 #ifndef _DEBUG
 	NG_PlayPresentsGame();
 #endif
 
-	MM_heap.reset();    
+	MM_heap.reset();
 
 #ifdef _DEBUG
     SYS_Debug("Run game loop...\n");
@@ -359,7 +350,7 @@ void STUB_MainCode(void)
     {
 		if (STUB_TaskControl())
 			break;
-        
+
         if (g_SGSettings.Menu)
         {
             MM_heap.reset();
@@ -394,11 +385,11 @@ void STUB_MainCode(void)
 				MenuChoice = 0;
                 if (!g_SGSettings.DemoMode)
                 {
-                    switch(g_SGObjects.FinCode) 
+                    switch(g_SGObjects.FinCode)
 					{
                         case GAMESTATE_WON:
 							NG_EndLevel();
-							MenuChoice=0;						
+							MenuChoice=0;
                         break;
                         case GAMESTATE_ABORT:
 							MenuChoice=0;
@@ -429,10 +420,10 @@ void STUB_MainCode(void)
 #if (SGTARGET != NG_DEMO_VERSION)
                     if  (g_SGSettings.DemoMode==2)
                     {
-                        if (g_SGGame.Demo==3) 
+                        if (g_SGGame.Demo==3)
 							NG_MenuCredits();
 
-                        if (g_SGGame.Demo==0) 
+                        if (g_SGGame.Demo==0)
 							NG_PlayPresentsGame();
                     }
 #endif
@@ -453,8 +444,8 @@ end:
     MM_heap.reset();
 	NG_ReleaseGameData();
     filewad_close(FIO_wad);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void STUB_Default(void)
@@ -479,9 +470,8 @@ void STUB_Default(void)
     RLX.Audio.Config|=RLXAUDIO_UseHwMixer;
     RLX.Audio.Config&=~RLXAUDIO_Use3D;
 	V3XA.State|=1;
-
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void STUB_ReadyToRun(void)
@@ -489,11 +479,10 @@ void STUB_Default(void)
 * DESCRIPTION :
 *
 */
-
 void STUB_ReadyToRun(void)
 {
 	char *resFile = "NOGRAVITY.RMX";
-	
+
 #ifdef _DEBUG
     SYS_Debug("Open file resource : %s\n", resFile);
 #endif
@@ -532,11 +521,11 @@ void STUB_ReadyToRun(void)
     g_pGameIO = &FIO_res;
     FIO_cur = g_pGameIO;
 	NG_SetGameInfo();
-	
+
     V3X.Setup.flags|=V3XOPTION_COLLISION;
     V3X.Setup.MaxExtentableObjet = 200;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void STUB_QuitRequested(void)
@@ -550,7 +539,6 @@ void STUB_QuitRequested(void)
 		return;
     NG_HighScoresSave();
 	NG_CleanUp();
-    return;
 }
 
 GXDISPLAYMODEINFO *g_pDisplayMode;
@@ -558,28 +546,28 @@ GXDISPLAYMODEINFO *g_pDisplayMode;
 static int EnumDisplayMode(char **ModeList)
 {
 	GXDISPLAYMODEINFO *p;
-    
+
 	int colorDepth = g_SGSettings.ColorDepth;
 	int m_nValue = g_SGSettings.DisplayIndex;
 
-    g_pDisplayMode = p = GX.Client->EnumDisplayList(g_SGSettings.ColorDepth);	
-	
+    g_pDisplayMode = p = GX.Client->EnumDisplayList(g_SGSettings.ColorDepth);
+
 	if (g_pDisplayMode)
 	{
-		struct _gx_display_mode_info *current = g_pDisplayMode;		
+		struct _gx_display_mode_info *current = g_pDisplayMode;
 		int n = 0;
 		SYS_ASSERT(g_pDisplayMode);
 
 		while (current->BitsPerPixel)
 		{
 			current ++;
-			n++;		
+			n++;
 		}
-		
-		if (n)	
+
+		if (n)
 		{
 			struct _gx_display_mode_info *filtered = (struct _gx_display_mode_info*) MM_heap.malloc((n+1) * sizeof(struct _gx_display_mode_info));
-			struct _gx_display_mode_info *filter = filtered;			
+			struct _gx_display_mode_info *filter = filtered;
 
 			int pref = -1;
 			n = 0;
@@ -603,11 +591,11 @@ static int EnumDisplayMode(char **ModeList)
 					if (f==filter)
 					{
 						*filter = *current;
-						
+
 						if ((current->lWidth==g_SGSettings.ResolutionX)&&
 							(current->lHeight==g_SGSettings.ResolutionY)&&(current->BitsPerPixel==colorDepth))
 							pref = n;
-						
+
 						filter++;
 						n++;
 					}
@@ -632,13 +620,12 @@ static int EnumDisplayMode(char **ModeList)
 
 				);
 				i++;
-			}		
+			}
 
 			return i;
 		}
     }
 	return 0;
-	
 }
 
 void NG_CreateDisplayList(void)
@@ -647,7 +634,6 @@ void NG_CreateDisplayList(void)
     pMenu->max = EnumDisplayMode(pMenu->Val);
     pMenu->Val[pMenu->max] = NULL;
     pMenu->max--;
-    return;
 }
 
 void NG_ChangeScreenMode(int mode)
@@ -655,7 +641,7 @@ void NG_ChangeScreenMode(int mode)
 	static int nCurrentMode;
 	static int n3DSystem;
 	int is3D = !!(GX.View.Flags&GX_CAPS_3DSYSTEM);
-		
+
 	if (RLX.Video.Config&RLXVIDEO_Windowed)
 		mode = -1;
 
@@ -666,7 +652,6 @@ void NG_ChangeScreenMode(int mode)
 	   sysConPrint("Multisampling : %d", GX.View.Multisampling);
     }
 
-	
 	if (!(V3X.Client->Capabilities&GXSPEC_FULLHWSPRITE))
 	{
 		if (n3DSystem!=is3D)
@@ -688,13 +673,12 @@ void NG_ChangeScreenMode(int mode)
     {
         GX.Client->GetDisplayInfo(mode);
     }
-	
-	if (GX.View.BitsPerPixel<=8) 
+
+	if (GX.View.BitsPerPixel<=8)
 		PAL_Black();
 
 	V3XKernel_RenderClass();
     nCurrentMode = mode;
 	sMOU->Hide();
-
-    return;
 }
+

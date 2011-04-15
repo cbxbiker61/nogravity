@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -56,17 +56,15 @@ static void RLXAPI Flip(void)
 {
     glFinish();
     SDL_GL_SwapBuffers();
-    return;
 }
 
-static u_int8_t RLXAPI *Lock(void)
+static uint8_t RLXAPI *Lock(void)
 {
     return NULL;
 }
 
 static void RLXAPI Unlock(void)
 {
-    return;
 }
 
 static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
@@ -110,7 +108,7 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
       fmts[2].BitsPerPixel = 32;
       fmts[2].BytesPerPixel = 4;
     }
-  
+
     for (fmt_idx = 0; fmt_idx < num_fmts; fmt_idx ++)
     {
       modes = SDL_ListModes(&fmts[fmt_idx], SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN));
@@ -180,7 +178,7 @@ static void RLXAPI SetPrimitive()
   g_pRLX->pGX->View.Flip = Flip;
   g_pRLX->pGX->gi = GI_OpenGL;
   g_pRLX->pGX->csp = CSP_OpenGL;
-	
+
   g_pRLX->pGX->csp_cfg.put.fonct = g_pRLX->pGX->csp.put;
   g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
   g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
@@ -235,7 +233,6 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
   }
   SetPrimitive();
   GL_FakeViewPort();
-  return;
 }
 
 static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
@@ -292,8 +289,8 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	int sdl_flags = SDL_OPENGL | ((g_pRLX->Video.Config & RLXVIDEO_Windowed) ? 0 : SDL_FULLSCREEN);
 	int multisampling = FALSE;
 
-  	SYS_ASSERT(g_pSurface == NULL);
-  	SYS_ASSERT(g_pDisplays != NULL);
+	SYS_ASSERT(g_pSurface == NULL);
+	SYS_ASSERT(g_pDisplays != NULL);
 	SYS_ASSERT(g_Mode != -1);
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -315,7 +312,7 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 	  g_pSurface = SDL_SetVideoMode(g_pDisplays[g_Mode].lWidth, g_pDisplays[g_Mode].lHeight, g_pDisplays[g_Mode].BitsPerPixel, sdl_flags);
 	}
-	
+
 	if (g_pSurface == NULL)
 	{
 		return -1;
@@ -346,7 +343,6 @@ static void RLXAPI ReleaseSurfaces(void)
   SDL_FreeSurface(g_pSurface);
   g_pRLX->pGX->Surfaces.maxSurface = 0;
   g_pSurface = NULL;
-  return;
 }
 
 static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
@@ -358,7 +354,7 @@ static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
     // Use it.
     mode = 0;
   }
-  g_pRLX->pGX->View.DisplayMode = (u_int16_t)mode;
+  g_pRLX->pGX->View.DisplayMode = (uint16_t)mode;
   g_pRLX->pGX->Client->GetDisplayInfo(mode);
   return g_pRLX->pGX->Client->SetDisplayMode(mode);
 }
@@ -402,7 +398,7 @@ GXCLIENTDRIVER GX_OpenGL = {
     RegisterMode,
     Shutdown,
     Open,
-    NotifyEvent,    
+    NotifyEvent,
     "OpenGL"
 };
 
@@ -413,15 +409,14 @@ _RLXEXPORTFUNC void RLXAPI GX_EntryPoint(struct RLXSYSTEM *p)
     g_pRLX = p;
 	SetPrimitiveSprites();
 	g_pRLX->pGX->Client = &GX_OpenGL;
-    return;
 }
 
 extern V3X_GXSystem V3X_OpenGL;
 
-// _V3XEXPORTUNC 
+// _V3XEXPORTUNC
 void RLXAPI V3X_EntryPoint(struct RLXSYSTEM *p)
 {
 	GX_EntryPoint(p);
     g_pRLX->pV3X->Client = &V3X_OpenGL;
-    return;
 }
+

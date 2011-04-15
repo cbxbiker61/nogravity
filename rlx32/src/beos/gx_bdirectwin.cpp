@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -40,15 +40,14 @@ __end_extern_c
 
 inline struct GXSYSTEM *GET_GX() { return g_pRLX->pGX; }
 
-static void RLXAPI blitBuffer(u_int32_t dest, u_int32_t src)
+static void RLXAPI blitBuffer(uint32_t dest, uint32_t src)
 {
 	SYS_ASSERT(GET_GX()->Surfaces.lpSurface[dest+1]);
 	SYS_ASSERT(GET_GX()->Surfaces.lpSurface[src+1]);
 
-	sysMemCpy(	GET_GX()->Surfaces.lpSurface[dest+1], 
-					GET_GX()->Surfaces.lpSurface[src+1], 
+	sysMemCpy(	GET_GX()->Surfaces.lpSurface[dest+1],
+					GET_GX()->Surfaces.lpSurface[src+1],
 					GET_GX()->View.lSurfaceSize);
-	return;
 }
 
 static void PageFlip()
@@ -68,8 +67,8 @@ static void PageFlip()
 	else
 	{
 		GX_BDirectWindow::m_pInstance->Lock();
-		u_int8_t * src = GET_GX()->Surfaces.lpSurface[ 0 ];
-		u_int8_t * dest = (u_int8_t*)GX_BDirectWindow::m_pInstance->m_pBits + GX_BDirectWindow::m_pInstance->fBounds.top * GX_BDirectWindow::m_pInstance->fRowBytes + GX_BDirectWindow::m_pInstance->fBounds.left * GET_GX()->View.BytePerPixel;
+		uint8_t * src = GET_GX()->Surfaces.lpSurface[ 0 ];
+		uint8_t * dest = (uint8_t*)GX_BDirectWindow::m_pInstance->m_pBits + GX_BDirectWindow::m_pInstance->fBounds.top * GX_BDirectWindow::m_pInstance->fRowBytes + GX_BDirectWindow::m_pInstance->fBounds.left * GET_GX()->View.BytePerPixel;
 		int i;
 		for (i=0;i<GX_BDirectWindow::m_pInstance->lHeight;i++, src+=GET_GX()->View.lPitch, dest+=GX_BDirectWindow::m_pInstance->fRowBytes)
 			sysMemCpy(dest, src, GET_GX()->View.lPitch);
@@ -94,8 +93,8 @@ static GXDISPLAYMODEHANDLE SearchDisplayMode(int width, int height, int bpp)
 
 static void GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 {
-	g_pRLX->pfSetViewPort(&GET_GX()->View, GX_BDirectWindow::m_pInstance->lWidth, 
-						  GX_BDirectWindow::m_pInstance->lHeight, 
+	g_pRLX->pfSetViewPort(&GET_GX()->View, GX_BDirectWindow::m_pInstance->lWidth,
+						  GX_BDirectWindow::m_pInstance->lHeight,
 						  GX_BDirectWindow::m_pInstance->BitsPerPixel);
 	GXRGBCOMPONENT &mask = GET_GX()->View.ColorMask;
 	switch(GX_BDirectWindow::m_pInstance->BitsPerPixel)
@@ -125,7 +124,6 @@ static void GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 	GET_GX()->gi.blit = blitBuffer;
 	GET_GX()->View.Flip = PageFlip;
 	GET_GX()->View.lPitch = GET_GX()->View.lWidth * GET_GX()->View.BytePerPixel;
-	return ;
 }
 
 static int SetDisplayMode(GXDISPLAYMODEHANDLE mode)
@@ -166,7 +164,7 @@ static GXDISPLAYMODEINFO *EnumDisplayList(int bpp)
 	return NULL;
 }
 
-static u_int8_t *Lock(void)
+static uint8_t *Lock(void)
 {
 	GET_GX()->View.lpBackBuffer = GET_GX()->Surfaces.lpSurface[ 0 ];
 	GET_GX()->View.State |= GX_STATE_LOCKED;
@@ -177,7 +175,6 @@ static void Unlock(void)
 {
 	GET_GX()->View.State &= ~GX_STATE_LOCKED;
 	GET_GX()->View.lpBackBuffer = NULL;
-	return;
 }
 
 static void ReleaseSurfaces(void)
@@ -193,7 +190,6 @@ static void ReleaseSurfaces(void)
 
 	GET_GX()->View.lpBackBuffer = NULL;
 	GET_GX()->Surfaces.maxSurface = 0;
-	return;
 }
 
 static int CreateSurface(int pages)
@@ -205,7 +201,7 @@ static int CreateSurface(int pages)
 
 	for (i=0;i< pages;i++)
 	{
-		GET_GX()->Surfaces.lpSurface[i] = (u_int8_t *) malloc(GET_GX()->View.lSurfaceSize + GET_GX()->View.lPitch);
+		GET_GX()->Surfaces.lpSurface[i] = (uint8_t *) malloc(GET_GX()->View.lSurfaceSize + GET_GX()->View.lPitch);
 		if (!GET_GX()->Surfaces.lpSurface[i])
 			return -2;
 		sysMemZero(GET_GX()->Surfaces.lpSurface[i], GET_GX()->View.lSurfaceSize);
@@ -248,7 +244,6 @@ static void Shutdown()
 		GX_BDirectWindow::m_pInstance->Quit();
 		GX_BDirectWindow::m_pInstance = 0;
 	}
-	return;
 }
 
 /*------------------------------------------------------------------------
@@ -258,7 +253,6 @@ static void Shutdown()
 * DESCRIPTION :
 *
 */
-
 static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 {
 	GXSPRITESW *p = (GXSPRITESW*) g_pRLX->mm_heap->malloc(sizeof(GXSPRITESW));
@@ -266,8 +260,8 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	if (bpp == 3)
 	{
 		int BytePerPixel = GET_GX()->View.BytePerPixel;
-		u_int8_t * src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
-		g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel, 
+		uint8_t * src_buf = (uint8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
+		g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel,
 								 sp->data, colorTable, bpp, sp->LX*sp->LY);
 		g_pRLX->mm_heap->free(sp->data);
 		sp->data = src_buf;
@@ -282,7 +276,6 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	sp->handle = p;
 	p->bpp = bpp;
     UNUSED(sp);
-    return;
 }
 
 /*------------------------------------------------------------------------
@@ -297,16 +290,16 @@ static void ReleaseSprite(GXSPRITE *sp)
 	GXSPRITESW *p = (GXSPRITESW*) sp->handle;
 	g_pRLX->mm_heap->free(p);
 	sp->data = NULL;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+* PROTOTYPE  :  unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 *
 * DESCRIPTION :
 *
 */
-static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+static unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 {
 	GXSPRITESW *p = (GXSPRITESW*) sp->handle;
 	int i;
@@ -324,20 +317,20 @@ static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t
 *
 */
 GXCLIENTDRIVER GX_BDirectWin = {
-    Lock, 
-    Unlock, 
-    EnumDisplayList, 
-    GetDisplayInfo, 
-    SetDisplayMode, 
-    SearchDisplayMode, 
-    CreateSurface, 
-    ReleaseSurfaces, 
-    UploadSprite, 
-    ReleaseSprite, 
-    UpdateSprite, 
-    RegisterMode, 
-    Shutdown, 
-    Open, 
+    Lock,
+    Unlock,
+    EnumDisplayList,
+    GetDisplayInfo,
+    SetDisplayMode,
+    SearchDisplayMode,
+    CreateSurface,
+    ReleaseSurfaces,
+    UploadSprite,
+    ReleaseSprite,
+    UpdateSprite,
+    RegisterMode,
+    Shutdown,
+    Open,
     NotifyEvent,
 	"BDirectWindow"
 };
@@ -347,16 +340,15 @@ extern GXCLIENTDRIVER GX_BWinScrn;
 *
 * PROTOTYPE  :  void GET_GX()->ClientEntryPoint(void)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void GX_EntryPoint(struct RLXSYSTEM *p)
 {
-	g_pRLX = p; 
+	g_pRLX = p;
 	g_pApp = (sysApplication*)g_pRLX->pApplication;
 	// TODO: Change here to use BDirectWindow or BWindowscreen
 	bool bFs = true;
 	GET_GX()->Client = bFs ? &GX_BWinScrn : &GX_BDirectWin;
-    return;
 }
 

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -44,7 +44,7 @@ static struct _v3xa_reverbproperties EAX_cfg;
 int EAX_SetProperty(LPKSPROPERTYSET pPropertySet, struct _v3xa_reverbproperties *cfg, int mode)
 {
     EAX_REVERBPROPERTIES rev;
-    rev.environment = cfg->environment; 
+    rev.environment = cfg->environment;
     rev.fVolume = cfg->fVolume;
     rev.fDecayTime_sec = cfg->fDecayTime_sec;
     rev.fDamping = cfg->fDamping;
@@ -52,11 +52,11 @@ int EAX_SetProperty(LPKSPROPERTYSET pPropertySet, struct _v3xa_reverbproperties 
        return 0;
 
 	if (SYS_DXTRACE(pPropertySet->Set(
-			DSPROPSETID_EAX_ReverbProperties, 
-			DSPROPERTY_EAX_ALL, 
-			NULL, 
-			0, 
-			&rev, 
+			DSPROPSETID_EAX_ReverbProperties,
+			DSPROPERTY_EAX_ALL,
+			NULL,
+			0,
+			&rev,
 			sizeof(EAX_REVERBPROPERTIES) )))
 		return 0;
 	else
@@ -73,7 +73,7 @@ int EAX_CreateBuffer(DS_handle *hnd)
 
     if (hnd->pbuffer)
 		return 0;
-    
+
 	// we don't have a secondary to work with so we will create one.
 	ZeroMemory( &dsbdSecondary, sizeof(DSBUFFERDESC));
 	ZeroMemory( &pcmOut, sizeof(WAVEFORMATEX));
@@ -83,7 +83,7 @@ int EAX_CreateBuffer(DS_handle *hnd)
 	pcmOut.nChannels = 1;
 	pcmOut.nSamplesPerSec  = 44100;
 	pcmOut.nBlockAlign = 2;
-	pcmOut.nAvgBytesPerSec = pcmOut.nBlockAlign * pcmOut.nSamplesPerSec;	
+	pcmOut.nAvgBytesPerSec = pcmOut.nBlockAlign * pcmOut.nSamplesPerSec;
 	pcmOut.wBitsPerSample = 16;
 	pcmOut.cbSize = 0;
 
@@ -97,7 +97,7 @@ int EAX_CreateBuffer(DS_handle *hnd)
 
 	// Create a 3D Sound Buffer
     if (!hnd->pbuffer3D)
-    	SYS_DXTRACE(hnd->pbuffer->QueryInterface(IID_IDirectSound3DBuffer, (void**)&hnd->pbuffer3D));
+		SYS_DXTRACE(hnd->pbuffer->QueryInterface(IID_IDirectSound3DBuffer, (void**)&hnd->pbuffer3D));
 
 	// Query interface
     if (SYS_DXTRACE(hnd->pbuffer->QueryInterface( IID_IKsPropertySet, (void**)&hnd->pReverb)))
@@ -125,19 +125,20 @@ int EAX_CreateBuffer(DS_handle *hnd)
 int EAX_ChannelSetEnvironment(int channel, V3XA_REVERBPROPERTIES *cfg)
 {
     // Save last environment.
-    if (!cfg) 
+    if (!cfg)
 		cfg = &EAX_cfg;
-    else 
+    else
 		EAX_cfg = *cfg;
 
     if (!DS_SecBuffer.pbuffer)
-	    if (!EAX_CreateBuffer(&DS_SecBuffer)) 
+	    if (!EAX_CreateBuffer(&DS_SecBuffer))
 				return 0;
-    
+
 	return EAX_SetProperty(
 	     channel<0
 	   ? DS_SecBuffer.pReverb
-	   : g_pDSHandles[channel].pReverb, 
-	     cfg, 
+	   : g_pDSHandles[channel].pReverb,
+	     cfg,
 	     channel<0);
 }
+

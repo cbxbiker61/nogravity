@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -64,7 +65,7 @@ public:
 		virtual void							ScreenConnected(bool active);
 		virtual void							MessageReceived(BMessage *message);
 
-		int 									InitDisplayMode(int mode);
+		int									InitDisplayMode(int mode);
 		void									ShowPage(int page);
 
 		static GX_BWindowScreen			*		GetInstance() { return m_pInstance; }
@@ -77,21 +78,22 @@ public:
 		thread_id								m_DrawThread;
 		sem_id									m_SemID, m_KillID;
 
-		PFCARDHOOKPROC0 						define_cursor;
-	    PFCARDHOOKPROC1 						move_cursor;
-	    PFCARDHOOKPROC2 						show_cursor;
-		PFCARDHOOKPROC3 						draw_line_with_8_bit_depth;
-		PFCARDHOOKPROC4 						draw_line_with_32_bit_depth;
-		PFCARDHOOKPROC5 						draw_rect_with_8_bit_depth;
-		PFCARDHOOKPROC6 						draw_rect_with_32_bit_depth;
-		PFCARDHOOKPROC7 						blit;
-		PFCARDHOOKPROC8 						draw_array_with_8_bit_depth;
-		PFCARDHOOKPROC9 						draw_array_with_32_bit_depth;
-		PFCARDHOOKPROC10 						sync;
-		PFCARDHOOKPROC11 						invert_rect;
-		PFCARDHOOKPROC12 						draw_line_with_16_bit_depth;
-		PFCARDHOOKPROC13 						draw_rect_with_16_bit_depth;
-		PFCARDHOOKPROC14 						draw_array_with_16_bit_depth;
+		PFCARDHOOKPROC0						define_cursor;
+	    PFCARDHOOKPROC1						move_cursor;
+	    PFCARDHOOKPROC2						show_cursor;
+		PFCARDHOOKPROC3						draw_line_with_8_bit_depth;
+		PFCARDHOOKPROC4						draw_line_with_32_bit_depth;
+		PFCARDHOOKPROC5						draw_rect_with_8_bit_depth;
+		PFCARDHOOKPROC6						draw_rect_with_32_bit_depth;
+		PFCARDHOOKPROC7						blit;
+		PFCARDHOOKPROC8						draw_array_with_8_bit_depth;
+		PFCARDHOOKPROC9						draw_array_with_32_bit_depth;
+		PFCARDHOOKPROC10						sync;
+		PFCARDHOOKPROC11						invert_rect;
+		PFCARDHOOKPROC12						draw_line_with_16_bit_depth;
+		PFCARDHOOKPROC13						draw_rect_with_16_bit_depth;
+		PFCARDHOOKPROC14						draw_array_with_16_bit_depth;
 };
 
 #endif
+

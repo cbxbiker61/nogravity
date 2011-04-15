@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,17 +30,17 @@ extern struct RLXSYSTEM *g_pRLX;
 #define RGB_ALPHA50(a, b)        ((((a)&g_pRLX->pGX->View.RGB_Magic)+((b)&g_pRLX->pGX->View.RGB_Magic))>>1)
 
 typedef struct
-{	
+{
 	int		bpp;
-	u_int32_t   palette[256];	
-	u_int8_t * texture;
+	uint32_t   palette[256];
+	uint8_t * texture;
 }V3XTEXTURESW;
 
 #ifdef cplusplus
 extern "C"{
 #endif
     // PolyPrimitives References(C) - 8bit
- 
+
     void CALLING_C Rend8bit_C_flat(V3XPOLY *fce);
     void CALLING_C Rend8bit_C_glenzflat(V3XPOLY *fce);
     void CALLING_C Rend8bit_C_gouraud(V3XPOLY *fce);
@@ -58,8 +59,8 @@ extern "C"{
     void CALLING_C Rend8bit_Fix_map_norm_G(V3XPOLY *fce);
     void CALLING_C Rend8bit_Fix_map_sprite(V3XPOLY *fce);
     void CALLING_C Rend8bit_Fix_map_sprite_F(V3XPOLY *fce);
-    void CALLING_C Rend8bit_Fix_tex_alpha(V3XPOLY *fce); 
-  
+    void CALLING_C Rend8bit_Fix_tex_alpha(V3XPOLY *fce);
+
 
  // PolyPrimitives References(C) - 16bit
     void CALLING_C Rend16bit_C_flat(V3XPOLY *fce);

@@ -46,7 +46,7 @@ struct stream
   size_t pos;
   ssize_t start;
   ssize_t end;
-  u_int8_t vol;
+  uint8_t vol;
   int8_t buf[409600];
 };
 
@@ -198,7 +198,7 @@ static int ChannelGetFree(V3XA_HANDLE *sam)
     {
       return channel;
     }
-  } 
+  }
  return -1;
 }
 
@@ -399,8 +399,8 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
     Enum,
     Detect,
     Initialize,
-    Release, 
-    SetVolume, 
+    Release,
+    SetVolume,
     Start,
     Stop,
     Poll,
@@ -408,27 +408,27 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
     UserSetParms,
 
     ChannelOpen,
-    ChannelPlay, 
-    ChannelStop, 
+    ChannelPlay,
+    ChannelStop,
 
-    ChannelSetVolume, 
-    ChannelSetPanning, 
+    ChannelSetVolume,
+    ChannelSetPanning,
     ChannelSetSamplingRate,
 
     ChannelGetStatus,
 
     ChannelSetParms,
-    ChannelSetEnvironment, 
+    ChannelSetEnvironment,
 
-    ChannelGetFree, 
-    ChannelFlushAll, 
+    ChannelGetFree,
+    ChannelFlushAll,
     ChannelInvalidate,
     ChannelGetSample,
 
-    StreamRelease, 
+    StreamRelease,
     StreamInitialize,
-    StreamGetChannel, 
-    StreamGetPosition, 
+    StreamGetChannel,
+    StreamGetPosition,
     StreamPoll,
     StreamSetVolume,
     StreamLoad,
@@ -442,7 +442,5 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
   };
 
   V3XA.Client = &SDLMixer_Client;
-
-  return;
 }
 

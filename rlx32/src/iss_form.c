@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -69,14 +69,15 @@ int V3XA_Handle_LoadFromFp(V3XA_HANDLE *pHandle, SYS_FILEHANDLE fp, const V3XA_F
 // Load sample from filename
 int V3XA_Handle_LoadFromFn(V3XA_HANDLE *pHandle, char *szFilename)
 {
-	const char *fn = (szFilename);	
+	const char *fn = (szFilename);
 	int ret = 0;
+
 	if (fn)
 	{
 		SYS_FILEHANDLE fp = FIO_cur->fopen(fn, "rb");
 		if (fp)
 		{
-			ret = V3XA_Handle_LoadFromFp(pHandle, fp, V3XA_CodecFind(szFilename)); 
+			ret = V3XA_Handle_LoadFromFp(pHandle, fp, V3XA_CodecFind(szFilename));
 			if (ret)
 			{
 				V3XA.Client->SmpLoad( pHandle );
@@ -84,6 +85,7 @@ int V3XA_Handle_LoadFromFn(V3XA_HANDLE *pHandle, char *szFilename)
 			FIO_cur->fclose(fp);
 		}
 	}
-	return ret;
 
+	return ret;
 }
+

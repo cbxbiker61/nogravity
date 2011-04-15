@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -68,7 +69,7 @@ enum {
     V3XA_FMTPACKED = 0x8,        // Compressed sample
     V3XA_FMTMULTI = 0x10,       // Reserved
     V3XA_FMTVOLATILE = 0x20,       // Reserved
-    V3XA_FMTBIGENDIAN = 0x40,       // ADPCM format 
+    V3XA_FMTBIGENDIAN = 0x40,       // ADPCM format
     V3XA_FMT3D = 0x80,       // 3D Samples (in use with DirectSound 3D)
 	V3XA_FMTIEEE = 0x100,      // OGG
 	V3XA_FMTUNKSIZE  = 0x200,      // Unknown size
@@ -79,18 +80,18 @@ enum {
 // Sample handle
 typedef struct _v3xa_handle
 {
-	struct _v3xa_audiocodec *	codec;	
+	struct _v3xa_audiocodec *	codec;
     void             *sample;            // Raw data sample
-    u_int32_t         length;            // Sample length in byte 
-    u_int32_t         loopstart;         // Loop start offset
-    u_int32_t         loopend;           // Loop end offset
-    u_int32_t         samplingRate;      // Sample sampling rate in hz 
-    u_int32_t         chunkLength;       // Reserved
-	u_int32_t         sampleID;          // Reserved
-    u_int16_t         sampleFormat;      // Sample format (see before).    
-    u_int8_t          mode;              // Reserved    
-    u_int8_t          priority;          // Play priority 0..255 (MAX)    
-	
+    uint32_t         length;            // Sample length in byte
+    uint32_t         loopstart;         // Loop start offset
+    uint32_t         loopend;           // Loop end offset
+    uint32_t         samplingRate;      // Sample sampling rate in hz
+    uint32_t         chunkLength;       // Reserved
+	uint32_t         sampleID;          // Reserved
+    uint16_t         sampleFormat;      // Sample format (see before).
+    uint8_t          mode;              // Reserved
+    uint8_t          priority;          // Play priority 0..255 (MAX)
+
 }V3XA_HANDLE;
 
 // Streaming functions
@@ -99,7 +100,7 @@ typedef int V3XA_STREAM;
 // Sound decoder and processor
 struct _sys_fileio;
 
-typedef void * (*PFV3XAAUDIOINIT)(size_t size, struct _sys_fileio *, 
+typedef void * (*PFV3XAAUDIOINIT)(size_t size, struct _sys_fileio *,
 										struct _sys_memory *);
 typedef int (*PFV3XAAUDIORELEASE)(void *context);
 typedef int (*PFV3XAAUDIOOPEN)(void *context, SYS_FILEHANDLE fp, V3XA_HANDLE *info);
@@ -133,40 +134,40 @@ struct _v3xa_audiocodec;
 // Channel infos
 typedef struct _v3xa_channelInfo
 {
-    u_int8_t              Volume;
-    u_int8_t              filler[3];
+    uint8_t              Volume;
+    uint8_t              filler[3];
 }V3XA_CHANNELINFO;
 
 // EAX environment preset
 enum V3XA_ENVIRONMENT
 {
     V3XA_ENVIRONMENT_GENERIC,
-    V3XA_ENVIRONMENT_PADDEDCELL, 
-    V3XA_ENVIRONMENT_ROOM, 
-    V3XA_ENVIRONMENT_BATHROOM, 
+    V3XA_ENVIRONMENT_PADDEDCELL,
+    V3XA_ENVIRONMENT_ROOM,
+    V3XA_ENVIRONMENT_BATHROOM,
     V3XA_ENVIRONMENT_LIVINGROOM,
-    V3XA_ENVIRONMENT_STONEROOM, 
-    V3XA_ENVIRONMENT_AUDITORIUM, 
-    V3XA_ENVIRONMENT_CONCERTHALL, 
-    V3XA_ENVIRONMENT_CAVE, 
-    V3XA_ENVIRONMENT_ARENA, 
-    V3XA_ENVIRONMENT_HANGAR, 
-    V3XA_ENVIRONMENT_CARPETEDHALLWAY, 
-    V3XA_ENVIRONMENT_HALLWAY, 
-    V3XA_ENVIRONMENT_STONECORRIDOR, 
-    V3XA_ENVIRONMENT_ALLEY, 
-    V3XA_ENVIRONMENT_FOREST, 
-    V3XA_ENVIRONMENT_CITY, 
-    V3XA_ENVIRONMENT_MOUNTAINS, 
+    V3XA_ENVIRONMENT_STONEROOM,
+    V3XA_ENVIRONMENT_AUDITORIUM,
+    V3XA_ENVIRONMENT_CONCERTHALL,
+    V3XA_ENVIRONMENT_CAVE,
+    V3XA_ENVIRONMENT_ARENA,
+    V3XA_ENVIRONMENT_HANGAR,
+    V3XA_ENVIRONMENT_CARPETEDHALLWAY,
+    V3XA_ENVIRONMENT_HALLWAY,
+    V3XA_ENVIRONMENT_STONECORRIDOR,
+    V3XA_ENVIRONMENT_ALLEY,
+    V3XA_ENVIRONMENT_FOREST,
+    V3XA_ENVIRONMENT_CITY,
+    V3XA_ENVIRONMENT_MOUNTAINS,
     V3XA_ENVIRONMENT_QUARRY,
-    V3XA_ENVIRONMENT_PLAIN, 
-    V3XA_ENVIRONMENT_PARKINGLOT, 
-    V3XA_ENVIRONMENT_SEWERPIPE, 
-    V3XA_ENVIRONMENT_UNDERWATER, 
-    V3XA_ENVIRONMENT_DRUGGED, 
-    V3XA_ENVIRONMENT_DIZZY, 
-    V3XA_ENVIRONMENT_PSYCHOTIC, 
-    V3XA_ENVIRONMENT_COUNT, 
+    V3XA_ENVIRONMENT_PLAIN,
+    V3XA_ENVIRONMENT_PARKINGLOT,
+    V3XA_ENVIRONMENT_SEWERPIPE,
+    V3XA_ENVIRONMENT_UNDERWATER,
+    V3XA_ENVIRONMENT_DRUGGED,
+    V3XA_ENVIRONMENT_DIZZY,
+    V3XA_ENVIRONMENT_PSYCHOTIC,
+    V3XA_ENVIRONMENT_COUNT,
 	V3XA_ENVIRONMENT_FORCEDWORD = 0xffff
 };
 
@@ -174,80 +175,80 @@ enum V3XA_ENVIRONMENT
 typedef struct _v3xa_reverbproperties
 {
 	/* environment */
-    u_int32_t		environment; 
+    uint32_t		environment;
 	/* volume */
     float		fVolume;
 	/* decay in msec */
     float		fDecayTime_sec;
 	/* damping in sec. */
-    float		fDamping;  
+    float		fDamping;
 }V3XA_REVERBPROPERTIES;
 
 // Wave driver
 typedef struct _v3xa_wave_client_driver
 {
 // Init Functions
-	int 			(RLXAPI *Enum)(void);			// Enumerate devices
-	int 			(RLXAPI *Detect)(void);			// Detect devices
-	int 			(RLXAPI *Initialize)(void *);	// Initialize previously detected device
+	int			(RLXAPI *Enum)(void);			// Enumerate devices
+	int			(RLXAPI *Detect)(void);			// Detect devices
+	int			(RLXAPI *Initialize)(void *);	// Initialize previously detected device
 	void			(RLXAPI *Release)(void);		// Release driver
 	void			(RLXAPI *SetVolume)(float volume);// Set master volume
-	void			(RLXAPI *Start)(void); 		// Start to play
+	void			(RLXAPI *Start)(void);		// Start to play
 	void			(RLXAPI *Stop)(void);			// Stop to play
 	int32_t			(RLXAPI *Poll)(int32_t param); // poller
 	void			(RLXAPI *Render)(void);		// Render 3D environment sound (optional)
-	void			(RLXAPI *UserSetParms)(V3XMATRIX *lpMAT, V3XVECTOR *lpVEL, 
-										   float *lpDistanceF, float *lpDopplerF, 
+	void			(RLXAPI *UserSetParms)(V3XMATRIX *lpMAT, V3XVECTOR *lpVEL,
+										   float *lpDistanceF, float *lpDopplerF,
 										   float *lpRolloff);
 // Sample Functions
 	void			(RLXAPI *ChannelOpen)(int gain, int numbersOfchannel); // Open multichannel mixer
-	int 			(RLXAPI *ChannelPlay)(V3XA_CHANNEL channel, int frequency, float volume, float panning, V3XA_HANDLE *handle); // Play channel given frequency, volume, panning and audio handle
+	int			(RLXAPI *ChannelPlay)(V3XA_CHANNEL channel, int frequency, float volume, float panning, V3XA_HANDLE *handle); // Play channel given frequency, volume, panning and audio handle
 	void			(RLXAPI *ChannelStop)(V3XA_CHANNEL channel); // stop channem
 
 	void			(RLXAPI *ChannelSetVolume)(V3XA_CHANNEL channel, float volume); // set channel volume
 	void			(RLXAPI *ChannelSetPanning)(V3XA_CHANNEL channel, float panning); // set channel panning
 	void			(RLXAPI *ChannelSetSamplingRate)(V3XA_CHANNEL channel, int frequency); // set channel sampling rate
 
-	int 			(RLXAPI *ChannelGetStatus)(V3XA_CHANNEL channel); // get channel status
+	int			(RLXAPI *ChannelGetStatus)(V3XA_CHANNEL channel); // get channel status
 
-	void			(RLXAPI *ChannelSetParms)(V3XA_CHANNEL channel, V3XVECTOR *pos, 
-																    V3XVECTOR *velocity, 
+	void			(RLXAPI *ChannelSetParms)(V3XA_CHANNEL channel, V3XVECTOR *pos,
+																    V3XVECTOR *velocity,
 																	V3XRANGE *fRange
 																	); // set channel parameters for 3D placement
-	int 			(RLXAPI *ChannelSetEnvironment)(V3XA_CHANNEL channel, V3XA_REVERBPROPERTIES *cfg); // set channel environmenet
+	int			(RLXAPI *ChannelSetEnvironment)(V3XA_CHANNEL channel, V3XA_REVERBPROPERTIES *cfg); // set channel environmenet
 
-	V3XA_CHANNEL 	(RLXAPI *ChannelGetFree)(V3XA_HANDLE *handle); // get free channel
+	V3XA_CHANNEL	(RLXAPI *ChannelGetFree)(V3XA_HANDLE *handle); // get free channel
 	void			(RLXAPI *ChannelFlushAll)(int mode); // flush all channel
-	void			(RLXAPI *ChannelInvalidate)(V3XA_HANDLE *handle); // invalid channel 
-	V3XA_HANDLE* 	(RLXAPI *ChannelGetSample)(V3XA_CHANNEL channel); // get sound handle from channel
+	void			(RLXAPI *ChannelInvalidate)(V3XA_HANDLE *handle); // invalid channel
+	V3XA_HANDLE*	(RLXAPI *ChannelGetSample)(V3XA_CHANNEL channel); // get sound handle from channel
 
 // Streaming
 	void			(RLXAPI *StreamRelease)(V3XA_STREAM handle); // release streaming handle
 	V3XA_STREAM		(RLXAPI *StreamInitialize)(int sampleFormat, int samplingRate, size_t size); // initialise stream channel with sample format, sampling rate, buffer size
-	V3XA_CHANNEL 	(RLXAPI *StreamGetChannel)(V3XA_STREAM handle); // get play channel from steam handle
-	size_t			(RLXAPI *StreamGetPosition)(V3XA_STREAM handle); // 
+	V3XA_CHANNEL	(RLXAPI *StreamGetChannel)(V3XA_STREAM handle); // get play channel from steam handle
+	size_t			(RLXAPI *StreamGetPosition)(V3XA_STREAM handle); //
 	int				(RLXAPI *StreamPoll)(V3XA_STREAM handle); // Should be threaded if possible
 	void			(RLXAPI *StreamSetVolume)(V3XA_STREAM handle, float volume);
 	int				(RLXAPI *StreamLoad)(V3XA_STREAM handle, void *data, size_t size);
-	int 			(RLXAPI *StreamStart)(V3XA_STREAM handle);
+	int			(RLXAPI *StreamStart)(V3XA_STREAM handle);
 	void			(RLXAPI *StreamStop)(V3XA_STREAM handle);
 
 // Low level Load/Unload sample (used internally)
-	int 			(RLXAPI *SmpLoad)(V3XA_HANDLE *handle);
+	int			(RLXAPI *SmpLoad)(V3XA_HANDLE *handle);
 	void			(RLXAPI *SmpRelease)(V3XA_HANDLE *handle);
 
 	char			s_DrvName[MAX_V3XA_CLIENT_DRIVER_NAME];
 	char		**	p_DriverList;
-	
+
 }V3XA_WaveClientDriver;
 
 
 typedef struct {
-    unsigned 					numTrack;
-    unsigned 					channel;
-    unsigned 					status;
-    u_int32_t    					position;
-    u_int32_t    					length;
+    unsigned					numTrack;
+    unsigned					channel;
+    unsigned					status;
+    uint32_t					position;
+    uint32_t					length;
 	V3XA_HANDLE				*	sample;
 }V3XA_STREAMINFO;
 
@@ -257,11 +258,11 @@ struct V3XAUDIO
 {
 	V3XA_WaveClientDriver	*	Client;
 	char					**	p_driverList;
-	char						samplePath[MAX_V3XA_AUDIO_PATH];	
-	u_int32_t						State;
+	char						samplePath[MAX_V3XA_AUDIO_PATH];
+	uint32_t						State;
 	int32_t						nStreamBufferSizeKb;
-	int32_t 						numChannel;
-	int32_t 						samplingRate;
+	int32_t						numChannel;
+	int32_t						samplingRate;
 	int32_t						deviceID;
 	int32_t						driverID;
 };
@@ -281,3 +282,4 @@ _RLXEXPORTDATA    extern struct V3XAUDIO  V3XA;
 __end_extern_c
 
 #endif
+

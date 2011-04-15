@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -86,7 +87,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #ifndef FALSE
   enum {
-         FALSE, 
+         FALSE,
          TRUE
    };
 #endif
@@ -96,30 +97,30 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #if !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L
     #if defined __LCC__ || defined __LINUX__ || defined LINUX || (defined __BEOS__ && B_BEOS_VERSION >=0x0520)
        #include <stdint.h>
-       #include <stddef.h>       
+       #include <stddef.h>
     #elif defined __APPLE__ && defined __MACH__
 		#include <sys/types.h>
 	#else
 	   /* 8 bit type. */
 	   typedef signed char			int8_t;
        /* unsigned 8 bit type. */
-       typedef unsigned char		u_int8_t;
+       typedef unsigned char		uint8_t;
        /* 16bit type (2 bytes). */
        typedef short int			int16_t;
        /* unsigned 16 bit type. */
-       typedef unsigned short int	u_int16_t;
+       typedef unsigned short int	uint16_t;
 	   /* 32bit type (4 bytes). */
 	   typedef int					int32_t;
        /* unsigned 32 bit type. */
-       typedef unsigned int			u_int32_t;
+       typedef unsigned int			uint32_t;
     #if defined __GNUC__
        typedef long long int		int64_t;
-       typedef unsigned long long int u_int64_t;
+       typedef unsigned long long int uint64_t;
     #else
 	   /* 64 bit type (8 bytes). */
 	   typedef __int64				int64_t;
        /* unsigned 64 bit type. */
-       typedef unsigned __int64		u_int64_t;
+       typedef unsigned __int64		uint64_t;
     #endif // __GNUC__
    #endif // __LINUX__
 #endif // STDC_VERSION
@@ -130,22 +131,22 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 typedef struct _gx_sprite
 {
-    u_int32_t    LX, LY;
-    u_int8_t   *data;
+    uint32_t    LX, LY;
+    uint8_t   *data;
     void    *handle;
 } GXSPRITE;
 
 typedef struct _gx_rgb24{
-    u_int8_t    r, g, b;
+    uint8_t    r, g, b;
 } rgb24_t;
 
 typedef struct _gx_rgb32{
-    u_int8_t    r, g, b, a;
+    uint8_t    r, g, b, a;
 } rgb32_t;
 
 typedef struct _gx_bgr32
 {
-    u_int8_t			a, b, g, r;
+    uint8_t			a, b, g, r;
 } bgr32_t;
 
 #ifdef __BIG_ENDIAN__
@@ -156,8 +157,8 @@ typedef struct _gx_bgr32
 
 typedef struct _gx_sprite_sw{
 	int		bpp;
-	u_int32_t	palette[256];
-	void *  reserved;	
+	uint32_t	palette[256];
+	void *  reserved;
 } GXSPRITESW;
 
 
@@ -174,7 +175,7 @@ typedef void* SYS_MUTEXHANDLE; /* Mutex handle. */
 #include <pthread.h>
 typedef pthread_mutex_t SYS_MUTEXHANDLE; /* Mutex handle. */
 typedef pthread_t SYS_THREADHANDLE; /* Thread handle. */
-#elif defined __LINUX__ 
+#elif defined __LINUX__
 typedef void * SYS_MUTEXHANDLE; /* Mutex handle. */
 typedef void * SYS_THREADHANDLE; /* Thread handle. */
 #else
@@ -204,10 +205,11 @@ typedef void* SYS_THREADHANDLE; /* Thread handle. */
 #define SYS_FAILED(condition) ((condition)!=0)
 
 __extern_c
-_RLXEXPORTFUNC void     RLXAPI   SYS_Msg(char *fmt, ...);
-_RLXEXPORTFUNC void     RLXAPI   SYS_Debug(char *fmt, ...);
-_RLXEXPORTFUNC void     RLXAPI   SYS_Error(char *fmt, ...);
+_RLXEXPORTFUNC void     RLXAPI   SYS_Msg(const char *fmt, ...);
+_RLXEXPORTFUNC void     RLXAPI   SYS_Debug(const char *fmt, ...);
+_RLXEXPORTFUNC void     RLXAPI   SYS_Error(const char *fmt, ...);
 _RLXEXPORTFUNC int      RLXAPI   RLX_ErrorGetCodeString(int error_code);
 __end_extern_c
 
 #endif
+

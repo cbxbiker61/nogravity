@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -23,7 +23,7 @@ Original Source: 1996 - Stephane Denis
 Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 Linux/SDL Port: 2005 - Matt Williams
 */
-//------------------------------------------------------------------------- 
+//-------------------------------------------------------------------------
 #include <stdio.h>
 
 #include "_rlx32.h"
@@ -31,23 +31,22 @@ Linux/SDL Port: 2005 - Matt Williams
 #include "systime.h"
 
 // Time in millisecond
-u_int32_t timer_ms(void)
+uint32_t timer_ms(void)
 {
   // Return the value from SDL_GetTicks(), which returns time in ms.
   return 0;
 }
 
 // Time in seconds
-u_int32_t timer_sec(void)
+uint32_t timer_sec(void)
 {
   // Return the value from SDL_GetTicks(), converting to seconds.
   return 0;
 }
 
 // Snooze (wait + release CPU)
-void timer_snooze(u_int32_t t)
+void timer_snooze(uint32_t t)
 {
- 
 }
 
 // 1 microsecond = 0.001 millisecond
@@ -60,7 +59,6 @@ static const int64_t g_iFreq = 1000000;
 void timer_Stop(SYS_TIMER *tm)
 {
     tm->flags &= ~SYS_TIMER_FLAGS_START;
-    return;
 }
 
 // clear timer
@@ -68,17 +66,14 @@ void timer_Reset(SYS_TIMER *tm)
 {
     tm->iCounter = 0;
     tm->fCounter = 0.f;
-    return;
 }
 
 void timer_Update(SYS_TIMER *tm)
-{   
-    return;
+{
 }
 
 void timer_Start(SYS_TIMER *tm, int iFreq, int iMinFrame)
-{	
-    return;
+{
 }
 
 // http://www.yolinux.com/TUTORIALS/LinuxTutorialPosixThreads.html
@@ -91,12 +86,10 @@ int32_t thread_begin(SYS_THREAD *pThread, enum SYS_THREAD_PRIORITY_ENUM priority
 
 void thread_end(SYS_THREAD *pThread)
 {
-	return;
 }
 
 void thread_exit(int code)
 {
-    return;
 }
 
 // Unix
@@ -124,3 +117,4 @@ time_t time(time_t *t)
 {
 	return *t;
 }
+

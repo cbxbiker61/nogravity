@@ -92,7 +92,7 @@ static int Initialize(void *hnd)
   alDistanceModel(AL_INVERSE_DISTANCE);
   alDopplerFactor(0.f); // No doppler
   alDopplerVelocity(0.f); // No velocity
- 
+
   RLX.Audio.Config|=RLXAUDIO_Use3D;
   return 0;
 }
@@ -361,7 +361,7 @@ static void StreamReset(int stream)
 {
     static const V3XVECTOR vector = {0.0, 0.0, 0.0};
     static const V3XRANGE range = {0.0, 10000.0};
- 
+
 	g_pstreams[stream].used = TRUE;
 	g_pstreams[stream].play = TRUE;
 	g_pstreams[stream].pos = 0;
@@ -373,7 +373,6 @@ static void StreamReset(int stream)
 	ChannelSetPanning(g_pstreams[stream].chan, 0.0);
 	ChannelSetParms(g_pstreams[stream].chan, (V3XVECTOR *)&vector, (V3XVECTOR *)&vector, (V3XRANGE *)&range);
 	alSourcei(g_pchannels[g_pstreams[stream].chan].src, AL_LOOPING, AL_FALSE);
- 
 }
 
 static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t size)
@@ -394,9 +393,9 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t siz
     {
 	   g_pstreams[stream].chan = channel;
 	   g_pstreams[stream].fmt = (sampleFormat & V3XA_FMTSTEREO) ?  ((sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16) : ((sampleFormat & V3XA_FMT16BIT) ? AL_FORMAT_STEREO8 : AL_FORMAT_MONO8);
-   	   g_pstreams[stream].rate = sampleRate;
+	   g_pstreams[stream].rate = sampleRate;
 
-   	   StreamReset(stream);
+	   StreamReset(stream);
 	}
     else
     {
@@ -407,6 +406,7 @@ static V3XA_STREAM StreamInitialize(int sampleFormat, int sampleRate, size_t siz
   {
     stream = -1;
   }
+
   return stream;
 }
 
@@ -433,8 +433,9 @@ static int StreamPoll(V3XA_STREAM handle)
   }
 
    ChannelSetParms(g_pstreams[handle].chan, &g_ListenerPos, NULL, NULL);
-  
+
    alGetSourcei(g_pchannels[g_pstreams[handle].chan].src, AL_BUFFERS_PROCESSED, &processed);
+
    while (processed > 0)
    {
     alSourceUnqueueBuffers(g_pchannels[g_pstreams[handle].chan].src, 1, &g_pstreams[handle].bufs[g_pstreams[handle].first]);
@@ -455,6 +456,7 @@ static int StreamPoll(V3XA_STREAM handle)
   {
     ret_code = 0;
   }
+
   return ret_code;
 }
 
@@ -486,7 +488,7 @@ static int StreamLoad(V3XA_STREAM handle, void *data, size_t size)
           (g_pstreams[handle].last + g_nbufsperstream - g_pstreams[handle].first > 2))))
     {
       alGetSourcei(g_pchannels[g_pstreams[handle].chan].src, AL_SOURCE_STATE, &status);
-      if (status != AL_PLAYING)	
+      if (status != AL_PLAYING)
       {
         alSourcePlay(g_pchannels[g_pstreams[handle].chan].src);
       }
@@ -528,8 +530,8 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
     Enum,
     Detect,
     Initialize,
-    Release, 
-    SetVolume, 
+    Release,
+    SetVolume,
     Start,
     Stop,
     Poll,
@@ -537,27 +539,27 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
     UserSetParms,
 
     ChannelOpen,
-    ChannelPlay, 
+    ChannelPlay,
     ChannelStop,
 
-    ChannelSetVolume, 
-    ChannelSetPanning, 
+    ChannelSetVolume,
+    ChannelSetPanning,
     ChannelSetSamplingRate,
 
     ChannelGetStatus,
 
     ChannelSetParms,
-    ChannelSetEnvironment, 
+    ChannelSetEnvironment,
 
-    ChannelGetFree, 
-    ChannelFlushAll, 
+    ChannelGetFree,
+    ChannelFlushAll,
     ChannelInvalidate,
     ChannelGetSample,
 
-    StreamRelease, 
+    StreamRelease,
     StreamInitialize,
-    StreamGetChannel, 
-    StreamGetPosition, 
+    StreamGetChannel,
+    StreamGetPosition,
     StreamPoll,
     StreamSetVolume,
     StreamLoad,
@@ -571,6 +573,5 @@ void RLXAPI V3XA_EntryPoint(struct RLXSYSTEM *rlx)
   };
 
   V3XA.Client = &OpenAL_Client;
-
-  return;
 }
+

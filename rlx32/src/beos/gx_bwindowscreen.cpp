@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -51,7 +51,7 @@ true
 false
 #endif
 ),
-	    
+
 		m_pGci(0),
 		m_DisplayMode(0),
 		m_Space(DEFAULT_DISPLAY_MODE),
@@ -60,7 +60,7 @@ false
 		m_DrawThread(0),
 		m_SemID(0), m_KillID(0)
 
-{	
+{
 	m_pInstance = this;
     if (*error == B_OK)
     {
@@ -79,7 +79,6 @@ false
 			be_app_messenger.SendMessage( B_QUIT_REQUESTED );
 		}
 	}
-	return;
 }
 
 int GX_BWindowScreen::InitDisplayMode(int mode)
@@ -128,7 +127,6 @@ void GX_BWindowScreen::Quit()
 	g_pApp->Stop();
 	g_pApp->SetActive(false);
 	BWindowScreen::Quit();
-	return;
 }
 
 void GX_BWindowScreen::MessageReceived(BMessage *msg)
@@ -140,14 +138,13 @@ void GX_BWindowScreen::MessageReceived(BMessage *msg)
 		break;
 		case MSG_SYSAPPLICATION_OPEN:
 			printf("Resume BWindowScreen\n");
-		
-		 	break;
+
+			break;
 		default:
 		    g_pApp->WindowMessage(msg);
 			BWindowScreen::MessageReceived(msg);
 		break;
 	}
-	return;
 }
 
 void GX_BWindowScreen::ScreenConnected(bool active)
@@ -158,18 +155,18 @@ void GX_BWindowScreen::ScreenConnected(bool active)
 	if (active==TRUE)
 	{
 		resume_thread(m_DrawThread);
-     	g_pApp->StartDrawing();
-	
+		g_pApp->StartDrawing();
+
 		SetSpace(m_Space);
 		m_pGci = CardInfo();
 		m_Pitch = m_pGci->bytes_per_row;
 		m_Offset = 0;
 
 		// Setup hooks
-		u_int32_t * p = (u_int32_t *)&define_cursor;
+		uint32_t * p = (uint32_t *)&define_cursor;
 	    int i;
 	    for (i=0;i<=14;i++)
-			 p[i] = (u_int32_t)CardHookAt(i+1);
+			 p[i] = (uint32_t)CardHookAt(i+1);
 		g_pApp->SetActive(true);
 	}
 	else
@@ -177,8 +174,5 @@ void GX_BWindowScreen::ScreenConnected(bool active)
 		g_pApp->SetActive(false);
 	}
 	release_sem(m_SemID);
-	return;
 }
-
-
 

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -72,7 +72,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define GET_TICK(tmp) *tmp = GET_MILLISEC()
 #endif
 
-static u_int64_t g_iFreq = 0;
+static uint64_t g_iFreq = 0;
 
 // Start timer
 void timer_Start(struct _sys_timerhandle *tm, int iFreq, int iMinFrame)
@@ -86,14 +86,13 @@ void timer_Start(struct _sys_timerhandle *tm, int iFreq, int iMinFrame)
 #endif
 
 #ifdef USE_QPC
-   	QueryPerformanceFrequency((LARGE_INTEGER*)&g_iFreq);
+	QueryPerformanceFrequency((LARGE_INTEGER*)&g_iFreq);
 #else
     g_iFreq = 1000;
 #endif
 
     GET_TICK(&tm->tStart);
     timer_Update(tm);
-    return;
 }
 
 // Reset timer
@@ -101,7 +100,6 @@ void timer_Reset(struct _sys_timerhandle *tm)
 {
     tm->iCounter = 0;
     tm->fCounter = 0.f;
-    return;
 }
 
 // Update timer
@@ -116,7 +114,7 @@ void timer_Update(struct _sys_timerhandle *tm)
     do
     {
         GET_TICK(&tm->tEnd);
-    	ticks_passed = tm->tEnd - tm->tStart;
+		ticks_passed = tm->tEnd - tm->tStart;
 		ticks_left = (int64_t)ticks_to_wait - (int64_t)ticks_passed;
 
 #ifdef USE_YIELD
@@ -141,13 +139,12 @@ void timer_Update(struct _sys_timerhandle *tm)
 #endif
 
     }while(ticks_left>0);
-    
+
 	tm->fFrameDelta = (float)((double)ticks_passed / (double)g_iFreq);
 	tm->fCounter = tm->fFrameDelta * (float) tm->iFreq;
     tm->iCounter = (int32_t)(tm->fCounter * 65535.f);
 
     GET_TICK(&tm->tStart);
-    return;
 }
 
 // Stop timer
@@ -157,28 +154,26 @@ void timer_Stop(struct _sys_timerhandle *tm)
 #ifdef USE_TIME_PERIOD
     timeEndPeriod(1);
 #endif
-
-    return;
 }
 
 #endif
 
 // Get time in ms
-u_int32_t timer_ms(void)
+uint32_t timer_ms(void)
 {
 	return GET_MILLISEC();
 }
 
 // Get time in secs
-u_int32_t timer_sec(void)
+uint32_t timer_sec(void)
 {
 	return GET_MILLISEC() / 1000;
 }
 
 // Snooze (yield)
-void timer_snooze(u_int32_t n)
+void timer_snooze(uint32_t n)
 {
-#ifdef USE_YIELD	
+#ifdef USE_YIELD
 	Sleep(n);
 #endif
 }
@@ -187,11 +182,11 @@ void timer_snooze(u_int32_t n)
 int32_t thread_begin(SYS_THREAD *pFunc, enum SYS_THREAD_PRIORITY_ENUM priority)
 {
 	HANDLE hThread = CreateThread(
-		NULL, 					// no security attributes
-		0, 						// use default stack size
-		pFunc->pFunc, 			// thread function
-		pFunc->pArgument, 		// argument to thread function
-		0, 						// use default creation flags
+		NULL,					// no security attributes
+		0,						// use default stack size
+		pFunc->pFunc,			// thread function
+		pFunc->pArgument,		// argument to thread function
+		0,						// use default creation flags
 		NULL
 	);							// returns the thread identifier
 	DWORD p = THREAD_PRIORITY_NORMAL;
@@ -215,18 +210,16 @@ int32_t thread_begin(SYS_THREAD *pFunc, enum SYS_THREAD_PRIORITY_ENUM priority)
 // End thread
 void thread_end(SYS_THREAD *pFunc)
 {
-	HANDLE handle = (HANDLE)pFunc->hThread;	
+	HANDLE handle = (HANDLE)pFunc->hThread;
 	WaitForSingleObject(handle, INFINITE);
 	CloseHandle(handle);
 	pFunc->hThread = 0;
-	return;
 }
 
 // Exit thread
 void thread_exit(int code)
 {
 	ExitThread(code);
-	return;
 }
 
 // Win32
@@ -247,9 +240,9 @@ int mutex_init(SYS_MUTEX *mutex)
 
 int mutex_destroy(SYS_MUTEX *mutex)
 {
-   if ( mutex ) 
+   if ( mutex )
    {
-		if ( mutex->hMutex ) 
+		if ( mutex->hMutex )
 		{
 			CloseHandle((HANDLE)mutex->hMutex);
 			mutex->hMutex = 0;
@@ -264,7 +257,7 @@ int mutex_lock(SYS_MUTEX *mutex)
 	if ( mutex == NULL )
 		return -1;
 
-	if ( WAIT_FAILED == WaitForSingleObject((HANDLE)mutex->hMutex, INFINITE) ) 
+	if ( WAIT_FAILED == WaitForSingleObject((HANDLE)mutex->hMutex, INFINITE) )
 		return -1;
 
 	return 0;
@@ -275,7 +268,7 @@ int mutex_unlock(SYS_MUTEX *mutex)
 	if ( mutex == NULL )
 		return -1;
 
-	if ( FALSE == ReleaseMutex((HANDLE)mutex->hMutex)) 
+	if ( FALSE == ReleaseMutex((HANDLE)mutex->hMutex))
 		return -1;
 
 	return 0;

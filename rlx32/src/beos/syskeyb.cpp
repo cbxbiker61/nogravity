@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -44,21 +44,20 @@ static unsigned long Update(void *pdevice)
     {
 		sysMemCpy(sKEY->steButtons, sKEY->rgbButtons, 16);
         sysMemCpy(sKEY->rgbButtons, TheKey.key_states, 16);
-    	int i;
-    	for (i=0;i<16*8;i++)
+		int i;
+		for (i=0;i<16*8;i++)
 		{
 			if (sKEY_IsHeld(i))
 			{
 				sKEY->scanCode = i;
 			}
-	   	}
-    }       
+		}
+    }
     return 1;
 }
 
 static void Release(void)
 {
-    return;
 }
 
 static const char KEYB_US[]={
@@ -71,7 +70,7 @@ static const char KEYB_US[]={
     0,0,0,0,0,0,0,0,0,0,
     0,0,1,1,0,'-',1,
     '5',1,'+',1,1,0,0,
-	'.',87,88 
+	'.',87,88
 };
 
 char static *sysKeybScanNameCode(int scan)

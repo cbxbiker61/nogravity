@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -35,11 +35,11 @@ STUB_Registry RLX={
  // System
  {
    // TODO: Understand what all these options mean and if the right ones are chosen.
-   RLXSYSTEM_Enable, 
+   RLXSYSTEM_Enable,
    RLXOS_LINUX,
    FALSE,
    5,
-   0, 
+   0,
    {
      NULL,
      NULL,
@@ -50,7 +50,7 @@ STUB_Registry RLX={
      "Pentium Pro",
      "Ix86"
    }
- }, 
+ },
  // Audio
  {
    RLXAUDIO_Enable+
@@ -60,59 +60,60 @@ STUB_Registry RLX={
    0,
    4, 32,
    {11025, 16537, 22050, 33075, 44100}
- }, 
+ },
  // Video
  {
-   RLXVIDEO_Enable, 
+   RLXVIDEO_Enable,
    RLXVIDEO_Primary,
-   70, 
+   70,
    0,
    0
- }, 
+ },
  // 3D
  {
-   0, 
+   0,
    RLX3D_OPENGL,
    2,
    {0, 0}
- }, 
+ },
 
  // Control
  {
    RLXCTRL_Enable+
    RLXCTRL_IntKeyboard,
    RLXCTRL_JoyAnalog,
- }, 
+ },
  // Joy
  {
    {
-    {0, 0, 0, 0, 0, 0}, 
-    {0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
    }
- }, 
+ },
  // Network
  {
-   0, 
+   0,
    {0, 0, 0}
- }, 
+ },
  // Dev
  {
-   "Default", 
+   "Default",
    "application/x-vnd",
-   "Realtech", 
-   0, 
-   0, 
- }, 
+   "Realtech",
+   0,
+   0,
+ },
  // App
  {
-   "", 
+   "",
    RLXAPP_IsRunning,
-   0, 
+   0,
    1L<<20
- }, 
+ },
  "rlxreg.ini",
  ""
 };
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void STUB_RegistryReset(STUB_Registry *regs)
@@ -123,8 +124,8 @@ STUB_Registry RLX={
 void STUB_RegistryReset(STUB_Registry *regs)
 {
     *regs = RLX;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void STUB_RegistryRead(STUB_Registry *regs)
@@ -132,7 +133,6 @@ void STUB_RegistryReset(STUB_Registry *regs)
 * DESCRIPTION :
 *
 */
-
 void STUB_RegistryRead(STUB_Registry *regs)
 {
   char tex[256];
@@ -144,36 +144,35 @@ void STUB_RegistryRead(STUB_Registry *regs)
         if (SelectConfigClass("System", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->System.Config);
-            GetCF_uchar2("Id", &iniFile, (u_int8_t*)&regs->System.Id);
-            GetCF_uchar2("Processor", &iniFile, (u_int8_t*)&regs->System.Processor);
+            GetCF_uchar2("Id", &iniFile, (uint8_t*)&regs->System.Id);
+            GetCF_uchar2("Processor", &iniFile, (uint8_t*)&regs->System.Processor);
         }
         if (SelectConfigClass("Audio", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->Audio.Config);
-            GetCF_uchar2("WaveDeviceId", &iniFile, (u_int8_t*)&regs->Audio.WaveDeviceId);
-            GetCF_uchar2("MidiDeviceId", &iniFile, (u_int8_t*)&regs->Audio.MidiDeviceId);
-            GetCF_uchar2("SamplingRate", &iniFile, (u_int8_t*)&regs->Audio.SamplingRate);
-            GetCF_uchar2("ChannelToMix", &iniFile, (u_int8_t*)&regs->Audio.ChannelToMix);
+            GetCF_uchar2("WaveDeviceId", &iniFile, (uint8_t*)&regs->Audio.WaveDeviceId);
+            GetCF_uchar2("MidiDeviceId", &iniFile, (uint8_t*)&regs->Audio.MidiDeviceId);
+            GetCF_uchar2("SamplingRate", &iniFile, (uint8_t*)&regs->Audio.SamplingRate);
+            GetCF_uchar2("ChannelToMix", &iniFile, (uint8_t*)&regs->Audio.ChannelToMix);
         }
         if (SelectConfigClass("Video", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->Video.Config);
-            GetCF_uchar2("Id", &iniFile, (u_int8_t*)&regs->Video.Id);
+            GetCF_uchar2("Id", &iniFile, (uint8_t*)&regs->Video.Id);
         }
         if (SelectConfigClass("3D", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->V3X.Config);
-            GetCF_uchar2("Id", &iniFile, (u_int8_t*)&regs->V3X.Id);
-            GetCF_uchar2("TextureQuality", &iniFile, (u_int8_t*)&regs->V3X.DefaultResize);
+            GetCF_uchar2("Id", &iniFile, (uint8_t*)&regs->V3X.Id);
+            GetCF_uchar2("TextureQuality", &iniFile, (uint8_t*)&regs->V3X.DefaultResize);
         }
         if (SelectConfigClass("Controller", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->Control.Config);
-            GetCF_uchar2("Id", &iniFile, (u_int8_t*)&regs->Control.Id);
+            GetCF_uchar2("Id", &iniFile, (uint8_t*)&regs->Control.Id);
         }
         DestroyConfig(&iniFile);
     } else STUB_RegistryWrite(regs);
-    return;
 }
 
 int STUB_RegistryWrite(STUB_Registry *regs)
@@ -210,3 +209,4 @@ int STUB_RegistryWrite(STUB_Registry *regs)
     }
     else return 0;
 }
+

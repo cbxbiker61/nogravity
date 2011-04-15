@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -62,17 +62,17 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 */
 SGScript *GetSifByName(char *s)
 {
-	       
     SGScript *pScript, *f=NULL;
     int i;
     for (pScript=g_pPlayerInfo, i=0;(i<g_SGSettings.maxCase)&&(f==NULL);i++, pScript++)
     {
-        if (strcmp(s, pScript->Basename)==0) 
+        if ( ! strcmp(s, pScript->Basename) )
 			f=pScript;
     }
 	SYS_ASSERT(f);
     return f;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NG_StageReadFile(char *fin)
@@ -84,7 +84,7 @@ void NG_StageReadFile(char *fin, int extrn)
 {
     ConfigFile iniFile;
     int32_t val;
-    u_int8_t val2;
+    uint8_t val2;
     char *s;
     char tex2[64], fn[64];
     SYS_FILEHANDLE in;
@@ -109,10 +109,10 @@ void NG_StageReadFile(char *fin, int extrn)
 			continue;
 
         sscanf(tmp, "%s %s", tex, tex2);
-        if (strcmp(tex, "include")==0) 
+        if (strcmp(tex, "include")==0)
 			NG_StageReadFile(tex2, extrn);
         else
-        if (strcmp(tex, "xinclude")==0) 
+        if (strcmp(tex, "xinclude")==0)
 			NG_StageReadFile(tex2, 1);
         else i=1;
     } while(i!=1);
@@ -125,7 +125,7 @@ void NG_StageReadFile(char *fin, int extrn)
 			SYS_ASSERT(g_SGSettings.maxCase<MAX_PLAYER);
             pScript=g_pPlayerInfo+g_SGSettings.maxCase;
         }
-                    
+
 		if(SelectConfigClass("World", &iniFile))
 		{
 			g_SGObjects.World.Focal = GetCF_long("Focal", &iniFile);
@@ -137,15 +137,15 @@ void NG_StageReadFile(char *fin, int extrn)
 			sprintf(tex, "NAV %d", i);
 			if (SelectConfigClass(tex, &iniFile))
 			{
-				g_SGObjects.World.Nav[i].SunFlare = (u_int8_t)GetCF_bool("SunFlare", &iniFile);
-				g_SGObjects.World.Nav[i].SpaceDebris = (u_int8_t)GetCF_bool("Debris", &iniFile);
-				g_SGObjects.World.Nav[i].Skybox = (u_int8_t)GetCF_bool("Sky", &iniFile);
+				g_SGObjects.World.Nav[i].SunFlare = (uint8_t)GetCF_bool("SunFlare", &iniFile);
+				g_SGObjects.World.Nav[i].SpaceDebris = (uint8_t)GetCF_bool("Debris", &iniFile);
+				g_SGObjects.World.Nav[i].Skybox = (uint8_t)GetCF_bool("Sky", &iniFile);
 				g_SGObjects.World.Nav[i].Check=1;
 			} else g_SGObjects.World.Nav[i].Check=0;
 		}
 		for (i=1;i<8;i++)
 		{
-			if (!g_SGObjects.World.Nav[i].Check) 
+			if (!g_SGObjects.World.Nav[i].Check)
 				g_SGObjects.World.Nav[i]=g_SGObjects.World.Nav[0];
 		}
 		if(SelectConfigClass("Scene", &iniFile))
@@ -338,24 +338,24 @@ void NG_StageReadFile(char *fin, int extrn)
 				if (s) pScript->SoundAppear = NG_AudioGetByName(s);
 				s = GetCF_str("SoundAmbiant", &iniFile);
 				if (s) pScript->AmbiantSound = 0; // NG_AudioGetByName(s);
-				if (GetCF_long2("Event", &iniFile, &val)) pScript->Event=(u_int8_t)val;
-				if (GetCF_long2("AnimMode", &iniFile, &val)) pScript->AnimMode=(u_int8_t)val;
+				if (GetCF_long2("Event", &iniFile, &val)) pScript->Event=(uint8_t)val;
+				if (GetCF_long2("AnimMode", &iniFile, &val)) pScript->AnimMode=(uint8_t)val;
 				if (GetCF_long2("Appear", &iniFile, &val)) pScript->Appear=val;
-				if (GetCF_long2("Avary", &iniFile, &val)) pScript->Avary=(u_int8_t)val;
-				if (GetCF_long2("SpeedTurn", &iniFile, &val)) pScript->SpeedTurn=(u_int8_t)val;
-				if (GetCF_long2("ShootAxe", &iniFile, &val)) pScript->ShootAxe=(u_int8_t)val;
+				if (GetCF_long2("Avary", &iniFile, &val)) pScript->Avary=(uint8_t)val;
+				if (GetCF_long2("SpeedTurn", &iniFile, &val)) pScript->SpeedTurn=(uint8_t)val;
+				if (GetCF_long2("ShootAxe", &iniFile, &val)) pScript->ShootAxe=(uint8_t)val;
 				if (GetCF_long2("Shield", &iniFile, &val)) pScript->Shield=val; else pScript->Shield=1;
 				if (GetCF_long2("ShieldMax", &iniFile, &val)) pScript->ShieldMax=val;
 				else pScript->ShieldMax=pScript->Shield;
 				if (GetCF_long2("Weight", &iniFile, &val)) pScript->Poids=val;
 				if (GetCF_long2("Sight", &iniFile, &val)) pScript->Sight=val;
 				if (GetCF_long2("Scoring", &iniFile, &val)) pScript->Scoring=val;
-				if (GetCF_long2("Code", &iniFile, &val)) pScript->Code=(u_int8_t)val;
+				if (GetCF_long2("Code", &iniFile, &val)) pScript->Code=(uint8_t)val;
 				if (GetCF_long2("Wait", &iniFile, &val)) pScript->Wait=val;
 				if (GetCF_long2("SpeedMax", &iniFile, &val)) pScript->fSpeedMax=(float)val;
-				if (GetCF_long2("Attack", &iniFile, &val)) pScript->Attack=(u_int8_t)val;
-				if (GetCF_long2("ColorRadar", &iniFile, &val)) pScript->ColorRadar=(u_int8_t)val;
-				if (GetCF_long2("NeverShock", &iniFile, &val)) pScript->NeverShock=(u_int8_t)val;
+				if (GetCF_long2("Attack", &iniFile, &val)) pScript->Attack=(uint8_t)val;
+				if (GetCF_long2("ColorRadar", &iniFile, &val)) pScript->ColorRadar=(uint8_t)val;
+				if (GetCF_long2("NeverShock", &iniFile, &val)) pScript->NeverShock=(uint8_t)val;
 				if (GetCF_long2("Stealth", &iniFile, &val))
 				{
 					pScript->Stealth = 1;
@@ -367,7 +367,7 @@ void NG_StageReadFile(char *fin, int extrn)
 				if (GetCF_bool2("NeverHide", &iniFile, &val2)) pScript->NeverHide=val2 ? 1 : 2;
 				if (GetCF_bool2("BigExplode", &iniFile, &val2)) pScript->BigExplode=val2;
 				if (GetCF_bool2("NoFogging", &iniFile, &val2)) pScript->NoFog=val2;
-			} 
+			}
 			else
 			{
 				SYS_ASSERT(0);
@@ -379,5 +379,5 @@ void NG_StageReadFile(char *fin, int extrn)
     {
         SYS_ASSERT(0);
     }
-    return;
 }
+

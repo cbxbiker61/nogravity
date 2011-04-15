@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -59,13 +59,11 @@ void RW_Interface_Release(RW_Interface *pInt)
 	if (pInt->parent)
 		MM_heap.free(pInt->parent);
     MM_heap.free(pInt);
-    return;
 }
 
 static void RW_Zone_Alloc(RW_Interface *pInt)
 {
     pInt->item = ( RW_Button *) MM_heap.realloc(pInt->item, sizeof( RW_Button  ) * (pInt->numItem+2) );
-    return;
 }
 
 void RW_Zone_CreateWithSize(RW_Interface *pInt, int x, int y, int lx, int ly)
@@ -76,13 +74,11 @@ void RW_Zone_CreateWithSize(RW_Interface *pInt, int x, int y, int lx, int ly)
     pInt->item[pInt->numItem].LX=lx;
     pInt->item[pInt->numItem].LY=ly;
     pInt->numItem++;
-    return;
 }
 
 void RW_Zone_CreateWithButton(RW_Interface *pInt, RW_Button *But)
 {
     RW_Zone_CreateWithSize(pInt, But->X, But->Y, But->LX, But->LY);
-    return;
 }
 
 void RW_Zone_CreateWithText(RW_Interface *pInt, char *szText, int x, int y, int bAllocate)
@@ -92,7 +88,7 @@ void RW_Zone_CreateWithText(RW_Interface *pInt, char *szText, int x, int y, int 
     area.Y = y;
     area.LX = (short)(CSPG_TxLen(szText, RW.pFont) + 6);
     area.LY = (short)(RW.pFont->item[0].LY + 6);
-    
+
 	CSP_WriteText(szText, area.X + 4, area.Y + 3, RW.pFont);
 
     if (!bAllocate)
@@ -103,7 +99,6 @@ void RW_Zone_CreateWithText(RW_Interface *pInt, char *szText, int x, int y, int 
 		area.LY-=3;
         RW_Zone_CreateWithButton(pInt, &area);
 	}
-	return;
 }
 
 static int IsOverlapping(RW_Interface *pInt, int i)
@@ -128,7 +123,6 @@ static int CheckMouseOverlap(RW_Interface *pInt, int OldF)
     return f;
 }
 
-
 #define deadZone     16382L
 #define isjoyright  (sJOY->lX>32767L+deadZone)
 #define isjoyleft   (sJOY->lX<32767L-deadZone)
@@ -140,13 +134,13 @@ static int ScanKeys(RW_Interface *pInt, int *pCurSel, int *pPrevSel)
     RW.dx = 0;
 	RW.dy = 0;
 	RW.ch = 0;
-       
+
 	if (sKEY_IsClicked(s_return))
 		RW.ch = 13;
 
-    if (sKEY_IsClicked(s_esc))    
+    if (sKEY_IsClicked(s_esc))
 		RW.ch = 27;
-    
+
 	RW.dx = sKEY_IsClicked(s_right) - sKEY_IsClicked(s_left);
     RW.dy = sKEY_IsClicked(s_down) - sKEY_IsClicked(s_up);
 
@@ -164,7 +158,7 @@ static int ScanKeys(RW_Interface *pInt, int *pCurSel, int *pPrevSel)
 				RW.dy = isjoydown ? 1 : (isjoyup ? -1 : 0);
 		}
 
-		if (sJOY_IsClicked(2))			
+		if (sJOY_IsClicked(2))
 		{
 			RW.ch = 13;
 		}
@@ -178,13 +172,13 @@ static int ScanKeys(RW_Interface *pInt, int *pCurSel, int *pPrevSel)
 	if ((RW.ch)||(RW.dx)||(RW.dy))
     {
         RW.isMouseHidden = 1;
-        switch(pInt->keymode) 
+        switch(pInt->keymode)
 		{
             case RW_BOTH:
 			{
-				if (RW.dx) 
-					(*pCurSel)+=RW.dx; 
-				else 
+				if (RW.dx)
+					(*pCurSel)+=RW.dx;
+				else
 					(*pCurSel)+=RW.dy;
 			}
 			break;
@@ -206,23 +200,23 @@ static int ScanKeys(RW_Interface *pInt, int *pCurSel, int *pPrevSel)
 			RW.isMouseHidden = 0;
 
 	}
-    
-	if (*pCurSel<0) 
+
+	if (*pCurSel<0)
 	{
 		(*pCurSel)=pInt->numItem-1;
 		(*pPrevSel)= -1;
 	}
-    
+
 	if (*pCurSel>=pInt->numItem)
 	{
-		(*pCurSel)=0; 
+		(*pCurSel)=0;
 		(*pPrevSel)= -1;
 	}
-    
+
 	if (((RW.dx)||(RW.dy))&&(!RW.isMouseHidden))
     {
 		sMOU->SetPosition(
-			pInt->item[*pCurSel].X+(pInt->item[*pCurSel].LX>>1), 
+			pInt->item[*pCurSel].X+(pInt->item[*pCurSel].LX>>1),
 			pInt->item[*pCurSel].Y+(pInt->item[*pCurSel].LY>>1)
 		);
     }
@@ -254,7 +248,7 @@ int RW_Interface_Scan(RW_Interface *pInt, int pCurSel, int *ok, PFRWCALLBACK pfC
 			if (sMOU->numControllers && !RW.isMouseHidden)
 			{
 				pCurSel = CheckMouseOverlap(pInt, pCurSel);
-				
+
 				if ( sMOU_IsHeld(0) )
 				{
 					if (IsOverlapping(pInt, pCurSel))
@@ -266,7 +260,7 @@ int RW_Interface_Scan(RW_Interface *pInt, int pCurSel, int *ok, PFRWCALLBACK pfC
 
 				if ( sMOU_IsReleased(0) )
 				{
-					if ( pushed && IsOverlapping(pInt, pushOn)) 
+					if ( pushed && IsOverlapping(pInt, pushOn))
 						pushed = 2;
 					else
 						pushed = 0;
@@ -274,12 +268,12 @@ int RW_Interface_Scan(RW_Interface *pInt, int pCurSel, int *ok, PFRWCALLBACK pfC
 
 				if (pushed == 2)
 				{
-					if (IsOverlapping(pInt, pCurSel)) 
-						key = 13;					
+					if (IsOverlapping(pInt, pCurSel))
+						key = 13;
 				}
-			}        
+			}
 		}
-		
+
 		RW.ch = key;
 		RW.current = pCurSel;
 
@@ -303,18 +297,16 @@ void RW_Create(GXSPRITEGROUP *pFont)
 {
     sysMemZero(&RW, sizeof(RW));
 	RW.pFont = pFont;
-    return;
 }
 
 void RW_Release(void)
 {
-    return;
 }
 
 int RW_InputText(RW_Interface *pInt, char *t, int numChar, PFRWCALLBACK pfCallback)
 {
-    u_int8_t finish = 0;
- 	int m_nNumSpaces = 0;
+    uint8_t finish = 0;
+	int m_nNumSpaces = 0;
 	char text[256], tmp[256];
 	char m_scanCode = sKEY->scanCode;
 	SYS_ASSERT(numChar<255);
@@ -327,7 +319,7 @@ int RW_InputText(RW_Interface *pInt, char *t, int numChar, PFRWCALLBACK pfCallba
     {
 		sKEY->Update(0);
 		sJOY->Update(0);
-		
+
 		if (sKEY->scanCode!=m_scanCode)
 		{
 			m_scanCode = sKEY->scanCode;
@@ -340,7 +332,7 @@ int RW_InputText(RW_Interface *pInt, char *t, int numChar, PFRWCALLBACK pfCallba
 					{
 						strncat(text, " ", 1);
 						m_nNumSpaces++;
-					}			
+					}
 				}
 				break;
 				case s_delete:
@@ -368,7 +360,7 @@ int RW_InputText(RW_Interface *pInt, char *t, int numChar, PFRWCALLBACK pfCallba
 
 				case s_return:
 					{
-						m_nNumSpaces = 0;						
+						m_nNumSpaces = 0;
 						finish = 1;
 
 					}break;
@@ -387,12 +379,12 @@ int RW_InputText(RW_Interface *pInt, char *t, int numChar, PFRWCALLBACK pfCallba
 					}
 					break;
 				}
-			}        
+			}
 
-		sprintf(tmp, "%s%c", text, timer_ms()%1000<500 ? '_' : ' '); 
+		sprintf(tmp, "%s%c", text, timer_ms()%1000<500 ? '_' : ' ');
 		RW.szInputText = tmp;
 		pfCallback(pInt, 2);
-                
+
     }while(!finish);
 
 	if (finish == 1)
@@ -416,7 +408,7 @@ RW_Interface * RW_Interface_GetFp(SYS_FILEHANDLE in)
     {
         FIO_cur->fread(&spl, sizeof(GXSPRITEFORMAT), 1, in);
 #ifdef __BIG_ENDIAN__
-        BSWAP16((u_int16_t*)&spl.a, 4);
+        BSWAP16((uint16_t*)&spl.a, 4);
 #endif
         RW_Zone_CreateWithSize(pInterface, spl.a, spl.b, spl.c-spl.a+1, spl.d-spl.b+1);
     }
@@ -446,11 +438,11 @@ void RW_Interface_BuildTree(RW_Interface *spc)
         if (spc->parent[i]<255)
         {
             root = spc->item + spc->parent[i];
-            but->X-=root->X; 
+            but->X-=root->X;
             but->Y-=root->Y;
             but->parent = root;
         }
         else but->parent = NULL;
     }
-    return;
 }
+

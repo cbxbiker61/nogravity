@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -142,7 +142,6 @@ void W32_WindowLayoutSetStyle(HWND hWnd, bool bWindowed)
 	}
 }
 
-
 static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwHeight, bool bFullScrn, bool bResizable) // Must be in called at D3Dx window creation
 {
 	DWORD dwStyle = GetWindowStyle(hWnd);
@@ -177,9 +176,9 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 		// Center Window
 		SetRect( &rc, 0, 0, dwWidth, dwHeight );
 		SystemParametersInfo( SPI_GETWORKAREA, 0, &rcWork, 0 );
-		
+
 		int cx = (rcWork.right - rcWork.left - (rc.right - rc.left)) >>1;
-		int cy = (rcWork.bottom - rcWork.top - (rc.bottom - rc.top)) >>1;		
+		int cy = (rcWork.bottom - rcWork.top - (rc.bottom - rc.top)) >>1;
 
 		rc.left+=cx;
 		rc.right+=cx;
@@ -195,7 +194,7 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 #if _WIN32_WCE
 							0,
 #else
-	  						GetMenu(hWnd) != NULL,
+							GetMenu(hWnd) != NULL,
 #endif
 							GetWindowExStyle(hWnd) );
 
@@ -203,15 +202,15 @@ static void W32_WindowLayoutSetSize(HWND hWnd, RECT *pRect, int dwWidth, int dwH
 
 
 		SetWindowPos( hWnd, NULL,
-					  rc.left, rc.top, 
-					  rc.right - rc.left, 
+					  rc.left, rc.top,
+					  rc.right - rc.left,
 					  rc.bottom - rc.top,
 					  SWP_NOZORDER | SWP_NOACTIVATE );
 
 
 	}
 	else
-	{		
+	{
 		SetRect( &rc, 0, 0, dwWidth, dwHeight );
 		SetWindowPos( hWnd, HWND_TOPMOST, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, NULL);
 	}
@@ -230,7 +229,7 @@ static void CALLING_C Flip(void)
 }
 
 // lock framebuffer
-static u_int8_t RLXAPI *Lock(void)
+static uint8_t RLXAPI *Lock(void)
 {
     return NULL;
 }
@@ -297,17 +296,17 @@ static int GL_SetupPixelFormat(HWND hWnd)
 	SYS_Debug("...registered fake window class");
 #endif
 
-	hWndTemp = CreateWindowEx(0, 
+	hWndTemp = CreateWindowEx(0,
                               wcTemp.lpszClassName,
-							  wcTemp.lpszClassName, 
+							  wcTemp.lpszClassName,
 							  WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 1, 1,
 							  0, 0, wcTemp.hInstance, NULL);
-	
+
 	if (!hWndTemp)
 	{
 		return -1;
 	}
-	
+
 	hDCTemp = GetDC(hWndTemp);
 
 	if (!hDCTemp)
@@ -354,7 +353,7 @@ static int GL_SetupPixelFormat(HWND hWnd)
 
 			if (acc)
 			{
-		   		*piAttrib = WGL_SUPPORT_OPENGL_ARB; piAttrib++;
+				*piAttrib = WGL_SUPPORT_OPENGL_ARB; piAttrib++;
 				*piAttrib = GL_TRUE; piAttrib++;
 				*piAttrib = WGL_ACCELERATION_ARB; piAttrib++;
 				*piAttrib = WGL_FULL_ACCELERATION_ARB; piAttrib++;
@@ -438,12 +437,12 @@ static int GL_SetupPixelFormat(HWND hWnd)
 			else
 			{
 #ifdef _DEBUG
-	   		 	SYS_Debug("...failed to set multisampling to %d\n", multisample);
+				SYS_Debug("...failed to set multisampling to %d\n", multisample);
 #endif
 				pixfmt = -1;
 				if (multisample)
 				{
-			    	multisample/=2;
+					multisample/=2;
 			    }
 				else
 					break;
@@ -495,7 +494,7 @@ static int GL_SetupPixelFormat(HWND hWnd)
 // Enumerate display modes
 static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 {
-   	DEVMODE *drv;
+	DEVMODE *drv;
 	int j=0, i;
 	GXDISPLAYMODEINFO *pRes, *p;
 	SYS_ASSERT(gl_pDisplayModes);
@@ -512,9 +511,9 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 	{
 		if ((drv->dmBitsPerPel==(unsigned)bpp)||(bpp == -1))
 		{
-			p->lWidth = (u_int16_t)drv->dmPelsWidth;
-			p->lHeight = (u_int16_t)drv->dmPelsHeight;
-			p->BitsPerPixel = (u_int8_t)drv->dmBitsPerPel;
+			p->lWidth = (uint16_t)drv->dmPelsWidth;
+			p->lHeight = (uint16_t)drv->dmPelsHeight;
+			p->BitsPerPixel = (uint8_t)drv->dmBitsPerPel;
 			p->mode = i;
 			p++;
 		}
@@ -523,12 +522,11 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 	return pRes;
 }
 
-
 // Search display modes
 static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 {
     int i;
-	u_int16_t MaxRefreshRate = 0;
+	uint16_t MaxRefreshRate = 0;
 	gl_bpp = GL_GetDesktopColorDepth(g_hWnd);
 	int safeMode1 = 0, safeMode2 = 0;
 
@@ -538,11 +536,11 @@ static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 		DEVMODE *drv = gl_pDisplayModes;
 		SYS_ASSERT(gl_nDisplayModeCount);
 		for (i=0;i<gl_nDisplayModeCount;i++, drv++)
-		{			
+		{
 			if (
-				((drv->dmBitsPerPel ==(u_int16_t)bpp)|| ((bpp == -1) && (bpp == gl_bpp)))
-			&&	 (drv->dmPelsWidth  ==(u_int16_t)lx)
-			&&	 (drv->dmPelsHeight ==(u_int16_t)ly)
+				((drv->dmBitsPerPel ==(uint16_t)bpp)|| ((bpp == -1) && (bpp == gl_bpp)))
+			&&	 (drv->dmPelsWidth  ==(uint16_t)lx)
+			&&	 (drv->dmPelsHeight ==(uint16_t)ly)
 			)
 			{
 				// get highest supported refresh rate
@@ -551,7 +549,7 @@ static GXDISPLAYMODEHANDLE RLXAPI SearchDisplayMode(int lx, int ly, int bpp)
 					// not too high ...
 					if ((ret && (drv->dmDisplayFrequency<=70))||(!ret))
 					{
-						MaxRefreshRate = (u_int16_t)drv->dmDisplayFrequency;
+						MaxRefreshRate = (uint16_t)drv->dmDisplayFrequency;
 						ret = i + 1;
 					}
 				}
@@ -599,7 +597,7 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 	}
 
 	g_pRLX->pGX->gi = GI_OpenGL;
-	
+
 	GL_FakeViewPort();
 	SetPrimitiveSprites();
 
@@ -612,8 +610,6 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
     g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
     g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
     g_pRLX->pGX->csp_cfg.op = g_pRLX->pGX->csp.put;
-
-    return;
 }
 
 // Set display mode
@@ -639,7 +635,7 @@ static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
 
 // Create surface
 static int RLXAPI CreateSurface(int BackBufferCount)
-{    
+{
 	int pixfmt = GL_SetupPixelFormat(g_hWnd);
 	if (pixfmt < 0)
 	{
@@ -663,7 +659,7 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	if (!wglMakeCurrent(g_hDC, g_hGLRC))
 	{
 		return -5;
-	}	
+	}
 
 #ifdef _DEBUG
 	SYS_Debug("...making context current: succeeded");
@@ -686,13 +682,13 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	{
 		wglSwapIntervalEXT(g_pRLX->pGX->View.Flags&GX_CAPS_VSYNC);
 	}
-	
+
 #ifdef _DEBUG
 	SYS_Debug("...%s", glGetString(GL_VENDOR));
 	SYS_Debug("...%s", glGetString(GL_VERSION));
 	SYS_Debug("...%s", glGetString(GL_RENDERER));
 #endif
-	
+
 	// Enable multisampling
 	if (g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING)
 	{
@@ -706,7 +702,7 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 	// Clear buffers
 	for (int i=0;i<2;i++)
 	{
- 	    glClearColor(0.5,0.5,0.5,0.5);
+	    glClearColor(0.5,0.5,0.5,0.5);
 		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 		Flip();
 	}
@@ -714,7 +710,7 @@ static int RLXAPI CreateSurface(int BackBufferCount)
 
 	g_pRLX->pGX->Surfaces.maxSurface = BackBufferCount;
 
-    return 0; 
+    return 0;
 }
 
 // Release surfaces
@@ -734,13 +730,12 @@ static void RLXAPI ReleaseSurfaces(void)
 	}
 
 	g_pRLX->pGX->Surfaces.maxSurface = 0;
-    return;
 }
 
 // Register display mode
 static int RLXAPI RegisterMode(int mode)
 {
-	g_pRLX->pGX->View.DisplayMode = (u_int16_t)mode;
+	g_pRLX->pGX->View.DisplayMode = (uint16_t)mode;
 	g_pRLX->pGX->Client->GetDisplayInfo(mode);
 	return g_pRLX->pGX->Client->SetDisplayMode(mode);
 }
@@ -758,8 +753,6 @@ static void RLXAPI Shutdown(void)
 		delete[] gl_pDisplayModes;
 		gl_pDisplayModes = 0;
 	}
-
-    return;
 }
 
 // Open engine
@@ -782,18 +775,18 @@ static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)
 
 GXCLIENTDRIVER GX_OpenGL = {
     Lock,
-    Unlock, 
-    EnumDisplayList, 
-    GetDisplayInfo, 
+    Unlock,
+    EnumDisplayList,
+    GetDisplayInfo,
     SetDisplayMode,
-    SearchDisplayMode, 
-    CreateSurface, 
+    SearchDisplayMode,
+    CreateSurface,
     ReleaseSurfaces,
-    NULL, 
-    NULL, 
-    NULL, 	
-    RegisterMode, 
-    Shutdown, 
+    NULL,
+    NULL,
+    NULL,
+    RegisterMode,
+    Shutdown,
     Open,
     NotifyEvent,
     "OpenGL"
@@ -803,13 +796,11 @@ _RLXEXPORTFUNC void RLXAPI GX_EntryPoint(struct RLXSYSTEM *p)
 {
     g_pRLX = p;
 	g_pRLX->pGX->Client = &GX_OpenGL;
-    return;
 }
 
 _RLXEXPORTFUNC void RLXAPI V3X_EntryPoint(struct RLXSYSTEM *p)
-{    
+{
 	GX_EntryPoint(p);
     g_pRLX->pV3X->Client = &V3X_OpenGL;
-    return;
-
 }
+

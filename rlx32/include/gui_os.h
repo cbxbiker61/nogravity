@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -32,20 +33,20 @@ typedef struct _button_item
     struct _button_item		*	parent;
 }RW_Button;
 
-enum RW_KEY_MODE 
+enum RW_KEY_MODE
 {
 	RW_BOTH,
 	RW_VERT,
-	RW_HORIZ	
+	RW_HORIZ
 };
 
 typedef struct _RW_Interface
 {
     int							numItem;
-    u_int8_t					*	parent;
+    uint8_t					*	parent;
     RW_Button				*	item;
     int							type;
-	enum RW_KEY_MODE 			keymode;
+	enum RW_KEY_MODE			keymode;
 }RW_Interface;
 
 typedef int (*PFRWCALLBACK)( struct _RW_Interface *p, int mode);
@@ -79,3 +80,4 @@ _RLXEXPORTDATA    extern RW_SYSTEM RW;
 __end_extern_c
 
 #endif
+

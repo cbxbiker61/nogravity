@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -43,8 +44,8 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define RGB_Make32bit(r, g, b, a) (unsigned)(b)+((unsigned)(g)<<8)+((unsigned)(r)<<16)+((unsigned)(a)<<24)
 #define RGB_Alpha50(a, b)        ((((a)&GX.View.RGB_Magic)+((b)&GX.View.RGB_Magic))>>1)
 #define RGB_Specular(a, ext)   ((unsigned)a.ext+(unsigned)GX.AmbientColor.ext>255 ? 255 : a.ext+GX.AmbientColor.ext)
-#define RGB_Set(pal, xr, xg, xb) { (pal).r=(u_int8_t)(xr); (pal).g=(u_int8_t)(xg);  (pal).b=(u_int8_t)(xb); }
-#define RGB32_Set(pal, xr, xg, xb, xa) { (pal).r=(u_int8_t)(xr); (pal).g=(u_int8_t)(xg);  (pal).b=(u_int8_t)(xb); (pal).a=(u_int8_t)(xa);}
+#define RGB_Set(pal, xr, xg, xb) { (pal).r=(uint8_t)(xr); (pal).g=(uint8_t)(xg);  (pal).b=(uint8_t)(xb); }
+#define RGB32_Set(pal, xr, xg, xb, xa) { (pal).r=(uint8_t)(xr); (pal).g=(uint8_t)(xg);  (pal).b=(uint8_t)(xb); (pal).a=(uint8_t)(xa);}
 
 // 48 bit color structure
 typedef struct{
@@ -74,9 +75,9 @@ enum {
 __extern_c
 
     // Pixel format
-_RLXEXPORTFUNC    void    RLXAPI  RGB_GetPixelFormat(rgb24_t *rgb, u_int32_t c);    //
+_RLXEXPORTFUNC    void    RLXAPI  RGB_GetPixelFormat(rgb24_t *rgb, uint32_t c);    //
 _RLXEXPORTFUNC    unsigned   RLXAPI  RGB_SetPixelFormat(int r, int g, int b);    //
-_RLXEXPORTFUNC    void    RLXAPI  RGB_SetAlphaBit(u_int16_t *mp, int32_t size);
+_RLXEXPORTFUNC    void    RLXAPI  RGB_SetAlphaBit(uint16_t *mp, int32_t size);
 
     // Operation Palette
 _RLXEXPORTFUNC    void    RLXAPI  PAL_fadeChannel(rgb24_t *pf, int st, int fi, int start, int fin, rgb48_t *coul, int revrse);
@@ -89,12 +90,12 @@ _RLXEXPORTFUNC    void    RLXAPI  ACT_LoadFn(rgb24_t *pal, char *filename2);
 _RLXEXPORTFUNC    void    RLXAPI  ACT_LoadFp(rgb24_t *pal, SYS_FILEHANDLE in);
 
     // Color converters
-_RLXEXPORTFUNC    u_int32_t   RLXAPI  RGB_convert(int c, rgb24_t *palette);
+_RLXEXPORTFUNC    uint32_t   RLXAPI  RGB_convert(int c, rgb24_t *palette);
 _RLXEXPORTFUNC    void    RLXAPI  RGBA_to_RGB(rgb32_t *tab, unsigned size);
-_RLXEXPORTFUNC    u_int32_t   RLXAPI  RGB_PixelFormatEx(rgb24_t *p);
-_RLXEXPORTFUNC    u_int8_t   RLXAPI *RGB_SmartConverter(void *tgt, rgb24_t *target_pal, int target_bpp, 
-      void *source, const rgb24_t *source_pal, int source_bpp, u_int32_t size);
-_RLXEXPORTFUNC    u_int32_t  RLXAPI   RGB_findNearestColor(const rgb24_t *col, const rgb24_t *pal);
+_RLXEXPORTFUNC    uint32_t   RLXAPI  RGB_PixelFormatEx(rgb24_t *p);
+_RLXEXPORTFUNC    uint8_t   RLXAPI *RGB_SmartConverter(void *tgt, rgb24_t *target_pal, int target_bpp,
+      void *source, const rgb24_t *source_pal, int source_bpp, uint32_t size);
+_RLXEXPORTFUNC    uint32_t  RLXAPI   RGB_findNearestColor(const rgb24_t *col, const rgb24_t *pal);
 
     // RGB filtering
 _RLXEXPORTFUNC    void    RLXAPI  CSP_SmoothRGB(GXSPRITE *sp, int tbpp, int sbpp);
@@ -106,11 +107,11 @@ _RLXEXPORTFUNC    void    RLXAPI  RGB_AntiAlias(GXSPRITE *sp);
 _RLXEXPORTFUNC    void    RLXAPI  RGB_Build332ColorTable(rgb24_t *lut);
 
     // 8bit blend palette
-_RLXEXPORTFUNC    u_int8_t   RLXAPI *REALCOLOR_Compute(rgb24_t *pal, rgb24_t *clr, int mode, int alpha, int quantize);
-_RLXEXPORTFUNC    void    RLXAPI  REALCOLOR_Reduce(u_int8_t **real, int factor);
-_RLXEXPORTFUNC    int     RLXAPI  REALCOLOR_Simply(u_int8_t **real);
-_RLXEXPORTFUNC    void    RLXAPI  REALCOLOR_Free(u_int8_t **real);
-_RLXEXPORTFUNC    u_int8_t   RLXAPI **REALCOLOR_LoadFn(const char *xpal);
+_RLXEXPORTFUNC    uint8_t   RLXAPI *REALCOLOR_Compute(rgb24_t *pal, rgb24_t *clr, int mode, int alpha, int quantize);
+_RLXEXPORTFUNC    void    RLXAPI  REALCOLOR_Reduce(uint8_t **real, int factor);
+_RLXEXPORTFUNC    int     RLXAPI  REALCOLOR_Simply(uint8_t **real);
+_RLXEXPORTFUNC    void    RLXAPI  REALCOLOR_Free(uint8_t **real);
+_RLXEXPORTFUNC    uint8_t   RLXAPI **REALCOLOR_LoadFn(const char *xpal);
 
     // Fast macro for color fading.
 #define GX_FadeDownPalette(typ)     PAL_fading(GX.ColorTable, 32, 0, 32, typ)
@@ -125,3 +126,4 @@ _RLXEXPORTFUNC    u_int8_t   RLXAPI **REALCOLOR_LoadFn(const char *xpal);
 __end_extern_c
 
 #endif
+

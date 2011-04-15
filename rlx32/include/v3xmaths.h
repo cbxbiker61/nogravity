@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -46,15 +47,15 @@ static __inline V3XSCALAR V3XVector_Length(const V3XVECTOR *a)
 
 static __inline void V3XVector_CrossProduct(V3XVECTOR *r, const V3XVECTOR *a, const V3XVECTOR *b)
 {
-	r->x = MULF32(a->y, b->z) - MULF32 (a->z, b->y); 
-    r->y = MULF32(a->z, b->x) - MULF32 (a->x, b->z); 
-    r->z = MULF32(a->x, b->y) - MULF32 (a->y, b->x); 
+	r->x = MULF32(a->y, b->z) - MULF32 (a->z, b->y);
+    r->y = MULF32(a->z, b->x) - MULF32 (a->x, b->z);
+    r->z = MULF32(a->x, b->y) - MULF32 (a->y, b->x);
 }
 
-static __inline void V3XVector_Set(V3XVECTOR *P, V3XSCALAR X, V3XSCALAR Y, V3XSCALAR Z) 
+static __inline void V3XVector_Set(V3XVECTOR *P, V3XSCALAR X, V3XSCALAR Y, V3XSCALAR Z)
 {
-    P->x = X; 	
-	P->y = Y; 
+    P->x = X;
+	P->y = Y;
 	P->z = Z;
 }
 
@@ -84,54 +85,54 @@ static __inline void  V3XMatrix_GetCol2(V3XVECTOR *P, const V3XMATRIX *M)
     R.x = B.x; R.y = B.y; R.z = B.z;\
 }
 
-static __inline void V3XVector_Neg(V3XVECTOR *r) 
+static __inline void V3XVector_Neg(V3XVECTOR *r)
 {
-    r->x = -r->x; 
-    r->y = -r->y; 
-    r->z = -r->z; 
+    r->x = -r->x;
+    r->y = -r->y;
+    r->z = -r->z;
 }
 
 static __inline void V3XVector_Sum(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
 {
-    r->x = a->x + b->x; 
-    r->y = a->y + b->y; 
-    r->z = a->z + b->z; 
+    r->x = a->x + b->x;
+    r->y = a->y + b->y;
+    r->z = a->z + b->z;
 }
 
 static __inline void V3XVector_Dif(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
 {
-    r->x = a->x - b->x; 
-    r->y = a->y - b->y; 
-    r->z = a->z - b->z; 
+    r->x = a->x - b->x;
+    r->y = a->y - b->y;
+    r->z = a->z - b->z;
 }
 
 static __inline void V3XVector_Inc(V3XVECTOR *r, const V3XVECTOR* a)
 {
-    r->x += a->x ; 
-    r->y += a->y ; 
-    r->z += a->z ; 
+    r->x += a->x ;
+    r->y += a->y ;
+    r->z += a->z ;
 }
 
 static __inline void V3XVector_Dec(V3XVECTOR *r, const V3XVECTOR* a)
 {
-    r->x -= a->x ; 
-    r->y -= a->y ; 
-    r->z -= a->z ; 
+    r->x -= a->x ;
+    r->y -= a->y ;
+    r->z -= a->z ;
 }
 
 static __inline void V3XVector_Avg(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
 {
-    r->x = (a->x + b->x)/2; 
-    r->y = (a->y + b->y)/2; 
-    r->z = (a->z + b->z)/2; 
+    r->x = (a->x + b->x)/2;
+    r->y = (a->y + b->y)/2;
+    r->z = (a->z + b->z)/2;
 }
 
 
 static __inline void V3XVector_Scl(V3XVECTOR *r, const V3XVECTOR *a, V3XSCALAR k)
 {
-    r->x = MULF32(a->x, k); 
-    r->y = MULF32(a->y, k); 
-    r->z = MULF32(a->z, k); 
+    r->x = MULF32(a->x, k);
+    r->y = MULF32(a->y, k);
+    r->z = MULF32(a->z, k);
 }
 
 static __inline void V3XVector_Div(V3XVECTOR *r, V3XSCALAR k)
@@ -142,9 +143,9 @@ static __inline void V3XVector_Div(V3XVECTOR *r, V3XSCALAR k)
 
 static __inline void V3XVector_Madd(V3XVECTOR *r, const V3XVECTOR *a, const V3XVECTOR *b, V3XSCALAR k)
 {
-    r->x = MULF32(a->x, k) + b->x; 
-    r->y = MULF32(a->y, k) + b->y; 
-    r->z = MULF32(a->z, k) + b->z; 
+    r->x = MULF32(a->x, k) + b->x;
+    r->y = MULF32(a->y, k) + b->y;
+    r->z = MULF32(a->z, k) + b->z;
 }
 
 static __inline void V3XVector_PolarSet(V3XVECTOR *a, const V3XVECTOR *b, V3XSCALAR r, int32_t al, int32_t bl)
@@ -191,12 +192,12 @@ static __inline V3XSCALAR V3XVector_Normalize(V3XVECTOR *a, const V3XVECTOR *b)
     V3XSCALAR N = V3XVector_LengthSq(b);
     if (N < CST_EPSILON)
     {
-        if ((!b->x)&&(!b->y))  
+        if ((!b->x)&&(!b->y))
 			V3XVector_Set(a, CST_ZERO, CST_ZERO, CST_ONE);
         else
-        if ((!b->x)&&(!b->z))  
+        if ((!b->x)&&(!b->z))
 			V3XVector_Set(a, CST_ZERO, CST_ONE, CST_ZERO);
-        else 
+        else
 		V3XVector_Set(a, CST_ONE, CST_ZERO, CST_ZERO);
 		return 1.f;
     }
@@ -384,3 +385,4 @@ _RLXEXPORTFUNC    void    RLXAPI  V3XMatrix_Rotate_Z_Local(int32_t Theta, V3XSCA
 __end_extern_c
 
 #endif
+

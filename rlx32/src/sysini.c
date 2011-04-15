@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -32,7 +32,9 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "systools.h"
 #include "sysresmx.h"
 #include "sysini.h"
+
 static ConfigItemData C_DATA;
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -40,19 +42,20 @@ static ConfigItemData C_DATA;
 * DESCRIPTION :
 *
 */
-int GetCF_uchar2(char *s, ConfigFile *ini, u_int8_t *val)
+int GetCF_uchar2(char *s, ConfigFile *ini, uint8_t *val)
 {
     ConfigItemData  *itemData;
     itemData = GetConfigItem(s, T_LONG, ini);
     if (itemData==NULL) return 0;
-    *val = (u_int8_t)itemData->i_long;
+    *val = (uint8_t)itemData->i_long;
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int GetCF_long2(char *s, ConfigFile *ini, int32_t *val)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 int GetCF_long2(char *s, ConfigFile *ini, int32_t *val)
@@ -63,11 +66,12 @@ int GetCF_long2(char *s, ConfigFile *ini, int32_t *val)
     *val = itemData->i_long;
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int GetCF_hexa2(char *s, ConfigFile *ini, int32_t *val)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 int GetCF_hexa2(char *s, ConfigFile *ini, int32_t *val)
@@ -78,14 +82,15 @@ int GetCF_hexa2(char *s, ConfigFile *ini, int32_t *val)
     *val = itemData->i_long;
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  int GetCF_bool2(char *s, ConfigFile *ini, u_int8_t *val)
+* PROTOTYPE  :  int GetCF_bool2(char *s, ConfigFile *ini, uint8_t *val)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
-int GetCF_bool2(char *s, ConfigFile *ini, u_int8_t *val)
+int GetCF_bool2(char *s, ConfigFile *ini, uint8_t *val)
 {
     ConfigItemData  *itemData;
     itemData = GetConfigItem(s, T_BOOL, ini);
@@ -93,11 +98,12 @@ int GetCF_bool2(char *s, ConfigFile *ini, u_int8_t *val)
     *val = itemData->i_bool;
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int32_t GetCF_hexa(char *s, ConfigFile *ini)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 int32_t GetCF_hexa(char *s, ConfigFile *ini)
@@ -107,11 +113,12 @@ int32_t GetCF_hexa(char *s, ConfigFile *ini)
     if (itemData==NULL) return 0;
     return itemData->i_long;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int32_t GetCF_long(char *s, ConfigFile *ini)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 int32_t GetCF_long(char *s, ConfigFile *ini)
@@ -121,11 +128,12 @@ int32_t GetCF_long(char *s, ConfigFile *ini)
     if (itemData==NULL) return 0;
     return itemData->i_long;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int32_t GetCF_bool(char *s, ConfigFile *ini)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 int32_t GetCF_bool(char *s, ConfigFile *ini)
@@ -135,11 +143,12 @@ int32_t GetCF_bool(char *s, ConfigFile *ini)
     if (itemData==NULL) return 0;
     return itemData->i_bool;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  char *GetCF_str(char *s, ConfigFile *ini)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 char *GetCF_str(char *s, ConfigFile *ini)
@@ -149,11 +158,12 @@ char *GetCF_str(char *s, ConfigFile *ini)
     if (itemData==NULL) return NULL;
     return itemData->i_str;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  char *GetCF_str2(char *s, ConfigFile *ini)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 char *GetCF_str2(char *s, ConfigFile *ini)
@@ -163,6 +173,7 @@ char *GetCF_str2(char *s, ConfigFile *ini)
     if (itemData==NULL) return NULL;
     return itemData->i_str;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -176,11 +187,12 @@ static void trimSpace(char *str)
     while( isspace(*str) ) str++;
     sysStrCpy(orgStr, str);
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void flip_string(char *str)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 static void flip_string(char *str)
@@ -191,8 +203,8 @@ static void flip_string(char *str)
     for (i=0;i<l;i++)  str2[i]=str[l-i-1];
     str2[l]=0;
     sysStrCpy(str, str2);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -310,6 +322,7 @@ int ReadConfig(char const *fileName, ConfigFile *c_file)
     FIO_cur->fclose(file);
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  ConfigItemData *GetConfigItem(char const *itemName, enum ConfigDataType type, ConfigFile *c_file)
@@ -352,11 +365,12 @@ ConfigItemData *GetConfigItem(char const *itemName, enum ConfigDataType type, Co
     }
     return &C_DATA;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int SelectConfigClass(char const *className, ConfigFile *c_file)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 int SelectConfigClass(char const *className, ConfigFile *c_file)
@@ -367,6 +381,7 @@ int SelectConfigClass(char const *className, ConfigFile *c_file)
     c_file->currentClass = cPtr;
     return 1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  ConfigClass *GetConfigClass(char const *className, ConfigFile *c_file)
@@ -384,6 +399,7 @@ ConfigClass *GetConfigClass(char const *className, ConfigFile *c_file)
     }
     return c;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void DestroyConfigItem(ConfigItem *q)
@@ -402,13 +418,13 @@ static void DestroyConfigItem(ConfigItem *q)
         MM_heap.free(item);
         item = item2;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void DestroyConfig(ConfigFile *q)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void DestroyConfig(ConfigFile *q)
@@ -424,5 +440,5 @@ void DestroyConfig(ConfigFile *q)
         item
  = item2;
     }
-    return;
 }
+

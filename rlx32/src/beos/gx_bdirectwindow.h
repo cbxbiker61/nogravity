@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -43,11 +44,11 @@ class GX_BDirectWindow : public BDirectWindow
 		void				Create();
 		virtual void		Quit();
 		void				ForceRedraw(void);
-		void				Center();	
+		void				Center();
 
-		int 				lWidth;
-		int 				lHeight;
-		int 				BitsPerPixel;
+		int				lWidth;
+		int				lHeight;
+		int				BitsPerPixel;
 
 		static GX_BDirectWindow * m_pInstance;
 
@@ -55,7 +56,7 @@ class GX_BDirectWindow : public BDirectWindow
 		long				m_KillID;
 
 		thread_id			m_DrawThread;
-		u_int8_t		*	m_pBits;
+		uint8_t		*	m_pBits;
 		int32_t				fRowBytes;
 		color_space			fFormat;
 		clipping_rect		fBounds;
@@ -65,6 +66,4 @@ class GX_BDirectWindow : public BDirectWindow
 };
 
 #endif // _GX_BDirectWindow_HH
-
-
 

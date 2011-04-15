@@ -1,5 +1,5 @@
 /*
-** Copyright (c) 1999, 3Dfx Interactive, Inc. 
+** Copyright (c) 1999, 3Dfx Interactive, Inc.
 ** All Rights Reserved.
 **
 ** This is UNPUBLISHED PROPRIETARY SOURCE CODE of 3Dfx Interactive, Inc.;
@@ -35,65 +35,61 @@
 #include "glide.h"
 #include "glidemem.h"
 
-void
-GrMemManager::initList(GrChipID_t tmu)
-{   
-    _maxMemory[tmu] = grTexMaxAddress(tmu) - grTexMinAddress(tmu);  
+void GrMemManager::initList(GrChipID_t tmu)
+{
+    _maxMemory[tmu] = grTexMaxAddress(tmu) - grTexMinAddress(tmu);
     _lastBlock[tmu] = _firstBlock[tmu] = addBlock(_maxMemory[tmu], tmu, false);
     _firstBlock[tmu]->isfree = 1;
-    _firstBlock[tmu]->offset = grTexMinAddress(tmu);    
-    
+    _firstBlock[tmu]->offset = grTexMinAddress(tmu);
 }
 
 GrMemManager::GrMemManager() : _strategy(0)
 {
     initList(GR_TMU0);
-    initList(GR_TMU1);      
-}   
+    initList(GR_TMU1);
+}
 
-unsigned 
-GrMemManager::getNumbersOfBlock(GrChipID_t tmu) const
+unsigned GrMemManager::getNumbersOfBlock(GrChipID_t tmu) const
 {
     unsigned nb = 0;
     GrMemBlock *b = _firstBlock[tmu];
     while (b!=0)
     {
         if (!b->isfree) nb++;
-        b = b->next;        
-    }   
+        b = b->next;
+    }
     return nb;
 }
-void
-GrMemManager::clearList(GrChipID_t tmu)
+
+void GrMemManager::clearList(GrChipID_t tmu)
 {
     GrMemBlock *b = _firstBlock[tmu];
     char t[64];
     while (b!=0)
     {
-        GrMemBlock *a = b;      
-        b = b->next;        
+        GrMemBlock *a = b;
+        b = b->next;
         if (!a->isfree) // Resource leak error check ...
-        {       
+        {
             sprintf(t,"Glide resource leak, allocated for TMU %d, HANDLE: 0x%p\n",
-                a->tmu, a->offset);         
-            #ifdef __WIN32__            
+                a->tmu, a->offset);
+            #ifdef __WIN32__
                 OutputDebugString(t);
             #else
                 fprintf(stderr,t);
             #endif
         }
         delete a;
-    }   
+    }
 }
 
 GrMemManager::~GrMemManager()
 {
     clearList(GR_TMU0);
-    clearList(GR_TMU1); 
+    clearList(GR_TMU1);
 }
 
-GrMemBlock *
-GrMemManager::findBlockByOffset(GrMemOffset offset,GrChipID_t tmu)
+GrMemBlock * GrMemManager::findBlockByOffset(GrMemOffset offset,GrChipID_t tmu)
 {
      GrMemBlock *b = _firstBlock[tmu];
      while(b!=0)
@@ -107,8 +103,7 @@ GrMemManager::findBlockByOffset(GrMemOffset offset,GrChipID_t tmu)
      return NULL;
 }
 
-void
-GrMemManager::garbageCollection(GrChipID_t tmu)
+void GrMemManager::garbageCollection(GrChipID_t tmu)
 {
     int ok;
     // collect all small free block to a larger one;
@@ -117,7 +112,7 @@ GrMemManager::garbageCollection(GrChipID_t tmu)
         GrMemBlock *b = _firstBlock[tmu];
         ok = 0;
         while (b!=0)
-        {   
+        {
             GrMemBlock *c = b->next;
             if ( (b->tmu == tmu) && c)
             {
@@ -128,38 +123,35 @@ GrMemManager::garbageCollection(GrChipID_t tmu)
                     delete c;
                     ok = 1;
                 }
-            }   
-            b = b->next;            
+            }
+            b = b->next;
         }
     }while(ok==1);
     return;
 }
 
-void
-GrMemManager::free(GrMemOffset offset,GrChipID_t tmu)
+void GrMemManager::free(GrMemOffset offset,GrChipID_t tmu)
 {
    GrMemBlock *b = findBlockByOffset(offset, tmu);
    assert(b!=0); // add handle
    if (b && (b->tmu == tmu) && (!b->isfree))
    {
-       b->isfree = 1; // free that block    
+       b->isfree = 1; // free that block
       _maxMemory[tmu]+=size;
    }
-   return;
 }
 
-GrMemBlock *
-GrMemManager::addBlock(size_t size,GrChipID_t tmu, bool connect )
+GrMemBlock * GrMemManager::addBlock(size_t size,GrChipID_t tmu, bool connect )
 {
     GrMemBlock *b = new GrMemBlock;
-    b->size   = size;    
+    b->size   = size;
     b->tmu    = tmu;
-    b->next   = 0;  
+    b->next   = 0;
     if (connect)
     {
         b->isfree = 0;
         if (_lastBlock[tmu])
-            _lastBlock[tmu]->next = b;  
+            _lastBlock[tmu]->next = b;
         _lastBlock[tmu] = b;
 
         if (!_firstBlock[tmu])
@@ -169,13 +161,12 @@ GrMemManager::addBlock(size_t size,GrChipID_t tmu, bool connect )
     return b;
 }
 
-GrMemBlock*
-GrMemManager::findEmptyBlock(size_t size,GrChipID_t tmu)
+GrMemBlock* GrMemManager::findEmptyBlock(size_t size,GrChipID_t tmu)
 {
      garbageCollection(tmu);
      // First, try to get a same size block; could occurs often
-     // Since the memory are mostly the same size (for a example a common texture is 256x256x2 bytes).       
-     
+     // Since the memory are mostly the same size (for a example a common texture is 256x256x2 bytes).
+
      GrMemBlock *b = _firstBlock[tmu];
      while(b!=0)
      {
@@ -186,25 +177,25 @@ GrMemManager::findEmptyBlock(size_t size,GrChipID_t tmu)
               return b;
          }
          b = b->next;
-     }   
+     }
 
-     // Not same size match, so, try to get a larger block, and split it     
+     // Not same size match, so, try to get a larger block, and split it
      b = _firstBlock[tmu];
      GrMemBlock *prev = 0;
      while (b!=0)
-     {       
+     {
          if ((b->tmu==tmu) && (b->isfree) && (b->size>size))
-         {  
-              _maxMemory[tmu]-=size              ;
-              // split the block into b and c.                        
+         {
+              _maxMemory[tmu] -= size;
+              // split the block into b and c.
               GrMemBlock *c = addBlock(b->size - size,tmu, false); // alloc block ..
               c->isfree = 1; // c is a free block
               // Compute the offset ...
-              if (prev) b->offset = prev->offset + prev->size;            
+              if (prev) b->offset = prev->offset + prev->size;
               c->offset = b->offset + size;
               _maxMemory[tmu]+=c->size; // ajust memory left
               c->next = b->next; // his next block is the b next block
-              b->next = c; // and b next block becomes c              
+              b->next = c; // and b next block becomes c
               b->isfree = 0;
               b->size = size;
               return b;
@@ -213,16 +204,14 @@ GrMemManager::findEmptyBlock(size_t size,GrChipID_t tmu)
          b = b->next;
      }
      // There is no more room. There 2 solutions
-     // - Return 0 
-     // - alloc into an other TMU ?  
+     // - Return 0
+     // - alloc into an other TMU ?
      // - Try to find the largest map, grab the memory, resize it, and replace it.
-      
+
      return NULL;
 }
 
-
-GrMemOffset
-GrMemManager::alloc(size_t size,GrChipID_t tmu)
+GrMemOffset GrMemManager::alloc(size_t size,GrChipID_t tmu)
 {
     GrMemBlock *b = findEmptyBlock(size, tmu);
     if (b)
@@ -232,5 +221,4 @@ GrMemManager::alloc(size_t size,GrChipID_t tmu)
     }
     return GR_BAD_OFFSET;
 }
-
 

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -37,6 +37,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "v3x_2.h"
 #include "v3x_1.h"
 #include "v3xsort.h"
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :void quicksort_recurse( V3XPOLY *si, V3XPOLY *sj)
@@ -45,11 +46,12 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 *
 */
 #define ALGO1(fce)  ((fce).distance)
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void RLXAPI v3xpoly_SortByDistance( V3XPOLY **si, V3XPOLY **sj)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void RLXAPI v3xpoly_SortByDistance( V3XPOLY **si, V3XPOLY **sj)
@@ -74,28 +76,29 @@ void RLXAPI v3xpoly_SortByDistance( V3XPOLY **si, V3XPOLY **sj)
     }
     if (si<sl) v3xpoly_SortByDistance(si, sl);
     if (sk<sj) v3xpoly_SortByDistance(sk, sj);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  #define ALGO2(fce)  (((V3XMATERIAL*)(fce).Mat)->RenderID)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 #define ALGO2(fce)  (((V3XMATERIAL*)(fce).Mat)->RenderID)
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void RLXAPI v3xpoly_SortByTranparency( V3XPOLY **si, V3XPOLY **sj)
 *
-* DESCRIPTION :  
+* DESCRIPTION :
 *
 */
 void RLXAPI v3xpoly_SortByID( V3XPOLY **si, V3XPOLY **sj)
 {
     V3XPOLY **p = (si+((sj-si)>>1)), **sk, **sl;
     V3XPOLY  *q;
-    u_int32_t p0 = ALGO2(**p);
+    uint32_t p0 = ALGO2(**p);
     for ( sk = si, sl = sj ; sk<=sl ; )
     {
         for( ; ALGO2(**sk)<p0 ; sk++ ){}
@@ -113,16 +116,17 @@ void RLXAPI v3xpoly_SortByID( V3XPOLY **si, V3XPOLY **sj)
     }
     if (si<sl) v3xpoly_SortByID(si, sl);
     if (sk<sj) v3xpoly_SortByID(sk, sj);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  #define ALGO3(fce)  ((u_int32_t)(((V3XMATERIAL*)(fce).Mat)->texture[0].handle))
+* PROTOTYPE  :  #define ALGO3(fce)  ((uint32_t)(((V3XMATERIAL*)(fce).Mat)->texture[0].handle))
 *
-* Description :  
+* Description :
 *
 */
-#define ALGO3(fce)  ((u_int32_t)(((V3XMATERIAL*)(fce).Mat)->texture[0].handle))
+#define ALGO3(fce)  ((uint32_t)(((V3XMATERIAL*)(fce).Mat)->texture[0].handle))
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -134,7 +138,7 @@ void RLXAPI v3xpoly_SortByTexture( V3XPOLY **si, V3XPOLY **sj)
 {
     V3XPOLY **p = (si+((sj-si)>>1)), **sk, **sl;
     V3XPOLY  *q;
-    u_int32_t p0 = ALGO3(**p);
+    uint32_t p0 = ALGO3(**p);
     for ( sk = si, sl = sj ; sk<=sl ; )
     {
         for( ; ALGO3(**sk)<p0 ; sk++ ){}
@@ -152,5 +156,5 @@ void RLXAPI v3xpoly_SortByTexture( V3XPOLY **si, V3XPOLY **sj)
     }
     if (si<sl) v3xpoly_SortByTexture(si, sl);
     if (sk<sj) v3xpoly_SortByTexture(sk, sj);
-    return;
 }
+

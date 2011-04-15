@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -75,7 +75,6 @@ static void OnClose(void)
     ShowCursor(TRUE);
     UpdateWindow(g_hWnd);
     SetCurrentDirectory(szActualFolder);
-    return;
 }
 
 static void SetFocusApp(bool b)
@@ -87,15 +86,13 @@ static void OnSwitchApp(WPARAM wParam, LPARAM lParam)
 {
 	if (wParam == TRUE)
 		SetFocusApp(TRUE);
-
-	return;
 }
 
 static int32_t MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{	
+{
 	switch( msg )
     {
-        case WM_ACTIVATEAPP:			
+        case WM_ACTIVATEAPP:
 	        OnSwitchApp(wParam, lParam);
         break;
 		case WM_CLOSE:
@@ -118,21 +115,21 @@ static int32_t MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		if (sKEY)
 		{
 			int push = (msg==WM_KEYDOWN) ? 0x80 : 0;
-			sKEY->scanCode = (u_int8_t)((lParam >> 16) & 0xff) | (u_int8_t)((lParam >> 17) & 0x80);
+			sKEY->scanCode = (uint8_t)((lParam >> 16) & 0xff) | (uint8_t)((lParam >> 17) & 0x80);
 			if (!push)
 			{
 				sKEY->charCode = 0;
 				sKEY->scanCode = 0;
 			}
-		} 
+		}
 		break;
 
         case WM_CHAR :
         case WM_SYSCHAR:
         case WM_IME_CHAR:
-			sKEY->charCode = (u_int8_t)(wParam & 0xff);			
+			sKEY->charCode = (uint8_t)(wParam & 0xff);
         break;
-        		case WM_POWERBROADCAST:
+		case WM_POWERBROADCAST:
         switch( wParam )
         {
             case PBT_APMQUERYSUSPEND:
@@ -170,7 +167,7 @@ static int32_t MessageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 int STUB_TaskControl(void)
 {
-    MSG msg;	
+    MSG msg;
 
 	do
     {
@@ -178,7 +175,7 @@ int STUB_TaskControl(void)
         {
 			TranslateMessage(&msg);
             DispatchMessage(&msg);
-        }	
+        }
 		if (g_bQuit)
 			return -1;
 
@@ -186,16 +183,16 @@ int STUB_TaskControl(void)
 			Sleep(100);
 
     }while(g_bIsActive!=1);
-	
+
 	return g_bQuit ? -1 : 0;
-} 
+}
 
 static void GetModuleDirectory(LPSTR defaut)
 {
     int i;
 	char tex[256];
     if (defaut)
-    {		
+    {
         sysStrCpy(tex, defaut); //path override
     }
     else
@@ -215,7 +212,6 @@ static void GetModuleDirectory(LPSTR defaut)
     }
     GetCurrentDirectory(256, szActualFolder);
     SetCurrentDirectory(tex);
-    return;
 }
 
 static HWND CreateAppWindow(HINSTANCE hInstance)
@@ -236,7 +232,7 @@ static HWND CreateAppWindow(HINSTANCE hInstance)
 		WS_EX_APPWINDOW,
 		RLX.Dev.TeamSignature,
 		RLX.Dev.ApplicationName,
-		WS_POPUP|WS_MINIMIZEBOX|WS_CAPTION, 
+		WS_POPUP|WS_MINIMIZEBOX|WS_CAPTION,
 		0, 0,
 		1,
 		1,
@@ -254,7 +250,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 	std::ostringstream	os;
 	try
 	{
-#endif	
+#endif
     g_hInstance = hInstance;
 	g_bQuit = 0;
 
@@ -265,7 +261,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
     GetModuleDirectory(NULL);
     STUB_OsStartup(lpCmdLine);
     STUB_Default();
-   
+
     HWND h = CreateAppWindow(hInstance);
 	if (!h)
 		return -1;
@@ -275,7 +271,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 
 	STUB_OsCustom(lpCmdLine);
     STUB_CheckUp(h);
-	
+
     STUB_ReadyToRun();
     RLX.System.Running = true;
 
@@ -291,27 +287,26 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
         g_lpDI = NULL;
     }
 
-
-#ifdef _DEBUG_EXCEPTION	
+#ifdef _DEBUG_EXCEPTION
 	}
 	catch(se_translator::access_violation& ex)
-	{			
-		os	<< "*" << ex.name() << " at 0x" << std::hex << ex.address() 				
+	{
+		os	<< "*" << ex.name() << " at 0x" << std::hex << ex.address()
 			<< ", thread attempts to " << (ex.is_read_op() ? "read" : "write")
 			<< " at 0x" << std::right << (int) ex.inaccessible_address() << std::endl
 			<< std::endl
 			<< "Stack : " << std::endl;
-		sym_engine::stack_trace(os, ex.info()->ContextRecord);		
+		sym_engine::stack_trace(os, ex.info()->ContextRecord);
 		::MessageBox(::GetActiveWindow(), (os.str().c_str()), ("Generic exception"), MB_ABORTRETRYIGNORE|MB_ICONERROR);
 	}
 	catch(se_translator::no_memory& ex)
 	{
-		
-		os  << "*" << ex.name() << " at 0x" << std::hex << ex.address() 				
+
+		os  << "*" << ex.name() << " at 0x" << std::hex << ex.address()
 			<< ", unable to allocate " << std::dec << (int)ex.mem_size() << " bytes" << std::endl
 			<< std::endl
 			<< "Stack : " << std::endl;
-		sym_engine::stack_trace(os, ex.info()->ContextRecord);					
+		sym_engine::stack_trace(os, ex.info()->ContextRecord);
 		::MessageBox(::GetActiveWindow(), (os.str().c_str()), ("Generic exception"), MB_ABORTRETRYIGNORE|MB_ICONERROR);
 	}
 	catch(exception2& ex)
@@ -323,7 +318,6 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLin
 		::MessageBox(::GetActiveWindow(), (os.str().c_str()), ("Generic exception"), MB_ABORTRETRYIGNORE|MB_ICONERROR);
 	}
 
-	
 #endif	// _DEBUG_EXCEPTION
 
     return 0;

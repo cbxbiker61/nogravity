@@ -62,7 +62,7 @@ static void MouseHide()
   SDL_ShowCursor(0);
 }
 
-static void MouseSetPosition(u_int32_t x, u_int32_t y)
+static void MouseSetPosition(uint32_t x, uint32_t y)
 {
   // Just call through into SDL.
   SDL_WarpMouse((Uint16)x, (Uint16)y);
@@ -79,9 +79,9 @@ static unsigned long MouseUpdate(void *dev)
   buttons = SDL_GetRelativeMouseState(&sMOU->lX, &sMOU->lY);
 
   // For each button, record its new state.
-  sMOU->rgbButtons[0] = (u_int8_t)((buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) ? 1 : 0);
-  sMOU->rgbButtons[1] = (u_int8_t)((buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) ? 1 : 0);
-  sMOU->rgbButtons[2] = (u_int8_t)((buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) ? 1 : 0);
+  sMOU->rgbButtons[0] = (uint8_t)((buttons & SDL_BUTTON(SDL_BUTTON_LEFT)) ? 1 : 0);
+  sMOU->rgbButtons[1] = (uint8_t)((buttons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) ? 1 : 0);
+  sMOU->rgbButtons[2] = (uint8_t)((buttons & SDL_BUTTON(SDL_BUTTON_RIGHT)) ? 1 : 0);
 
   // SDL treats the Z axis (mouse wheel) as buttons, rather than an axis.
   sMOU->lZ = ((buttons & SDL_BUTTON(SDL_BUTTON_WHEELUP)) ? 1 : 0) -
@@ -110,3 +110,4 @@ _RLXEXPORTFUNC MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
 
   return sMOU;
 }
+

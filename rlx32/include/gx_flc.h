@@ -1,3 +1,4 @@
+#pragma once
 //-------------------------------------------------------------------------
 /*
 Copyright (C) 1996, 2005 - realtech VR
@@ -9,9 +10,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -29,30 +30,30 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 // Load format
 enum {
-    FLI_DIRECTFROMDISK = 0x0, 
-    FLI_USEMEMORY  = 0x1, 
-    FLI_LZWPACKED  = 0x2, 
+    FLI_DIRECTFROMDISK = 0x0,
+    FLI_USEMEMORY  = 0x1,
+    FLI_LZWPACKED  = 0x2,
     FLI_EXPANDED = 0x4};
 
 // Play status
 enum {
-    FLX_ISPLAYING  = 0x1, 
-    FLX_LOOPANIMATION = 0x2, 
-    FLX_DECOMPRESSFRAME = 0x4, 
-    FLX_RESETPALETTE = 0x8, 
-    FLX_INSurfaces = 0x10, 
-    FLX_DOUBLEBUFFERING = 0x20, 
-    FLX_FORMARD1FRAME = 0x40, 
+    FLX_ISPLAYING  = 0x1,
+    FLX_LOOPANIMATION = 0x2,
+    FLX_DECOMPRESSFRAME = 0x4,
+    FLX_RESETPALETTE = 0x8,
+    FLX_INSurfaces = 0x10,
+    FLX_DOUBLEBUFFERING = 0x20,
+    FLX_FORMARD1FRAME = 0x40,
     FLX_EXPANDED = 0x80};
 
 // FLC Header
 typedef struct{
     int32_t        size;
-    u_int16_t      type;
-    u_int16_t      Chunks;
-    u_int16_t      width;
-    u_int16_t      height;
-    u_int16_t      bits_a_pixel;
+    uint16_t      type;
+    uint16_t      Chunks;
+    uint16_t      width;
+    uint16_t      height;
+    uint16_t      bits_a_pixel;
     short       flags;
     int32_t        speed;
     short       reserved;
@@ -62,7 +63,7 @@ typedef struct{
     int32_t        updater;
     short       aspectx;
     short       aspecty;
-    u_int8_t       reserved2[38];
+    uint8_t       reserved2[38];
     int32_t        frame1;
     int32_t        frame2;
     char        reserved3[40];
@@ -78,18 +79,18 @@ typedef struct _fli_struct {
     SYS_FILEHANDLE       fli_stream;
     FLC_Header  Header;
 
-    u_int8_t      *fileBuffer;
-    u_int8_t      *decompBuffer;
+    uint8_t      *fileBuffer;
+    uint8_t      *decompBuffer;
 
     GXSPRITE      bitmap;
-    u_int32_t       start;
-    u_int32_t       start_buf;
-    u_int32_t       LastTime;
-    u_int16_t      CurrentFrame;
-    u_int16_t      MaximumFrame;
-    u_int8_t       Flags;
-    u_int8_t       ReadMode;
-    u_int8_t       filler[2];
+    uint32_t       start;
+    uint32_t       start_buf;
+    uint32_t       LastTime;
+    uint16_t      CurrentFrame;
+    uint16_t      MaximumFrame;
+    uint8_t       Flags;
+    uint8_t       ReadMode;
+    uint8_t       filler[2];
 	GXSPRITE     *frames;
 	rgb24_t	    ColorTable[256];
 
@@ -109,3 +110,4 @@ _RLXEXPORTFUNC    GXSPRITEGROUP       RLXAPI *FLI_LoadToSpriteGroup(const char *
 __end_extern_c
 
 #endif
+

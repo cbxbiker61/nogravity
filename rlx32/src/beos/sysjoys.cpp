@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -32,15 +32,15 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "sysctrl.h"
 #include "systools.h"
 
-class CController : public BJoystick 
+class CController : public BJoystick
 {
 public:
 	int16_t		*	Axis;
-	u_int8_t	*	Hats;
+	uint8_t	*	Hats;
 	int32_t			InitCheck;
 };
 
-static class CController *g_pJoystick;      
+static class CController *g_pJoystick;
 
 static unsigned long Update(void *pdevice)
 {
@@ -78,14 +78,14 @@ static int DeviceStart(void)
 	g_pJoystick->GetDeviceName(0, name);
 	if (g_pJoystick->Open(name, true)==B_ERROR)
 	{
-    	g_pJoystick->InitCheck = 0;
+		g_pJoystick->InitCheck = 0;
 		return -2;
 	}
 	else
 	{
 		g_pJoystick->EnterEnhancedMode();
 		g_pJoystick->EnableCalibration(true);
-    	g_pJoystick->InitCheck = 1;
+		g_pJoystick->InitCheck = 1;
 	}
 	return 0;
 }
@@ -96,14 +96,14 @@ static int Open(void *hwnd, int bForceFeedback)
 	g_pJoystick->Axis = (int16*)MM_std.malloc(sizeof(int16)*(1+g_pJoystick->CountAxes()));
 	g_pJoystick->Hats = (uint8*)MM_std.malloc(sizeof(uint8)*(1+g_pJoystick->CountHats()));
 	sJOY->device = g_pJoystick;
-	sJOY->numControllers = g_pJoystick->CountDevices();	
+	sJOY->numControllers = g_pJoystick->CountDevices();
 	sJOY->numAxes = g_pJoystick->CountAxes();
 	sJOY->numPOVs = g_pJoystick->CountHats();
 
 #ifdef _DEBUG
-	SYS_Debug("Joystick count : %d\n", sJOY->numControllers); 
+	SYS_Debug("Joystick count : %d\n", sJOY->numControllers);
 #endif
-	
+
 	int i;
 	for (i=0;i<sJOY->numControllers;i++)
 	{
@@ -120,7 +120,6 @@ static int Open(void *hwnd, int bForceFeedback)
 		return 0;
 	}
 
-
 	return DeviceStart();
 }
 
@@ -129,7 +128,6 @@ static void Release(void)
 
 	MM_std.free(g_pJoystick->Axis);
 	MM_std.free(g_pJoystick->Hats);
-	return;
 }
 
 static JOY_ClientDriver JoystickClientBeOS = {
@@ -143,3 +141,4 @@ JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
     sJOY = &JoystickClientBeOS;
 	return sJOY;
 }
+

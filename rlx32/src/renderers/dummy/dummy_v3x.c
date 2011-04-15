@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -36,7 +36,6 @@ static int  HardwareSetup(void)
 
 static void  HardwareShutdown(void)
 {
-    return;
 }
 
 static unsigned  ZbufferClear(rgb24_t *color, V3XSCALAR z, void *bitmap)
@@ -44,19 +43,18 @@ static unsigned  ZbufferClear(rgb24_t *color, V3XSCALAR z, void *bitmap)
     return 1;
 }
 
-static unsigned SetState(unsigned command, u_int32_t value)
+static unsigned SetState(unsigned command, uint32_t value)
 {
      return 0;
 }
 
-static int TextureModify(GXSPRITE *sp, u_int8_t *bitmap, const rgb24_t *colorTable)
+static int TextureModify(GXSPRITE *sp, uint8_t *bitmap, const rgb24_t *colorTable)
 {
     return 1;
 }
 
 static void FreeTexture(void *sp)
 {
-    return;
 }
 
 static void * UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable, int bpp, unsigned options)
@@ -66,48 +64,43 @@ static void * UploadTexture(const GXSPRITE *sp, const rgb24_t *colorTable, int b
 
 static void RenderPoly(V3XPOLY **fe, int count)
 {
-    return;
 }
 
 
 static void StartList(void)
 {
-    return;
 }
 
 
 static void EndList(void)
 {
-    return;
 }
 
 static void RenderDisplay(void)
 {
-    return;
 }
 
-static void DrawPrimitives(V3XVECTOR *vertexes, u_int16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int option, rgb32_t *color)
+static void DrawPrimitives(V3XVECTOR *vertexes, uint16_t *indexTab, unsigned NumIndexes, unsigned NumVertexes, int option, rgb32_t *color)
 {
-    return;
 }
 
 V3X_GXSystem V3X_OpenGS=
 {
-    NULL, 
-    RenderDisplay, 
+    NULL,
+    RenderDisplay,
     UploadTexture,
-    FreeTexture, 
-    TextureModify, 
+    FreeTexture,
+    TextureModify,
     HardwareSetup,
-    HardwareShutdown, 
-    SetState, 
+    HardwareShutdown,
+    SetState,
     ZbufferClear,
-    RenderPoly, 
-    StartList, 
-    EndList, 
-    DrawPrimitives, 
+    RenderPoly,
+    StartList,
+    EndList,
+    DrawPrimitives,
     "GS",
-    256+10, 
+    256+10,
     GXSPEC_ZBUFFER|
     GXSPEC_OPACITYTRANSPARENT|
     GXSPEC_SPRITEAREPOLY|
@@ -120,9 +113,8 @@ V3X_GXSystem V3X_OpenGS=
     GXSPEC_ENABLEFILTERING|
     GXSPEC_HARDWARE|
     GXSPEC_ENABLEPERSPECTIVE|
-    0, 
-    0x000000, 
+    0,
+    0x000000,
     1 // Texture en (256>>1)=128x128 par defaut
 };
-
 

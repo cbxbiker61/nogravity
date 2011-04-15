@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -56,7 +56,7 @@ BOOL FAR PASCAL EnumConnectionsCallback(LPCGUID lpguidSP, LPVOID lpConnection, D
     // make space for connection shortcut
     lpConnectionBuffer = MM_std.malloc(dwConnectionSize);
     if (lpConnectionBuffer)
-    {     
+    {
         NET_ConnectionType *cn = lpDPInfo->lpConnectionType + lpDPInfo->numConnections;
         sysMemCpy(lpConnectionBuffer, lpConnection, dwConnectionSize);
         sysStrnCpy(cn->name, (char *)lpName->lpszShortNameA, NET_MAXPLAYERLEN);
@@ -64,13 +64,15 @@ BOOL FAR PASCAL EnumConnectionsCallback(LPCGUID lpguidSP, LPVOID lpConnection, D
         cn->ID = lpDPInfo->numConnections;
         lpDPInfo->numConnections++;
     }
+
     return TRUE;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void NET_ReleaseSessionList(void)
 *
-* Description :  
+* Description :
 *
 */
 void DPN_ReleaseSessionList(void)
@@ -90,13 +92,13 @@ void DPN_ReleaseSessionList(void)
     }
     sysMemZero(lpDPInfo->lpSessionName, sizeof(NET_SessionName)*lpDPInfo->numSessions);
     lpDPInfo->numSessions = 0;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void sNET->ReleaseConnectionList(void)
 *
-* Description :  
+* Description :
 *
 */
 void DPN_ReleaseConnectionList(void)
@@ -117,8 +119,8 @@ void DPN_ReleaseConnectionList(void)
     lpDPInfo->numConnections = 0;
     if (lpDirectPlay4)  lpDirectPlay4->Release();
     lpDirectPlay4 = NULL;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  NET_ConnectionType *sNET->CreateConnectionList(void)
@@ -128,29 +130,30 @@ void DPN_ReleaseConnectionList(void)
 */
 NET_ConnectionType *DPN_CreateConnectionList(void)
 {
-    HRESULT   hr;    
-    // Initialize COM library    
-    if (lpDirectPlay4) 
+    HRESULT   hr;
+    // Initialize COM library
+    if (lpDirectPlay4)
 		DPN_ReleaseConnectionList();
-    
+
 	// Create an IDirectPlay4 interface
     hr = CoCreateInstance(CLSID_DirectPlay, NULL, CLSCTX_INPROC_SERVER, IID_IDirectPlay4A, (LPVOID*)&lpDirectPlay4);
-    if (SYS_DXTRACE(hr)) 
+    if (SYS_DXTRACE(hr))
 		return NULL;
 
     // Enumerate Connections
     lpDPInfo->numConnections = 0;
     hr = lpDirectPlay4->EnumConnections(&g_cGUID, EnumConnectionsCallback, lpDPInfo, 0);
-    if (SYS_DXTRACE(hr)) 
+    if (SYS_DXTRACE(hr))
 		return NULL;
 
-    if (lpDPInfo->numConnections==0) 
+    if (lpDPInfo->numConnections==0)
 		return NULL;
     lpDPInfo->lpConnectionType[lpDPInfo->numConnections].name[0] = 0;
     lpDPInfo->lpConnectionType[lpDPInfo->numConnections].ID = lpDPInfo->numConnections;
     lpDPInfo->numConnections++;
     return lpDPInfo->lpConnectionType;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int sNET->SelectConnection(int id)
@@ -161,7 +164,7 @@ NET_ConnectionType *DPN_CreateConnectionList(void)
 int DPN_SelectConnection(int id)
 {
     LPVOID lpConnection;
-    lpConnection = lpDPInfo->lpConnectionType[id].lpConnection; 
+    lpConnection = lpDPInfo->lpConnectionType[id].lpConnection;
     if (lpConnection)
     {
         DPCAPS  dpCaps;
@@ -175,6 +178,7 @@ int DPN_SelectConnection(int id)
     }
     return -2;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int NET_CloseConnection(void)
@@ -186,6 +190,7 @@ int DPN_CloseConnection(void)
 {
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  BOOL FAR PASCAL EnumSessionsCallback(LPCDPSESSIONDESC2 lpSessionDesc, LPDWORD lpdwTimeOut, DWORD dwFlags, LPVOID lpContext)
@@ -197,22 +202,21 @@ BOOL FAR PASCAL EnumSessionsCallback(LPCDPSESSIONDESC2 lpSessionDesc, LPDWORD lp
 {
     DPSESSIONDESC2 *p;
     NET_SessionName *sess = lpDPInfo->lpSessionName + lpDPInfo->numSessions;
-    // see if last session has been enumerated      
+    // see if last session has been enumerated
     if (dwFlags & DPESC_TIMEDOUT)  return FALSE;
 
-    // store pointer to guid in list    
-    sysStrnCpy(sess->name, lpSessionDesc->lpszSessionNameA, 64);    
+    // store pointer to guid in list
+    sysStrnCpy(sess->name, lpSessionDesc->lpszSessionNameA, 64);
     sess->ID = lpDPInfo->numSessions;
-    
+
     //
     p = (DPSESSIONDESC2*) MM_std.malloc(sizeof(DPSESSIONDESC2));
     sysMemCpy(p, lpSessionDesc, sizeof(DPSESSIONDESC2));
     sess->lpSession = p;
     sess->flags = 0;
 	sess->nbPlayers = p->dwCurrentPlayers;
-	sess->maxPlayers = p->dwMaxPlayers;	
-	
- 
+	sess->maxPlayers = p->dwMaxPlayers;
+
     if (p->dwFlags&DPSESSION_JOINDISABLED)
     {
         sess->flags|=NET_SESSIONISCLOSED;
@@ -224,19 +228,20 @@ BOOL FAR PASCAL EnumSessionsCallback(LPCDPSESSIONDESC2 lpSessionDesc, LPDWORD lp
     if (lpSessionDesc->lpszSessionNameA)
     {
         p->lpszSessionNameA = (char*)MM_std.malloc(strlen(lpSessionDesc->lpszSessionNameA)+1);
-        sysStrCpy(p->lpszSessionNameA, lpSessionDesc->lpszSessionNameA);        
+        sysStrCpy(p->lpszSessionNameA, lpSessionDesc->lpszSessionNameA);
     }
     if (lpSessionDesc->lpszPasswordA)
     {
         p->lpszPasswordA = (char*)MM_std.malloc(strlen(lpSessionDesc->lpszPasswordA)+1);
         sysStrCpy(p->lpszPasswordA, lpSessionDesc->lpszPasswordA);
-    }	
+    }
 
     lpDPInfo->numSessions++;
     UNUSED(lpdwTimeOut);
     UNUSED(lpContext);
     return (TRUE);
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  NET_SessionName *sNET->CreateSessionList(unsigned flag)
@@ -248,21 +253,21 @@ NET_SessionName *DPN_CreateSessionList(unsigned flag)
 {
     DPSESSIONDESC2   sessionDesc;
     HRESULT          hr;
- 
+
 	// free older session list
     sNET->ReleaseSessionList();
-    
+
 	 // Enum session
     sysMemZero(&sessionDesc, sizeof(DPSESSIONDESC2));
     sessionDesc.dwSize = sizeof(DPSESSIONDESC2);
     sessionDesc.guidApplication = g_cGUID;
-    
-	hr = SYS_DXTRACE(lpDirectPlay4->EnumSessions(&sessionDesc, 0, EnumSessionsCallback, g_hWnd, 
+
+	hr = SYS_DXTRACE(lpDirectPlay4->EnumSessions(&sessionDesc, 0, EnumSessionsCallback, g_hWnd,
           DPENUMSESSIONS_ALL|DPENUMSESSIONS_ASYNC|DPENUMSESSIONS_PASSWORDREQUIRED));
-    
-	if (lpDPInfo->numSessions==0) 
+
+	if (lpDPInfo->numSessions==0)
 		return NULL;
-    
+
 	// select Session
     lpDPInfo->lpSessionName[lpDPInfo->numSessions].name[0] = 0;
     lpDPInfo->lpSessionName[lpDPInfo->numSessions].ID = lpDPInfo->numSessions;
@@ -270,6 +275,7 @@ NET_SessionName *DPN_CreateSessionList(unsigned flag)
     UNUSED(flag);
     return lpDPInfo->lpSessionName;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : unsigned sNET->QuitSession(unsigned flag)
@@ -294,6 +300,7 @@ unsigned DPN_QuitSession(void)
 	lpDPInfo->wSessionName[0] = 0;
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  unsigned sNET->CloseSession(int numero)
@@ -310,22 +317,23 @@ unsigned DPN_CloseSession(void)
     sNET->CreateSessionList(0);
     sNET->CreatePlayerList(0);
     hr = lpDirectPlay4->DestroyPlayer((DPID)lpDPInfo->dpidPlayer);
-    if (SYS_DXTRACE(hr)) 
+    if (SYS_DXTRACE(hr))
 		return -1;
     lpSession = (DPSESSIONDESC2*)(lpDPInfo->lpSessionName[lpDPInfo->currentSession].lpSession);
-    if (!lpSession) 
+    if (!lpSession)
 		return -1;
     hr = lpDirectPlay4->Close();
-    if (SYS_DXTRACE(hr)) 
+    if (SYS_DXTRACE(hr))
 		return -1;
     lpDPInfo->dpidPlayer = 0;
     lpDPInfo->IsHost = FALSE;
     lpDPInfo->currentSession = 0;
-    lpDPInfo->IsClient = FALSE;	
+    lpDPInfo->IsClient = FALSE;
     lpDPInfo->wSessionName[0] = 0;
     sNET->CreateSessionList(0);
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  unsigned sNET->CreateNewSession(char *SessionName, unsigned MaxGamers)
@@ -339,10 +347,10 @@ int DPN_CreateNewSession(char *SessionName, unsigned MaxGamers, char *password)
     DPNAME         dpName;
     DPSESSIONDESC2 sessionDesc;
     HRESULT        hr;
-    
+
 	// should have an interface by now
     if (!lpDirectPlay4) return -1;
- 
+
 	// Open Session
     lpDPInfo->bytesSent = 0;
     lpDPInfo->bytesRecv = 0;
@@ -367,17 +375,17 @@ int DPN_CreateNewSession(char *SessionName, unsigned MaxGamers, char *password)
         hr = SYS_DXTRACE(lpDirectPlay4->Open(&sessionDesc, DPOPEN_CREATE));
     }
     else
-    {     
-	    DPCREDENTIALS lpCredentials;        
+    {
+	    DPCREDENTIALS lpCredentials;
         lpCredentials.dwSize = sizeof(DPCREDENTIALS);
         lpCredentials.lpszPasswordA = password;
         lpCredentials.lpszUsernameA = lpDPInfo->wPlayerName;
         lpCredentials.lpszDomainA = lpDPInfo->domain;
-        hr = lpDirectPlay4->SecureOpen(&sessionDesc, DPOPEN_CREATE, NULL, &lpCredentials);        
+        hr = lpDirectPlay4->SecureOpen(&sessionDesc, DPOPEN_CREATE, NULL, &lpCredentials);
 	}
     if (hr!=DPERR_ALREADYINITIALIZED)
     {
-        if (hr) 
+        if (hr)
 			return hr;
     }
 
@@ -386,12 +394,13 @@ int DPN_CreateNewSession(char *SessionName, unsigned MaxGamers, char *password)
     dpName.dwSize = sizeof(DPNAME);
     dpName.lpszShortNameA = lpDPInfo->wPlayerName;
     hr = lpDirectPlay4->CreatePlayer(&dpidPlayer, &dpName, NULL, NULL, 0, 0);
-    if (SYS_DXTRACE(hr)) 
-		return -2;    
+    if (SYS_DXTRACE(hr))
+		return -2;
     lpDPInfo->dpidPlayer = dpidPlayer;
     lpDPInfo->IsHost  = TRUE;
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  unsigned sNET->JoinSession(unsigned numero)
@@ -406,8 +415,8 @@ int DPN_JoinSession(unsigned numero, char *password)
     HRESULT         hr;
     DPSESSIONDESC2 *lpSession;
     if (lpDirectPlay4 == NULL) return -1;
-    
-	// Clean    
+
+	// Clean
     if (lpDPInfo->IsHost)   sNET->CloseSession();
     if (lpDPInfo->IsClient) sNET->QuitSession();
 
@@ -417,43 +426,44 @@ int DPN_JoinSession(unsigned numero, char *password)
     sNET->CreateSessionList(0);
 
     // Join session
-    lpDPInfo->currentSession = (u_int8_t)numero;
-    lpSession = (DPSESSIONDESC2*)(lpDPInfo->lpSessionName[lpDPInfo->currentSession].lpSession);	
-    if (!lpSession) return -1;        
-	lpDPInfo->maxPlayers = (u_int8_t)lpSession->dwMaxPlayers;
+    lpDPInfo->currentSession = (uint8_t)numero;
+    lpSession = (DPSESSIONDESC2*)(lpDPInfo->lpSessionName[lpDPInfo->currentSession].lpSession);
+    if (!lpSession) return -1;
+	lpDPInfo->maxPlayers = (uint8_t)lpSession->dwMaxPlayers;
     if (!password)
     {
         hr = lpDirectPlay4->Open(lpSession, DPOPEN_JOIN);
     }
     else
-    {     
-	    DPCREDENTIALS lpCredentials;        
+    {
+	    DPCREDENTIALS lpCredentials;
         sysMemZero(&lpCredentials, sizeof(DPCREDENTIALS));
         lpCredentials.dwSize = sizeof(DPCREDENTIALS);
         lpCredentials.lpszPasswordA = password;
-        lpCredentials.lpszUsernameA = lpDPInfo->wPlayerName;        
+        lpCredentials.lpszUsernameA = lpDPInfo->wPlayerName;
         lpCredentials.lpszDomainA = lpDPInfo->domain;
         hr = lpDirectPlay4->SecureOpen(lpSession, DPOPEN_JOIN, NULL, NULL);
         if (hr == DPERR_LOGONDENIED)
         {
             hr = lpDirectPlay4->SecureOpen(lpSession, DPOPEN_JOIN, NULL, &lpCredentials);
         }
-	}    
-    if (SYS_DXTRACE(hr)) 
+	}
+    if (SYS_DXTRACE(hr))
 		return -1;
     sysStrCpy(lpDPInfo->wSessionName, lpSession->lpszSessionNameA);
 
     // Create player
     sysMemZero(&dpName, sizeof(DPNAME));
     dpName.dwSize = sizeof(DPNAME);
-    dpName.lpszShortNameA = lpDPInfo->wPlayerName;    
+    dpName.lpszShortNameA = lpDPInfo->wPlayerName;
     hr = lpDirectPlay4->CreatePlayer(&dpidPlayer, &dpName, NULL, NULL, 0, 0);
-    if (SYS_DXTRACE(hr)) 
-		return -1;        
+    if (SYS_DXTRACE(hr))
+		return -1;
     lpDPInfo->dpidPlayer = dpidPlayer;
-    lpDPInfo->IsClient = TRUE;    
+    lpDPInfo->IsClient = TRUE;
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  BOOL FAR PASCAL EnumPlayersCallback(DPID dpId, DWORD dwPlayerType, LPCDPNAME lpName, DWORD dwFlags, LPVOID lpContext)
@@ -464,7 +474,7 @@ int DPN_JoinSession(unsigned numero, char *password)
 BOOL FAR PASCAL EnumPlayersCallback(DPID dpId, DWORD dwPlayerType, LPCDPNAME lpName, DWORD dwFlags, LPVOID lpContext)
 {
     sysStrCpy(lpDPInfo->lpPlayerName[lpDPInfo->numPlayers].name, lpName->lpszShortNameA);
-    lpDPInfo->lpPlayerName[lpDPInfo->numPlayers].ID = dpId;        
+    lpDPInfo->lpPlayerName[lpDPInfo->numPlayers].ID = dpId;
     if (strcmp(lpName->lpszShortNameA, lpDPInfo->wPlayerName)==0)    lpDPInfo->index = lpDPInfo->numPlayers;
     lpDPInfo->numPlayers++;
     UNUSED(dwPlayerType);
@@ -472,6 +482,7 @@ BOOL FAR PASCAL EnumPlayersCallback(DPID dpId, DWORD dwPlayerType, LPCDPNAME lpN
     UNUSED(lpContext   );
     return(TRUE);
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  NET_PlayerName *sNET->CreatePlayerList(unsigned flag)
@@ -484,7 +495,7 @@ NET_PlayerName *DPN_CreatePlayerList(unsigned flag)
     HRESULT  hr;
     // MM_std.free older player list
     lpDPInfo->numPlayers = 0;
-    
+
     // Enum players
     if ((!lpDPInfo->IsClient)&&(!lpDPInfo->IsHost)) return NULL;
     hr = lpDirectPlay4->EnumPlayers(NULL, EnumPlayersCallback, lpDPInfo, 0 );
@@ -494,6 +505,7 @@ NET_PlayerName *DPN_CreatePlayerList(unsigned flag)
     UNUSED(flag);
     return lpDPInfo->lpPlayerName;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int sNET->SetPlayerName(char *name)
@@ -514,6 +526,7 @@ int DPN_SetPlayerName(char *name)
     }
     return TRUE;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int NET_SendData(unsigned dest, void *data, unsigned size)
@@ -529,27 +542,27 @@ int DPN_SendData(unsigned dest, void *data, unsigned size)
         case NET_EVERYBODY: idTo = DPID_ALLPLAYERS;     break;
         case NET_HOST     : idTo = lpDPInfo->dpidHost;  break;
         default:            idTo = lpDPInfo->lpPlayerName[dest].ID; break;
-    } 
+    }
     // compress packet
 #ifdef LZ
-    if ( compress( lpDPInfo->lpzBuffer, (u_int32_t*)&size, (u_int8_t*)data, size) == Z_OK )
-    data = lpDPInfo->lpzBuffer;  
+    if ( compress( lpDPInfo->lpzBuffer, (uint32_t*)&size, (uint8_t*)data, size) == Z_OK )
+    data = lpDPInfo->lpzBuffer;
     else return 0;
 #endif
     lpDPInfo->bytesSent +=size;
 
     hr = lpDirectPlay4->SendEx(
-    lpDPInfo->dpidPlayer, 
-        idTo, 
+    lpDPInfo->dpidPlayer,
+        idTo,
         #ifdef ASYNC
              DPSEND_ASYNC | // Async mode
         #endif
-        DPSEND_GUARANTEED, 
-        data, 
-        size, 
-        0, 
-        0, 
-        NULL, 
+        DPSEND_GUARANTEED,
+        data,
+        size,
+        0,
+        0,
+        NULL,
         NULL
     );
     if (hr == DPERR_PENDING)
@@ -560,6 +573,7 @@ int DPN_SendData(unsigned dest, void *data, unsigned size)
     if (hr!=DP_OK) return FALSE;
     return TRUE;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  unsigned NET_ReceiveData(unsigned from, void *xdata, unsigned xmaxbuf)
@@ -584,10 +598,10 @@ unsigned DPN_ReceiveData(unsigned from, void *xdata, unsigned xmaxbuf)
     {
         idTo = lpDPInfo->dpidPlayer;
         hr = lpDirectPlay4->Receive(
-               &idFrom, 
-                &idTo, 
-                DPRECEIVE_ALL, 
-                data, 
+               &idFrom,
+                &idTo,
+                DPRECEIVE_ALL,
+                data,
                 &maxbuf);
         if (hr == DPERR_BUFFERTOOSMALL) // Calcul de la taille max
         {
@@ -634,7 +648,7 @@ unsigned DPN_ReceiveData(unsigned from, void *xdata, unsigned xmaxbuf)
                 case DPSYS_SETSESSIONDESC:
                 // session desc has changed ;
                 break;
-               
+
             }
             idFrom = 0;
         }
@@ -642,9 +656,9 @@ unsigned DPN_ReceiveData(unsigned from, void *xdata, unsigned xmaxbuf)
         {
             // Buffer big enough
             if (maxbuf < xmaxbuf)
-            {             
+            {
                 #ifdef LZ
-                    if ( uncompress((u_int8_t*)xdata, &maxbuf, (u_int8_t*)data, maxbuf) != Z_OK )
+                    if ( uncompress((uint8_t*)xdata, &maxbuf, (uint8_t*)data, maxbuf) != Z_OK )
                         idFrom = 0; // bad packet
                 #else
                     sysMemCpy(xdata, data, maxbuf);
@@ -657,6 +671,7 @@ unsigned DPN_ReceiveData(unsigned from, void *xdata, unsigned xmaxbuf)
     if ((data) && (data!=lpDPInfo->lpRecBuffer))  MM_std.free(data);
     return idFrom;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int NET_PIDtoIndex(unsigned Pid)
@@ -674,12 +689,13 @@ int DPN_PIDtoIndex(unsigned Pid)
     }
     return -1;
 }
+
 int DPN_SIDtoIndex(char *seName)
 {
     int i;
     for (i=0;i<lpDPInfo->numSessions;i++)
     {
-        NET_SessionName *sn = lpDPInfo->lpSessionName + i;        
+        NET_SessionName *sn = lpDPInfo->lpSessionName + i;
         DPSESSIONDESC2 *p = (DPSESSIONDESC2*)sn->lpSession;
         if( p)
         {
@@ -688,6 +704,7 @@ int DPN_SIDtoIndex(char *seName)
     }
     return -1;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  unsigned sNET->Synchronise(void)
@@ -701,30 +718,30 @@ static char str_recv[32] ="$client::Ok~%";
 
 unsigned DPN_Synchronise(int id, int (*callback)(int numConnected))
 {
-    char tx[256];        
-    int ok = 0;    
+    char tx[256];
+    int ok = 0;
     {
         int i;
         for (i=0;i<lpDPInfo->numPlayers;i++) lpDPInfo->lpPlayerName[i].connected = 0;
     }
     if (lpDPInfo->IsHost)
-    {        
-        *(unsigned*)(str_sender+16) = lpDPInfo->dpidPlayer;        
+    {
+        *(unsigned*)(str_sender+16) = lpDPInfo->dpidPlayer;
         sNET->SendData(NET_EVERYBODY, str_sender, 32);
         do
-        {  
+        {
             int i, c;
             unsigned pid;
             if (callback)  if (!callback(1)) return 0;
             pid = sNET->ReceiveData(NET_EVERYBODY, tx, 256);
-            if (pid) 
+            if (pid)
             {
                 int cm = sNET->PIDtoIndex(pid);
                 if (cm>=0)
-                {                    
+                {
                     if (strcmp(tx, str_recv)==0) lpDPInfo->lpPlayerName[ cm ].connected = 1;
                 }
-            }            
+            }
             for (c=1, i=0;i<lpDPInfo->numPlayers;i++) c+=lpDPInfo->lpPlayerName[i].connected;
             if (c==lpDPInfo->numPlayers-1) ok = 1;
         }while (ok!=1);
@@ -735,18 +752,18 @@ unsigned DPN_Synchronise(int id, int (*callback)(int numConnected))
         while(1)
         {
             unsigned pid;
-            if (callback)  
-				if (!callback(2)) 
+            if (callback)
+				if (!callback(2))
 					return 0;
             pid = sNET->ReceiveData(NET_EVERYBODY, tx, 256);
             if (pid)
             {
                 tx[255]=0;
                 if (strcmp(tx, str_sender)==0)
-                {                    
+                {
                     lpDPInfo->dpidHost = *(unsigned*)(tx+16);
                     *(unsigned*)(str_recv+16) = lpDPInfo->dpidPlayer;
-                    sNET->SendData(NET_EVERYBODY, str_recv, 32); 
+                    sNET->SendData(NET_EVERYBODY, str_recv, 32);
                     return 1;
                 }
             }
@@ -754,78 +771,80 @@ unsigned DPN_Synchronise(int id, int (*callback)(int numConnected))
     }
 }
 
-#define nalloc(size, type) (type*)MM_std.malloc(size*sizeof(type)); 
+#define nalloc(size, type) (type*)MM_std.malloc(size*sizeof(type));
+
 static LPNET_Informations DPN_Initialize(int maxPlayers, unsigned port)
 {
 	char tex[256];
     ULONG len;
-	lpDPInfo = (LPNET_Informations) nalloc(1, NET_Informations);      
+	lpDPInfo = (LPNET_Informations) nalloc(1, NET_Informations);
 	sysMemZero(lpDPInfo, sizeof(NET_Informations));
-    lpDPInfo->lpConnectionType = nalloc(8, NET_ConnectionType);      
+    lpDPInfo->lpConnectionType = nalloc(8, NET_ConnectionType);
 	sysMemZero(lpDPInfo->lpConnectionType,  8*sizeof(NET_ConnectionType));
-    lpDPInfo->lpSessionName = nalloc(32, NET_SessionName);       
+    lpDPInfo->lpSessionName = nalloc(32, NET_SessionName);
 	sysMemZero(lpDPInfo->lpSessionName, 32*sizeof(NET_SessionName));
-    lpDPInfo->lpPlayerName = nalloc(maxPlayers, NET_PlayerName); 
+    lpDPInfo->lpPlayerName = nalloc(maxPlayers, NET_PlayerName);
 	sysMemZero(lpDPInfo->lpPlayerName, maxPlayers * sizeof(NET_PlayerName));
     lpDPInfo->maxPlayers  = maxPlayers;
-    lpDPInfo->lpBuffer = (u_int8_t*)MM_std.malloc(MAXSENDBUFFER);
-    lpDPInfo->lpRecBuffer = (u_int8_t*)MM_std.malloc(MAXRECVBUFFER);
-    lpDPInfo->lpzBuffer = (u_int8_t*)MM_std.malloc(MAXRECVBUFFER);
-    SYS_DXTRACE(CoInitialize(NULL)); 
+    lpDPInfo->lpBuffer = (uint8_t*)MM_std.malloc(MAXSENDBUFFER);
+    lpDPInfo->lpRecBuffer = (uint8_t*)MM_std.malloc(MAXRECVBUFFER);
+    lpDPInfo->lpzBuffer = (uint8_t*)MM_std.malloc(MAXRECVBUFFER);
+    SYS_DXTRACE(CoInitialize(NULL));
 	len = 64;
 	sysStrCpy(tex, "New user");
 	GetComputerName(tex, &len);
 	sNET->SetPlayerName(tex);
-	sprintf(lpDPInfo->wSessionName, "%s'game", tex);	
+	sprintf(lpDPInfo->wSessionName, "%s'game", tex);
     return lpDPInfo;
-    
+
 }
+
 int DPN_Release(LPNET_Informations obj)
 {
-    if (!obj) 
-		obj = lpDPInfo;	
-	if (!obj) 
+    if (!obj)
+		obj = lpDPInfo;
+	if (!obj)
 		return 0;
 	sNET->ReleaseConnectionList();
-	CoUninitialize();	
+	CoUninitialize();
     MM_std.free(obj->lpConnectionType);
     MM_std.free(obj->lpSessionName);
     MM_std.free(obj->lpPlayerName);
     MM_std.free(obj->lpBuffer);
-    MM_std.free(obj->lpRecBuffer);    
+    MM_std.free(obj->lpRecBuffer);
     MM_std.free(obj->lpzBuffer);
 	sysMemZero(obj, sizeof(NET_Informations));
     MM_std.free(obj);
-	lpDPInfo = NULL;    
+	lpDPInfo = NULL;
     return 1;
 }
 
 NET_ClientDriver net_dplay = {
-	DPN_Initialize, 
-    DPN_Release, 
-    DPN_CreateConnectionList, 
-    DPN_SelectConnection, 
-    DPN_CloseConnection, 
-    DPN_CreateSessionList, 
-    DPN_ReleaseConnectionList, 
-    DPN_JoinSession, 
-    DPN_CreateNewSession, 
-    DPN_QuitSession, 
-    DPN_CloseSession, 
-    DPN_SetPlayerName, 
-    DPN_CreatePlayerList, 
-    DPN_SendData, 
-    DPN_ReceiveData, 
-    DPN_PIDtoIndex, 
-    DPN_SIDtoIndex, 
-    DPN_Synchronise, 
-	DPN_ReleaseSessionList	
+	DPN_Initialize,
+    DPN_Release,
+    DPN_CreateConnectionList,
+    DPN_SelectConnection,
+    DPN_CloseConnection,
+    DPN_CreateSessionList,
+    DPN_ReleaseConnectionList,
+    DPN_JoinSession,
+    DPN_CreateNewSession,
+    DPN_QuitSession,
+    DPN_CloseSession,
+    DPN_SetPlayerName,
+    DPN_CreatePlayerList,
+    DPN_SendData,
+    DPN_ReceiveData,
+    DPN_PIDtoIndex,
+    DPN_SIDtoIndex,
+    DPN_Synchronise,
+	DPN_ReleaseSessionList
 };
 
 NET_ClientDriver *NET_GetDirectPlayInterface(void *hwnd, const void *cGuid)
 {
 	g_cGUID = *(const GUID*)cGuid;
 	g_hWnd = (HWND)hwnd;
-    return &net_dplay;    
+    return &net_dplay;
 }
 

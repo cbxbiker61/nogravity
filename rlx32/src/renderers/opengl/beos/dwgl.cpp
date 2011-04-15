@@ -1,18 +1,18 @@
 /****************************************************************************
 ; *
-; * 	File		:  dwgl.cpp
+; *	File		:  dwgl.cpp
 ; *
-; * 	Description :  BDirectGLWindow driver
+; *	Description :  BDirectGLWindow driver
 ; *
-; * 	Copyright © Realtech VR 1995 - 2003 - http://www.v3x.net.
+; *	Copyright © Realtech VR 1995 - 2003 - http://www.v3x.net.
 ; *
-; * 	Permission to use, copy, modify, distribute and sell this software
-; * 	and its documentation for any purpose is hereby granted without fee,
-; * 	provided that the above copyright notice appear in all copies and
-; * 	that both that copyright notice and this permission notice appear
-; * 	in supporting documentation.  Realtech makes no representations
-; * 	about the suitability of this software for any purpose.
-; * 	It is provided "as is" without express or implied warranty.
+; *	Permission to use, copy, modify, distribute and sell this software
+; *	and its documentation for any purpose is hereby granted without fee,
+; *	provided that the above copyright notice appear in all copies and
+; *	that both that copyright notice and this permission notice appear
+; *	in supporting documentation.  Realtech makes no representations
+; *	about the suitability of this software for any purpose.
+; *	It is provided "as is" without express or implied warranty.
 ; *
 ; ***************************************************************************/
 #include "v3x_std"
@@ -73,17 +73,17 @@ struct GLDisplayModeInfo
     int32_t color;
 };
 
-static GLDeviceInfo				          	g_cgDeviceList[MAX_DEVICES];
+static GLDeviceInfo							g_cgDeviceList[MAX_DEVICES];
 static GLDisplayModeInfo				    g_cgDisplayModeList[MAX_DISPLAY_MODES];
-static int 									m_NumDevice, m_NumVideoModes;
+static int									m_NumDevice, m_NumVideoModes;
 
 void V3X_BDirectGLWindow::DeviceInfo( uint32_t device_id, uint32_t monitor, const char *name, bool depth, bool stencil, bool accum )
 {
- 	printf("Device %d:, Monitor %d, %s, depth:%d, stencil:%d, accum:%d\n" , device_id, monitor, name, depth, 
+	printf("Device %d:, Monitor %d, %s, depth:%d, stencil:%d, accum:%d\n" , device_id, monitor, name, depth,
     stencil, accum);
 
- 	if (m_NumDevice < MAX_DEVICES - 1)
- 	{
+	if (m_NumDevice < MAX_DEVICES - 1)
+	{
 		GLDeviceInfo *p = g_cgDeviceList + m_NumDevice;
 		p->device_id = device_id;
 		p->monitor = monitor;
@@ -91,7 +91,6 @@ void V3X_BDirectGLWindow::DeviceInfo( uint32_t device_id, uint32_t monitor, cons
 		m_NumDevice++;
 		p[0].name[0] = 0;
     }
-	return;
 }
 
 void V3X_BDirectGLWindow::VideoModeInfo( uint32_t width, uint32_t height, uint32_t color, uint32_t depth, uint32_t stencil, uint32_t accum )
@@ -107,7 +106,6 @@ void V3X_BDirectGLWindow::VideoModeInfo( uint32_t width, uint32_t height, uint32
 		m_NumVideoModes++;
 		p[1].width = 0;
     }
-	return;
 }
 
 V3X_BDirectGLWindow::V3X_BDirectGLWindow(BRect rect, const char *title)
@@ -132,7 +130,7 @@ V3X_BDirectGLWindow::V3X_BDirectGLWindow(BRect rect, const char *title)
     m_NumVideoModes = 0;
 	EnumerateDevices( BGL_MONITOR_ANY, BGL_ANY | BGL_DOUBLE, BGL_ANY, BGL_NONE, BGL_NONE );
 
-	if (RestartGL(BGL_DEVICE_HARDWARE) < B_OK) 
+	if (RestartGL(BGL_DEVICE_HARDWARE) < B_OK)
 	{
 		printf("Can't start OpenGL, bailing out...\n" );
 		be_app_messenger.SendMessage( B_QUIT_REQUESTED );
@@ -179,27 +177,26 @@ status_t V3X_BDirectGLWindow::RestartGL(uint32_t m_DeviceID)
 	{
 		sysStrnCpy(GET_V3X()->Client->s_DrvName, gl_AllDevices[m_DeviceID].name);
 	}
+
 	return ret;
 }
 
-void
-V3X_BDirectGLWindow::Center()
+void V3X_BDirectGLWindow::Center()
 {
 	BScreen b;
 	BRect bounds = b.Frame(), rect = Bounds();
 	float32_t w = bounds.right,  h = bounds.bottom;
 	MoveTo( (w - (rect.right - rect.left)) / 2, (h - (rect.bottom - rect.top)) / 2 );
-	return;
 }
 
-bool
-V3X_BDirectGLWindow::QuitRequested()
+bool V3X_BDirectGLWindow::QuitRequested()
 {
 	if (!g_pApp->IsStopped())
 	{
 		g_pApp->Stop();
 		g_pApp->SetActive(false);
 	}
+
 	return false;
 }
 
@@ -224,15 +221,13 @@ void V3X_BDirectGLWindow::MessageReceived( BMessage *msg )
 			BDirectWindow::MessageReceived(msg);
 		break;
 	}
-	return;
 }
 
 void V3X_BDirectGLWindow::FrameResized( float32_t width, float32_t height )
 {
     printf("Frame resized %f x %f", width, height);
-   	g_pRLX->pfSetViewPort(&GET_GX()->View, width, height, 32);
+	g_pRLX->pfSetViewPort(&GET_GX()->View, width, height, 32);
 	GL_InvalidateViewport();
-	return;
 }
 
 BRect V3X_BDirectGLWindow::UpdateGLRect( BRect window_rect )
@@ -256,5 +251,5 @@ void V3X_BDirectGLWindow::SetFullScreenMode(bool bFs, int lx, int ly)
 
 	g_pRLX->pfSetViewPort(&GET_GX()->View, lx, ly, 32);
 	GL_InvalidateViewport();
-	return;
 }
+

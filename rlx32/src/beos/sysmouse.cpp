@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -40,24 +40,20 @@ static int Open(void *hwnd)			// Return non-zero if error
 
 static void Release(void)
 {
-	return;
 }
 
 static void Show()
 {
-    return;
 }
 
 static void Hide()
 {
-    return;
 }
 
-static void SetPosition(u_int32_t x, u_int32_t y)
+static void SetPosition(uint32_t x, uint32_t y)
 {
 	sMOU->x = x;
 	sMOU->y = y;
-	return;
 }
 
 static unsigned long CALLING_STD Update(void *device)
@@ -70,19 +66,19 @@ static unsigned long CALLING_STD Update(void *device)
        {
             BPoint point;
             uint32 button;
-	 		v->GetMouse(&point, &button);
-  		    sMOU->lX = (int)point.x - sMOU->x;
+			v->GetMouse(&point, &button);
+		    sMOU->lX = (int)point.x - sMOU->x;
 		    sMOU->lY = (int)point.y - sMOU->y;
-	  	 	sMOU->x = (int)point.x;
-	   		sMOU->y = (int)point.y;
-	   		sysMemCpy(sMOU->steButtons, sMOU->rgbButtons, sizeof(sMOU->steButtons));
-	 	 	sMOU->rgbButtons[0] =  button&1;
-	 	    sMOU->rgbButtons[1] = (button>>1)&1;
-	  	    sMOU->rgbButtons[2] = (button>>2)&1;
+			sMOU->x = (int)point.x;
+			sMOU->y = (int)point.y;
+			sysMemCpy(sMOU->steButtons, sMOU->rgbButtons, sizeof(sMOU->steButtons));
+			sMOU->rgbButtons[0] =  button&1;
+		    sMOU->rgbButtons[1] = (button>>1)&1;
+		    sMOU->rgbButtons[2] = (button>>2)&1;
        }
        w->Unlock();
    }
-   
+
    return 0;
 }
 
@@ -101,3 +97,4 @@ _RLXEXPORTFUNC MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
     sMOU = &MouseClientBeOS;
 	return sMOU;
 }
+

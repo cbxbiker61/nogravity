@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -34,80 +34,81 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 STUB_Registry RLX={
  // System
  {
-   RLXSYSTEM_Enable, 
-   RLXOS_MACOS, 
-   FALSE, 
-   5, 
-   0, 
+   RLXSYSTEM_Enable,
+   RLXOS_MACOS,
+   FALSE,
+   5,
+   0,
    {
      NULL
    }
- }, 
+ },
  // Audio
  {
    RLXAUDIO_Enable+
    RLXAUDIO_Use16BIT+
    RLXAUDIO_UseSTEREO+
    RLXAUDIO_DetectHARDWARE+
-   RLXAUDIO_EnableCDAudio, 
-   1, 1, 8, 0, 
-   0x200, 
-   0, 32, 
+   RLXAUDIO_EnableCDAudio,
+   1, 1, 8, 0,
+   0x200,
+   0, 32,
    {11025, 16537, 22050, 33075, 44100}
- }, 
+ },
  // Video
  {
-   RLXVIDEO_Enable, 
-   RLXVIDEO_VESA12, 
-   70, 
-   0, 
+   RLXVIDEO_Enable,
+   RLXVIDEO_VESA12,
+   70,
+   0,
    0
- }, 
+ },
  // 3D
  {
-   0, 
-   RLX3D_Software, 
-   2, 
+   0,
+   RLX3D_Software,
+   2,
    {0, 0}
- }, 
+ },
 
  // Control
  {
    RLXCTRL_Enable+
-   RLXCTRL_IntKeyboard, 
-   RLXCTRL_JoyAnalog, 
-  
- }, 
+   RLXCTRL_IntKeyboard,
+   RLXCTRL_JoyAnalog,
+
+ },
  // Joy
  {
    {
-    {0, 0, 0, 0, 0, 0}, 
-    {0, 0, 0, 0, 0, 0}, 
+    {0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0},
    }
- }, 
+ },
  // Network
  {
-   0, 
+   0,
    {0, 0, 0}
- }, 
+ },
  // Dev
  {
-   "Default", 
+   "Default",
    "application/x-vnd",
-   "Realtech", 
-   0, 
-   0, 
- }, 
+   "Realtech",
+   0,
+   0,
+ },
  // App
  {
-   "", 
-   RLXAPP_IsRunning, 
-   0, 
+   "",
+   RLXAPP_IsRunning,
+   0,
    1L<<20
- }, 
+ },
  "rlxreg.ini",
  ""
 };
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void STUB_RegistryReset(STUB_Registry *regs)
@@ -118,8 +119,8 @@ STUB_Registry RLX={
 void STUB_RegistryReset(STUB_Registry *regs)
 {
     *regs = RLX;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void STUB_RegistryRead(STUB_Registry *regs)
@@ -127,7 +128,6 @@ void STUB_RegistryReset(STUB_Registry *regs)
 * DESCRIPTION :
 *
 */
-
 void STUB_RegistryRead(STUB_Registry *regs)
 {
 	char tex[256];
@@ -135,43 +135,42 @@ void STUB_RegistryRead(STUB_Registry *regs)
 
 	CFStringRef userName = CSCopyUserName(true);
 	CFStringGetCString(userName, RLX.App.UserName, 16, kCFStringEncodingISOLatin1);
-   
+
 	sprintf(tex, "%s/%s", regs->IniPath, regs->IniFilename);
     if (  ReadConfig(tex, &iniFile) == 0 )
     {
         if (SelectConfigClass("System", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->System.Config);
-            GetCF_uchar2("Id", &iniFile, (u_int8_t*)&regs->System.Id);
-            GetCF_uchar2("Processor", &iniFile, (u_int8_t*)&regs->System.Processor);
+            GetCF_uchar2("Id", &iniFile, (uint8_t*)&regs->System.Id);
+            GetCF_uchar2("Processor", &iniFile, (uint8_t*)&regs->System.Processor);
         }
         if (SelectConfigClass("Audio", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->Audio.Config);
-            GetCF_uchar2("WaveDeviceId", &iniFile, (u_int8_t*)&regs->Audio.WaveDeviceId);
-            GetCF_uchar2("MidiDeviceId", &iniFile, (u_int8_t*)&regs->Audio.MidiDeviceId);
-            GetCF_uchar2("SamplingRate", &iniFile, (u_int8_t*)&regs->Audio.SamplingRate);
-            GetCF_uchar2("ChannelToMix", &iniFile, (u_int8_t*)&regs->Audio.ChannelToMix);
+            GetCF_uchar2("WaveDeviceId", &iniFile, (uint8_t*)&regs->Audio.WaveDeviceId);
+            GetCF_uchar2("MidiDeviceId", &iniFile, (uint8_t*)&regs->Audio.MidiDeviceId);
+            GetCF_uchar2("SamplingRate", &iniFile, (uint8_t*)&regs->Audio.SamplingRate);
+            GetCF_uchar2("ChannelToMix", &iniFile, (uint8_t*)&regs->Audio.ChannelToMix);
         }
         if (SelectConfigClass("Video", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->Video.Config);
-            GetCF_uchar2("Id", &iniFile, (u_int8_t*)&regs->Video.Id);
+            GetCF_uchar2("Id", &iniFile, (uint8_t*)&regs->Video.Id);
         }
         if (SelectConfigClass("3D", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->V3X.Config);
-            GetCF_uchar2("Id", &iniFile, (u_int8_t*)&regs->V3X.Id);
-            GetCF_uchar2("TextureQuality", &iniFile, (u_int8_t*)&regs->V3X.DefaultResize);
+            GetCF_uchar2("Id", &iniFile, (uint8_t*)&regs->V3X.Id);
+            GetCF_uchar2("TextureQuality", &iniFile, (uint8_t*)&regs->V3X.DefaultResize);
         }
         if (SelectConfigClass("Controller", &iniFile))
         {
             GetCF_hexa2("Config", &iniFile, (int32_t*)&regs->Control.Config);
-            GetCF_uchar2("Id", &iniFile, (u_int8_t*)&regs->Control.Id);
+            GetCF_uchar2("Id", &iniFile, (uint8_t*)&regs->Control.Id);
         }
         DestroyConfig(&iniFile);
     } else STUB_RegistryWrite(regs);
-    return;
 }
 
 int STUB_RegistryWrite(STUB_Registry *regs)

@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -67,84 +67,69 @@ static const GK_DisplayModeSettings g_pDisplayModes[]=
 };
 
 // 8
-static void hook_8_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t color)
+static void hook_8_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_line_with_8_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x2, y2+GX_BWindowScreen::GetInstance()->m_Offset, color, 0, 0, 0, 0, 0);
-	return;
 }
-static void hook_8_drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t color)
+static void hook_8_drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_8_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x1+lx-1, y1+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
-static void hook_8_drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t color)
+static void hook_8_drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_8_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x1, y1+lx+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
-static void hook_8_drawFilledRect(int32_t x, int32_t y, int32_t x2, int32_t y2, u_int32_t color)
+static void hook_8_drawFilledRect(int32_t x, int32_t y, int32_t x2, int32_t y2, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_8_bit_depth(x, y+GX_BWindowScreen::GetInstance()->m_Offset, x2, y2+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
 static void hook_8_clearBackBuffer(void)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_8_bit_depth(0, GX_BWindowScreen::GetInstance()->m_Offset, GET_GX()->View.lWidth, GET_GX()->View.lHeight+GX_BWindowScreen::GetInstance()->m_Offset-1, 0);
-	return;
 }
 
 // 16
-static void hook_16_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t color)
+static void hook_16_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_line_with_16_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x2, y2+GX_BWindowScreen::GetInstance()->m_Offset, color, 0, 0, 0, 0, 0);
-	return;
 }
-static void hook_16_drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t color)
+static void hook_16_drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_16_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x1+lx-1, y1+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
-static void hook_16_drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t color)
+static void hook_16_drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_16_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x1, y1+lx+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
-static void hook_16_drawFilledRect(int32_t x, int32_t y, int32_t x2, int32_t y2, u_int32_t color)
+static void hook_16_drawFilledRect(int32_t x, int32_t y, int32_t x2, int32_t y2, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_16_bit_depth(x, y+GX_BWindowScreen::GetInstance()->m_Offset, x2, y2+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
 static void hook_16_clearBackBuffer(void)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_16_bit_depth(0, GX_BWindowScreen::GetInstance()->m_Offset, GET_GX()->View.lWidth, GET_GX()->View.lHeight+GX_BWindowScreen::GetInstance()->m_Offset-1, 0);
-	return;
 }
 
 // 32
-static void hook_32_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, u_int32_t color)
+static void hook_32_drawAnyLine(int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_line_with_32_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x2, y2+GX_BWindowScreen::GetInstance()->m_Offset, color, 0, 0, 0, 0, 0);
-	return;
 }
-static void hook_32_drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t color)
+static void hook_32_drawHorizontalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_32_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x1+lx-1, y1+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
-static void hook_32_drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, u_int32_t color)
+static void hook_32_drawVerticalLine(int32_t x1, int32_t y1, int32_t lx, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_32_bit_depth(x1, y1+GX_BWindowScreen::GetInstance()->m_Offset, x1, y1+lx+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
-static void hook_32_drawFilledRect(int32_t x, int32_t y, int32_t x2, int32_t y2, u_int32_t color)
+static void hook_32_drawFilledRect(int32_t x, int32_t y, int32_t x2, int32_t y2, uint32_t color)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_32_bit_depth(x, y+GX_BWindowScreen::GetInstance()->m_Offset, x2, y2+GX_BWindowScreen::GetInstance()->m_Offset, color);
-	return;
 }
 static void hook_32_clearBackBuffer(void)
 {
 	GX_BWindowScreen::GetInstance()->draw_rect_with_32_bit_depth(0, GX_BWindowScreen::GetInstance()->m_Offset, GET_GX()->View.lWidth, GET_GX()->View.lHeight+GX_BWindowScreen::GetInstance()->m_Offset-1, 0);
-	return;
 }
 
 static void GetGraphicInterface(int bpp, struct _gx_graphic_interface *pGi)
@@ -192,7 +177,6 @@ static void GetGraphicInterface(int bpp, struct _gx_graphic_interface *pGi)
 		default:
 		break;
 	}
-	return;
 }
 
 static char	*	video_top_heap;
@@ -211,10 +195,9 @@ static void video_initheap(void *top, size_t size)
 	video_bot_heap = (char*)top;
 	video_top_heap = video_bot_heap + size;
 	video_cur_heap = video_bot_heap;
-	return;
 }
 
-static void RLXAPI setPalette (u_int32_t firstReg, u_int32_t numRegs, const rgb24_t *src)
+static void RLXAPI setPalette (uint32_t firstReg, uint32_t numRegs, const rgb24_t *src)
 {
 	rgb_color palette[256];
 	rgb_color *dst = palette;
@@ -229,15 +212,13 @@ static void RLXAPI setPalette (u_int32_t firstReg, u_int32_t numRegs, const rgb2
 	GX_BWindowScreen::GetInstance()->Lock();
 	GX_BWindowScreen::GetInstance()->SetColorList(palette, firstReg, firstReg+numRegs-1);
 	GX_BWindowScreen::GetInstance()->Unlock();
-
-	return;
 }
 
 static void RLXAPI PageFlipMem(void)
 {
 	long ecx;
-	u_int8_t *edi = GET_GX()->View.lpFrontBuffer + GX_BWindowScreen::GetInstance()->m_Offset;
-	u_int8_t *esi = GET_GX()->Surfaces.lpSurface[1];
+	uint8_t *edi = GET_GX()->View.lpFrontBuffer + GX_BWindowScreen::GetInstance()->m_Offset;
+	uint8_t *esi = GET_GX()->Surfaces.lpSurface[1];
 	for (ecx = GET_GX()->View.ymax;ecx!=0;ecx--)
 	{
 		sysMemCpy(edi, esi, GET_GX()->View.lPitch);
@@ -246,7 +227,6 @@ static void RLXAPI PageFlipMem(void)
 	}
 	if (GX_BWindowScreen::GetInstance()->sync && (GET_GX()->View.Flags & GX_CAPS_VSYNC))
 		GX_BWindowScreen::GetInstance()->sync();
-	return;
 }
 
 static void RLXAPI PageFlip(void)
@@ -256,8 +236,6 @@ static void RLXAPI PageFlip(void)
 		GX_BWindowScreen::GetInstance()->sync();
 
 	GX_BWindowScreen::GetInstance()->ShowPage(GET_GX()->View.State&GX_STATE_BACKBUFFERPAGE);
-
-	return;
 }
 
 static GXDISPLAYMODEHANDLE SearchDisplayMode(int width, int height, int bpp)
@@ -319,8 +297,6 @@ static void GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 	}
 
 	GET_GX()->gi.setPalette = setPalette;
-
-	return ;
 }
 
 static int SetDisplayMode(GXDISPLAYMODEHANDLE mode)
@@ -331,16 +307,16 @@ static int SetDisplayMode(GXDISPLAYMODEHANDLE mode)
 	{
 		GX_BWindowScreen::GetInstance()->m_Space = mode;
 		int ret = GX_BWindowScreen::GetInstance()->InitDisplayMode(GX_BWindowScreen::GetInstance()->m_DisplayMode->Space);
-    	if (!ret)
-    	{
-    		return -1;
-    	}
-    	else
-    	{
-    		GET_GX()->View.lpFrontBuffer = (unsigned char*)GX_BWindowScreen::GetInstance()->m_pGci->frame_buffer;
-    		if (GET_GX()->View.lpFrontBuffer)
-    			sysMemZero(GET_GX()->View.lpFrontBuffer, GX_BWindowScreen::GetInstance()->m_pGci->bytes_per_row * GX_BWindowScreen::GetInstance()->m_pGci->height);
-    	}
+		if (!ret)
+		{
+			return -1;
+		}
+		else
+		{
+			GET_GX()->View.lpFrontBuffer = (unsigned char*)GX_BWindowScreen::GetInstance()->m_pGci->frame_buffer;
+			if (GET_GX()->View.lpFrontBuffer)
+				sysMemZero(GET_GX()->View.lpFrontBuffer, GX_BWindowScreen::GetInstance()->m_pGci->bytes_per_row * GX_BWindowScreen::GetInstance()->m_pGci->height);
+		}
 
 		int lx = GX_BWindowScreen::GetInstance()->m_pGci->width;
 		int ly = npage * GX_BWindowScreen::GetInstance()->m_pGci->height;
@@ -388,7 +364,7 @@ static GXDISPLAYMODEINFO *EnumDisplayList(int bpp)
 			dst->BitsPerPixel = p->BitsPerPixel;
 			dst->mode = (GXDISPLAYMODEHANDLE)p->Space;
 			dst++;
-		}		
+		}
 	}
 	sysMemSet(dst, 0, sizeof(GXDISPLAYMODEINFO));
 	return pResult;
@@ -409,10 +385,9 @@ static void ReleaseSurfaces(void)
 	}
 	GET_GX()->View.lpBackBuffer = NULL;
 	GET_GX()->Surfaces.maxSurface	 = 0;
-	return;
 }
 
-static u_int8_t *Lock(void)
+static uint8_t *Lock(void)
 {
 	int page = 1;
 
@@ -435,7 +410,6 @@ static void Unlock(void)
 {
 	GET_GX()->View.State &= ~GX_STATE_LOCKED;
 	GET_GX()->View.lpBackBuffer = NULL;
-	return;
 }
 
 static int CreateSurface(int pages)
@@ -450,21 +424,21 @@ static int CreateSurface(int pages)
 
 	for (i=0;i<pages;i++)
 	{
-		u_int8_t *p = 0;
+		uint8_t *p = 0;
 		if (i == 0 || (GET_GX()->View.Flags&GX_CAPS_BACKBUFFERINVIDEO))
 		{
- 		   p = (u_int8_t*) video_malloc(GET_GX()->View.lSurfaceSize);
+		   p = (uint8_t*) video_malloc(GET_GX()->View.lSurfaceSize);
 		   GET_GX()->Surfaces.flags[i] = 0;
- 		}
+		}
         else
         {
-		   p = (u_int8_t*) g_pRLX->mm_std->malloc(GET_GX()->View.lSurfaceSize);
+		   p = (uint8_t*) g_pRLX->mm_std->malloc(GET_GX()->View.lSurfaceSize);
 	       GET_GX()->Surfaces.flags[i] = 1;
         }
 
 		if (!p)
 			return -3;
-		
+
 		GET_GX()->Surfaces.lpSurface[i] = p;
 
 	}
@@ -478,7 +452,6 @@ static void Shutdown(void)
 		GX_BWindowScreen::GetInstance()->Lock();
 		GX_BWindowScreen::GetInstance()->Quit();
 	}
-	return ;
 }
 
 static int Open(void *hwnd)
@@ -499,7 +472,6 @@ static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)
 	return 0;
 }
 
-
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  static void UploadSprite(GXSPRITE *sp)
@@ -507,7 +479,6 @@ static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)
 * DESCRIPTION :
 *
 */
-
 static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 {
 	GXSPRITESW *p = (GXSPRITESW*) g_pRLX->mm_heap->malloc(sizeof(GXSPRITESW));
@@ -515,8 +486,8 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	if (bpp == 3)
 	{
 		int BytePerPixel = GET_GX()->View.BytePerPixel;
-		u_int8_t * src_buf = (u_int8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
-		g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel, 
+		uint8_t * src_buf = (uint8_t*)g_pRLX->mm_std->malloc(sp->LX * sp->LY * BytePerPixel);
+		g_pRLX->pfSmartConverter(src_buf, NULL, BytePerPixel,
 								 sp->data, colorTable, bpp, sp->LX*sp->LY);
 		g_pRLX->mm_heap->free(sp->data);
 		sp->data = src_buf;
@@ -531,7 +502,6 @@ static void UploadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 	sp->handle = p;
 	p->bpp = bpp;
     UNUSED(sp);
-    return;
 }
 
 /*------------------------------------------------------------------------
@@ -546,16 +516,16 @@ static void ReleaseSprite(GXSPRITE *sp)
 	GXSPRITESW *p = (GXSPRITESW*) sp->handle;
 	g_pRLX->mm_heap->free(p);
 	sp->data = NULL;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+* PROTOTYPE  :  unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 *
 * DESCRIPTION :
 *
 */
-static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t *colorTable)
+static unsigned UpdateSprite(GXSPRITE *sp, const uint8_t *bitmap, const rgb24_t *colorTable)
 {
 	GXSPRITESW *p = (GXSPRITESW*) sp->handle;
 	int i;
@@ -565,22 +535,21 @@ static unsigned UpdateSprite(GXSPRITE *sp, const u_int8_t *bitmap, const rgb24_t
     return 0;
 }
 
-
 GXCLIENTDRIVER GX_BWinScrn = {
-    Lock, 
-    Unlock, 
-    EnumDisplayList, 
-    GetDisplayInfo, 
-    SetDisplayMode, 
-    SearchDisplayMode, 
-    CreateSurface, 
-    ReleaseSurfaces, 
-    UploadSprite, 
-    ReleaseSprite, 
-    UpdateSprite, 
-    RegisterMode, 
-    Shutdown, 
-    Open, 
+    Lock,
+    Unlock,
+    EnumDisplayList,
+    GetDisplayInfo,
+    SetDisplayMode,
+    SearchDisplayMode,
+    CreateSurface,
+    ReleaseSurfaces,
+    UploadSprite,
+    ReleaseSprite,
+    UpdateSprite,
+    RegisterMode,
+    Shutdown,
+    Open,
     NotifyEvent,
 	"BDirectWindow"
 };

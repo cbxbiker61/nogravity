@@ -106,7 +106,7 @@ static SInt32 HIDGetElementValue (recDevice *pDevice, recElement *pElement)
 	IOReturn result = kIOReturnSuccess;
 	IOHIDEventStruct hidEvent;
 	hidEvent.value = 0;
-	
+
 	if (NULL != pDevice && NULL != pElement && NULL != pDevice->interface)
 	{
 		result = (*(pDevice->interface))->getElementValue(pDevice->interface, pElement->cookie, &hidEvent);
@@ -125,7 +125,7 @@ static SInt32 HIDGetElementValue (recDevice *pDevice, recElement *pElement)
 	return hidEvent.value;
 }
 
-/* similiar to HIDCalibratedValue but calibrates to an arbitrary scale instead of the elements default scale 
+/* similiar to HIDCalibratedValue but calibrates to an arbitrary scale instead of the elements default scale
 
 static SInt32 HIDScaledCalibratedValue (recDevice *pDevice, recElement *pElement, int32_t min, int32_t max)
 {
@@ -149,7 +149,7 @@ static IOReturn HIDCreateOpenDeviceInterface (io_object_t hidDevice, recDevice *
 	HRESULT plugInResult = S_OK;
 	SInt32 score = 0;
 	IOCFPlugInInterface ** ppPlugInInterface = NULL;
-	
+
 	if (NULL == pDevice->interface)
 	{
 		result = IOCreatePlugInInterfaceForService (hidDevice, kIOHIDDeviceUserClientTypeID,
@@ -200,7 +200,7 @@ static IOReturn HIDCloseReleaseInterface (recDevice *pDevice)
 		if (kIOReturnSuccess != result)
 			HIDReportErrorNum ("Failed to release IOHIDDeviceInterface.", result);
 		pDevice->interface = NULL;
-	}	
+	}
 	return result;
 }
 
@@ -241,7 +241,7 @@ static void HIDAddElement (CFTypeRef refElement, recDevice* pDevice)
 	if ((refElementType) && (CFNumberGetValue (refElementType, kCFNumberLongType, &elementType)))
 	{
 		/* look at types of interest */
-		if ((elementType == kIOHIDElementTypeInput_Misc) || 
+		if ((elementType == kIOHIDElementTypeInput_Misc) ||
 			(elementType == kIOHIDElementTypeInput_Button) ||
 			(elementType == kIOHIDElementTypeInput_Axis))
 		{
@@ -281,9 +281,9 @@ static void HIDAddElement (CFTypeRef refElement, recDevice* pDevice)
 									}
 								break;
 								// Velocity
-								case kHIDUsage_GD_Vx: 
-								case kHIDUsage_GD_Vy: 
-								case kHIDUsage_GD_Vz: 
+								case kHIDUsage_GD_Vx:
+								case kHIDUsage_GD_Vy:
+								case kHIDUsage_GD_Vz:
 									element = (recElement *) NewPtrClear (sizeof (recElement));
 									if (element)
 									{
@@ -303,15 +303,14 @@ static void HIDAddElement (CFTypeRef refElement, recDevice* pDevice)
 										headElement = &(pDevice->firstVRAxis);
 									}
 								break;
-	
-								// DPad							
-								case kHIDUsage_GD_DPadUp: 
+
+								// DPad
+								case kHIDUsage_GD_DPadUp:
 								case kHIDUsage_GD_DPadDown:
 								case kHIDUsage_GD_DPadRight:
 								case kHIDUsage_GD_DPadLeft:
 								break;
-							
-							}							
+							}
 						}
 						break;
 					case kHIDPage_Button:
@@ -371,7 +370,7 @@ static void HIDGetElements (CFTypeRef refElementCurrent, recDevice *pDevice)
 		/* CountElementsCFArrayHandler called for each array member */
 		CFArrayApplyFunction (refElementCurrent, range, HIDGetElementsCFArrayHandler, pDevice);
 	}
-}			
+}
 
 /* handles extracting element information from element collection CF types
    used from top level element decoding and hierarchy deconstruction to flatten device element list
@@ -401,7 +400,7 @@ static void HIDTopLevelElementHandler (const void * value, void * parameter)
 		HIDReportErrorNum ("CFNumberGetValue error retrieving pDevice->usage.", 0);
 }
 
-/* extracts device info from CF dictionary 
+/* extracts device info from CF dictionary
    records in IO registry
 */
 
@@ -409,7 +408,7 @@ static void HIDGetDeviceInfo (io_object_t hidDevice, CFMutableDictionaryRef hidP
 {
 	CFMutableDictionaryRef usbProperties = 0;
 	io_registry_entry_t parent1, parent2;
-	
+
 	/* Mac OS X currently is not mirroring all USB properties to HID page so need to look at USB device page also
 	 * get dictionary for usb properties: step up two levels and get CF dictionary for USB properties
 	 */
@@ -430,7 +429,7 @@ static void HIDGetDeviceInfo (io_object_t hidDevice, CFMutableDictionaryRef hidP
 				if (!CFStringGetCString (refCF, pDevice->product, 256, CFStringGetSystemEncoding ()))
 					HIDReportErrorNum ("CFStringGetCString error retrieving pDevice->product.", 0);
 			}
-			
+
 			/* get usage page and usage */
 			refCF = CFDictionaryGetValue (hidProperties, CFSTR(kIOHIDPrimaryUsagePageKey));
 			if (refCF)
@@ -515,8 +514,8 @@ static void HIDDisposeElementList (recElement **elementList)
 	*elementList = NULL;
 }
 
-/* 
-   Disposes of a single device, closing and releaseing interface, freeing memory for device and elements, 
+/*
+   Disposes of a single device, closing and releaseing interface, freeing memory for device and elements,
    setting device pointer to NULL
    all your device no longer belong to us... (i.e., you do not 'own' the device anymore)
  */
@@ -529,13 +528,13 @@ static recDevice *HIDDisposeDevice (recDevice **ppDevice)
 	{
 		// save next device prior to disposing of this device
 		pDeviceNext = (*ppDevice)->pNext;
-		
+
 		/* free element lists */
 		HIDDisposeElementList (&(*ppDevice)->firstAxis);
 		HIDDisposeElementList (&(*ppDevice)->firstVAxis);
 		HIDDisposeElementList (&(*ppDevice)->firstVRAxis);
 		HIDDisposeElementList (&(*ppDevice)->firstButton);
-		HIDDisposeElementList (&(*ppDevice)->firstHat);		
+		HIDDisposeElementList (&(*ppDevice)->firstHat);
 
 		result = HIDCloseReleaseInterface (*ppDevice); /* function sanity checks interface value (now application does not own device) */
 		if (kIOReturnSuccess != result)
@@ -552,7 +551,7 @@ static int HIDOpen(io_iterator_t *pHIDObjectIterator)
 {
 	IOReturn result = kIOReturnSuccess;
 	mach_port_t masterPort = 0;
-	CFMutableDictionaryRef hidMatchDictionary = NULL;	
+	CFMutableDictionaryRef hidMatchDictionary = NULL;
 
 	*pHIDObjectIterator = 0;
 
@@ -611,18 +610,18 @@ static int HIDInit()
 	if (!HIDRefCount)
 	{
 		int result;
-		
+
 		recDevice *device, *lastDevice;
 		io_iterator_t HIDObjectIterator;
-		io_object_t ioHIDDeviceObject;	
+		io_object_t ioHIDDeviceObject;
 		int ret = HIDOpen(&HIDObjectIterator);
 		if (ret)
 			return ret;
-	 	
+
 		/* build flat linked list of devices from device iterator */
 
 		gpHIDDeviceList = lastDevice = NULL;
-		
+
 		while ((ioHIDDeviceObject = IOIteratorNext (HIDObjectIterator)))
 		{
 			/* build a device record */
@@ -632,7 +631,7 @@ static int HIDInit()
 
 			/* dump device object, it is no longer needed */
 			result = IOObjectRelease (ioHIDDeviceObject);
-			
+
 			/* Add device to the end of the list */
 			if (lastDevice)
 				lastDevice->pNext = device;
@@ -651,7 +650,7 @@ static int isDeviceJoystick(recDevice *device)
 {
 	if ((device->usagePage != kHIDPage_GenericDesktop) ||
 	   ((device->usage != kHIDUsage_GD_Joystick &&
-	     device->usage != kHIDUsage_GD_GamePad)) ) 
+	     device->usage != kHIDUsage_GD_GamePad)) )
 		return 0;
     return 1;
 }
@@ -693,15 +692,15 @@ static int JoystickOpen(void * hwnd, int bForceFeedback)
 			if (sJOY->numButtons <= device->buttons)
 			{
 				sJOY->device = device;
-	    		sJOY->numButtons = device->buttons;
+				sJOY->numButtons = device->buttons;
 				sJOY->numAxes = device->axes;
 				sJOY->numPOVs = device->hats;
-				printf("Found joystick %d buttons, %d axis\n", sJOY->numButtons, sJOY->numAxes);    			
+				printf("Found joystick %d buttons, %d axis\n", sJOY->numButtons, sJOY->numAxes);
 			}
 			sJOY->numControllers++;
 		}
 		device = device->pNext;
-	}	
+	}
 
 	if (sJOY->numControllers)
 	{
@@ -744,8 +743,7 @@ static int MouseOpen(void * hwnd)
 				sMOU->device = device;
 				sMOU->numButtons = device->buttons;
 				sMOU->numAxes = device->axes;
-				printf("Found mouse %d buttons, %d axes\n", sMOU->numButtons, sMOU->numAxes);    			
-	
+				printf("Found mouse %d buttons, %d axes\n", sMOU->numButtons, sMOU->numAxes);
 			}
 			sMOU->numControllers++;
 		}
@@ -753,8 +751,7 @@ static int MouseOpen(void * hwnd)
 	}
 
 	if (sMOU->numControllers)
-	{    	
-    	
+	{
 	}
 	else
 		return -4;
@@ -768,7 +765,7 @@ static unsigned long MouseUpdate(void *d)
     recDevice *device = (recDevice*) sMOU->device; // prefered device
 	recElement *element;
 	int32_t	*Axis = &sMOU->lX;
-	u_int8_t *Buttons = sMOU->rgbButtons;
+	uint8_t *Buttons = sMOU->rgbButtons;
 
 
 	// Get absolute position
@@ -777,10 +774,10 @@ static unsigned long MouseUpdate(void *d)
     ConvertToLocal(&pos);
     sMOU->x = pos.h;
     sMOU->y = pos.v;
-   
+
 	if (!device)
         return 1;
-		
+
 	sysMemCpy(sMOU->steButtons, sMOU->rgbButtons, sMOU->numButtons);
 
 	// Get axis
@@ -793,7 +790,7 @@ static unsigned long MouseUpdate(void *d)
 	}
 
 	// Get buttons
-	element = device->firstButton;	
+	element = device->firstButton;
 	while (element)
 	{
 		*Buttons = HIDGetElementValue(device, element) ? 0x80 : 0;
@@ -805,13 +802,13 @@ static unsigned long MouseUpdate(void *d)
 
 static unsigned long JoystickUpdate(void *p)
 {
-    recDevice *device = (recDevice*) sJOY->device; // prefered device    
+    recDevice *device = (recDevice*) sJOY->device; // prefered device
 	recElement *element;
 	int32_t	*Axis = &sJOY->lX;
 	int32_t	*VAxis = &sJOY->lVX;
 	int32_t	*VRAxis = &sJOY->lVRx;
-	u_int8_t *Buttons = sJOY->rgbButtons;
-	u_int32_t *POVs = sJOY->rgdwPOV;	
+	uint8_t *Buttons = sJOY->rgbButtons;
+	uint32_t *POVs = sJOY->rgdwPOV;
 
 	if (!device)
         return 1;
@@ -851,14 +848,14 @@ static unsigned long JoystickUpdate(void *p)
 			value *= 2;
 		else if (element->max != 7) /* Neither a 4 nor 8 positions - fall back to default position (centered) */
 			value = -1;
-		
+
 		*POVs = (value>=0 && value<=7) ? 4500 * value : 0;
 		POVs++;
 		element = element->pNext;
 	}
 
 	// Get buttons
-	element = device->firstButton;	
+	element = device->firstButton;
 	while (element)
 	{
 		*Buttons = HIDGetElementValue(device, element) ? 0x80 : 0;
@@ -886,7 +883,6 @@ static unsigned long JoystickUpdate(void *p)
     return 0;
 }
 
-
 JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
 {
 	static JOY_ClientDriver HIDJoystick = {
@@ -898,21 +894,18 @@ JOY_ClientDriver *JOY_SystemGetInterface_STD(void)
     return sJOY;
 }
 
-static void SetPosition(u_int32_t x, u_int32_t y)
+static void SetPosition(uint32_t x, uint32_t y)
 {
-    return;
 }
 
 static void Show(void)
 {
 	ShowCursor();
-    return;
 }
 
 static void Hide(void)
 {
 	HideCursor();
-    return;
 }
 
 MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
@@ -926,5 +919,6 @@ MSE_ClientDriver *MSE_SystemGetInterface_STD(void)
 		MouseUpdate
 	};
 	sMOU = &HIDMouse;
-    return sMOU; 
+    return sMOU;
 }
+

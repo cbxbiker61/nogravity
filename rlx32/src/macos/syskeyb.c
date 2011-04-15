@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -46,7 +46,7 @@ static const uint16_t KEYB_US[] =
 
 static unsigned long Update(void * device)
 {
- 	int i;
+	int i;
 	sysMemCpy(sKEY->steButtons, sKEY->rgbButtons, sizeof(sKEY->steButtons));
 #if TARGET_API_MAC_CARBON
 	GetKeys((SInt32 *)sKEY->rgbButtons);
@@ -56,7 +56,7 @@ static unsigned long Update(void * device)
 	for (i=0;i<16*8;i++)
 	{
 		if (sKEY_IsHeld(i))
-      		sKEY->scanCode = i;
+			sKEY->scanCode = i;
     }
     return 1;
 }
@@ -80,24 +80,24 @@ static char *NameScanCode(int scan)
 	{
 		 case 0:			sysStrCpy(dest,"<NONE>");break;
 		 case s_esc:		sysStrCpy(dest,"ESC"); break;
-		 case s_ctrl: 		sysStrCpy(dest,"CTRL"); break;
+		 case s_ctrl:		sysStrCpy(dest,"CTRL"); break;
 		 case s_tab:		sysStrCpy(dest,"TAB"); break;
 		 case s_alt:		sysStrCpy(dest,"ALT"); break;
-		 case s_capslock: 	sysStrCpy(dest,"CAPSL"); break;
-		 case s_home: 		sysStrCpy(dest,"HOME"); break;
+		 case s_capslock:	sysStrCpy(dest,"CAPSL"); break;
+		 case s_home:		sysStrCpy(dest,"HOME"); break;
 		 case s_end:		sysStrCpy(dest,"END"); break;
 		 case s_space:		sysStrCpy(dest,"SPACE"); break;
 		 case s_backspace:	sysStrCpy(dest,"BACKSPC"); break;
 		 case s_leftshift:	sysStrCpy(dest,"SHIFT"); break;
 		 case s_up:			sysStrCpy(dest,"UP"); break;
-		 case s_left: 		sysStrCpy(dest,"LEFT"); break;
+		 case s_left:		sysStrCpy(dest,"LEFT"); break;
 		 case s_right:		sysStrCpy(dest,"RIGHT"); break;
-		 case s_down: 		sysStrCpy(dest,"DOWN"); break;
+		 case s_down:		sysStrCpy(dest,"DOWN"); break;
 		 case s_numup:		sysStrCpy(dest,"NUMUP"); break;
 		 case s_numleft:	sysStrCpy(dest,"NUMLEFT"); break;
-		 case s_numright: 	sysStrCpy(dest,"NUMRIGHT"); break;
+		 case s_numright:	sysStrCpy(dest,"NUMRIGHT"); break;
 		 case s_numdown:	sysStrCpy(dest,"NUMDOWN"); break;
-		 case s_pagedown: 	sysStrCpy(dest,"PAGEDN"); break;
+		 case s_pagedown:	sysStrCpy(dest,"PAGEDN"); break;
 		 case s_pageup:		sysStrCpy(dest,"PAGEUP"); break;
 		 case s_numpagedown:sysStrCpy(dest,"NUMPAGEDN"); break;
 		 case s_numpageup:	sysStrCpy(dest,"NUMPAGEUP"); break;

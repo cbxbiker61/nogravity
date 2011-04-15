@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -42,15 +42,15 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 
 WindowPtr						g_hWnd;
-struct RLXSYSTEM 	      	*	g_pRLX;
+struct RLXSYSTEM			*	g_pRLX;
 
 // GL Driver Specific
 int32_t							gl_pRect[4];
-static int           			gl_lx,
+static int						gl_lx,
 								gl_ly,
 								gl_bpp;
 
-CGLContextObj		 			g_pCGLC;
+CGLContextObj					g_pCGLC;
 
 // CGL
 static CFArrayRef				g_cgDisplayModeList;
@@ -88,25 +88,23 @@ int _SYS_CGLTRACE(int err, int line)
 
 static void RLXAPI Flip(void)
 {
-   	CGLFlushDrawable(g_pCGLC);
-    return;
+	CGLFlushDrawable(g_pCGLC);
 }
 
-static u_int8_t RLXAPI *Lock(void)
-{	
+static uint8_t RLXAPI *Lock(void)
+{
     return NULL;
 }
 
 static void RLXAPI Unlock(void)
 {
-    return;
 }
 
 static GXDISPLAYMODEHANDLE ModeHandleToDictRef(CFDictionaryRef ref)
 {
 	int n = g_cgDisplayModeList ? CFArrayGetCount (g_cgDisplayModeList) : 0;
 	int j;
-	for(j = 0; j < n; j++)  
+	for(j = 0; j < n; j++)
 	{
 		CFDictionaryRef modeDict = (CFDictionaryRef) CFArrayGetValueAtIndex (g_cgDisplayModeList, j);
 		if (ref == modeDict)
@@ -120,7 +118,7 @@ static CFDictionaryRef DictRefToModeHandle(GXDISPLAYMODEHANDLE mode)
 {
 	int n = g_cgDisplayModeList ? CFArrayGetCount (g_cgDisplayModeList) : 0;
 	int j;
-	for(j = 0; j < n; j++)  
+	for(j = 0; j < n; j++)
 	{
 		CFDictionaryRef modeDict = (CFDictionaryRef) CFArrayGetValueAtIndex (g_cgDisplayModeList, j);
 		if (j + 1 == mode)
@@ -135,8 +133,8 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 	int k = 0;
 	int j;
 	GXDISPLAYMODEINFO *drv = (GXDISPLAYMODEINFO *)g_pRLX->mm_heap->malloc(sizeof(GXDISPLAYMODEINFO) * (n+1));
-	
-	for(j = 0; j < n; j++)  
+
+	for(j = 0; j < n; j++)
 	{
 		CFDictionaryRef modeDict = (CFDictionaryRef) CFArrayGetValueAtIndex (g_cgDisplayModeList, j);
 		int thisBpp = getDictLong (modeDict,  kCGDisplayBitsPerPixel);
@@ -149,7 +147,7 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 			k++;
 		}
 	}
-	
+
 	drv[k].BitsPerPixel = 0;
 
     return drv;
@@ -163,7 +161,7 @@ static void RLXAPI SetPrimitive()
 	g_pRLX->pGX->View.Flip = Flip;
 	g_pRLX->pGX->gi = GI_OpenGL;
 	g_pRLX->pGX->csp = CSP_OpenGL;
-	
+
 	g_pRLX->pGX->csp_cfg.put.fonct = g_pRLX->pGX->csp.put;
     g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
     g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
@@ -174,7 +172,7 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 {
 	g_pRLX->pfSetViewPort(&g_pRLX->pGX->View, gl_lx, gl_ly, gl_bpp);
 	g_pRLX->pGX->View.ColorMask.RedMaskSize			= 8;
-	g_pRLX->pGX->View.ColorMask.GreenMaskSize 		= 8;
+	g_pRLX->pGX->View.ColorMask.GreenMaskSize		= 8;
 	g_pRLX->pGX->View.ColorMask.BlueMaskSize		= 8;
 	g_pRLX->pGX->View.ColorMask.RsvdMaskSize		= 8;
 #ifdef __BIG_ENDIAN__
@@ -190,11 +188,10 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
 	SetPrimitive();
 	GL_FakeViewPort();
 	UNUSED(mode);
-    return;
 }
 
 static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
-{	
+{
 	if ((g_pRLX->Video.Config & RLXVIDEO_Windowed)==0)
 	{
 		if (!g_cgOldDisplayModeRestore)
@@ -231,7 +228,7 @@ struct PixelFormatDesc
 
 static void DEBUG_PIXEL_FORMAT(CGLPixelFormatObj pix)
 {
-	const struct PixelFormatDesc p[] = {	
+	const struct PixelFormatDesc p[] = {
    {kCGLPFAAllRenderers, "All renderers"},
    {kCGLPFADoubleBuffer, "Double buffer"},
    {kCGLPFAStereo, "Stereo"},
@@ -280,18 +277,18 @@ static void DEBUG_PIXEL_FORMAT(CGLPixelFormatObj pix)
 		printf("... %s: %ld\n", p[i].text, value);
 		i++;
 	}
-
 }
+
 static int RLXAPI CreateSurface(int numberOfSparePages)
 {
     CGOpenGLDisplayMask displayMask = CGDisplayIDToOpenGLDisplayMask( g_cgDisplayID ) ;
     static CGLPixelFormatAttribute attribs[32];
-   	CGLPixelFormatAttribute	*pAttrib =  attribs;
+	CGLPixelFormatAttribute	*pAttrib =  attribs;
     CGLPixelFormatObj pixelFormatObj ;
     long numPixelFormats = 0;
 
 	*pAttrib = kCGLPFAFullScreen; pAttrib++;
-	*pAttrib = kCGLPFASingleRenderer; pAttrib++; 
+	*pAttrib = kCGLPFASingleRenderer; pAttrib++;
 
 	*pAttrib = kCGLPFADisplayMask; pAttrib++;
 	*pAttrib = (CGLPixelFormatAttribute)displayMask; pAttrib++;
@@ -299,18 +296,18 @@ static int RLXAPI CreateSurface(int numberOfSparePages)
 	*pAttrib = kCGLPFADoubleBuffer; pAttrib++;
 	*pAttrib = kCGLPFAColorSize; pAttrib++;
 	*pAttrib = (CGLPixelFormatAttribute)gl_bpp; pAttrib++;
-	
+
 	 if ((g_pRLX->pGX->View.Flags & GX_CAPS_MULTISAMPLING))
 	{
 		*pAttrib = kCGLPFASampleBuffers; pAttrib++;
-		*pAttrib = (CGLPixelFormatAttribute)1;  pAttrib++; 
+		*pAttrib = (CGLPixelFormatAttribute)1;  pAttrib++;
 
 		*pAttrib = kCGLPFASamples;  pAttrib++;
 		*pAttrib = (CGLPixelFormatAttribute)g_pRLX->pGX->View.Multisampling; pAttrib++;
 	}
 
 	if (SYS_CGLTRACE(CGLChoosePixelFormat( attribs, &pixelFormatObj, &numPixelFormats )))
-    	return -1;
+		return -1;
 
     if (!numPixelFormats)
         return -2;
@@ -329,7 +326,7 @@ static int RLXAPI CreateSurface(int numberOfSparePages)
 	{
 		CGDisplaySwitchToMode(g_cgDisplayID, g_cgPrevDisplayMode);
 		CGReleaseAllDisplays();
-	
+
 		return -5;
 	}
 
@@ -360,13 +357,12 @@ static void RLXAPI ReleaseSurfaces(void)
 
     g_pCGLC = 0;
 	g_pRLX->pGX->Surfaces.maxSurface = 0;
-    return;
 }
 
 static int RLXAPI RegisterMode(GXDISPLAYMODEHANDLE mode)
 {
     g_pRLX->pGX->View.DisplayMode = (uint16_t)mode;
-    g_pRLX->pGX->Client->GetDisplayInfo(mode);	
+    g_pRLX->pGX->Client->GetDisplayInfo(mode);
 	return g_pRLX->pGX->Client->SetDisplayMode(mode);
 }
 
@@ -378,8 +374,6 @@ static void RLXAPI Shutdown(void)
 	CGDisplaySwitchToMode(g_cgDisplayID, g_cgPrevDisplayMode);
 	CGReleaseAllDisplays();
 	ShowMenuBar();
-
-    return;
 }
 
 static int Open(void * hwnd)
@@ -432,7 +426,7 @@ GXCLIENTDRIVER GX_OpenGL = {
     RegisterMode,
     Shutdown,
     Open,
-    NotifyEvent,    
+    NotifyEvent,
     "OpenGL/CGL",
 	0x10 // ARGB
 };
@@ -444,15 +438,14 @@ _RLXEXPORTFUNC void RLXAPI GX_EntryPoint(struct RLXSYSTEM *p)
     g_pRLX = p;
 	SetPrimitiveSprites();
 	g_pRLX->pGX->Client = &GX_OpenGL;
-    return;
 }
 
 extern V3X_GXSystem V3X_OpenGL;
 
-// _V3XEXPORTUNC 
+// _V3XEXPORTUNC
 void RLXAPI V3X_EntryPoint(struct RLXSYSTEM *p)
 {
 	GX_EntryPoint(p);
     g_pRLX->pV3X->Client = &V3X_OpenGL;
-    return;
 }
+

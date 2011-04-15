@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -54,43 +54,46 @@ static const short CSP_Offset[] =
 	-1, -1, -1, -1,  0, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, 14, -1, -1, 14, -1, -1, -1, -1, -1, 20, -1, -1, -1
 };
+
 static int CSP_Offset2[]={
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-    -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 
-    31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 
-    47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 
-    63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 
-    79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 
-    -1, -1, 68, -1, -1, 64, -1, -1, 64, -1, 68, -1, -1, -1, 68, -1, 
-    -1, -1, -1, 78, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-    -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 30, 
-    -1, -1, -1, -1, 64, -1, -1, -1, -1, -1, -1, 68, -1, 72, -1, 72, 
-    -1, 77, -1, 78, -1, -1, 78, -1, -1, -1, -1, -1, 84, -1, -1, -1, 
-    -1, -1, -1, -1, 64, -1, -1, -1, -1, 68, -1, -1, -1, -1, -1, -1, 
-    -1, -1, -1, 78, -1, -1, 78, -1, -1, -1, -1, -1, 84, -1, -1, -1, 
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+    31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46,
+    47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
+    63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
+    79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
+    -1, -1, 68, -1, -1, 64, -1, -1, 64, -1, 68, -1, -1, -1, 68, -1,
+    -1, -1, -1, 78, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 30,
+    -1, -1, -1, -1, 64, -1, -1, -1, -1, -1, -1, 68, -1, 72, -1, 72,
+    -1, 77, -1, 78, -1, -1, 78, -1, -1, -1, -1, -1, 84, -1, -1, -1,
+    -1, -1, -1, -1, 64, -1, -1, -1, -1, 68, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, 78, -1, -1, 78, -1, -1, -1, -1, -1, 84, -1, -1, -1,
 };
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  #define SpriteGroup_Car2Val(car, type) (type ? CSP_Offset2[car] : CSP_Offset[car])
 *
-* Description :  
+* Description :
 *
 */
 #define SpriteGroup_Car2Val(car, type) (type ? CSP_Offset2[(int)(car)] : CSP_Offset[(int)(car)])
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  void CSP_Get(int32_t xx, int32_t yy, GXSPRITE *capt, u_int8_t *buf, int32_t width, int32_t byte)
+* PROTOTYPE  :  void CSP_Get(int32_t xx, int32_t yy, GXSPRITE *capt, uint8_t *buf, int32_t width, int32_t byte)
 *
 * DESCRIPTION :
 *
 */
-_RLXEXPORTFUNC void CSP_Get(int32_t xx, int32_t yy, GXSPRITE *capt, u_int8_t *buf, int32_t width, int32_t byte)
+_RLXEXPORTFUNC void CSP_Get(int32_t xx, int32_t yy, GXSPRITE *capt, uint8_t *buf, int32_t width, int32_t byte)
 {
-    u_int32_t cx, lx=capt->LX*byte, lxx=width*byte;
-    u_int8_t *v=buf+(yy*width+xx)*byte, 
+    uint32_t cx, lx=capt->LX*byte, lxx=width*byte;
+    uint8_t *v=buf+(yy*width+xx)*byte,
     *w=capt->data;
 	SYS_ASSERT(buf);
 	SYS_ASSERT(width);
@@ -100,8 +103,8 @@ _RLXEXPORTFUNC void CSP_Get(int32_t xx, int32_t yy, GXSPRITE *capt, u_int8_t *bu
         w+=lx;
         v+=lxx;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CSPG_Release(GXSPRITEGROUP *pSpriteGroup)
@@ -117,24 +120,24 @@ _RLXEXPORTFUNC void CSPG_Release(GXSPRITEGROUP *pSpriteGroup)
         GX.Client->ReleaseSprite(pSpriteGroup->item+i);
     MM_heap.free(pSpriteGroup->item);
     MM_heap.free(pSpriteGroup);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
-* PROTOTYPE  :  GXSPRITEGROUP static *CSPG_GetFp(SYS_FILEHANDLE in, u_int8_t *buf, int32_t pitch, int bpp, int inSurfaces)
+* PROTOTYPE  :  GXSPRITEGROUP static *CSPG_GetFp(SYS_FILEHANDLE in, uint8_t *buf, int32_t pitch, int bpp, int inSurfaces)
 *
 * DESCRIPTION :
 *
 */
-static void CSPG_GetFp(GXSPRITEGROUP *pSpriteGroup, SYS_FILEHANDLE in, u_int8_t *buf, int32_t pitch, int bpp, int inSurfaces)
+static void CSPG_GetFp(GXSPRITEGROUP *pSpriteGroup, SYS_FILEHANDLE in, uint8_t *buf, int32_t pitch, int bpp, int inSurfaces)
 {
     char      SPChead[4];
-    int  i;    
-    GXSPRITE   *sp;    
+    int  i;
+    GXSPRITE   *sp;
     FIO_cur->fread(SPChead, sizeof(char), 4, in);
     FIO_cur->fread(&pSpriteGroup->maxItem, sizeof(unsigned short int), 1, in);
 #ifdef __BIG_ENDIAN__
-    BSWAP16((u_int16_t*)&pSpriteGroup->maxItem, 1);
+    BSWAP16((uint16_t*)&pSpriteGroup->maxItem, 1);
 #endif
     pSpriteGroup->item = MM_CALLOC(pSpriteGroup->maxItem, GXSPRITE);
     for (i=0, sp=pSpriteGroup->item;i<pSpriteGroup->maxItem;i++, sp++)
@@ -142,13 +145,13 @@ static void CSPG_GetFp(GXSPRITEGROUP *pSpriteGroup, SYS_FILEHANDLE in, u_int8_t 
         GXSPRITEFORMAT   spl;
         FIO_cur->fread(&spl, sizeof(GXSPRITEFORMAT), 1, in);
 #ifdef __BIG_ENDIAN__
-        BSWAP16((u_int16_t*)&spl, 4);
+        BSWAP16((uint16_t*)&spl, 4);
 #endif
         sp->LX = spl.c - spl.a + 1;
         sp->LY = spl.d - spl.b + 1;
-        sp->data = (u_int8_t *) MM_heap.malloc(sp->LX*sp->LY*bpp);
+        sp->data = (uint8_t *) MM_heap.malloc(sp->LX*sp->LY*bpp);
         CSP_Get(spl.a, spl.b, sp, buf, pitch, bpp);
-        switch(inSurfaces) 
+        switch(inSurfaces)
 		{
             case 1:
 				SYS_ASSERT(GX.Client->UploadSprite);
@@ -157,8 +160,8 @@ static void CSPG_GetFp(GXSPRITEGROUP *pSpriteGroup, SYS_FILEHANDLE in, u_int8_t 
             case 2:
             {
                 GXSPRITEUV *pPage = (GXSPRITEUV*) MM_heap.malloc(sizeof(GXSPRITEUV));
-                pPage->U = (u_int8_t)spl.a;
-                pPage->V = (u_int8_t)spl.b;
+                pPage->U = (uint8_t)spl.a;
+                pPage->V = (uint8_t)spl.b;
                 pPage->Page = sp->handle;
                 pPage->Alpha = 0;
                 pPage->Mode = 0;
@@ -167,8 +170,8 @@ static void CSPG_GetFp(GXSPRITEGROUP *pSpriteGroup, SYS_FILEHANDLE in, u_int8_t 
             break;
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  GXSPRITEGROUP *CSPG_GetFn(char *filename, char *mode, SYS_FILEIO *f, unsigned option)
@@ -181,41 +184,42 @@ static int CSPG_GetES(GXSPRITEGROUP *s, const char *bitname, const char *spcname
     SYS_FILEHANDLE in;
     GXSPRITE sp;
     unsigned bs, bt = (option&CSPLOAD_FORCE8 ? 1 : GX.View.BytePerPixel);
-    int h = MM_heap.active;    
+    int h = MM_heap.active;
     MM_heap.active = 0;
-	bs = IMG_LoadFn(bitname, &sp); 
+	bs = IMG_LoadFn(bitname, &sp);
 	bs = (bs+1)>>3;
 
 	if (!(option & CSPLOAD_POSTERIZE))
 	{
 		bt = bs;
 	}
-	
+
 	if (option&CSPLOAD_POSTERIZE)
-    {			
+    {
 		if ((bt>1)||(option&CSPLOAD_FORCE8))
-        {		
+        {
             if (bs!=bt)
 				sp.data = RGB_SmartConverter(NULL, NULL, bt, sp.data, GX.ColorTable, bs, sp.LX * sp.LY);
         }
     }
+
     MM_heap.active = h;
     in = FIO_cur->fopen(spcname, "rb");
 	SYS_ASSERT(in);
     CSPG_GetFp(s, in, sp.data, sp.LX, bt, (option&CSPLOAD_SURFACE ? 1 : 0) + (option&CSPLOAD_HWSPRITE  ? 1 : 0));
-    FIO_cur->fclose(in);    
+    FIO_cur->fclose(in);
     MM_heap.active = 0;
     MM_heap.free(sp.data);
     MM_heap.active = h;
 	return bt;
- 
 }
+
 _RLXEXPORTFUNC GXSPRITEGROUP *CSPG_GetFn(char *filename, SYS_FILEIO *f, unsigned option)
 {
     GXSPRITEGROUP *s = (GXSPRITEGROUP*) MM_heap.malloc(sizeof(GXSPRITEGROUP));
-	char bitname[256];	
+	char bitname[256];
 	char spcname[256];
-	FIO_cur = f;	
+	FIO_cur = f;
 	SYS_ASSERT(*GX.csp_cfg.ext);
 	sprintf(bitname, "%s.%s", filename, GX.csp_cfg.ext);
 	sprintf(spcname, "%s.spc", filename);
@@ -240,8 +244,8 @@ _RLXEXPORTFUNC void CSP_DrawRect(int32_t x, int32_t y, int32_t lx, int32_t ly, G
     GX.View.ymax=y+ly;
     for (i=0;i<=nx;i++) for(j=0;j<=ny;j++) GX.csp.pset(x+i*sp->LX, y+j*sp->LY, sp);
     GX.View=OLD;
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : int32_t realan(char *texte, GXSPRITEGROUP *Fonte)
@@ -260,7 +264,7 @@ _RLXEXPORTFUNC int32_t CSPG_TxLen(const char *texte, const GXSPRITEGROUP *Fonte)
 		   : Fonte->HSpacing + (Fonte->item[a].LX);
         texte++;
     }
-    return ll ;
+    return ll;
 }
 
 _RLXEXPORTFUNC int32_t CSPG_TxLenS(const char *texte, int32_t fx, GXSPRITEGROUP *Fonte)
@@ -269,13 +273,14 @@ _RLXEXPORTFUNC int32_t CSPG_TxLenS(const char *texte, int32_t fx, GXSPRITEGROUP 
     while ((*texte)!=0)
     {
         int32_t a = SpriteGroup_Car2Val(*texte, Fonte->Caps&1) ;
-        ll += ((a >= Fonte->maxItem)||(a < 0)) 
+        ll += ((a >= Fonte->maxItem)||(a < 0))
 			? Fonte->HSpacing + llx
 			: Fonte->HSpacing +  VMUL(fx, Fonte->item[a].LX);
         texte++;
     }
     return ll ;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :
@@ -310,8 +315,8 @@ _RLXEXPORTFUNC void CSP_DrawText(const char *texte, int32_t xx, int32_t yy, cons
         }
         texte++;
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CSP_DrawTextC(char *texte, int xx, int yy, int attr1, int attr2, GXSPRITEGROUP *Fonte, CSP_Ptr spz)
@@ -358,7 +363,6 @@ _RLXEXPORTFUNC void CSP_DrawTextC(const char *texte, int xx, int yy, int attr1, 
         }
         texte++;
     }
-    return;
 }
 
 _RLXEXPORTFUNC void CSP_ZoomText(const char *texte, int32_t xx, int32_t yy, int32_t sx, int32_t sy, const GXSPRITEGROUP *Fonte, CSP_FUNCTION func)
@@ -396,8 +400,8 @@ _RLXEXPORTFUNC void CSP_ZoomText(const char *texte, int32_t xx, int32_t yy, int3
         }
         texte++;
     }
-    return;
 }
+
 _RLXEXPORTFUNC GXSPRITE *CSP_GetFn(const char *filename, unsigned option)
 {
     SYS_FILEHANDLE in;
@@ -413,15 +417,15 @@ _RLXEXPORTFUNC GXSPRITE *CSP_GetFn(const char *filename, unsigned option)
             if (option&CSPLOAD_POSTERIZE)
             {
                 sp->data = RGB_SmartConverter(
-                NULL, 
-                GX.ColorTable, 
-                dp, 
-                sp->data, 
-                GX.ColorTable, 
-                bp, 
+                NULL,
+                GX.ColorTable,
+                dp,
+                sp->data,
+                GX.ColorTable,
+                bp,
                 sp->LX * sp->LY);
             }
-            if (option&CSPLOAD_SURFACE) 
+            if (option&CSPLOAD_SURFACE)
 				GX.Client->UploadSprite(sp, GX.ColorTable, bp);
             FIO_cur->fclose(in);
             return sp;
@@ -432,6 +436,7 @@ _RLXEXPORTFUNC GXSPRITE *CSP_GetFn(const char *filename, unsigned option)
     UNUSED(option);
     return NULL;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void CSP_Resize(GXSPRITE *sp, int lx, int ly, int bpp)
@@ -441,11 +446,11 @@ _RLXEXPORTFUNC GXSPRITE *CSP_GetFn(const char *filename, unsigned option)
 */
 _RLXEXPORTFUNC void CSP_Resize(GXSPRITE *sp, int lx, int ly, int bpp)
 {
-    u_int32_t sz = lx*ly, 
-    sz2 = sz*bpp, 
-    ok = (((u_int32_t)MM_heap.PreviousAddress==(u_int32_t)sp->data)&&(MM_heap.active));
-    u_int8_t *tmp;
-    tmp = (u_int8_t *)MM_heap.malloc(sz2);
+    uint32_t sz = lx*ly,
+    sz2 = sz*bpp,
+    ok = (((uint32_t)MM_heap.PreviousAddress==(uint32_t)sp->data)&&(MM_heap.active));
+    uint8_t *tmp;
+    tmp = (uint8_t *)MM_heap.malloc(sz2);
     IMG_stretch(sp->data, tmp, sp->LY, ly, sp->LX, lx, bpp);
     if (sz<sp->LX*sp->LY)
     {
@@ -467,5 +472,5 @@ _RLXEXPORTFUNC void CSP_Resize(GXSPRITE *sp, int lx, int ly, int bpp)
     }
     sp->LX =lx;
     sp->LY =ly;
-    return;
 }
+

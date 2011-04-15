@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -42,6 +42,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "v3xmaps.h"
 #include "v3xrend.h"
 #include "fixops.h"
+
 __extern_c
 int V3XVECTOR_IsVisible(void *Scene, V3XVECTOR *start, V3XVECTOR *end, unsigned hint, void *who) ;
 __end_extern_c
@@ -49,7 +50,7 @@ __end_extern_c
 *
 * PROTOTYPE  :  #define V3XMatrix_Transform(Mat, MObj)\
 *
-* Description :  
+* Description :
 *
 */
 #define V3XMatrix_Transform(Mat, MObj)\
@@ -60,6 +61,7 @@ __end_extern_c
     V3XVector_ApplyMatrix(Mat.v.Pos, VV, V3X.Camera.M.Matrix);\
     V3XVector_ApplyTransposeMatrix(V3X.Camera.transposed, VV, MObj.Matrix);\
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int32_t V3XMesh_Transform(V3XMESH *mesh)
@@ -71,7 +73,7 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
 {
     if ((mesh->flags&V3XMESH_HASDYNLIGHT)&&((mesh->flags&V3XMESH_PRESHADED)==0))
     {
-        unsigned  sx, n;        
+        unsigned  sx, n;
         V3XSCALAR *p;
         V3XLIGHT *lite = V3X.Light.light;
         // Initializing lights values
@@ -81,26 +83,23 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
 		{
 			if (!mesh->normal)
 			{
-				
 				mesh->flags|=V3XMESH_FLATSHADE;
 				if (!mesh->normal_face)
 				{
 					return;
 				}
-			}			
-			
+			}
 		}
 		else
 		{
 			if (!mesh->normal_face)
 			{
-				
 				mesh->flags&=~V3XMESH_FLATSHADE;
 				if (!mesh->normal)
 				{
 					return;
-				}				
-			}			
+				}
+			}
 		}
 
         n = (mesh->flags&V3XMESH_FLATSHADE) ? mesh->numFaces : mesh->numVerts;
@@ -115,8 +114,8 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
             V3XSCALAR *sh = mesh->shade;
             for (p=V3X.Buffer.shade;n!=0;p++, sh++, n--)
             *p = mesh->flags&V3XMESH_HASSHADETABLE ? *sh : mesh->selfIllumine;
-        }        
-        // Lights processing  
+        }
+        // Lights processing
         for (sx=V3X.Light.numSource;sx!=0;lite++, sx--)
         {
             if ((lite->type!=V3XLIGHTTYPE_DIRECTIONAL)||
@@ -259,12 +258,12 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
                                         rgb32_t *rgb = (rgb32_t*)p;
                                         unsigned int i = (unsigned int)inten;
                                         unsigned
-                                        wr = rgb->r + xMUL8(i, lite->color.r), 
-                                        wg = rgb->g + xMUL8(i, lite->color.g), 
-                                        wb = rgb->b + xMUL8(i, lite->color.b);                                        
-                                        rgb->r = wr<255 ? (u_int8_t)wr : (u_int8_t)255;
-                                        rgb->g = wg<255 ? (u_int8_t)wg : (u_int8_t)255;
-                                        rgb->b = wb<255 ? (u_int8_t)wb : (u_int8_t)255;
+                                        wr = rgb->r + xMUL8(i, lite->color.r),
+                                        wg = rgb->g + xMUL8(i, lite->color.g),
+                                        wb = rgb->b + xMUL8(i, lite->color.b);
+                                        rgb->r = wr<255 ? (uint8_t)wr : (uint8_t)255;
+                                        rgb->g = wg<255 ? (uint8_t)wg : (uint8_t)255;
+                                        rgb->b = wb<255 ? (uint8_t)wb : (uint8_t)255;
                                         rgb->a = 0;
                                     }
                                     else
@@ -275,8 +274,8 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
                             }
                         }
                         if (flag0) flag0++;
-                        if (f)    f++;                            
-                    } // End for 
+                        if (f)    f++;
+                    } // End for
                 }
             }
         }
@@ -293,8 +292,8 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
                 if (i)
                 {
                     int32_t m=f->numEdges;
-                    u_int32_t *p1=f->faceTab;
-                    for (;m!=0;m--, p1++) V3X.Buffer.flag[*p1]|= (u_int8_t)((i&7)<<2);
+                    uint32_t *p1=f->faceTab;
+                    for (;m!=0;m--, p1++) V3X.Buffer.flag[*p1]|= (uint8_t)((i&7)<<2);
                     envmap=1;
                 }
             }
@@ -304,7 +303,7 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
             V3XVECTOR *edges = mesh->normal;
             V3XUV     *map = V3X.Buffer.uv_vertex;
             V3XVECTOR w;
-            u_int8_t *flag0=V3X.Buffer.flag;
+            uint8_t *flag0=V3X.Buffer.flag;
             int i;
             for (i=mesh->numVerts;i!=0;map++, edges++, flag0++, i--)
             {
@@ -312,7 +311,7 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
                 if (m>1)
                 {
                     switch(m) {
-                        case V3XENVMAPTYPE_CAMERA<<2: // Reflection 'normal' 
+                        case V3XENVMAPTYPE_CAMERA<<2: // Reflection 'normal'
                         {
                             V3XVECTOR ww;
                             V3XVector_Dif(&ww, edges, &V3X.Light.HVector);
@@ -341,6 +340,7 @@ static void V3XMesh_T2(V3XMESH *mesh, V3XMATRIX *Matrix)
         }
     }
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : static void V3XMesh_T3(V3XMESH *mesh)
@@ -359,7 +359,7 @@ static void V3XMesh_T3(V3XMESH *mesh)
         for(  n = 0; n < mesh->numMaterial; n++)
         {
             V3XMATERIAL *Mat= mesh->material + n;
-            Mat->lod = (mesh->flags&V3XMESH_LOWDETAIL) ? Mat->lod_far : Mat->lod_near;			
+            Mat->lod = (mesh->flags&V3XMESH_LOWDETAIL) ? Mat->lod_far : Mat->lod_near;
         }
     }
     else
@@ -368,7 +368,7 @@ static void V3XMesh_T3(V3XMESH *mesh)
         {
             V3XMATERIAL *Mat= mesh->material + n;
             Mat->render_clip = (mesh->flags&V3XMESH_LOWDETAIL)
-              ? Mat->render_far : Mat->render_near;             
+              ? Mat->render_far : Mat->render_near;
         }
     }
     for(  n = mesh->numFaces, f =mesh->face;  n!=0;  f++, n--)
@@ -396,17 +396,17 @@ static void V3XMesh_T3(V3XMESH *mesh)
                         for(j=0;j<fce->numEdges;j++)
                         {
                             fce->shade[j] = V3X.Buffer.shade[fce->faceTab[j]];
-                            if (fce->shade[j]>255.f) 
+                            if (fce->shade[j]>255.f)
 								fce->shade[j]=255.f;
                         }
                     }
-                }            
+                }
                 else
                 {
                     int j;
                     if (V3X.Client->Capabilities&GXSPEC_RGBLIGHTING)
                     {
-                        u_int32_t *tab = fce->faceTab;
+                        uint32_t *tab = fce->faceTab;
                         rgb32_t *dest = fce->rgb + 0;
                         for(j=0;j<fce->numEdges;j++, tab++, dest++)
                         {
@@ -421,8 +421,8 @@ static void V3XMesh_T3(V3XMESH *mesh)
                             if (fce->shade[j]>255.f) fce->shade[j]=255.f;
                         }
                     }
-                }    
-            }   
+                }
+            }
             if ( Mat->info.Environment )
             {
                 unsigned j;
@@ -438,12 +438,12 @@ static void V3XMesh_T3(V3XMESH *mesh)
                         *uv = *uvR;
                     }
                 }
-            }   
+            }
 			if (Mat->info.Perspective && fce->ZTab )
             {
                 unsigned j;
-                u_int32_t *ix = fce->faceTab;                
-                V3XWPTS  *po = fce->ZTab;                
+                uint32_t *ix = fce->faceTab;
+                V3XWPTS  *po = fce->ZTab;
                 V3XUV    *uv = fce->uvTab[0];
 				SYS_ASSERT(po);
 
@@ -464,13 +464,13 @@ static void V3XMesh_T3(V3XMESH *mesh)
                         if (po->oow<zmin) zmin = po->oow;
                     }
                     fce->visible+=( (zmin / zmax) > .90f);
-                }    
+                }
             }
             {
                 V3XSCALAR  zMax, zMin;
                 V3XVECTOR *b = a + fce->faceTab[0];
                 V3XPTS    *pd;
-                u_int32_t     *p1;
+                uint32_t     *p1;
                 int32_t       m;
                 zMax = zMin = b->z;
                 for( p1 = fce->faceTab, pd = fce->dispTab, m = fce->numEdges;  m !=0;  p1 ++, pd ++, m  --)
@@ -480,21 +480,21 @@ static void V3XMesh_T3(V3XMESH *mesh)
 					SYS_ASSERT(vX<mesh->numVerts);
                     pd->x = d[vX].x;
                     pd->y = d[vX].y;
-					
+
                     pd->z = b->z;
-                    if (b->z<zMin) 
+                    if (b->z<zMin)
 						zMin = b->z;
-                    if (b->z>zMax) 
+                    if (b->z>zMax)
 						zMax = b->z;
                 }
                 if ( zMax < V3X.Clip.Far ) fce->visible = 0;
                 else
                 if ( fce->visible )
-                {    
+                {
                     if (fce->NeedToClip)
                     {
-                        fce = V3XPoly_ZClipNear(fce);    
-                    }     
+                        fce = V3XPoly_ZClipNear(fce);
+                    }
                     if ((fce->visible)&&(zMin<V3X.Clip.Far))
                     {
                         fce = V3XPoly_ZClipFar(fce);
@@ -512,11 +512,10 @@ static void V3XMesh_T3(V3XMESH *mesh)
                                 p.y =  V3X.Buffer.prj_vertex[fce->faceTab[0]].y;
                                 p.z = -V3X.Buffer.rot_vertex[fce->faceTab[0]].z;
                                 Mat->shift_size = 0;
-                                V3XPoly_SpriteZoom(fce, &Mat->texture[0], &p, 
-                                V3X.Buffer.prj_vertex[fce->faceTab[1]].x, 
-                                V3X.Buffer.prj_vertex[fce->faceTab[1]].y, 
+                                V3XPoly_SpriteZoom(fce, &Mat->texture[0], &p,
+                                V3X.Buffer.prj_vertex[fce->faceTab[1]].x,
+                                V3X.Buffer.prj_vertex[fce->faceTab[1]].y,
                                 0);
-								
                             }
                             default:
                             if (!(V3X.Client->Capabilities&GXSPEC_XYCLIPPING))
@@ -547,13 +546,13 @@ static void V3XMesh_T3(V3XMESH *mesh)
             }
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int32_t V3XMesh_Transform(V3XMESH *mesh)
 *
-* Description :  
+* Description :
 *
 */
 int32_t V3XMesh_Transform(V3XMESH *mesh)
@@ -585,7 +584,7 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
         for (n=mesh->numFaces, f=mesh->face;n!=0;f++, n--)
         {
             f->visible=1;
-        }        
+        }
     }
     else
     {
@@ -596,7 +595,7 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
         sysMemSet(V3X.Buffer.flag, 1, mesh->numVerts);
         for (b=mesh->normal_face, n=mesh->numFaces, f=mesh->face;n!=0;f++, b++, n--)
         {
-            if (((V3XMATERIAL*)f->Mat)->info.TwoSide) 
+            if (((V3XMATERIAL*)f->Mat)->info.TwoSide)
 				f->visible=1;
             else
             {
@@ -608,10 +607,10 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
             if (f->visible)
             {
                 int m;
-                u_int32_t *p1;
+                uint32_t *p1;
                 for (m=f->numEdges, p1=f->faceTab;m!=0;m--, p1++)
                 {
-                    u_int32_t index = *p1;
+                    uint32_t index = *p1;
 					if (index>=mesh->numVerts)
 					{
 						index = *p1 = 0;
@@ -623,21 +622,21 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
         }
     }
     if ((!isVisible)&&(!(mesh->flags&V3XMESH_FULLUPDATE)))
-    {  
+    {
         return 3;
-    } 
+    }
     {
         V3XVECTOR *a, *b;
         V3XVECTOR *d;
-        u_int8_t *flag0;
+        uint8_t *flag0;
         int32_t n;
         V3XSCALAR zclip = V3X.Clip.Near;
         isVisible = 0;
         for (
-        flag0 = V3X.Buffer.flag, 
-        a = V3X.Buffer.rot_vertex, 
-        d = V3X.Buffer.prj_vertex, 
-        b = mesh->vertex, 
+        flag0 = V3X.Buffer.flag,
+        a = V3X.Buffer.rot_vertex,
+        d = V3X.Buffer.prj_vertex,
+        b = mesh->vertex,
         n = mesh->numVerts;
         n    != 0;
         a++, b++, flag0++, d++, n--)
@@ -662,7 +661,7 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
         }
     }
     if ((!isVisible)&&(!(mesh->flags&V3XMESH_FULLUPDATE)))
-    {   
+    {
         return 1;
     }
     else
@@ -680,8 +679,8 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
                 if (Mat->info.Sprite)
                 {
                     int
-                    n0 = f->faceTab[0], 
-                    n1 = f->faceTab[1], 
+                    n0 = f->faceTab[0],
+                    n1 = f->faceTab[1],
                     n2 = f->faceTab[2];
                     V3XVECTOR LX, A, B;
                     if ((a[n0].z<CST_ZERO)&&(a[n2].z<CST_ZERO))
@@ -713,14 +712,14 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
                 else
                 if (f->visible)
                 {
-                    u_int32_t *p1;
+                    uint32_t *p1;
                     int32_t m;
                     for(
-                    f->NeedToClip = 0, 
-                    p1 = f->faceTab, 
+                    f->NeedToClip = 0,
+                    p1 = f->faceTab,
                     m = f->numEdges;
                     m != 0;
-                    p1++, 
+                    p1++,
                     m--)
                     {
                         if (V3X.Buffer.flag[*p1]==2) f->NeedToClip++;
@@ -733,14 +732,15 @@ int32_t V3XMesh_Transform(V3XMESH *mesh)
             }
         }
     }
-    if ((!isVisible)&&(!(mesh->flags&V3XMESH_FULLUPDATE))) 
-    {  
+    if ((!isVisible)&&(!(mesh->flags&V3XMESH_FULLUPDATE)))
+    {
         return 1;
     }
     V3XMesh_T2(mesh, &Matrix); // Lighting.
-    V3XMesh_T3(mesh );          // Face building.    
+    V3XMesh_T3(mesh );          // Face building.
     return 0;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  : void space_pixel(V3XKEYANGLE *Ob_info, V3XVECTOR *b, V3XVECTOR *a)
@@ -773,8 +773,8 @@ void V3XMesh_RenderPoints(V3XMATRIX *Mat, V3XVECTOR *vertex_list, int32_t maxver
             GX.gi.drawPixel(x, y, color);
         }
     }
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XVector_WorldPos(V3XMATRIX *Mat, V3XVECTOR *input, V3XVECTOR *result)
@@ -783,16 +783,17 @@ void V3XMesh_RenderPoints(V3XMATRIX *Mat, V3XVECTOR *vertex_list, int32_t maxver
 *
 */
 static V3XMATRIX m1 = {
-    {CST_ONE, CST_ZERO , CST_ZERO, 
-        CST_ZERO, CST_ONE, CST_ZERO, 
-        CST_ZERO, CST_ZERO , CST_ONE, 
+    {CST_ONE, CST_ZERO , CST_ZERO,
+        CST_ZERO, CST_ONE, CST_ZERO,
+        CST_ZERO, CST_ZERO , CST_ONE,
     CST_ZERO, CST_ZERO , CST_ZERO }
 };
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  void V3XVector_WorldPos(V3XMATRIX *Mat, V3XVECTOR *input, V3XVECTOR *result)
 *
-* Description :  
+* Description :
 *
 */
 void V3XVector_WorldPos(V3XMATRIX *Mat, V3XVECTOR *input, V3XVECTOR *result)
@@ -801,8 +802,8 @@ void V3XVector_WorldPos(V3XMATRIX *Mat, V3XVECTOR *input, V3XVECTOR *result)
     if (!Mat) Mat = &m1;
     V3XMatrix_Transform(Matrix, (*Mat));
     V3XVector_ApplyMatrixTrans((*result), (*input), Matrix.Matrix);
-    return;
 }
+
 /*------------------------------------------------------------------------
 *
 * PROTOTYPE  :  int V3XVector_3Dto2D_pts(V3XMATRIX *Mat, V3XVECTOR *input, V3XVECTOR *result)
@@ -818,3 +819,4 @@ int V3XVector_3Dto2D_pts(V3XMATRIX *Mat, V3XVECTOR *input, V3XVECTOR *result)
     V3XVector_ProjectWithCenterAndTest((*result), temp, flag);
     return flag==0;
 }
+

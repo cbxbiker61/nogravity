@@ -9,9 +9,9 @@ modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, 
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -45,18 +45,15 @@ static void CALLING_C Flip(void)
 {
     glFinish();
     STUB_App->m_pBGLView->SwapBuffers();
-    return;
 }
 
-
-static u_int8_t RLXAPI *Lock(void)
+static uint8_t RLXAPI *Lock(void)
 {
     return NULL;
 }
 
 static void RLXAPI Unlock(void)
 {
-    return;
 }
 
 static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
@@ -65,7 +62,7 @@ static GXDISPLAYMODEINFO RLXAPI *EnumDisplayList(int bpp)
 }
 
 static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
-{   
+{
     g_pRLX->pGX->View.Flip = Flip;
     g_pRLX->pGX->gi = GX_OpenGL;
     g_pRLX->pGX->csp = CSP_OpenGL;
@@ -73,7 +70,6 @@ static void RLXAPI GetDisplayInfo(GXDISPLAYMODEHANDLE mode)
     g_pRLX->pGX->csp_cfg.pset.fonct = g_pRLX->pGX->csp.pset;
     g_pRLX->pGX->csp_cfg.transp.fonct = g_pRLX->pGX->csp.Trsp50;
     g_pRLX->pGX->csp_cfg.op = g_pRLX->pGX->csp.put;
-    return;
 }
 
 static int RLXAPI SetDisplayMode(GXDISPLAYMODEHANDLE mode)
@@ -106,7 +102,7 @@ static int RLXAPI CreateSurface(int numberOfSparePages)
     g_pRLX->pGX->Surfaces.maxSurface = numberOfSparePages;
     for (i=2;i<g_pRLX->pGX->Surfaces.maxSurface+1;i++)
     {
-        g_pRLX->pGX->Surfaces.lpSurface[i] = (u_int8_t*)g_pRLX->mm_std->.malloc(sz);
+        g_pRLX->pGX->Surfaces.lpSurface[i] = (uint8_t*)g_pRLX->mm_std->.malloc(sz);
         if (g_pRLX->pGX->Surfaces.lpSurface[i])
            SysMemZero(g_pRLX->pGX->Surfaces.lpSurface[i], sz);
         g_pRLX->pGX->Surfaces.flags[i] = 2;
@@ -128,22 +124,20 @@ static void RLXAPI ReleaseSurfaces(void)
             g_pRLX->pGX->Surfaces.flags[i] = 0;
         }
     }
-    for (i=0;i<g_pRLX->pGX->Surfaces.maxSurface+1;i++) 
+    for (i=0;i<g_pRLX->pGX->Surfaces.maxSurface+1;i++)
         g_pRLX->pGX->Surfaces.lpSurface[i]=NULL;
     g_pRLX->pGX->Surfaces.maxSurface = 0;
-    return;
 }
 
 static int RLXAPI RegisterMode(int mode)
 {
-    g_pRLX->pGX->View.DisplayMode = (u_int16_t)mode;
+    g_pRLX->pGX->View.DisplayMode = (uint16_t)mode;
     g_pRLX->pGX->Client->GetDisplayInfo(mode);
     return g_pRLX->pGX->Client->SetDisplayMode(mode);
 }
 
 static void RLXAPI Shutdown(void)
 {
-    return;
 }
 
 static int Open(void *hwnd)
@@ -160,19 +154,19 @@ static unsigned NotifyEvent(enum GX_EVENT_MODE mode, int x, int y)
 
 }
 static GXCLIENTDRIVER GX_OpenGL = {
-    Lock, 
-    Unlock, 
-    EnumDisplayList, 
-    GetDisplayInfo, 
-    SetDisplayMode, 
-    SearchDisplayMode, 
-    CreateSurface, 
-    ReleaseSurfaces, 
-    GL_DownloadSprite, 
-    GL_ReleaseSprite, 
-    GL_UpdateSprite, 
-    RegisterMode, 
-    Shutdown, 
+    Lock,
+    Unlock,
+    EnumDisplayList,
+    GetDisplayInfo,
+    SetDisplayMode,
+    SearchDisplayMode,
+    CreateSurface,
+    ReleaseSurfaces,
+    GL_DownloadSprite,
+    GL_ReleaseSprite,
+    GL_UpdateSprite,
+    RegisterMode,
+    Shutdown,
     Open,
     NotifyEvent
     "OpenGL"
@@ -182,12 +176,11 @@ _RLXEXPORTFUNC void RLXAPI GX_EntryPoint(struct RLXSYSTEM *p)
 {
     g_pRLX = p;
 	g_pRLX->pGX->Client = &GX_OpenGL;
-    return;
 }
 
 __declspec(dllexport) void RLXAPI V3X_EntryPoint(struct RLXSYSTEM *p)
 {
 	GX_EntryPoint(p);
     g_pRLX->pV3X->Client = &V3X_OpenGL;
-    return;
 }
+

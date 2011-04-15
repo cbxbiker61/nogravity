@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -33,7 +33,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #ifndef __amigaos__
 #define USE_THREAD
 #define USE_MUTEX
-#endif 
+#endif
 
 #include "_rlx.h"
 #include "_stub.h"
@@ -72,10 +72,10 @@ static SYS_MUTEX	m_Mutex;
 
 typedef struct
 {
-    int    			playChannel;
-    int    			samplingRate;
-    float  			volume;
-    float  			pan;
+    int			playChannel;
+    int			samplingRate;
+    float			volume;
+    float			pan;
     V3XA_HANDLE		*smpHandle;
     SND_DWHANDLE	*smpInfo;
 }NG_SAMPLE_AUDIO;
@@ -89,7 +89,7 @@ typedef struct
 */
 void NG_AudioBeep(int code)
 {
-    switch(code) 
+    switch(code)
 	{
         case 0: // Weapons
         NG_AudioPlaySound(NG_AudioGetByName("bridge1")-1, 0);
@@ -110,7 +110,6 @@ void NG_AudioBeep(int code)
         NG_AudioPlaySound(NG_AudioGetByName("select")-1, 0);
         break;
     }
-    return;
 }
 
 void NG_AudioLoadList(void)
@@ -146,21 +145,20 @@ void NG_AudioLoadList(void)
     {
 		char tmp[128];
         i++;
-		
+
 		FIO_cur->fgets(tmp, 128, in);
-        sscanf(tmp, "%s %d %d %d %s\n", 
-        g_pSoundList[i].name, 
-        &g_pSoundList[i].randomPitch, 
-        &g_pSoundList[i].defaultVol, 
+        sscanf(tmp, "%s %d %d %d %s\n",
+        g_pSoundList[i].name,
+        &g_pSoundList[i].randomPitch,
+        &g_pSoundList[i].defaultVol,
         &k, tex);
         g_pSoundList[i].priority = k;
-		
+
 
 	}while(strstr(g_pSoundList[i].name, "*")==NULL);
     g_pSoundList[i].name[0] = 0;
 
 	FIO_cur->fclose(in);
-    return;
 }
 
 int NG_AudioGetByName(char *s)
@@ -176,7 +174,7 @@ int NG_AudioGetByName(char *s)
 
     while(*g_pSoundList[i].name)
     {
-        if (sysStriCmp(g_pSoundList[i].name, ss)==0) 
+        if (sysStriCmp(g_pSoundList[i].name, ss)==0)
 			return i+1;
         i++;
     }
@@ -187,18 +185,17 @@ int NG_AudioGetByName(char *s)
 static void SFX_SampleBatchRelease(V3XA_HANDLE *smp)
 {
     int i;
-    for (i=0;i<g_nSample;i++)   
+    for (i=0;i<g_nSample;i++)
 		V3XA_Handle_Release(smp+i);
     MM_heap.free(smp);
     g_nSample = 0;
-    return;
 }
 
 #ifndef __APPLE__
 
 static void Resample44Khz(V3XA_HANDLE *smp)
 {
-	u_int8_t *src = (u_int8_t*)smp->sample;
+	uint8_t *src = (uint8_t*)smp->sample;
 	int factor = 44100 / smp->samplingRate;
 	short *dst = (short*)MM_std.malloc(smp->length * factor * 2);
 	unsigned i;
@@ -226,7 +223,7 @@ static V3XA_HANDLE *SFX_SampleBatchLoad(SND_DWHANDLE *sef)
     V3XA_HANDLE *WT, *sinfo;
     int  i;
     g_nSample = 0;
-    while (sef[g_nSample].name[0]!=0)  
+    while (sef[g_nSample].name[0]!=0)
 		g_nSample++;
     WT = MM_CALLOC(g_nSample, V3XA_HANDLE);  sinfo = WT;
     for (i=0;i<g_nSample;i++, sinfo++, sef++)
@@ -234,7 +231,7 @@ static V3XA_HANDLE *SFX_SampleBatchLoad(SND_DWHANDLE *sef)
 		char tex[256];
 		sprintf(tex, ".\\voix\\%s.WAV", sef->name);
 		V3XA_Handle_LoadFromFn(sinfo, tex);
-#ifndef HAVE_OPENAL		
+#ifndef HAVE_OPENAL
 		if (sinfo->samplingRate < 44100)
 			Resample44Khz(sinfo);
 #endif
@@ -257,25 +254,24 @@ void NG_AudioLoadWave(void)
     return;
 }
 
-static u_int32_t CALLING_STD Thread(void *context)
+static uint32_t CALLING_STD Thread(void *context)
 {
 	UNUSED(context);
-	
+
 	while (m_Status)
-	{	
+	{
 #ifdef USE_MUTEX
 		mutex_lock(&m_Mutex);
 #endif
 		V3XAStream_Poll(g_pWavStream);
 #ifdef USE_MUTEX
-		mutex_unlock(&m_Mutex);		
+		mutex_unlock(&m_Mutex);
 #endif
 		timer_snooze(75);
-	}	
+	}
 	thread_exit(0);
 	return 0;
 }
-
 
 void NG_AudioPlayTrack(int i)
 {
@@ -299,18 +295,16 @@ void NG_AudioPlayTrack(int i)
 		NG_AudioSetMusicVolume();
 	}
 
-#ifdef USE_THREAD	
+#ifdef USE_THREAD
 	m_Thread.hThread = 0;
 	m_Thread.pArgument = NULL;
 	m_Thread.pFunc = Thread;
 	m_Status = 1;
 	thread_begin(&m_Thread, SYS_THREAD_PRIORITY_NORMAL);
 #ifdef USE_MUTEX
-	mutex_init(&m_Mutex);	
+	mutex_init(&m_Mutex);
 #endif
 #endif
-
-    return;
 }
 
 static int NG_AllocSoundChannel( NG_SAMPLE_AUDIO *info, int index)
@@ -322,18 +316,18 @@ static int NG_AllocSoundChannel( NG_SAMPLE_AUDIO *info, int index)
 
     info->smpHandle = g_pFXTable + index;
     info->smpInfo  = g_pSoundList + index;
-    info->smpHandle->priority = (u_int8_t)info->smpInfo->priority;
+    info->smpHandle->priority = (uint8_t)info->smpInfo->priority;
     pitch = info->smpInfo->randomPitch+1;
     info->samplingRate = info->smpInfo->samplingRate + sysRand(pitch)-(pitch>>1);
-    
+
 	if (info->playChannel == -1)
 		info->playChannel = V3XA.Client->ChannelGetFree(info->smpHandle);
 
-    if (info->playChannel == -1)  
+    if (info->playChannel == -1)
 		return -1;
-   
+
 	g_ubSampleUsed[info->playChannel] = index;
-  
+
 	info->volume = ((float)g_SGSettings.VolFX) / 100.f;
     return info->playChannel;
 }
@@ -345,7 +339,7 @@ int NG_AudioPlaySound(int index, float pan)
 		return 0;
 
 	SYS_ASSERT((GX.View.State & GX_STATE_LOCKED) == 0);
-		
+
     info.playChannel = -1;
     if (NG_AllocSoundChannel(&info, index)>=0)
         V3XA.Client->ChannelPlay(info.playChannel, 44100, info.volume, pan, info.smpHandle);
@@ -356,13 +350,11 @@ void NG_AudioStopSound(int playChannel)
 {
     if (!(V3XA.State & 1))
 		return;
-    
+
 	SYS_ASSERT((GX.View.State & GX_STATE_LOCKED) == 0);
 
 	V3XA.Client->ChannelStop(playChannel);
     g_ubSampleUsed[playChannel] = 0;
-    
-    return;
 }
 
 void NG_AudioKickSound(int playChannel, int index, float pan)
@@ -370,15 +362,14 @@ void NG_AudioKickSound(int playChannel, int index, float pan)
     NG_SAMPLE_AUDIO info;
 	if (!(V3XA.State & 1))
 		return;
-		
-    info.playChannel = playChannel;	
+
+    info.playChannel = playChannel;
     if (NG_AllocSoundChannel(&info, index)>=0)
 	{
 		info.smpHandle->loopend = info.smpHandle->length;
 		SYS_ASSERT((GX.View.State & GX_STATE_LOCKED) == 0);
         V3XA.Client->ChannelPlay(info.playChannel, 44100, info.volume, pan, info.smpHandle);
 	}
-    return;
 }
 
 static void V3XSND_GetPosition(float *pan, float *volume, V3XVECTOR *v, V3XSCALAR cueDistance)
@@ -391,7 +382,6 @@ static void V3XSND_GetPosition(float *pan, float *volume, V3XVECTOR *v, V3XSCALA
     *pan = V3XVector_DotProduct(&VV, &V3X.Camera.M.v.I);
     // volume : 0 - 1;
     *volume = n<cueDistance ? 1 : DIVF32( cueDistance, n );
-    return;
 }
 
 int NG_Audio3DUpdate(V3XVECTOR *pos, V3XVECTOR *speed, int playChannel, int index)
@@ -424,7 +414,7 @@ int NG_Audio3DUpdate(V3XVECTOR *pos, V3XVECTOR *speed, int playChannel, int inde
 		V3XA.Client->ChannelSetVolume(  playChannel, Vol);
 		V3XA.Client->ChannelSetPanning( playChannel, Pan );
 		return Vol>8.f/100.f;
-    }    
+    }
 }
 
 int NG_Audio3DPlay(int index, V3XVECTOR *pos, V3XVECTOR *speed)
@@ -435,7 +425,7 @@ int NG_Audio3DPlay(int index, V3XVECTOR *pos, V3XVECTOR *speed)
        return 0;
 
     SYS_ASSERT((GX.View.State&GX_STATE_LOCKED)==0);
-    
+
     info.playChannel = -1;
 
     if (NG_AllocSoundChannel(&info, index)>=0)
@@ -462,49 +452,44 @@ int NG_Audio3DPlay(int index, V3XVECTOR *pos, V3XVECTOR *speed)
 
 void NG_AudioSetFreq(int playChannel, int newFrequency)
 {
-    if (!(V3XA.State & 1)) 
+    if (!(V3XA.State & 1))
 		return;
     SYS_ASSERT((GX.View.State&GX_STATE_LOCKED)==0);
 
     if (playChannel>=0)
 	   V3XA.Client->ChannelSetSamplingRate(playChannel, newFrequency);
-
-    return;
 }
 
 void NG_AudioSetMusicVolume(void)
 {
-    if (!(V3XA.State & 1)) 
+    if (!(V3XA.State & 1))
 		return;
-    
+
 	if (g_pWavStream)
 		V3XAStream_SetVolume(g_pWavStream, 0, ((float)g_SGSettings.VolMusic) / 100.f);
 
 	V3XA.Client->SetVolume(((float)g_SGSettings.VolDIG) / 100.f);
-    return;
 }
 
 void NG_AudioSay(char *voicename)
 {
     UNUSED(voicename);
-    return;
 }
 
 void NG_AudioPlayMusic(void)
 {
 	int track = g_pCurrentGame->episode == 7 ? 7 :  g_SGObjects.World.Track+7;
-	if (track<7) 
+	if (track<7)
 		track=7;
 	if (track>17)
 		track=7;
 	NG_AudioPlayTrack(track);
-    return;
 }
 
 void NG_AudioStopMusic(void)
 {
 	int i;
-	if (!(V3XA.State & 1)) 
+	if (!(V3XA.State & 1))
 		return;
 
 	if (g_pWavStream)
@@ -516,38 +501,34 @@ void NG_AudioStopMusic(void)
 			V3XA.Client->Poll(0);
 			timer_snooze((64L*12L)/((g_SGSettings.VolMusic*4)+1));
 		}
-		
-#ifdef USE_MUTEX		
+
+#ifdef USE_MUTEX
 		mutex_lock(&m_Mutex);
 		m_Status = 0;
 #endif
 		V3XAStream_Release(g_pWavStream);
-		
+
 #ifdef USE_MUTEX
-		mutex_unlock(&m_Mutex);	
+		mutex_unlock(&m_Mutex);
 #endif
-		
-		thread_end(&m_Thread);	
+
+		thread_end(&m_Thread);
 #ifdef USE_MUTEX
 		mutex_destroy(&m_Mutex);
-#endif		
+#endif
 		g_pWavStream = 0;
 	}
-    
 
 	V3XA.Client->ChannelFlushAll(1);
-
-    return;
 }
 
 void NG_AudioStopTrack(void)
 {
-	if (!(V3XA.State & 1)) 
+	if (!(V3XA.State & 1))
 		return;
 
-    NG_AudioStopMusic();    
+    NG_AudioStopMusic();
 	V3XA.Client->ChannelFlushAll(1);
-	return;
 }
 
 void NG_AudioPauseMusic(void)
@@ -556,10 +537,8 @@ void NG_AudioPauseMusic(void)
 	if (!(V3XA.State & 1))
 		return;
 
-    for (i=0;i<RLX.Audio.ChannelToMix;i++) 
+    for (i=0;i<RLX.Audio.ChannelToMix;i++)
 		V3XA.Client->ChannelStop( i );
-
-	return;
 }
 
 void NG_AudioResumeMusic(void)
@@ -567,13 +546,11 @@ void NG_AudioResumeMusic(void)
 	int i;
     if (!(V3XA.State & 1))
 		return;
-        
-    for (i=0;i<RLX.Audio.ChannelToMix;i++) 
+
+    for (i=0;i<RLX.Audio.ChannelToMix;i++)
 		V3XA.Client->ChannelSetVolume( i, ((float)g_SGSettings.VolFX)/100.f );
 
     sysMemZero(g_ubSampleUsed, 32);
-
-    return;
 }
 
 
@@ -584,8 +561,8 @@ void NG_AudioUpdate()
 
     V3XA.Client->Poll(0);
 
-#ifndef USE_THREAD	
-  	if (g_pWavStream) 
+#ifndef USE_THREAD
+	if (g_pWavStream)
 		V3XAStream_Poll(g_pWavStream);
 #endif
 }
@@ -600,24 +577,24 @@ void NG_AudioPlayWarp(void)
 		V3XAStream_GetFn(&pWavStream, ".\\MUSIC\\warp03.OGG", FALSE);
 		V3XAStream_Poll(pWavStream);
 		V3XA.Client->Poll(0);
-		V3XAStream_SetVolume(pWavStream, 0, ((float)g_SGSettings.VolMusic)/100.f);    
+		V3XAStream_SetVolume(pWavStream, 0, ((float)g_SGSettings.VolMusic)/100.f);
 		g_SGGame.FlashAlpha = 0;
 	}
 
 	t = timer_ms();
-	
+
     do
     {
         if (STUB_TaskControl())
 			break;
 
         RGB_Set(g_SGGame.FlashColor, g_SGGame.FlashAlpha, g_SGGame.FlashAlpha, g_SGGame.FlashAlpha);
-        
+
 		GX.Client->Lock();
         NG_RenderView();
         NG_DrawFlash();
         GX.Client->Unlock();
-        if ((V3XA.State & 1)) 
+        if ((V3XA.State & 1))
 			V3XAStream_PollAll();
         GX.View.Flip();
         g_SGGame.FlashAlpha+=4;
@@ -627,13 +604,9 @@ void NG_AudioPlayWarp(void)
 
     }while(timer_ms()<t+5000);
 
-    if (pWavStream) 
+    if (pWavStream)
 		V3XAStream_Release(pWavStream);
-
-    return;
 }
-
-
 
 extern SYS_TIMER g_cTimer;
 
@@ -643,7 +616,6 @@ static void CALLING_C TaskFlip(void)
 	SYS_ASSERT(ScreenPageFlip);
 	ScreenPageFlip();
 	timer_Update(&g_cTimer);
-    return;
 }
 
 void NG_InstallHandlers(void)
@@ -654,5 +626,5 @@ void NG_InstallHandlers(void)
         ScreenPageFlip = GX.View.Flip;
         GX.View.Flip = TaskFlip;
     }
-    return;
 }
+
