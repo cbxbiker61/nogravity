@@ -24,6 +24,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 Linux/SDL Port: 2005 - Matt Williams
 */
 //-------------------------------------------------------------------------
+#include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
 
