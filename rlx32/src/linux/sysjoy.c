@@ -101,7 +101,6 @@ static int JoystickOpen(void *hnd, int force_feedback)
 static void JoystickRelease()
 {
   SDL_Joystick *joy = (SDL_Joystick *)sJOY->device;
-  int idx;
 
   // If we have a joystick device...
   if (joy != NULL)
