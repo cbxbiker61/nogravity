@@ -26,7 +26,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#if defined __GNU_ || __BEOS__
+#if defined __GNUC__ || __BEOS__
 #include <unistd.h>
 #endif
 #if defined _MSC_VER
