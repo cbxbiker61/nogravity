@@ -1302,49 +1302,60 @@ static int g_nOldTimer, g_bSaveIT;
 */
 static void Demo_RecordA(void)
 {
-    SGActor *J=&g_pPlayer->J;
-    g_bSaveIT = 0;
-    if (g_SGSettings.DemoMode<=1)
-    {
-        V3XVector_Cpy(g_pPlayer->Mat->v.Pos, g_pPlayer->Rot->pos);
-        if (g_pPlayer->Mv.inert<1)
-			g_pPlayer->Mv.inert=1;
-        if (g_pPlayer->Mv.inert>J->pInf.fSpeedMax)
-			g_pPlayer->Mv.inert=J->pInf.fSpeedMax;
-    }
-    switch(g_SGSettings.DemoMode)
+	SGActor *J = &g_pPlayer->J;
+	g_bSaveIT = 0;
+
+	if (g_SGSettings.DemoMode <= 1)
 	{
-        case 1:
-        if (g_pRecordData.step<g_pRecordData.maxstep)
-        if (g_SGGame.CameraMode!=CAMERA_NEWNAV+1)
-        {
-            int t = timer_ms();
-            if (t>g_nOldTimer)
-            {
-                g_pPlayer->Mx.Mat = *(g_pPlayer->Mat);
-                g_pRecordData.pos[g_pRecordData.step]=g_pPlayer->Mx;
-                g_nOldTimer += (1000/30);
-                g_bSaveIT=1;
-            }
-        }
-        case 2:
-        case 4:
-        if (g_pRecordData.step<g_pRecordData.maxstep)
-        if (g_SGGame.CameraMode!=CAMERA_NEWNAV+1)
-        {
-            int t = timer_ms();
-            if (t>g_nOldTimer)
-            {
-                g_pPlayer->Mx = g_pRecordData.pos[g_pRecordData.step];
-                *(g_pPlayer->Mat) = g_pPlayer->Mx.Mat;
-                g_pPlayer->Rot->pos = g_pPlayer->Mat->v.Pos;
-                g_bSaveIT=1;
-                g_nOldTimer += (1000/30);
-            }
-        }
-        else g_pPlayer->Mx.but|=(1L<<20);
-        break;
-    }
+		V3XVector_Cpy(g_pPlayer->Mat->v.Pos, g_pPlayer->Rot->pos);
+
+		if (g_pPlayer->Mv.inert < 1)
+			g_pPlayer->Mv.inert=1;
+
+		if (g_pPlayer->Mv.inert > J->pInf.fSpeedMax)
+			g_pPlayer->Mv.inert=J->pInf.fSpeedMax;
+	}
+
+	switch(g_SGSettings.DemoMode)
+	{
+		case 1:
+		if (g_pRecordData.step < g_pRecordData.maxstep)
+		{
+			if (g_SGGame.CameraMode != CAMERA_NEWNAV+1)
+			{
+				int t = timer_ms();
+
+				if (t > g_nOldTimer)
+				{
+					g_pPlayer->Mx.Mat = *(g_pPlayer->Mat);
+					g_pRecordData.pos[g_pRecordData.step]=g_pPlayer->Mx;
+					g_nOldTimer += (1000/30);
+					g_bSaveIT=1;
+				}
+			}
+		}
+		case 2:
+		case 4:
+		if (g_pRecordData.step < g_pRecordData.maxstep)
+		{
+			if (g_SGGame.CameraMode != CAMERA_NEWNAV+1)
+			{
+				int t = timer_ms();
+
+				if (t > g_nOldTimer)
+				{
+					g_pPlayer->Mx = g_pRecordData.pos[g_pRecordData.step];
+					*(g_pPlayer->Mat) = g_pPlayer->Mx.Mat;
+					g_pPlayer->Rot->pos = g_pPlayer->Mat->v.Pos;
+					g_bSaveIT=1;
+					g_nOldTimer += (1000/30);
+				}
+			}
+			else
+				g_pPlayer->Mx.but|=(1L<<20);
+		}
+		break;
+	}
 }
 
 /*------------------------------------------------------------------------
