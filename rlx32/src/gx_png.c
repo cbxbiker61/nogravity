@@ -50,7 +50,7 @@ pngx_readm_pData(png_structp png_ptr, png_bytep data, png_size_t length)
 	* instead of an int, which is what fread() actually returns.
 	*/
 	check = (png_size_t)FIO_cur->fread(data, (png_size_t)1, length,
-	  (SYS_FILEHANDLE)png_ptr->io_ptr);
+	  (SYS_FILEHANDLE)png_get_io_ptr(png_ptr));
 
 	if (check != length)
 	{
@@ -77,7 +77,7 @@ static void pngx_error(png_structp png_ptr, png_const_charp message)
 #ifdef _DEBUG
 	SYS_Msg("!%s", message);
 #endif
-	longjmp(png_ptr->jmpbuf, 1);
+	longjmp(png_jmpbuf(png_ptr), 1);
 }
 
 static void pngx_warning(png_structp png_ptr, png_const_charp message)
@@ -121,7 +121,7 @@ if (!pClut)
 	info_ptr = png_create_info_struct(png_ptr);
 	png_read_info(png_ptr, info_ptr);  /* read all PNG info up to image data */
 
-	if (setjmp(png_ptr->jmpbuf))
+	if (setjmp(png_jmpbuf(png_ptr)))
 	{
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		return NULL;
