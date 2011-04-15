@@ -26,6 +26,9 @@ Linux/SDL Port: 2005 - Matt Williams
 //-------------------------------------------------------------------------
 #include <stdio.h>
 #include <SDL/SDL.h>
+#ifndef __amigaos4__
+#include <sched.h>
+#endif
 
 #include "_rlx32.h"
 #include "systools.h"
