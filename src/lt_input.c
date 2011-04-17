@@ -51,12 +51,25 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "lt_func.h"
 #include "_stub.h"
 
+#ifndef __amigaos__
+#define USE_MUTEX
+extern SYS_MUTEX m_Mutex;
+#endif
+
 int NG_WaitForKeyPress(void)
 {
     int a = 0;
 
+#ifdef USE_MUTEX
+	mutex_lock(&m_Mutex);
+#endif
+
     V3XA.Client->Poll(0);
     V3XAStream_PollAll();
+
+#ifdef USE_MUTEX
+	mutex_unlock(&m_Mutex);
+#endif
 
 	sKEY->Update(0);
 	sJOY->Update(0);
