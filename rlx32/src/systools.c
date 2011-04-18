@@ -301,10 +301,11 @@ void file_path(char *t)
 * DESCRIPTION :
 *
 */
-SYS_MEMORYMANAGER MM_std={
-    malloc,
-    free,
-realloc };
+SYS_MEMORYMANAGER MM_std = {
+	malloc,
+	free,
+	realloc
+};
 
 /*------------------------------------------------------------------------
 *
@@ -313,17 +314,21 @@ realloc };
 * DESCRIPTION :
 *
 */
-uint8_t static *MM_heap_reserve(size_t size)
+static uint8_t *MM_heap_reserve(size_t size)
 {
-    uint8_t *v = MM_heap.heapAddress     + MM_heap.CurrentAddress;
-    MM_heap.PreviousAddress = MM_heap.CurrentAddress;
-    {
-        int32_t off = ((uint32_t)v+size)&31;
-        if (off) size+=32-off;           // Alignement sur 32 octets
-    }
-    MM_heap.CurrentAddress+=size;
-	SYS_ASSERT(MM_heap.CurrentAddress<MM_heap.Size) ;
-    return v;
+	uint8_t *v = MM_heap.heapAddress + MM_heap.CurrentAddress;
+	MM_heap.PreviousAddress = MM_heap.CurrentAddress;
+
+	{
+		intptr_t off = ((uintptr_t)v+size)&31;
+
+		if ( off )
+			size += 32 - off; // Alignement sur 32 octets
+	}
+
+	MM_heap.CurrentAddress += size;
+	SYS_ASSERT(MM_heap.CurrentAddress < MM_heap.Size);
+	return v;
 }
 
 /*------------------------------------------------------------------------
@@ -335,25 +340,28 @@ uint8_t static *MM_heap_reserve(size_t size)
 */
 static void *MM_heap_malloc(size_t size)
 {
-    uint8_t *v=NULL;
+	uint8_t *v = NULL;
 	SYS_ASSERT(size);
-    if (MM_heap.active)
-    {
-        v = MM_heap_reserve(size);
-    }
-    else
-    {
-        v = (uint8_t*) MM_std.malloc(size);
+
+	if ( MM_heap.active )
+	{
+		v = MM_heap_reserve(size);
+	}
+	else
+	{
+		v = (uint8_t*) MM_std.malloc(size);
 		SYS_ASSERT(v);
-        if (!v)
-            size = 0;
-    }
-    if (v)
-    {
-        MM_heap.TotalAllocated+=size;
-        sysMemZero(v, size);
-    }
-    return v;
+		if ( ! v )
+			size = 0;
+	}
+
+	if ( v )
+	{
+		MM_heap.TotalAllocated += size;
+		sysMemZero(v, size);
+	}
+
+	return v;
 }
 
 /*------------------------------------------------------------------------
@@ -365,19 +373,20 @@ static void *MM_heap_malloc(size_t size)
 */
 static void MM_heap_free(void *block)
 {
-    if (MM_heap.active)
-    {
-        if (block==MM_heap.heapAddress+MM_heap.PreviousAddress)
-        {
-            MM_heap.CurrentAddress=MM_heap.PreviousAddress;
-        }
-        return;
-    }
-    if (block!=NULL)
-    {
-        MM_std.free(block);
-        block = NULL;
-    }
+	if ( MM_heap.active )
+	{
+		if ( block == MM_heap.heapAddress + MM_heap.PreviousAddress )
+		{
+			MM_heap.CurrentAddress = MM_heap.PreviousAddress;
+		}
+		return;
+	}
+
+	if ( block )
+	{
+		MM_std.free(block);
+		block = 0;
+	}
 }
 
 /*------------------------------------------------------------------------
@@ -389,13 +398,17 @@ static void MM_heap_free(void *block)
 */
 static void *MM_heap_realloc(void *block, size_t size)
 {
-    uint8_t *v;
-    if (MM_heap.active)
-    {
-        v = MM_heap_reserve(size);
-        sysMemCpy(v, block, size);
-    } else v=(uint8_t*)MM_std.realloc(block, size);
-    return v;
+	uint8_t *v;
+
+	if ( MM_heap.active )
+	{
+		v = MM_heap_reserve(size);
+		sysMemCpy(v, block, size);
+	}
+	else
+		v = (uint8_t*)MM_std.realloc(block, size);
+
+	return v;
 }
 
 /*------------------------------------------------------------------------
@@ -407,8 +420,8 @@ static void *MM_heap_realloc(void *block, size_t size)
 */
 static void  MM_heapalloc(void *block, size_t size)
 {
-    MM_heap.heapAddress = (uint8_t*)block;
-    MM_heap.Size = size;
+	MM_heap.heapAddress = (uint8_t*)block;
+	MM_heap.Size = size;
 	SYS_ASSERT(block);
 }
 
@@ -421,8 +434,8 @@ static void  MM_heapalloc(void *block, size_t size)
 */
 static unsigned MM_heap_push(void)
 {
-    MM_heap.Stack = MM_heap.CurrentAddress;
-    return MM_heap.Stack;
+	MM_heap.Stack = MM_heap.CurrentAddress;
+	return MM_heap.Stack;
 }
 
 /*------------------------------------------------------------------------
@@ -434,23 +447,25 @@ static unsigned MM_heap_push(void)
 */
 static void MM_heap_pop(int32_t id)
 {
-    MM_heap.CurrentAddress = (id<0) ? MM_heap.Stack : id;
-    MM_heap.PreviousAddress = 0;
+	MM_heap.CurrentAddress = ( id < 0 ) ? MM_heap.Stack : id;
+	MM_heap.PreviousAddress = 0;
 }
 
 void array_justifytext(const char **text, int numCharsPerLine, void (*callback)(char *text, int line))
 {
     char __t[1024];
     int ln = 0;
-    while (*text!=NULL)
+
+    while ( *text )
     {
         char    *t1 =  __t;
         const char    *t2 = *text;
         unsigned l;
-        while (*t2!=0)
+        while ( *t2 )
         {
             l = strlen(t2);
-            if (l<(unsigned)numCharsPerLine)
+
+            if ( l < (unsigned)numCharsPerLine )
             {
                 sysStrCpy(t1, t2);
                 callback(t1, ln);
@@ -459,23 +474,27 @@ void array_justifytext(const char **text, int numCharsPerLine, void (*callback)(
             else
             {
                 l = numCharsPerLine;
-                while (isspace(t2[l])==0)
+
+                while ( ! isspace(t2[l]) )
                 {
                     l--;
                 }
+
                 sysStrnCpy(t1, t2, l); t1[l]=0;
                 callback(t1, ln);
                 ln++;
             }
-            t2+=l;
+
+            t2 += l;
         }
+
         text++;
     }
 }
 
 static void MM_heap_reset(void)
 {
-    MM_heap.active = (MM_heap.heapAddress!=NULL);
+    MM_heap.active = ( MM_heap.heapAddress != NULL );
     MM_heap.CurrentAddress = 0;
     return;
 }

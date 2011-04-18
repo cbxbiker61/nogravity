@@ -66,11 +66,11 @@ typedef struct _sys_memory
     void	 (*pop)(int32_t id);
     void	 (*reset)(void);
     uint8_t     *heapAddress;
-    uint32_t     Size;
-    uint32_t     PreviousAddress;
-    uint32_t     CurrentAddress;
-    uint32_t     TotalAllocated;
-    uint32_t     Stack;
+    uintptr_t     Size;
+    uintptr_t     PreviousAddress;
+    uintptr_t     CurrentAddress;
+    uintptr_t     TotalAllocated;
+    uintptr_t     Stack;
     unsigned	  active;
 }SYS_MEMORYMANAGER;
 

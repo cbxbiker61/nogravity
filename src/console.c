@@ -476,7 +476,7 @@ void sysConRender()
 	int x = m_left;
 	int y = m_bottom - m_pFont->item[0].LY;
 
-	int cl = RGB_PixelFormat(128,128,128);
+	intptr_t cl = RGB_PixelFormat(128,128,128);
 	if (!sysConIsActive())
 		return;
 

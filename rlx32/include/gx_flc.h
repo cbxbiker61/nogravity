@@ -83,8 +83,8 @@ typedef struct _fli_struct {
     uint8_t      *decompBuffer;
 
     GXSPRITE      bitmap;
-    uint32_t       start;
-    uint32_t       start_buf;
+    uintptr_t       start;
+    uintptr_t       start_buf;
     uint32_t       LastTime;
     uint16_t      CurrentFrame;
     uint16_t      MaximumFrame;

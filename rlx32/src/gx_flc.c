@@ -341,7 +341,7 @@ _RLXEXPORTFUNC FLI_STRUCT *FLI_Open( SYS_FILEHANDLE in, int md)
     if (pAnim->ReadMode==FLI_USEMEMORY)
     {
         FIO_cur->fread(pAnim->fileBuffer, sizeof(uint8_t), pAnim->Header.Struct.size-128L-pAnim->start, pAnim->fli_stream);
-        pAnim->start_buf = (uint32_t)pAnim->fileBuffer;
+        pAnim->start_buf = (uintptr_t)pAnim->fileBuffer;
         FIO_cur->fclose(pAnim->fli_stream);
         pAnim->fli_stream = NULL;
     }

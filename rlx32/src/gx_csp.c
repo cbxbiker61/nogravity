@@ -448,7 +448,7 @@ _RLXEXPORTFUNC void CSP_Resize(GXSPRITE *sp, int lx, int ly, int bpp)
 {
     uint32_t sz = lx*ly,
     sz2 = sz*bpp,
-    ok = (((uint32_t)MM_heap.PreviousAddress==(uint32_t)sp->data)&&(MM_heap.active));
+    ok = (((uintptr_t)MM_heap.PreviousAddress==(uintptr_t)sp->data)&&(MM_heap.active));
     uint8_t *tmp;
     tmp = (uint8_t *)MM_heap.malloc(sz2);
     IMG_stretch(sp->data, tmp, sp->LY, ly, sp->LX, lx, bpp);
