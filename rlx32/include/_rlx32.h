@@ -123,6 +123,9 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
        typedef unsigned __int64		uint64_t;
     #endif // __GNUC__
    #endif // __LINUX__
+#else // STDC_VERSION
+#include <stdint.h>
+#include <stddef.h>
 #endif // STDC_VERSION
 
 

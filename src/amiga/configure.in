@@ -28,6 +28,7 @@ AC_ARG_ENABLE(sound, [  --enable-sound=type     Specify sound library (sdl_mixer
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_CC_C99
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
