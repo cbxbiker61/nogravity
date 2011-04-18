@@ -102,8 +102,14 @@ typedef struct _v3x_morph_frame{
  V3XVECTOR *vertex; // Vertex
 }V3XTWEENFRAME;
 
-typedef struct _v3x_morph{
+typedef struct _v3x_morph_disk{
+ uint8_t unused[4];
+ uint32_t numFrames; // Number of frame
+ uint32_t numVerts; // Number of vertex
+ uint32_t numFaces; // Number of face
+}V3XTWEENDISK;
 
+typedef struct _v3x_morph{
  V3XTWEENFRAME *frame; // Morphing frame
  uint32_t numFrames; // Number of frame
  uint32_t numVerts; // Number of vertex
@@ -126,67 +132,215 @@ typedef struct _v3x_node{
  uint32_t pad0[3+4];
 }V3XNODE;
 
+typedef struct _v3x_ori_disk{
+	uint16_t flags; // State
+	uint8_t type; // Object kind
+	uint8_t pad; // pad
+	uint32_t dataSize; // external data size
+	int32_t data; // external data
+	union {
+		int32_t mesh; // mesh
+		int32_t light; // light
+		int32_t dummy; // dummy object
+		int32_t camera;
+		int32_t node;
+	};
+	int32_t morph; // Mesh morphing handle
+	int32_t Cs; // Collision handle
+	int32_t dynamic; // Dynamic controller handle
+	V3XVECTOR global_center; // Visibility center
+	V3XSCALAR global_rayon; // Visibility radius
+	char name[16]; // Name
+	uint8_t index_color; // Index color
+	uint8_t sub_class;	 // sub class
+	uint8_t pad2[2];
+} V3XORIDISK; // 64bytes
 
 typedef struct _v3x_ori{
- uint16_t flags; // State
- uint8_t type; // Object kind
- uint8_t pad; // pad
- uint32_t dataSize; // external data size
- void *data; // external data
- union {
-	 V3XMESH *mesh; // mesh
-	 V3XLIGHT *light; // light
-	 V3XDUMMY *dummy; // dummy object
-	 V3XCAMERA *camera;
-	 V3XNODE *node;
- };
- V3XTWEEN *morph; // Mesh morphing handle
- V3XCL *Cs; // Collision handle
- void *dynamic; // Dynamic controller handle
- V3XVECTOR global_center; // Visibility center
- V3XSCALAR global_rayon; // Visibility radius
- char name[16]; // Name
- uint8_t index_color; // Index color
-	uint8_t					 sub_class;	 // sub class
- uint8_t pad2[2];
-}V3XORI; // 64bytes
+	uint16_t flags; // State
+	uint8_t type; // Object kind
+	uint8_t pad; // pad
+	uint32_t dataSize; // external data size
+	void *data; // external data
+	union {
+		V3XMESH *mesh; // mesh
+		V3XLIGHT *light; // light
+		V3XDUMMY *dummy; // dummy object
+		V3XCAMERA *camera;
+		V3XNODE *node;
+	};
+	V3XTWEEN *morph; // Mesh morphing handle
+	V3XCL *Cs; // Collision handle
+	void *dynamic; // Dynamic controller handle
+	V3XVECTOR global_center; // Visibility center
+	V3XSCALAR global_rayon; // Visibility radius
+	char name[16]; // Name
+	uint8_t index_color; // Index color
+	uint8_t sub_class;	 // sub class
+	uint8_t pad2[2];
+} V3XORI; // 64bytes
 
+static inline void OriDiskToMem(const V3XORIDISK *d, V3XORI *m)
+{
+	m->flags = d->flags;
+	m->type = d->type;
+	m->pad = d->pad;
+	m->dataSize = d->dataSize;
+	m->global_center = d->global_center;
+	m->global_rayon = d->global_rayon;
+	memcpy(m->name, d->name, sizeof(m->name));
+	m->index_color = d->index_color;
+	m->sub_class = d->sub_class;
+	m->pad2[0] = d->pad2[0];
+	m->pad2[1] = d->pad2[1];
+}
 
 // Maintenant
+typedef struct _v3x_tri_disk{
+	union {
+		uint32_t keys; // animations keys (old model)
+		uint32_t keyEx; // extended animation key
+	};
+	union {
+		uint32_t next; // Pointer to master key informations
+		int32_t index_NEXT; // Index
+	};
+	uint32_t ORI_ref; // Object reminder
+	union {
+		uint32_t chain; // Pointer to master key informations
+		int32_t index_CHAIN; // Index
+	};
+	uint32_t pad;
+	uint16_t numFrames; // number of frame in animation
+	uint16_t startFrame; // first frame
+	uint16_t numKeys; // number of keys
+	uint8_t fps; // default frame rate
+	uint8_t flags; // flags
+	uint8_t pad2[4];
+} V3XTRIDISK;
+
 typedef struct _v3x_tri{
- union {
- V3XKEY *keys; // animations keys (old model)
- V3XKEYEX *keyEx; // extended animation key
- };
- union {
+	union {
+		V3XKEY *keys; // animations keys (old model)
+		V3XKEYEX *keyEx; // extended animation key
+	};
+	union {
 		struct _v3x_tri *next; // Pointer to master key informations
-		int index_NEXT; // Index
- };
- void *ORI_ref; // Object reminder
- union {
+		int32_t index_NEXT; // Index
+	};
+	void *ORI_ref; // Object reminder
+	union {
 		struct _v3x_tri *chain; // Pointer to master key informations
-		int index_CHAIN; // Index
- };
- unsigned pad;
- uint16_t numFrames; // number of frame in animation
- uint16_t startFrame; // first frame
- uint16_t numKeys; // number of keys
- uint8_t fps; // default frame rate
- uint8_t flags; // flags
- uint8_t pad2[4];
-}V3XTRI;
+		int32_t index_CHAIN; // Index
+	};
+	uint32_t pad;
+	uint16_t numFrames; // number of frame in animation
+	uint16_t startFrame; // first frame
+	uint16_t numKeys; // number of keys
+	uint8_t fps; // default frame rate
+	uint8_t flags; // flags
+	uint8_t pad2[4];
+} V3XTRI;
+
+static inline void TriDiskToMem(const V3XTRIDISK *d, V3XTRI *m)
+{
+	uintptr_t x;
+	x = d->keys;
+	m->keys = (V3XKEY*)x;
+	m->index_NEXT = d->index_NEXT;
+	x = d->ORI_ref;
+	m->ORI_ref = (void *)x;
+	m->index_CHAIN = d->index_CHAIN;
+	m->pad = d->pad;
+	m->numFrames = d->numFrames;
+	m->startFrame = d->startFrame;
+	m->numKeys = d->numKeys;
+	m->fps = d->fps;
+	m->flags = d->flags;
+	m->pad2[0] = d->pad2[0];
+	m->pad2[1] = d->pad2[1];
+	m->pad2[2] = d->pad2[2];
+	m->pad2[3] = d->pad2[3];
+}
+
+typedef struct _v3x_tvi_disk{
+	union {
+		uint32_t TRI; // Pointer to master key informations
+		int32_t index_TRI; // Index
+	};
+	V3XSCALAR frame; // Current frame (float value)
+	uint16_t pad; // Index (if non null)
+	uint8_t flags; // flags
+	uint8_t fps; // Overriden frame rate
+	uint32_t startTimer; // Time when the animation has started
+} V3XTVIDISK;
 
 typedef struct _v3x_tvi{
+	union {
+		V3XTRI *TRI; // Pointer to master key informations
+		int32_t index_TRI; // Index
+	};
+	V3XSCALAR frame; // Current frame (float value)
+	uint16_t pad; // Index (if non null)
+	uint8_t flags; // flags
+	uint8_t fps; // Overriden frame rate
+	uint32_t startTimer; // Time when the animation has started
+} V3XTVI;
+
+static inline void TviDiskToMem(const V3XTVIDISK *d, V3XTVI *m)
+{
+	m->index_TRI = d->index_TRI;
+	m->frame = d->frame;
+	m->pad = d->pad;
+	m->flags = d->flags;
+	m->fps = d->fps;
+	m->startTimer = d->startTimer;
+}
+
+typedef struct _v3x_ovi_disk{
+ uint16_t state; // state
+ uint8_t matrix_Method; // matrix calculation method
+ uint8_t subDefinition; // pad
+
+ uint32_t dataSize; // external data size
+ int32_t data; // external data
  union {
-	V3XTRI *TRI; // Pointer to master key informations
-	int index_TRI; // Index
+	 int32_t mesh; // mesh
+	 int32_t light; // light
+	 int32_t dummy; // dummy object
+	 int32_t camera;
+	 int32_t node;
  };
- V3XSCALAR frame; // Current frame (float value)
- uint16_t pad; // Index (if non null)
- uint8_t flags; // flags
- uint8_t fps; // Overriden frame rate
- uint32_t startTimer; // Time when the animation has started
-}V3XTVI;
+ union {
+	 unsigned index_ORI; // index in scene or ORI handle
+	 int32_t ORI; // pointer will be calculated by CreatePointers
+ };
+ union {
+	 unsigned index_PARENT; // index of the parent (3D hierachical)
+	 int32_t parent;
+ };
+ union {
+	 unsigned index_TARGET; // index of the target (rotation)
+	 int32_t target;
+ };
+ union {
+	 unsigned index_INSTANCE; // index of the master object
+	 int32_t instance; // for multiple instance of this object
+ };
+ union {
+	 unsigned index_TVI; // Keyframe handle
+	 int32_t TVI;
+ };
+ int32_t Tk; // Shortcut to track Info
+ int32_t child; // children in hierchical
+ int32_t collisionList; // Collision object
+ union {
+	 unsigned index_NEXT;
+	 int32_t next;
+ };
+ V3XSCALAR distance; // distance for z sorting
+ uint32_t filler[2];
+} V3XOVIDISK; // 64bytes
 
 typedef struct _v3x_ovi{
  uint16_t state; // state
@@ -231,43 +385,56 @@ typedef struct _v3x_ovi{
  };
  V3XSCALAR distance; // distance for z sorting
  uint32_t filler[2];
-}V3XOVI; // 64bytes
+} V3XOVI; // 64bytes
+
+static inline void OviDiskToMem(const V3XOVIDISK *d, V3XOVI *m)
+{
+	m->state = d->state;
+	m->matrix_Method = d->matrix_Method;
+	m->subDefinition = d->subDefinition;
+	m->dataSize = d->dataSize;
+	m->index_ORI = d->index_ORI;
+	m->index_PARENT = d->index_PARENT;
+	m->index_TARGET = d->index_TARGET;
+	m->index_INSTANCE = d->index_INSTANCE;
+	m->index_TVI = d->index_TVI;
+	m->index_NEXT = d->index_NEXT;
+	m->distance = d->distance;
+}
 
 //---------------------------------------------------------
 
-
 typedef struct _v3xlayer_timer{
- uint32_t flags;
- uint32_t numFrames; // numbers of frames in the animation
- V3XSCALAR currentFrame; // Global frame
- V3XSCALAR firstFrame; // firstFrame
- uint32_t fps; // frame Rate
- uint32_t startTimer; // internal : startup timer
-}V3XLAYER_TIMER; //SizeOf: 20b
-
+	uint32_t flags;
+	uint32_t numFrames; // numbers of frames in the animation
+	V3XSCALAR currentFrame; // Global frame
+	V3XSCALAR firstFrame; // firstFrame
+	uint32_t fps; // frame Rate
+	uint32_t startTimer; // internal : startup timer
+} V3XLAYER_TIMER; //SizeOf: 20b
 
 enum {
- V3XBG_NONE = 0x0, // no background (not cleared)
- V3XBG_BLACK = 0x1, // black background
- V3XBG_COLOR = 0x2, // color background
+	V3XBG_NONE = 0x0, // no background (not cleared)
+	V3XBG_BLACK = 0x1, // black background
+	V3XBG_COLOR = 0x2, // color background
 	V3XBG_SIDE = 0x3, // barre side
- V3XBG_GRAD = 0x4, // gradient background
- V3XBG_IMG = 0x8, // picture
- V3XBG_IMGZ = 0x10, // Z buffer
- V3XBG_CALCINDEX = 0x20, // Recalc IndexColor
- V3XBG_STEREO = 0x40, // Stereo rendering mixed
- V3XBG_STEREOIL = 0x80, // Stereo rendering interleaved
- V3XBG_MOTIONBLUR= 0x100, // Motion Blur
- V3XBG_FILTERING = 0x200 // Frame filtering
+	V3XBG_GRAD = 0x4, // gradient background
+	V3XBG_IMG = 0x8, // picture
+	V3XBG_IMGZ = 0x10, // Z buffer
+	V3XBG_CALCINDEX = 0x20, // Recalc IndexColor
+	V3XBG_STEREO = 0x40, // Stereo rendering mixed
+	V3XBG_STEREOIL = 0x80, // Stereo rendering interleaved
+	V3XBG_MOTIONBLUR = 0x100, // Motion Blur
+	V3XBG_FILTERING = 0x200 // Frame filtering
 };
 
 enum {
- V3XSCENE_NEWVIEWPORT = 0x1,
- V3XSCENE_NEWCAMERA = 0x2,
- V3XSCENE_NEWLIGHT = 0x4,
- V3XSCENE_NEWNODES = 0x8,
- V3XSCENE_NEWKF = 0x10,
- V3XSCENE_NEWOBJECTS = 0x20
+	V3XSCENE_NEWVIEWPORT = 0x1,
+	V3XSCENE_NEWCAMERA = 0x2,
+	V3XSCENE_NEWLIGHT = 0x4,
+	V3XSCENE_NEWNODES = 0x8,
+	V3XSCENE_NEWKF = 0x10,
+	V3XSCENE_NEWOBJECTS = 0x20
 };
 
 typedef struct _v3x_layerbg{
@@ -284,7 +451,7 @@ typedef struct _v3x_layerbg{
 	V3XSPRITEINFO _bitmap; // internal : extended bitmap
 	uint32_t index_color; // internal : Color (indexed value)
 	V3XSCALAR stereoPitch;
-}V3XLAYER_BG; //SizeOf: 60b
+} V3XLAYER_BG; //SizeOf: 60b
 
 enum V3XFG{
 	V3XFG_LIN = 0x1, // fog linear
@@ -297,46 +464,70 @@ typedef struct _v3x_layerfog{
 	V3XSCALAR fogMin; // fog min
 	V3XSCALAR fogMax; // fog max
 	rgb32_t color; // fog color
-}V3XLAYER_FOG; //SizeOf: 20b
+} V3XLAYER_FOG; //SizeOf: 20b
 
 enum {
 	V3XZB_IMG = 0x1, // has special
 };
 
 typedef struct _v3x_layerZbuffer{
- uint32_t flags; // Z Buffer
- char filename[12]; // Z Buffer file name (without extensions)
- GXSPRITE zimg; // Z Buffer data
+	uint32_t flags; // Z Buffer
+	char filename[12]; // Z Buffer file name (without extensions)
+	GXSPRITE zimg; // Z Buffer data
 }V3XLAYER_ZB; //SizeOf: 36b
 
-
 typedef struct _v3xlayer{
- V3XLAYER_TIMER	tm; // timers and keyframe 20b
- V3XLAYER_BG	bg; // background 64b
- V3XLAYER_FOG	fg; // fog 20b
- V3XLAYER_ZB	zb; // zbuffer 36b
- V3XLAYER_CLUT	lt; // color tables 120b
-}V3XLAYER;	 // SizeOf 256b
+	V3XLAYER_TIMER tm; // timers and keyframe 20b
+	V3XLAYER_BG bg; // background 64b
+	V3XLAYER_FOG fg; // fog 20b
+	V3XLAYER_ZB zb; // zbuffer 36b
+	V3XLAYER_CLUT lt; // color tables 120b
+} V3XLAYER; // SizeOf 256b
 
-typedef struct _v3x_scene{
- char Signature[4]; // version signature
- uint16_t numOVI; // number of OVI object
- uint16_t numTVI;
- uint16_t numTRI;
- uint16_t numORI;
- V3XORI *ORI;
- V3XOVI *OVI;
- V3XTRI *TRI;
- V3XTVI *TVI;
- V3XLAYER Layer;
-}V3XSCENE;
+typedef struct _v3x_scene_header {
+	char Signature[4]; // version signature
+	uint16_t numOVI; // number of OVI object
+	uint16_t numTVI;
+	uint16_t numTRI;
+	uint16_t numORI;
+	uint32_t ORI;
+	uint32_t OVI;
+	uint32_t TRI;
+	uint32_t TVI;
+} V3XSCENEHEADER;
+
+typedef struct _v3x_scene_disk {
+	char Signature[4]; // version signature
+	uint16_t numOVI; // number of OVI object
+	uint16_t numTVI;
+	uint16_t numTRI;
+	uint16_t numORI;
+	uint32_t ORI;
+	uint32_t OVI;
+	uint32_t TRI;
+	uint32_t TVI;
+	V3XLAYER Layer;
+} V3XSCENEDISK;
+
+typedef struct _v3x_scene {
+	char Signature[4]; // version signature
+	uint16_t numOVI; // number of OVI object
+	uint16_t numTVI;
+	uint16_t numTRI;
+	uint16_t numORI;
+	V3XORI *ORI;
+	V3XOVI *OVI;
+	V3XTRI *TRI;
+	V3XTVI *TVI;
+	V3XLAYER Layer;
+} V3XSCENE;
 
 struct _gx_viewport;
 
 __extern_c
 //
 _RLXEXPORTFUNC V3XORI RLXAPI *V3XScene_NewORI(V3XSCENE *Scene);
-_RLXEXPORTFUNC V3XOVI	RLXAPI *V3XScene_NewOVI(V3XSCENE *Scene);
+_RLXEXPORTFUNC V3XOVI RLXAPI *V3XScene_NewOVI(V3XSCENE *Scene);
 _RLXEXPORTFUNC V3XTVI RLXAPI *V3XScene_NewTVI(V3XSCENE *Scene);
 _RLXEXPORTFUNC V3XTRI RLXAPI *V3XScene_NewTRI(V3XSCENE *Scene);
 _RLXEXPORTFUNC V3XOVI RLXAPI *V3XScene_NewObject(V3XSCENE *Scene, uint32_t flags);

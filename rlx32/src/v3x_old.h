@@ -24,60 +24,61 @@ Original Source: 1996 - Stephane Denis
 Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 */
 //-------------------------------------------------------------------------
+
 typedef struct _v3x_ori97
 {
-    V3XMESH	*mesh;
-    V3XTWEEN	*morph;
-    V3XCL	*Cs;
-    void	*data;
-    V3XSCALAR	 global_rayon;
-    uint8_t	 Type, matrix_Method, index_Color, Flags;
-    uint16_t	 index_Parent;
-    uint8_t	 pad[2];
-    char	 name[16];
-    V3XVECTOR	 global_pivot;
-    char	 filler[4+4];
-}V3XORI97;
+	uint32_t	mesh;
+	uint32_t	morph;
+	uint32_t	Cs;
+	uint32_t	data;
+	V3XSCALAR	global_rayon;
+	uint8_t		Type, matrix_Method, index_Color, Flags;
+	uint16_t	index_Parent;
+	uint8_t		pad[2];
+	char		name[16];
+	V3XVECTOR	global_pivot;
+	char		filler[4+4];
+} V3XORI97;
 
 typedef struct _v3x_ovi97
 {
-    V3XMESH             *mesh;
-    void                *data;
-    V3XKEY              *Tk;
-    V3XORI				*ORI;
-    V3XTVI				*TVI;
-    struct _ovi97	*Parent;
-    struct _ovi97		**Child;
-    struct _ovi97	*collisionList;
-    V3XSCALAR            distance;
-    uint16_t              index_OVI, index_ORI, index_TVI;
-    uint8_t               Flags_MatrixToUpdate, Flags_MatrixDone;
-    uint8_t               Flags_DisplaySphere;
-    uint8_t               filler1[3];
-    uint8_t               Hide_Never, Hide_ByDisplay, Hide_ByZ, Hide_ByFreeze;
-    uint8_t               filler[12];
-}V3XOVI97;
+	uint32_t	mesh;
+	uint32_t	data;
+	uint32_t	Tk;
+	uint32_t	ORI;
+	uint32_t	TVI;
+	uint32_t	Parent;
+	uint32_t	Child;
+	uint32_t	collisionList;
+	V3XSCALAR	distance;
+	uint16_t	index_OVI, index_ORI, index_TVI;
+	uint8_t		Flags_MatrixToUpdate, Flags_MatrixDone;
+	uint8_t		Flags_DisplaySphere;
+	uint8_t		filler1[3];
+	uint8_t		Hide_Never, Hide_ByDisplay, Hide_ByZ, Hide_ByFreeze;
+	uint8_t		filler[12];
+} V3XOVI97;
 
 typedef struct _v3x_layer97
 {
-    char                background_name[16];
-    uint8_t               filler5[32];
-    char                ColorTable_name[16];
-    uint8_t               filler6[32+80];
-    rgb32_t				SolidColor;
-    uint16_t              filler1, length_time, length_max, filler2;
-    uint8_t               filler3[2];
-    uint8_t               Version, Type;
-    rgb24_t				FogColor;
-    uint8_t               FogActivate;
-    uint8_t               filler4[32];
-}V3XLAYER97; //228 octets
+	char		background_name[16];
+	uint8_t		filler5[32];
+	char		ColorTable_name[16];
+	uint8_t		filler6[32+80];
+	rgb32_t		SolidColor;
+	uint16_t	filler1, length_time, length_max, filler2;
+	uint8_t		filler3[2];
+	uint8_t		Version, Type;
+	rgb24_t		FogColor;
+	uint8_t		FogActivate;
+	uint8_t		filler4[32];
+} V3XLAYER97; //228 octets
 
 typedef struct _v3x_chunk
 {
-    uint32_t	ckId;     // Chunk ID
-    uint32_t	ckSize;   // Chunk Size
-}v3xCHUNK;
+	uint32_t	ckId; // Chunk ID
+	uint32_t	ckSize; // Chunk Size
+} v3xCHUNK;
 
 #define MAKEID(d, c, b, a) (((int32_t)(a)<<24) | ((int32_t)(b)<<16) | ((int32_t)(c)<<8) | ((int32_t)(d)) )
 #define ID_LYLT MAKEID('V','L','L','T')

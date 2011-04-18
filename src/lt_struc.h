@@ -151,9 +151,9 @@ typedef struct _sg_control{
 }SGControl;
 
 typedef struct _sg_netdata{
-	uint32_t			but;
-	V3XMATRIX		Mat;
-}SGNetData;
+	uint32_t but;
+	V3XMATRIX Mat;
+} SGNetData;
 
 typedef struct _sg_weapon_info{
 	int				cur,
@@ -314,21 +314,51 @@ typedef struct _sg_mission
 }SGMISSION;
 
 typedef struct {
-   uint8_t			*	buffer;
-   uint32_t				length;
-}SGRecordBuffer;
+	uint32_t buffer;
+	uint32_t length;
+} SGRecordBufferDisk;
+
+typedef struct {
+	uint8_t *buffer;
+	uint32_t length;
+} SGRecordBuffer;
+
+static inline void RecordBufferDiskToMem(const SGRecordBufferDisk *d, SGRecordBuffer *m)
+{
+	m->length = d->length;
+}
 
 typedef struct
 {
-	uint16_t				startlevel;
-	uint16_t				version;
-	uint32_t				maxstep;
-	uint32_t				step;
-	SGNetData		*	pos;
+	uint16_t startlevel;
+	uint16_t version;
+	uint32_t maxstep;
+	uint32_t step;
+	uint32_t pos;
 #if (SGTARGET ==NG_FULL_VERSION)
-	SGRecordBuffer *	rec;
+	uint32_t rec;
 #endif
-}SGRecordReplay;
+} SGRecordReplayDisk;
+
+typedef struct
+{
+	uint16_t startlevel;
+	uint16_t version;
+	uint32_t maxstep;
+	uint32_t step;
+	SGNetData *pos;
+#if (SGTARGET ==NG_FULL_VERSION)
+	SGRecordBuffer *rec;
+#endif
+} SGRecordReplay;
+
+static inline void RecordReplayDiskToMem(const SGRecordReplayDisk *d, SGRecordReplay *m)
+{
+	m->startlevel = d->startlevel;
+	m->version = d->version;
+	m->maxstep = d->maxstep;
+	m->step = d->step;
+}
 
 typedef struct {
 	uint8_t				behind,

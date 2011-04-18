@@ -69,7 +69,6 @@ enum {
       V3XMATRIX_Quaternion = 0x5  // Quaternion mode
 };
 
-
 enum {
       V3XLIGHTTYPE_SPOT = 0x1, // Spot light
       V3XLIGHTTYPE_OMNI = 0x2, // Omni light
@@ -107,14 +106,10 @@ enum {
       V3XMTXBLEND_LIGHTMAP = 0x2  // light
 };
 
-
 enum {
       V3XFILTER_DEFAULT = 0x0, // Use default filtering mode
       V3XFILTER_NONE = 0x1  // Disable filtering
 };
-
-
-
 
 /*
    Polygon definitions (32 bytes size)
@@ -123,28 +118,61 @@ enum {
 
 struct _v3xmaterial;
 
-typedef struct _v3xpoly{
-    union
+typedef struct _v3xpoly_disk{
+	union
 	{
-         struct _v3xmaterial        *Mat;            // Material structures
-         int         matIndex;       // Material index in the mesh
-    };
-    uint32_t   *	faceTab;             // index array to mesh vertex
-    V3XPTS      *	dispTab;             // projected points (on screen)
-    V3XUV       **	uvTab;              // texture coordinates
-    V3XSCALAR		distance;             // distance (for Z Sort)
-    union
+		uint32_t Mat; // Material structures
+		int32_t matIndex; // Material index in the mesh
+	};
+	uint32_t faceTab; // index array to mesh vertex
+	uint32_t dispTab; // projected points (on screen)
+	uint32_t uvTab; // texture coordinates
+	V3XSCALAR distance; // distance (for Z Sort)
+	union
 	{
-        V3XSCALAR   *shade;
-        rgb32_t		*rgb;             // light intensity
-    };
+		uint32_t shade;
+		uint32_t rgb; // light intensity
+	};
 
-    V3XWPTS     *	ZTab;                // Homogenous coordinates (perspective)
-    uint8_t        numEdges;            // Number of edges 1..255
-    uint8_t		flags;
-    uint8_t        visible;             // reserved
-    uint8_t        NeedToClip;          // reserved
-}V3XPOLY;
+	uint32_t ZTab; // Homogenous coordinates (perspective)
+	uint8_t numEdges; // Number of edges 1..255
+	uint8_t flags;
+	uint8_t visible; // reserved
+	uint8_t NeedToClip; // reserved
+} V3XPOLYDISK;
+
+typedef struct _v3xpoly{
+	union
+	{
+		struct _v3xmaterial	*Mat; // Material structures
+		int32_t matIndex; // Material index in the mesh
+	};
+	uint32_t *faceTab; // index array to mesh vertex
+	V3XPTS *dispTab; // projected points (on screen)
+	V3XUV **uvTab; // texture coordinates
+	V3XSCALAR distance; // distance (for Z Sort)
+	union
+	{
+		V3XSCALAR *shade;
+		rgb32_t *rgb; // light intensity
+	};
+
+	V3XWPTS *ZTab; // Homogenous coordinates (perspective)
+	uint8_t numEdges; // Number of edges 1..255
+	uint8_t flags;
+	uint8_t visible; // reserved
+	uint8_t NeedToClip; // reserved
+} V3XPOLY;
+
+static inline void PolyDiskToMem (const V3XPOLYDISK *d, V3XPOLY *m)
+{
+	m->matIndex = d->matIndex;
+	m->distance = d->distance;
+	m->numEdges = d->numEdges;
+	m->flags = d->flags;
+	m->visible = d->visible;
+	m->NeedToClip = d->NeedToClip;
+}
 
 typedef struct _v3xpoly_l{
     union
@@ -172,74 +200,142 @@ typedef struct _v3xpoly_l{
      Mesh Material definitions (128 bytes size)
 */
 typedef struct _v3x_materialProperties{
-        unsigned TwoSide       : 1;  // material is 2 sided
-        unsigned Opacity       : 1;  // primary texture has a color-key
-        unsigned Perspective   : 1;  // primary texture is perspective corrected
-		unsigned Filtering     : 1;  // filtering method
+	uint32_t TwoSide       : 1;  // material is 2 sided
+	uint32_t Opacity       : 1;  // primary texture has a color-key
+	uint32_t Perspective   : 1;  // primary texture is perspective corrected
+	uint32_t Filtering     : 1;  // filtering method
 
-        unsigned Texturized    : 2;  // texturing mode
-        unsigned Transparency  : 2;  // blending mode
-        unsigned Shade         : 2;  // shading mode
-        unsigned Sprite        : 2;  // is a 2D sprte
+	uint32_t Texturized    : 2;  // texturing mode
+	uint32_t Transparency  : 2;  // blending mode
+	uint32_t Shade         : 2;  // shading mode
+	uint32_t Sprite        : 2;  // is a 2D sprte
 
-        unsigned Environment   : 4;  // texture environement model
+	uint32_t Environment   : 4;  // texture environement model
 
-        unsigned Dynamic       : 1;  // texture can be modified on the fly
-        unsigned Uncompressed  : 1;  // is a non-compressed animation file
-        unsigned AlphaLight    : 1;  // alpha component = light component
-        unsigned Transparency2 : 3;  // multitexturing blending mode OR advanced blending
-        unsigned MultiPassBlend: 2;  // Blending method for multipass
+	uint32_t Dynamic       : 1;  // texture can be modified on the fly
+	uint32_t Uncompressed  : 1;  // is a non-compressed animation file
+	uint32_t AlphaLight    : 1;  // alpha component = light component
+	uint32_t Transparency2 : 3;  // multitexturing blending mode OR advanced blending
+	uint32_t MultiPassBlend: 2;  // Blending method for multipass
 
-        unsigned Custom        : 1;  // reserved
-        unsigned RGB_Modulate  : 1;
-		unsigned AlphaComponent: 1;
-		unsigned HiColorTex    : 1;
+	uint32_t Custom        : 1;  // reserved
+	uint32_t RGB_Modulate  : 1;
+	uint32_t AlphaComponent: 1;
+	uint32_t HiColorTex    : 1;
 
-		unsigned LightMap	   : 1;
-		unsigned filler        : 3;  // reserved
-}V3XMATERIALPROPERTIES;
+	uint32_t LightMap	   : 1;
+	uint32_t filler        : 3;  // reserved
+} V3XMATERIALPROPERTIES;
 
 struct _fli_struct;
+
+typedef struct _v3xmaterial_disk
+{
+	union {
+		uint32_t info;
+		uint32_t lod;
+	};
+
+	uint8_t shift_size; // texture scale factor (2^shift_size)
+	uint8_t alpha; // alpha 0..255
+	uint8_t shiness; // shiness strength 0..255
+	uint8_t strength; // strength 0..255
+
+	char mat_name[16]; // material name
+	char ref_name[16]; // reflection mapping filename
+	char tex_name[16]; // texture mapping filename
+	GXSPRITEDISK texture[2]; // GXSPRITE structure of the texture map
+	uint32_t reserved[2];
+	uint32_t fli;
+	uint32_t render_clip; // internal
+
+	union {
+		uint32_t render_near; // internal
+		uint32_t info_near;
+		uint32_t lod_near;
+	};
+
+	union {
+		uint32_t render_far; // internal
+		uint32_t info_far;
+		uint32_t lod_far;
+	};
+
+	rgb24_t ambient, diffuse, specular; // Color informations
+	uint8_t  Properties; // Properties
+	uint8_t RenderID; // Render Identifier
+	uint8_t Render; // reserved
+	uint8_t scale; // Sprite factor 0..255
+	uint8_t RenderID_near;
+	uint8_t filler[2];
+} V3XMATERIALDISK;
 
 typedef struct _v3xmaterial
 {
 	union {
-		V3XMATERIALPROPERTIES	info;
-		uint32_t					lod;
+		V3XMATERIALPROPERTIES info;
+		uint32_t lod;
 	};
-    uint8_t        shift_size;        // texture scale factor (2^shift_size)
-    uint8_t        alpha;             // alpha 0..255
-    uint8_t        shiness;           // shiness strength 0..255
-    uint8_t        strength;          // strength 0..255
 
-    char         mat_name[16];      // material name
-    char         ref_name[16];      // reflection mapping filename
-    char         tex_name[16];      // texture mapping filename
-    GXSPRITE     texture[2];       // GXSPRITE structure of the texture map
-	void	*	 reserved[2];
-	struct _fli_struct	*fli;
-    void         (* CALLING_C render_clip)(V3XPOLY *fce);  // internal
+	uint8_t shift_size; // texture scale factor (2^shift_size)
+	uint8_t alpha; // alpha 0..255
+	uint8_t shiness; // shiness strength 0..255
+	uint8_t strength; // strength 0..255
+
+	char mat_name[16]; // material name
+	char ref_name[16]; // reflection mapping filename
+	char tex_name[16]; // texture mapping filename
+	GXSPRITE texture[2]; // GXSPRITE structure of the texture map
+	void *reserved[2];
+	struct _fli_struct *fli;
+	void (* CALLING_C render_clip)(V3XPOLY *fce); // internal
 
 	union {
-		void         (* CALLING_C render_near)(V3XPOLY *fce);  // internal
-		V3XMATERIALPROPERTIES	info_near;
-		uint32_t					lod_near;
+		void (* CALLING_C render_near)(V3XPOLY *fce); // internal
+		V3XMATERIALPROPERTIES info_near;
+		uint32_t lod_near;
 	};
 
 	union {
-		void         (* CALLING_C render_far )(V3XPOLY *fce);  // internal
-		V3XMATERIALPROPERTIES	info_far;
-		uint32_t					lod_far;
+		void (* CALLING_C render_far )(V3XPOLY *fce); // internal
+		V3XMATERIALPROPERTIES info_far;
+		uint32_t lod_far;
 	};
 
-	rgb24_t      ambient, diffuse, specular;  // Color informations
-    uint8_t        Properties;        // Properties
-    uint8_t        RenderID;          // Render Identifier
-    uint8_t        Render;            // reserved
-    uint8_t        scale;             // Sprite factor 0..255
-	uint8_t		 RenderID_near;
-    uint8_t        filler[2];
-}V3XMATERIAL;
+	rgb24_t ambient, diffuse, specular; // Color informations
+	uint8_t Properties; // Properties
+	uint8_t RenderID; // Render Identifier
+	uint8_t Render; // reserved
+	uint8_t scale; // Sprite factor 0..255
+	uint8_t RenderID_near;
+	uint8_t filler[2];
+} V3XMATERIAL;
+
+static inline void MaterialDiskToMem(const V3XMATERIALDISK *d, V3XMATERIAL *m)
+{
+	m->lod = d->lod;
+	m->shift_size = d->shift_size;
+	m->alpha = d->alpha;
+	m->shiness = d->shiness;
+	m->strength = d->strength;
+	memcpy(m->mat_name, d->mat_name, sizeof(m->mat_name));
+	memcpy(m->ref_name, d->ref_name, sizeof(m->ref_name));
+	memcpy(m->tex_name, d->tex_name, sizeof(m->tex_name));
+	SpriteDiskToMem(&d->texture[0], &m->texture[0]);
+	SpriteDiskToMem(&d->texture[1], &m->texture[1]);
+	m->lod_near = d->lod_near;
+	m->lod_far = d->lod_far;
+	m->ambient = d->ambient;
+	m->diffuse = d->diffuse;
+	m->specular = d->specular;
+	m->Properties = d->Properties;
+	m->RenderID = d->RenderID;
+	m->Render = d->Render;
+	m->scale = d->scale;
+	m->RenderID_near = d->RenderID_near;
+	m->filler[0] = d->filler[0];
+	m->filler[1] = d->filler[1];
+}
 
 /*
     Matrix Mesh informations
@@ -308,41 +404,124 @@ enum {
 
 };
 
+typedef struct _v3x_mesh_disk{
+	uint32_t vertex; // Vertex array
+	uint32_t face; // Face array
+	uint32_t uv; // UV coordinates array (may be null even if mesh is mapped)
+	uint32_t normal; // Edges normal array (may be null if mesh is not lightened)
+	uint32_t normal_face; // Face normal array
+	uint32_t material; // Material mesh array
+
+	V3XMATRIX matrix; // Matrix Transformation
+	V3XKEY Tk; // Keyframe informations
+	uint32_t flags; // State flags
+	uint16_t numVerts; // Number of vertex (0..65535)
+	uint16_t numMaterial; // Number of materials (0..65535)
+
+	uint16_t numFaces; // Number of faces (0..65535)
+	uint16_t selfIllumine; // Self illumination value (0..255)
+
+	V3XSCALAR scale; // Uniform scaling
+	union
+	{
+		uint32_t shade;
+		uint32_t rgb;
+	};
+	V3XSCALAR radius;
+	uint32_t pad;
+} V3XMESHDISK;
 
 typedef struct _v3x_mesh{
+	V3XVECTOR *vertex; // Vertex array
+	V3XPOLY *face; // Face array
+	V3XUV *uv; // UV coordinates array (may be null even if mesh is mapped)
+	V3XVECTOR *normal; // Edges normal array (may be null if mesh is not lightened)
+	V3XVECTOR *normal_face; // Face normal array
+	V3XMATERIAL *material; // Material mesh array
 
-    V3XVECTOR	*	vertex;         // Vertex array
-    V3XPOLY	*	face;           // Face array
-    V3XUV	*	uv;             // UV coordinates array (may be null even if mesh is mapped)
-    V3XVECTOR	*	normal;			// Edges normal array (may be null if mesh is not lightened)
-    V3XVECTOR	*	normal_face;    // Face normal array
-    V3XMATERIAL	*	material;       // Material mesh array
+	V3XMATRIX matrix; // Matrix Transformation
+	V3XKEY Tk; // Keyframe informations
+	uint32_t flags; // State flags
+	uint16_t numVerts; // Number of vertex (0..65535)
+	uint16_t numMaterial; // Number of materials (0..65535)
 
-    V3XMATRIX		matrix;         // Matrix Transformation
-    V3XKEY		Tk;             // Keyframe informations
-    uint32_t	flags;          // State flags
-    uint16_t		numVerts;       // Number of vertex (0..65535)
-    uint16_t		numMaterial;    // Number of materials (0..65535)
+	uint16_t numFaces; // Number of faces (0..65535)
+	uint16_t selfIllumine; // Self illumination value (0..255)
 
-    uint16_t		numFaces;       // Number of faces (0..65535)
-    uint16_t		selfIllumine;   // Self illumination value (0..255)
-
-    V3XSCALAR		scale;          // Uniform scaling
-    union
+	V3XSCALAR scale;// Uniform scaling
+	union
 	{
-        V3XSCALAR	*	shade;
-        rgb32_t		*	rgb;
-    };
-    V3XSCALAR			radius;
-    uint32_t	pad;        // Pad
+		V3XSCALAR *shade;
+		rgb32_t *rgb;
+	};
+	V3XSCALAR radius;
+	uint32_t pad;
 
-}V3XMESH;
+} V3XMESH;
+
+static inline void MeshDiskToMem(const V3XMESHDISK *d, V3XMESH *m)
+{
+	uintptr_t x;
+	x = d->vertex;
+	m->vertex = (V3XVECTOR*)x;
+	x = d->face;
+	m->face = (V3XPOLY*)x;
+	x = d->uv;
+	m->uv = (V3XUV*)x;
+	x = d->normal;
+	m->normal = (V3XVECTOR*)x;
+	x = d->normal_face;
+	m->normal_face = (V3XVECTOR*)x;
+	x = d->material;
+	m->material = (V3XMATERIAL*)x;
+	m->matrix = d->matrix;
+	m->Tk = d->Tk;
+	m->flags = d->flags;
+	m->numVerts = d->numVerts;
+	m->numMaterial = d->numMaterial;
+	m->numFaces = d->numFaces;
+	m->selfIllumine = d->selfIllumine;
+	m->scale = d->scale;
+	x = d->shade;
+	m->shade = (V3XSCALAR*)x;
+	m->radius = d->radius;
+	m->pad = d->pad;
+}
 
 /*
       Light Structure
 */
 
 struct _v3xsprite;
+
+typedef struct _v3x_light_disk
+{
+	V3XVECTOR		pos;		// Light position
+	V3XVECTOR		target;		// Target position
+	V3XVECTOR		vector;		// Internal (vector light/target)
+	V3XVECTOR		normal;		// Internal
+	V3XSCALAR		intensity;	// Light multiplier (255. : normal)
+	V3XSCALAR		diminish;	// Z shading diminish factor
+	V3XSCALAR		range;		// Light range
+	V3XSCALAR		falloff;	// Spot falloff size
+	rgb32_t			color;		// RGBA color
+	union {
+		uint32_t material;
+		uint32_t flare;
+	};
+	V3XSCALAR			flaresize;
+	rgb32_t				specular;
+	uint32_t			reserved[2];
+
+	V3XKEY			Tk;
+
+	uint8_t			type;
+    uint8_t			flags;
+    uint8_t			alpha;
+    uint8_t			status;
+    uint32_t		Timer, TimeOn, TimeOff;
+    uint32_t		pad2[3];
+}V3XLIGHTDISK;
 
 typedef struct _v3x_light
 {
@@ -354,7 +533,7 @@ typedef struct _v3x_light
     V3XSCALAR		diminish;       // Z shading diminish factor
     V3XSCALAR		range;          // Light range
     V3XSCALAR		falloff;       // Spot falloff size
-    rgb32_t				color;          // RGBA color
+    rgb32_t			color;          // RGBA color
     union {
 		 V3XMATERIAL		*	material;       // Material
 		struct _v3xsprite	*	flare;
@@ -372,6 +551,32 @@ typedef struct _v3x_light
     uint32_t			Timer, TimeOn, TimeOff;
     uint32_t	pad2[3];
 }V3XLIGHT;
+
+static inline void LightDiskToMem(const V3XLIGHTDISK *d, V3XLIGHT *m)
+{
+	uintptr_t x;
+	m->pos = d->pos;
+	m->target = d->target;
+	m->vector = d->vector;
+	m->normal = d->normal;
+	m->intensity = d->intensity;
+	m->diminish = d->diminish;
+	m->range = d->range;
+	m->falloff = d->falloff;
+	m->color = d->color;
+	x = d->material;
+	m->material = (V3XMATERIAL*)x;
+	m->flaresize = d->flaresize;
+	m->specular = d->specular;
+	m->Tk = d->Tk;
+	m->type = d->type;
+	m->flags = d->flags;
+	m->alpha = d->alpha;
+	m->status = d->status;
+	m->Timer = d->Timer;
+	m->TimeOn = d->TimeOn;
+	m->TimeOff = d->TimeOff;
+}
 
 /*
      Camera Structures

@@ -132,12 +132,30 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define float64_t double
 #define float32_t float
 
+typedef struct _gx_sprite_disk
+{
+	uint32_t LX, LY;
+	uint32_t data;
+	uint32_t handle;
+} GXSPRITEDISK;
+
 typedef struct _gx_sprite
 {
-    uint32_t    LX, LY;
-    uint8_t   *data;
-    void    *handle;
+	uint32_t LX, LY;
+	uint8_t *data;
+	void *handle;
 } GXSPRITE;
+
+static inline void SpriteDiskToMem(const GXSPRITEDISK *d, GXSPRITE *m)
+{
+	intptr_t x;
+	m->LX = d->LX;
+	m->LY = d->LY;
+	x = d->data;
+	m->data = (uint8_t *)x;
+	x = d->handle;
+	m->handle = (void *)x;
+}
 
 typedef struct _gx_rgb24{
     uint8_t    r, g, b;

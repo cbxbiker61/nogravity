@@ -1451,9 +1451,15 @@ static void v3xORI_Convert97(V3XSCENE *pScene, SYS_FILEHANDLE in)
         ori->flags = 0;
         sysStrnCpy(ori->name, ori97->name, 16);
         ori->type = objTable[ori97->Type];
-        ori->mesh = ori97->mesh;
-        ori->morph = ori97->morph;
-        ori->Cs = ori97->Cs;
+		{
+			uintptr_t x;
+			x = ori97->mesh;
+			ori->mesh = (V3XMESH*)x;
+			x = ori97->morph;
+			ori->morph = (V3XTWEEN*)x;
+			x = ori97->Cs;
+			ori->Cs = (V3XCL*)x;
+		}
         ori->global_center = ori97->global_pivot;
         ori->global_rayon = ori97->global_rayon;
         ori->dataSize = ori97->index_Parent;
@@ -1491,7 +1497,11 @@ static void v3xOVI_Convert97(V3XSCENE *pScene, SYS_FILEHANDLE in)
         if (ovi97->Hide_ByDisplay)
 			ovi->state|=V3XSTATE_HIDDEN;
 
-		ovi->mesh = ovi97->mesh;
+		{
+			uintptr_t x;
+			x = ovi97->mesh;
+			ovi->mesh = (V3XMESH*)x;
+		}
         ovi->index_ORI = ovi97->index_ORI;
         ovi->index_INSTANCE = ovi97->index_OVI;
         ovi->index_TVI = ovi97->index_TVI;
