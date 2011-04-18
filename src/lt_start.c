@@ -60,6 +60,11 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #include "lt_data.h"
 #include "lt_func.h"
 
+#ifndef __amigaos__
+#define USE_MUTEX
+extern SYS_MUTEX m_Mutex;
+#endif
+
 #define FIX100TO255(x) ((int32_t)x*255)/300
 
 /*------------------------------------------------------------------------
@@ -436,7 +441,15 @@ void NG_DrawLoadingBar(int step)
     rgb32_t cf ={180, 0, 0};
 
 	if ((V3XA.State & 1))
+	{
+#ifdef USE_MUTEX
+		mutex_lock(&m_Mutex);
+#endif
 		V3XAStream_PollAll();
+#ifdef USE_MUTEX
+		mutex_unlock(&m_Mutex);
+#endif
+	}
 
     GX.Client->Lock();
 	GX.csp.zoom_pset(&g_csPicture,0,0,GX.View.lWidth, GX.View.lHeight);
