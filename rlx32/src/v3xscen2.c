@@ -1512,40 +1512,43 @@ static void RLXAPI v3x_VMX_unpack_TRI(V3XTRI *TRI, SYS_FILEHANDLE in)
 */
 static void v3xORI_Convert97(V3XSCENE *pScene, SYS_FILEHANDLE in)
 {
-    V3XORI97	*ori97A = (V3XORI97*)MM_std.malloc(pScene->numORI*sizeof(V3XORI97));
-    V3XORI97	*ori97;
-    V3XORI		*ori;
-    int i;
-    FIO_gzip.fread(ori97A, pScene->numORI, sizeof(V3XORI97), in);
-    pScene->ORI = MM_CALLOC(pScene->numORI, V3XORI);
-    for (ori97 = ori97A, ori = pScene->ORI, i=0;i<pScene->numORI;i++, ori97++, ori++)
-    {
-        const uint8_t objTable[8] = { V3XOBJ_NONE, V3XOBJ_MESH, V3XOBJ_DUMMY, V3XOBJ_LIGHT, V3XOBJ_NONE, V3XOBJ_CAMERA, V3XOBJ_VIEWPORT};
+	int numORI = pScene->numORI;
+	V3XORI97 *ori97A = (V3XORI97*)MM_std.malloc(numORI*sizeof(V3XORI97));
+	V3XORI97 *ori97;
+	V3XORI *ori;
+	int i;
+	uintptr_t x;
+	FIO_gzip.fread(ori97A, numORI, sizeof(V3XORI97), in);
+	pScene->ORI = MM_CALLOC(numORI, V3XORI);
+
+	for ( ori97 = ori97A, ori = pScene->ORI, i = 0
+			; i < numORI
+			; ++i, ++ori97, ++ori )
+	{
+		const uint8_t objTable[8] = { V3XOBJ_NONE, V3XOBJ_MESH, V3XOBJ_DUMMY, V3XOBJ_LIGHT, V3XOBJ_NONE, V3XOBJ_CAMERA, V3XOBJ_VIEWPORT};
 
 #ifdef __BIG_ENDIAN__
-        BSWAP32((uint32_t* )&ori97->global_rayon, 1);
-        BSWAP32((uint32_t* )&ori97->global_pivot, 3);
-        BSWAP16((uint16_t*)&ori97->index_Parent, 1);
+		BSWAP32((uint32_t*)&ori97->global_rayon, 1);
+		BSWAP32((uint32_t*)&ori97->global_pivot, 3);
+		BSWAP16((uint16_t*)&ori97->index_Parent, 1);
 #endif
-        ori->flags = 0;
-        sysStrnCpy(ori->name, ori97->name, 16);
-        ori->type = objTable[ori97->Type];
-		{
-			uintptr_t x;
-			x = ori97->mesh;
-			ori->mesh = (V3XMESH*)x;
-			x = ori97->morph;
-			ori->morph = (V3XTWEEN*)x;
-			x = ori97->Cs;
-			ori->Cs = (V3XCL*)x;
-		}
-        ori->global_center = ori97->global_pivot;
-        ori->global_rayon = ori97->global_rayon;
-        ori->dataSize = ori97->index_Parent;
-        ori->pad2[0]  = ori97->matrix_Method;
-        ori->index_color = ori97->index_Color;
-    }
-    MM_std.free(ori97A);
+		ori->flags = 0;
+		sysStrnCpy(ori->name, ori97->name, 16);
+		ori->type = objTable[ori97->Type];
+		x = ori97->mesh;
+		ori->mesh = (V3XMESH*)x;
+		x = ori97->morph;
+		ori->morph = (V3XTWEEN*)x;
+		x = ori97->Cs;
+		ori->Cs = (V3XCL*)x;
+		ori->global_center = ori97->global_pivot;
+		ori->global_rayon = ori97->global_rayon;
+		ori->dataSize = ori97->index_Parent;
+		ori->pad2[0]  = ori97->matrix_Method;
+		ori->index_color = ori97->index_Color;
+	}
+
+	MM_std.free(ori97A);
 }
 
 /*------------------------------------------------------------------------
