@@ -1731,33 +1731,70 @@ static void ReadSceneNodes(V3XSCENE *pScene, SYS_FILEHANDLE in, int bFormat97)
 #define HEAD1 sizeof(V3XSCENE) - sizeof(V3XLAYER)
 _RLXEXPORTFUNC V3XSCENE RLXAPI *V3XScene_GetFromFile_VMX(const char *filename)
 {
-    uint8_t *temp, *sy;
-    SYS_FILEHANDLE in = FIO_gzip.fopen(filename, "rb");
-    V3XSCENE *pScene = (V3XSCENE*) MM_heap.malloc(sizeof(V3XSCENE));
-    V3XLAYER97 *bk;
-    V3XLAYER *layer = &pScene->Layer;
-    V3X.Setup.flags|=V3XOPTION_97;
-    temp = (uint8_t*) MM_std.malloc(HEAD1 + sizeof(V3XLAYER97));
-    FIO_gzip.fread(temp, HEAD1 + sizeof(V3XLAYER97), 1, in);
-    sysMemCpy(pScene, temp, HEAD1);
+#define HEAD1_SIZE (sizeof(V3XSCENEHEADER))
+#define HEAD_TOTAL_SIZE (HEAD1_SIZE + sizeof(V3XLAYER97))
+	V3XSCENEHEADER *hdr
+		= (V3XSCENEHEADER*) MM_std.malloc(HEAD_TOTAL_SIZE);
+	SYS_FILEHANDLE in = FIO_gzip.fopen(filename, "rb");
+	V3XSCENE *pScene = (V3XSCENE*) MM_heap.malloc(sizeof(V3XSCENE));
+	V3XLAYER *layer = &pScene->Layer;
+	V3X.Setup.flags |= V3XOPTION_97;
+	FIO_gzip.fread(hdr, HEAD_TOTAL_SIZE, 1, in);
+	pScene->numOVI = hdr->numOVI;
+	pScene->numTVI = hdr->numTVI;
+	pScene->numTRI = hdr->numTRI;
+	pScene->numORI = hdr->numORI;
 #ifdef __BIG_ENDIAN__
 	BSWAP16(&pScene->numOVI, 4);
 #endif
-    ReadSceneNodes(pScene, in, 1);
-    sy = temp + HEAD1;
-    bk = (V3XLAYER97*)sy;
-    sysStrCpy(layer->lt.palette.filename, bk->ColorTable_name);
-    sysStrCpy(layer->bg.filename, bk->background_name);
-    layer->bg.BG_color = bk->SolidColor;
-    layer->bg.flags  |= V3XBG_COLOR;
-    layer->fg.color.r = bk->FogColor.r;
-    layer->fg.color.g = bk->FogColor.g;
-    layer->fg.color.b = bk->FogColor.b;
-    if (bk->FogActivate)
-		layer->fg.flags|= V3XFG_LIN;
-    MM_std.free(temp);
-    FIO_gzip.fclose(in);
-    return pScene;
+
+	SYS_Debug("sizeof(V3XSCENEHEADER)=%zu\n", sizeof(V3XSCENEHEADER));
+	SYS_Debug("sizeof(V3XLAYER97)=%zu\n", sizeof(V3XLAYER97));
+	SYS_Debug("sizeof(V3XLAYER)=%zu\n", sizeof(V3XLAYER));
+	SYS_Debug("sizeof(V3XSCENEDISK)=%zu, sizeof(V3XSCENE)=%zu\n"
+					, sizeof(V3XSCENEDISK), sizeof(V3XSCENE));
+
+	// sizeof(V3XORIDISK) should be 64
+	// sizeof(V3XOVIDISK) should be 64
+	// sizeof(V3XTRIDISK) should be 32
+	// sizeof(V3XTVIDISK) should be 16
+	SYS_Debug("sizeof(V3XORIDISK)=%zu"
+					", sizeof(V3XOVIDISK)=%zu"
+					", sizeof(V3XTRIDISK)=%zu"
+					", sizeof(V3XTVIDISK)=%zu"
+					", sizeof(V3XKEY)=%zu\n"
+					, sizeof(V3XORIDISK)
+					, sizeof(V3XOVIDISK)
+					, sizeof(V3XTRIDISK)
+					, sizeof(V3XTVIDISK)
+					, sizeof(V3XKEY));
+
+	SYS_Debug("sizeof(V3XMATERIALDISK)=%zu, sizeof(V3XMATERIAL)=%zu\n"
+					, sizeof(V3XMATERIALDISK)
+					, sizeof(V3XMATERIAL));
+	SYS_Debug("sizeof(V3XMESHDISK)=%zu, sizeof(V3XMESH)=%zu\n"
+					, sizeof(V3XMESHDISK)
+					, sizeof(V3XMESH));
+
+	SYS_Debug("ReadSceneNodes start pos=%ld\n", FIO_gzip.ftell(in));
+	ReadSceneNodes(pScene, in, 1);
+	V3XLAYER97 *bk = (V3XLAYER97*)((uint8_t*)hdr + HEAD1_SIZE);
+	sysStrCpy(layer->lt.palette.filename, bk->ColorTable_name);
+	sysStrCpy(layer->bg.filename, bk->background_name);
+	layer->bg.BG_color = bk->SolidColor;
+	layer->bg.flags  |= V3XBG_COLOR;
+	layer->fg.color.r = bk->FogColor.r;
+	layer->fg.color.g = bk->FogColor.g;
+	layer->fg.color.b = bk->FogColor.b;
+
+	if ( bk->FogActivate )
+	{
+		layer->fg.flags |= V3XFG_LIN;
+	}
+
+	MM_std.free(hdr);
+	FIO_gzip.fclose(in);
+	return pScene;
 }
 
 /*------------------------------------------------------------------------
