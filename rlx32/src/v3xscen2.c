@@ -1122,10 +1122,12 @@ static void V3XRGB_ConvertToMono(V3XSCALAR *mono, rgb32_t *rgb, unsigned n)
 */
 V3XNODE static RLXAPI *v3x_VMX_unpack_node(SYS_FILEHANDLE in)
 {
-    V3XMESH *obj;
-    obj =(V3XMESH*)v3x_read_alloc(sizeof(V3XMESH), 1, -1, in);
+	V3XMESHDISK d;
+	V3XMESH *obj = MM_heap.malloc(sizeof(*obj));
+	v3x_read_buf(&d, sizeof(d), 1, in);
+	MeshDiskToMem(&d, obj);
 #ifdef __BIG_ENDIAN__
-    BSWAP32((uint32_t*)&obj->matrix, 12);
+	BSWAP32((uint32_t*)&obj->matrix, 12);
 	BSWAP32((uint32_t*)&obj->Tk, 3+3+1);
 #endif
 
