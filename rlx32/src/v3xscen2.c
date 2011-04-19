@@ -1607,52 +1607,125 @@ static void v3xOVI_Convert97(V3XSCENE *pScene, SYS_FILEHANDLE in)
 
 static void ReadSceneNodes(V3XSCENE *pScene, SYS_FILEHANDLE in, int bFormat97)
 {
-    unsigned i;
-    V3XLAYER *layer = &pScene->Layer;
-    layer->tm.numFrames = 0;
-    layer->tm.firstFrame = 0;
+	V3XLAYER *layer = &pScene->Layer;
+	layer->tm.numFrames = 0;
+	layer->tm.firstFrame = 0;
 
-    if (bFormat97)
+	if ( bFormat97 )
+	{
 		v3xORI_Convert97(pScene, in);
-    else
-		pScene->ORI = (V3XORI*)v3x_read_alloc(sizeof(V3XORI), pScene->numORI, V3X.Setup.MaxExtentableObjet, in);
-    for (i=0;i<V3X.Setup.MaxExtentableObjet;i++)
-    {
-        if (pScene->ORI[i].type == 0)
-		pScene->ORI[i].type = V3XOBJ_NONE;
-    }
-    if (bFormat97)
+	}
+	else
+	{
+		int numORI = pScene->numORI;
+		int numAlloc = max(numORI, V3X.Setup.MaxExtentableObjet);
+		V3XORI *p = pScene->ORI = MM_heap.malloc(sizeof(V3XORI) * numAlloc);
+
+		for ( int i = numORI; i; --i, ++p )
+		{
+			V3XORIDISK d;
+
+			v3x_read_buf(&d, sizeof(d), 1, in);
+			OriDiskToMem(&d, p);
+		}
+	}
+
+	{
+		V3XORI *p = pScene->ORI;
+
+		for ( uint32_t i = V3X.Setup.MaxExtentableObjet; i; --i, ++p )
+		{
+			if ( p->type == 0 )
+				p->type = V3XOBJ_NONE;
+		}
+	}
+
+    if ( bFormat97 )
 		v3xOVI_Convert97(pScene, in);
     else
-		pScene->OVI = (V3XOVI*) v3x_read_alloc(sizeof(V3XOVI), pScene->numOVI, V3X.Setup.MaxExtentableObjet, in);
-    pScene->TRI = (V3XTRI*) v3x_read_alloc(sizeof(V3XTRI), pScene->numTRI, V3X.Setup.MaxExtentableObjet, in);
-    pScene->TVI = (V3XTVI*) v3x_read_alloc(sizeof(V3XTVI), pScene->numTVI, V3X.Setup.MaxExtentableObjet, in);
-    if (bFormat97)
-    {
-        V3XTVI *TVI = pScene->TVI;
-        for (i=0;i<pScene->numTVI;i++, TVI++)
+	{
+		int numOVI = pScene->numOVI;
+		int numAlloc = max(numOVI, V3X.Setup.MaxExtentableObjet);
+		V3XOVI *p = pScene->OVI = MM_heap.malloc(sizeof(V3XOVI) * numAlloc);
+
+		for ( int i = numOVI; i; --i, ++p )
+		{
+			V3XOVIDISK d;
+
+			v3x_read_buf(&d, sizeof(d), 1, in);
+			OviDiskToMem(&d, p);
+		}
+	}
+
+	{
+		int numTRI = pScene->numTRI;
+		int numAlloc = max(numTRI, V3X.Setup.MaxExtentableObjet);
+		V3XTRI *p = pScene->TRI = MM_heap.malloc(sizeof(V3XTRI) * numAlloc);
+
+		for ( int i = numTRI; i; --i, ++p )
+		{
+			V3XTRIDISK d;
+
+			v3x_read_buf(&d, sizeof(d), 1, in);
+			TriDiskToMem(&d, p);
+		}
+	}
+
+	{
+		int numTVI = pScene->numTVI;
+		int numAlloc = max(numTVI, V3X.Setup.MaxExtentableObjet);
+		V3XTVI *p = pScene->TVI = MM_heap.malloc(sizeof(V3XTVI) * numAlloc);
+
+		for ( int i = numTVI; i; --i, ++p )
+		{
+			V3XTVIDISK d;
+
+			v3x_read_buf(&d, sizeof(d), 1, in);
+			TviDiskToMem(&d, p);
+		}
+	}
+
+	if ( bFormat97 )
+	{
+		V3XTVI *p = pScene->TVI;
+
+		for ( int i = pScene->numTVI; i; --i, ++p )
 		{
 #ifdef __BIG_ENDIAN__
-			BSWAP16((uint16_t*)&TVI->pad, 1);
+			BSWAP16((uint16_t*)&p->pad, 1);
 #endif
-			TVI->index_TRI = TVI->pad;
+			p->index_TRI = p->pad;
 		}
-    }
-    for (i=0;i<pScene->numORI;i++)
-		v3x_VMX_unpack_ORI(pScene->ORI+i, in, bFormat97);
+	}
 
-    for (i=0;i<pScene->numOVI;i++)
-		v3x_VMX_unpack_OVI(pScene->OVI+i, in);
+	{
+		V3XORI *p = pScene->ORI;
 
-	for (i=0;i<pScene->numTRI;i++)
-    {
-        V3XTRI *TRI = pScene->TRI + i;
-        v3x_VMX_unpack_TRI(pScene->TRI+i, in);
-        if ( layer->tm.firstFrame < TRI->startFrame )
-			layer->tm.firstFrame = TRI->startFrame;
-        if ( layer->tm.numFrames < TRI->numFrames )
-			layer->tm.numFrames = TRI->numFrames;
-    }
+		for ( int i = pScene->numORI; i; --i, ++p )
+			v3x_VMX_unpack_ORI(p, in, bFormat97);
+	}
+
+	{
+		V3XOVI *p = pScene->OVI;
+
+		for ( int i = pScene->numOVI; i; --i, ++p )
+			v3x_VMX_unpack_OVI(p, in);
+	}
+
+	{
+		V3XTRI *p = pScene->TRI;
+
+		for ( int i = pScene->numTRI; i; --i, ++p )
+		{
+			v3x_VMX_unpack_TRI(p, in);
+
+			if ( layer->tm.firstFrame < p->startFrame )
+				layer->tm.firstFrame = p->startFrame;
+
+			if ( layer->tm.numFrames < p->numFrames )
+				layer->tm.numFrames = p->numFrames;
+		}
+	}
 }
 
 #define HEAD1 sizeof(V3XSCENE) - sizeof(V3XLAYER)
