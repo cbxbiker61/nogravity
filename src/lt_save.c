@@ -390,6 +390,7 @@ void NG_ReplayStart(void)
 int NG_ReplayLoad(void)
 {
 	char tex[256];
+	SGRecordReplayDisk rrd;
 	SYS_FILEIO *pIO = FIO_cur;
     SYS_FILEHANDLE in;
     int old = 0, number =
@@ -423,7 +424,8 @@ int NG_ReplayLoad(void)
 	SYS_ASSERT(in);
 
 	sysConPrint("Load replay game %s", tex);
-    pIO->fread(&g_pRecordData, sizeof(SGRecordReplay), 1, in);
+	pIO->fread(&rrd, sizeof(rrd), 1, in);
+	RecordReplayDiskToMem(&rrd, &g_pRecordData);
 
 #ifdef __BIG_ENDIAN__
 	BSWAP16((uint16_t*)&g_pRecordData.startlevel, 2);
@@ -437,21 +439,28 @@ int NG_ReplayLoad(void)
 #endif
 
 #if (SGTARGET ==NG_FULL_VERSION)
-    if (g_pRecordData.version == 3)
-    {
-        unsigned k;
-        g_pRecordData.rec = (SGRecordBuffer*)MM_std.malloc(sizeof(SGRecordBuffer)*g_pRecordData.step);
-        pIO->fread(g_pRecordData.rec, sizeof(SGRecordBuffer), g_pRecordData.step, in);
-        for (k=0;k<g_pRecordData.step;k++)
-        {
-            SGRecordBuffer *rec = g_pRecordData.rec + k;
+	if (g_pRecordData.version == 3)
+	{
+		unsigned k;
+		SGRecordBuffer *p;
+		g_pRecordData.rec = (SGRecordBuffer*)MM_std.malloc(sizeof(SGRecordBuffer)*g_pRecordData.step);
+
+		for ( p = g_pRecordData.rec, k = g_pRecordData.step; k; ++p, --k )
+		{
+			SGRecordBufferDisk rbd;
+			pIO->fread(&rbd, sizeof(rbd), 1, in);
+			RecordBufferDiskToMem(&rbd, p);
 #ifdef __BIG_ENDIAN__
-			BSWAP32(&rec->length, 1);
+			BSWAP32(&p->length, 1);
 #endif
-            rec->buffer = (uint8_t *)MM_std.malloc(rec->length);
-            pIO->fread(rec->buffer, sizeof(uint8_t), rec->length, in);
-        }
-    }
+		}
+
+		for ( p = g_pRecordData.rec, k = g_pRecordData.step; k; ++p, --k )
+		{
+			p->buffer = (uint8_t *)MM_std.malloc(p->length);
+			pIO->fread(p->buffer, sizeof(uint8_t), p->length, in);
+		}
+	}
 #endif
     pIO->fclose(in);
     g_pRecordData.maxstep = g_pRecordData.step;
