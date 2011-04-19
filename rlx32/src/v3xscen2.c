@@ -1323,30 +1323,57 @@ V3XCAMERA static RLXAPI *v3x_VMX_unpack_camera(SYS_FILEHANDLE in)
 */
 V3XCL static RLXAPI *v3x_VMX_unpack_collide(SYS_FILEHANDLE in)
 {
-    V3XCL *Cs = (V3XCL*) v3x_read_alloc(sizeof(V3XCL), 1, -1, in);
+	V3XCL *Cs = MM_heap.malloc(sizeof(*Cs));
+	V3XCLDISK d;
+	int i;
+	V3XCL_ITEM *p;
+	v3x_read_buf(&d, sizeof(d), 1, in);
+	ClDiskToMem(&d, Cs);
 #ifdef __BIG_ENDIAN__
-    BSWAP32((uint32_t*)Cs, 2);
+	BSWAP32((uint32_t*)Cs, 2);
 #endif
-	SYS_ASSERT(sizeof(V3XCL_ITEM) == 64);
-    Cs->item = (V3XCL_ITEM*)v3x_read_alloc(sizeof(V3XCL_ITEM), Cs->numItem, -1, in);
+	p = Cs->item = (V3XCL_ITEM*)MM_heap.malloc(sizeof(V3XCL_ITEM) * Cs->numItem);
+
+	for ( i = Cs->numItem; i; --i, ++p )
+	{
+		uint8_t buf[64]; // on disk the items are all 64 bytes
+		V3XCL_ITEM *it = (V3XCL_ITEM*)buf;
+		v3x_read_buf(buf, sizeof(buf), 1, in);
+
+		switch ( it->type )
+		{
+			case V3XCTYPE_SPHERE:
+				SphereDiskToMem((const V3XCL_SPHEREDISK*)it, (V3XCL_SPHERE*)p);
+				break;
+			case V3XCTYPE_AXISBOX:
+				BoxDiskToMem((const V3XCL_BOXDISK*)it, (V3XCL_BOX*)p);
+				break;
+			case V3XCTYPE_MESH:
+				CollMeshDiskToMem((const V3XCL_MESHDISK*)it, (V3XCL_MESH*)p);
+				break;
+			default:
+				SYS_Debug("v3x_VMX_unpack_collide: unknown V3XCL_ITEM id=%d\n", it->type);
+				break;
+		}
+	}
+
 #ifdef __BIG_ENDIAN__
-    BSWAP32((uint32_t*)&Cs->global, 9);
-    {
-        V3XCL_ITEM *item = Cs->item;
-        int i;
-        for (i=Cs->numItem;i!=0;item++, i--)
-        {
-            BSWAP32((uint32_t*)&item->box.type , 16);
-        }
-    }
+	BSWAP32((uint32_t*)&Cs->global, 9);
+	{
+		V3XCL_ITEM *item = Cs->item;
+		for ( int i = Cs->numItem; i; ++item, --i )
+		{
+			BSWAP32((uint32_t*)&item->box.type , 16);
+		}
+	}
 #endif
-    {
-		if (Cs->old[0])
-        {
-            Cs->flags|=V3XCMODE_INVERTCONDITION;
-        }
-    }
-    return Cs;
+
+	if ( Cs->old[0] )
+	{
+		Cs->flags |= V3XCMODE_INVERTCONDITION;
+	}
+
+	return Cs;
 }
 
 /*------------------------------------------------------------------------
