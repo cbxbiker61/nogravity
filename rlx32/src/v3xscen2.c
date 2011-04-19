@@ -1385,22 +1385,32 @@ V3XCL static RLXAPI *v3x_VMX_unpack_collide(SYS_FILEHANDLE in)
 */
 V3XTWEEN static RLXAPI *v3x_VMX_unpack_morph3D(SYS_FILEHANDLE in)
 {
-    unsigned int i;
+	unsigned int i;
+	V3XTWEENDISK d;
     V3XTWEEN *Mo;
-    Mo = (V3XTWEEN*)v3x_read_alloc(sizeof(V3XTWEEN), 1, -1, in);
+
+	v3x_read_buf(&d, sizeof(d), 1, in);
+	Mo = MM_heap.malloc(sizeof(*Mo));
+	Mo->numFrames = d.numFrames;
+	Mo->numVerts = d.numVerts;
+	Mo->numFaces = d.numFaces;
 #ifdef __BIG_ENDIAN__
-    BSWAP32((uint32_t*)&Mo->numFrames, 3);
+	BSWAP32((uint32_t*)&Mo->numFrames, 3);
 #endif
-    if ((!Mo->numFrames)||(!Mo->numVerts)) return NULL;
-    Mo->frame = (V3XTWEENFRAME*) MM_heap.malloc(Mo->numFrames*sizeof(V3XTWEENFRAME));
-    for (i=0;i<Mo->numFrames;i++)
-    {
-        Mo->frame[i].vertex = (V3XVECTOR*) v3x_read_alloc(sizeof(V3XVECTOR), Mo->numVerts, -1, in);
+	if ( ( ! Mo->numFrames ) || ( ! Mo->numVerts ) )
+		return 0;
+
+	Mo->frame = (V3XTWEENFRAME*) MM_heap.malloc(Mo->numFrames*sizeof(V3XTWEENFRAME));
+
+	for ( i = 0; i < Mo->numFrames; ++i )
+	{
+		Mo->frame[i].vertex = (V3XVECTOR*) v3x_read_alloc(sizeof(V3XVECTOR), Mo->numVerts, -1, in);
 #ifdef __BIG_ENDIAN__
-        BSWAP32((uint32_t*)Mo->frame[i].vertex, Mo->numVerts*3);
+		BSWAP32((uint32_t*)Mo->frame[i].vertex, Mo->numVerts*3);
 #endif
-    }
-    return Mo;
+	}
+
+	return Mo;
 }
 
 /*------------------------------------------------------------------------
