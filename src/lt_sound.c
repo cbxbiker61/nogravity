@@ -500,6 +500,10 @@ void NG_AudioStopMusic(void)
 
 	if (g_pWavStream)
 	{
+#ifdef USE_MUTEX
+		mutex_lock(&m_Mutex);
+		m_Status = 0;
+#endif
 		for(i=g_SGSettings.VolMusic;i!=0;i--)
 		{
 			V3XAStream_SetVolume(g_pWavStream, 0, (float)i/100);
@@ -508,10 +512,6 @@ void NG_AudioStopMusic(void)
 			timer_snooze((64L*12L)/((g_SGSettings.VolMusic*4)+1));
 		}
 
-#ifdef USE_MUTEX
-		mutex_lock(&m_Mutex);
-		m_Status = 0;
-#endif
 		V3XAStream_Release(g_pWavStream);
 
 #ifdef USE_MUTEX
