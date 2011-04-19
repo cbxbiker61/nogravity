@@ -1064,33 +1064,40 @@ V3XMATERIAL *V3XMaterials_GetFp(SYS_FILEHANDLE in, int numMaterial)
 {
     V3XMATERIAL *Mat;
 	SYS_ASSERT(numMaterial < 255);
-	Mat = (V3XMATERIAL*)v3x_read_alloc(sizeof(V3XMATERIAL), numMaterial, -1, in);
+	Mat = (V3XMATERIAL*)MM_heap.malloc(sizeof(V3XMATERIAL) * numMaterial);
 
-#ifdef __BIG_ENDIAN__
 	{
-		V3XMATERIAL *pMat = Mat;
+		V3XMATERIAL *p = Mat;
 		int i;
-		for (i=0;i<numMaterial;i++, pMat++)
+
+		for ( i = numMaterial; i; --i, ++p )
 		{
-			uint32_t info = pMat->lod;
-			BSWAP32(&info, 1);
-			pMat->info.TwoSide = BGETFIELD(info, 0, 1);
-			pMat->info.Opacity = BGETFIELD(info, 1, 1);
-			pMat->info.Perspective = BGETFIELD(info, 2, 1);
-			pMat->info.Filtering = BGETFIELD(info, 3, 1);
-			pMat->info.Texturized = BGETFIELD(info, 4, 2);
-			pMat->info.Transparency = BGETFIELD(info, 6, 2);
-			pMat->info.Shade = BGETFIELD(info, 8, 2);
-			pMat->info.Sprite = BGETFIELD(info, 10, 2);
-			pMat->info.Environment = BGETFIELD(info, 12, 4);
-			pMat->info.Dynamic = BGETFIELD(info, 16, 1);
-			pMat->info.AlphaLight = BGETFIELD(info, 15, 1);
-			pMat->info.AlphaLight = BGETFIELD(info, 16, 1);
-			pMat->info.Transparency2 = BGETFIELD(info, 17, 3);
-			pMat->info.MultiPassBlend = BGETFIELD(info, 20, 2);
+			V3XMATERIALDISK d;
+			v3x_read_buf(&d, sizeof(d), 1, in);
+			MaterialDiskToMem(&d, p);
+#ifdef __BIG_ENDIAN__
+			{
+				uint32_t info = p->lod;
+				BSWAP32(&info, 1);
+				p->info.TwoSide = BGETFIELD(info, 0, 1);
+				p->info.Opacity = BGETFIELD(info, 1, 1);
+				p->info.Perspective = BGETFIELD(info, 2, 1);
+				p->info.Filtering = BGETFIELD(info, 3, 1);
+				p->info.Texturized = BGETFIELD(info, 4, 2);
+				p->info.Transparency = BGETFIELD(info, 6, 2);
+				p->info.Shade = BGETFIELD(info, 8, 2);
+				p->info.Sprite = BGETFIELD(info, 10, 2);
+				p->info.Environment = BGETFIELD(info, 12, 4);
+				p->info.Dynamic = BGETFIELD(info, 16, 1);
+				p->info.AlphaLight = BGETFIELD(info, 15, 1);
+				p->info.AlphaLight = BGETFIELD(info, 16, 1);
+				p->info.Transparency2 = BGETFIELD(info, 17, 3);
+				p->info.MultiPassBlend = BGETFIELD(info, 20, 2);
+			}
+#endif
 		}
 	}
-#endif
+
     return Mat;
 }
 
