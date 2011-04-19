@@ -1024,6 +1024,13 @@ void V3XScene_LoadTextures(V3XSCENE *pScene, void (*callback)(void *))
 * DESCRIPTION :
 *
 */
+static void RLXAPI *v3x_read_buf(void *buf, int32_t sz, int32_t n, SYS_FILEHANDLE in)
+{
+	int s = FIO_gzip.fread(buf, sz, n, in);
+	SYS_ASSERT(n == s);
+	return buf;
+}
+
 static void RLXAPI *v3x_read_alloc(int32_t sz, int32_t n, int32_t n2, SYS_FILEHANDLE in)
 {
     uint8_t *tmp;
