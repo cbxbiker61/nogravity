@@ -1136,112 +1136,138 @@ V3XNODE static RLXAPI *v3x_VMX_unpack_node(SYS_FILEHANDLE in)
 
 static V3XMESH RLXAPI *v3x_VMX_unpack_object(SYS_FILEHANDLE in)
 {
-    V3XMESH *obj;
-    int i;
-    V3XPOLY *f;
-    obj =(V3XMESH*)v3x_read_alloc(sizeof(V3XMESH), 1, -1, in);
+	V3XMESHDISK d;
+	V3XMESH *obj = MM_heap.malloc(sizeof(*obj));
+	int i;
+	V3XPOLY *f;
+	v3x_read_buf(&d, sizeof(d), 1, in);
+	MeshDiskToMem(&d, obj);
 #ifdef __BIG_ENDIAN__
-    BSWAP16((uint16_t*)&obj->numVerts, 4);
-    BSWAP32((uint32_t *)&obj->flags, 1);
-    BSWAP32((uint32_t *)&obj->scale, 1);
-    BSWAP32((uint32_t*)&obj->matrix, 12);
+	BSWAP16((uint16_t*)&obj->numVerts, 4);
+	BSWAP32((uint32_t *)&obj->flags, 1);
+	BSWAP32((uint32_t *)&obj->scale, 1);
+	BSWAP32((uint32_t*)&obj->matrix, 12);
 	BSWAP32((uint32_t*)&obj->Tk, 3+3+1);
 #endif
-    if (obj->numVerts)
-    {
-        obj->vertex = (V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numVerts, -1, in);
+	if ( obj->numVerts )
+	{
+		obj->vertex = (V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numVerts, -1, in);
 #ifdef __BIG_ENDIAN__
-        BSWAP32((uint32_t*)obj->vertex , obj->numVerts*3);
+		BSWAP32((uint32_t*)obj->vertex , obj->numVerts*3);
 #endif
-        obj->face = (V3XPOLY*) v3x_read_alloc(sizeof(V3XPOLY) , obj->numFaces, -1, in);
-        if (obj->uv)
-        {
-            obj->uv =(V3XUV*) v3x_read_alloc(sizeof(V3XUV), obj->numVerts, -1, in);
+		{
+			V3XPOLYDISK d;
+			int i;
+			V3XPOLY *p = obj->face = MM_heap.malloc(sizeof(V3XPOLY) * obj->numFaces);
+
+			for ( i = obj->numFaces; i; --i, ++p )
+			{
+				v3x_read_buf(&d, sizeof(d), 1, in);
+				PolyDiskToMem(&d, p);
+			}
+		}
+
+		if ( obj->uv )
+		{
+			obj->uv =(V3XUV*) v3x_read_alloc(sizeof(V3XUV), obj->numVerts, -1, in);
 #ifdef __BIG_ENDIAN__
 			BSWAP32((uint32_t*)obj->uv, obj->numVerts*2);
 #endif
-        }
-        if (obj->normal)
-        {
-            obj->normal =(V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numVerts, -1, in);
+		}
+
+		if ( obj->normal )
+		{
+			obj->normal =(V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numVerts, -1, in);
 #ifdef __BIG_ENDIAN__
 			BSWAP32((uint32_t*)obj->normal, obj->numVerts*3);
 #endif
-        }
-        if (obj->flags&V3XMESH_HASSHADETABLE)
-        {
-            unsigned nb = obj->flags&V3XMESH_FLATSHADE ? obj->numFaces : obj->numVerts;
-            obj->rgb = (rgb32_t*)v3x_read_alloc(sizeof(rgb32_t), nb, -1, in);
+		}
+
+		if ( obj->flags & V3XMESH_HASSHADETABLE )
+		{
+			unsigned nb = ( obj->flags & V3XMESH_FLATSHADE )
+					? obj->numFaces
+					: obj->numVerts;
+			obj->rgb = (rgb32_t*)v3x_read_alloc(sizeof(rgb32_t), nb, -1, in);
 #ifdef __BIG_ENDIAN__
-            BSWAP32((uint32_t*)obj->rgb, nb);
+			BSWAP32((uint32_t*)obj->rgb, nb);
 #endif
-            if ((V3X.Client->Capabilities&GXSPEC_RGBLIGHTING)==0)
-            V3XRGB_ConvertToMono(obj->shade, obj->rgb, nb);
-        }
-        else
+			if ( ! (V3X.Client->Capabilities & GXSPEC_RGBLIGHTING ) )
+				V3XRGB_ConvertToMono(obj->shade, obj->rgb, nb);
+		}
+		else
 			obj->rgb = NULL;
-        if ((V3X.Setup.flags&V3XOPTION_97)||(!obj->scale))
+
+		if ( (V3X.Setup.flags & V3XOPTION_97) || ! obj->scale )
 		{
 			obj->scale = CST_ONE;
 		}
 
-        obj->normal_face = (V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numFaces, -1, in);
+		obj->normal_face = (V3XVECTOR*)v3x_read_alloc(sizeof(V3XVECTOR), obj->numFaces, -1, in);
 #ifdef __BIG_ENDIAN__
-        BSWAP32((uint32_t*)obj->normal_face, obj->numFaces*3);
+		BSWAP32((uint32_t*)obj->normal_face, obj->numFaces*3);
 #endif
-        obj->material = V3XMaterials_GetFp(in, obj->numMaterial);
+		obj->material = V3XMaterials_GetFp(in, obj->numMaterial);
 
-        for (f=obj->face, i=obj->numFaces;i!=0;f++, i--)
-        {
-            V3XMATERIAL *pMat;
+		for ( f = obj->face, i = obj->numFaces; i; ++f, --i )
+		{
+			int numEdges = f->numEdges;
+			V3XMATERIAL *pMat;
 #ifdef __BIG_ENDIAN__
-            BSWAP32((uint32_t*)&f->matIndex, 1);
+			BSWAP32((uint32_t*)&f->matIndex, 1);
 #endif
-            f->matIndex--;
-			SYS_ASSERT(!((f->matIndex<0)||(f->matIndex>=obj->numMaterial)));
-            f->Mat = obj->material + f->matIndex ;
-            pMat  = (V3XMATERIAL*) f->Mat;
+			--f->matIndex;
+			SYS_ASSERT( ! ( ( f->matIndex < 0 ) || ( f->matIndex >= obj->numMaterial ) ) );
+			f->Mat = obj->material + f->matIndex;
+			pMat  = (V3XMATERIAL*) f->Mat;
 
-			if ((V3X.Client->Capabilities&GXSPEC_ENABLEPERSPECTIVE)&&(!pMat->info.Sprite)&&(pMat->info.Texturized))
-				pMat->info.Perspective=1;
+			if ( ( V3X.Client->Capabilities & GXSPEC_ENABLEPERSPECTIVE )
+						&& ( ! pMat->info.Sprite )
+						&& ( pMat->info.Texturized ) )
+			{
+				pMat->info.Perspective = 1;
+			}
 
-			f->dispTab = (V3XPTS*)MM_heap.malloc(sizeof(V3XPTS)*f->numEdges);
-
-			f->faceTab = (uint32_t *)v3x_read_alloc(sizeof(uint32_t), f->numEdges, -1, in);
+			f->dispTab = (V3XPTS*)MM_heap.malloc(sizeof(V3XPTS)*numEdges);
+			f->faceTab = (uint32_t *)v3x_read_alloc(sizeof(uint32_t), numEdges, -1, in);
 #ifdef __BIG_ENDIAN__
-            BSWAP32((uint32_t*)f->faceTab, f->numEdges);
+			BSWAP32((uint32_t*)f->faceTab, numEdges);
 #endif
-            f->shade = (pMat->info.Shade)  ? (V3XSCALAR *) v3x_read_alloc(sizeof(V3XSCALAR) , f->numEdges, -1, in) : NULL;
-            if ((f->shade)&&((V3X.Client->Capabilities&GXSPEC_RGBLIGHTING)==0))
-				V3XRGB_ConvertToMono(f->shade, f->rgb, f->numEdges);
+			f->shade = ( pMat->info.Shade )
+					? (V3XSCALAR *)v3x_read_alloc(sizeof(V3XSCALAR), numEdges, -1, in)
+					: 0;
 
-			if (pMat->info.Texturized)
+			if ( f->shade && ! ( V3X.Client->Capabilities & GXSPEC_RGBLIGHTING ) )
+				V3XRGB_ConvertToMono(f->shade, f->rgb, numEdges);
+
+			if ( pMat->info.Texturized )
             {
 				unsigned j;
-                unsigned n = pMat->info.Environment&V3XENVMAPTYPE_DOUBLE ? 2 : 1;
-                f->uvTab = V3X_CALLOC(V3X_MAXTMU, V3XUV*);
-                f->uvTab[0] = (V3XUV *) v3x_read_alloc(sizeof(V3XUV), f->numEdges, -1, in);
+				unsigned n = pMat->info.Environment&V3XENVMAPTYPE_DOUBLE ? 2 : 1;
+				f->uvTab = V3X_CALLOC(V3X_MAXTMU, V3XUV*);
+				f->uvTab[0] = (V3XUV *) v3x_read_alloc(sizeof(V3XUV), numEdges, -1, in);
 #ifdef __BIG_ENDIAN__
-                BSWAP32((uint32_t*)f->uvTab[0], 2 * f->numEdges);
+				BSWAP32((uint32_t*)f->uvTab[0], 2 * numEdges);
 #endif
-				for (j=0;j<f->numEdges;j++)
+				for ( j = 0; j < numEdges; ++j )
 				{
-					f->uvTab[0][j].u/=255.f;
-					f->uvTab[0][j].v/=255.f;
-					SYS_ASSERT(f->faceTab[j]<obj->numVerts);
+					f->uvTab[0][j].u /= 255.f;
+					f->uvTab[0][j].v /= 255.f;
+					SYS_ASSERT(f->faceTab[j] < obj->numVerts);
 				}
 
-                if (n>1)
-					f->uvTab[1] = V3X_CALLOC(f->numEdges, V3XUV);
-                else
-					f->uvTab[1] = NULL;
-            }
+				f->uvTab[1] = ( n > 1 ) ? V3X_CALLOC(numEdges, V3XUV) : 0;
+			}
 			else
-				f->uvTab = NULL;
-            f->ZTab = (pMat->info.Perspective) ? V3X_CALLOC(f->numEdges, V3XWPTS) : NULL;
-        }
-    }
-    return obj;
+			{
+				f->uvTab = 0;
+			}
+
+			f->ZTab = ( pMat->info.Perspective ) ? V3X_CALLOC(numEdges, V3XWPTS) : 0;
+		}
+	}
+
+	return obj;
 }
 
 /*------------------------------------------------------------------------
