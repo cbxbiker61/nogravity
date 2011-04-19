@@ -1560,45 +1560,49 @@ static void v3xORI_Convert97(V3XSCENE *pScene, SYS_FILEHANDLE in)
 */
 static void v3xOVI_Convert97(V3XSCENE *pScene, SYS_FILEHANDLE in)
 {
-    V3XOVI97 *ovi97A = (V3XOVI97*)MM_std.malloc(pScene->numOVI*sizeof(V3XOVI97));
-    V3XOVI97  *ovi97;
-    V3XOVI *ovi;
-    int i;
-    FIO_gzip.fread(ovi97A, pScene->numOVI, sizeof(V3XOVI97), in);
-    pScene->OVI = MM_CALLOC(pScene->numOVI, V3XOVI);
+	int numOVI = pScene->numOVI;
+	V3XOVI97 *ovi97A = (V3XOVI97*)MM_std.malloc(numOVI*sizeof(V3XOVI97));
+	V3XOVI97 *ovi97;
+	V3XOVI *ovi;
+	int i;
 
-	for (ovi97 = ovi97A, ovi = pScene->OVI, i = 0; i < pScene->numOVI; i++, ovi97++, ovi++)
-    {
+	FIO_gzip.fread(ovi97A, numOVI, sizeof(V3XOVI97), in);
+	pScene->OVI = MM_CALLOC(numOVI, V3XOVI);
+
+	for ( ovi97 = ovi97A, ovi = pScene->OVI, i = numOVI; i; --i, ++ovi97, ++ovi )
+	{
 #ifdef __BIG_ENDIAN__
-        BSWAP16((uint16_t*)&ovi97->index_OVI, 3);
+		BSWAP16((uint16_t*)&ovi97->index_OVI, 3);
 #endif
-        ovi->state = V3XSTATE_MATRIXUPDATE;
-        if (ovi97->Hide_Never)
-			ovi->state|=V3XSTATE_CULLNEVER;
+		ovi->state = V3XSTATE_MATRIXUPDATE;
 
-        if (ovi97->Hide_ByDisplay)
-			ovi->state|=V3XSTATE_HIDDEN;
+		if ( ovi97->Hide_Never )
+			ovi->state |= V3XSTATE_CULLNEVER;
 
+		if ( ovi97->Hide_ByDisplay )
+			ovi->state |= V3XSTATE_HIDDEN;
+
+		uintptr_t x = ovi97->mesh;
+		ovi->mesh = (V3XMESH*)x;
+		ovi->index_ORI = ovi97->index_ORI;
+		ovi->index_INSTANCE = ovi97->index_OVI;
+		ovi->index_TVI = ovi97->index_TVI;
+		ovi->matrix_Method = pScene->ORI[ovi->index_ORI].pad2[0];
+		ovi->index_PARENT = pScene->ORI[ovi->index_ORI].dataSize;
+	}
+
+	for ( ovi = pScene->OVI, i = numOVI; i; --i, ++ovi )
+	{
+		int j = ovi->index_PARENT;
+
+		if ( j )
 		{
-			uintptr_t x;
-			x = ovi97->mesh;
-			ovi->mesh = (V3XMESH*)x;
+			ovi->index_PARENT
+				= V3XScene_OVI_GetByName(pScene, pScene->ORI[j].name) - pScene->OVI;
 		}
-        ovi->index_ORI = ovi97->index_ORI;
-        ovi->index_INSTANCE = ovi97->index_OVI;
-        ovi->index_TVI = ovi97->index_TVI;
-        ovi->matrix_Method = pScene->ORI[ovi->index_ORI].pad2[0];
-        ovi->index_PARENT = pScene->ORI[ovi->index_ORI].dataSize;
-    }
-    for (ovi = pScene->OVI, i = 0; i < pScene->numOVI; i++, ovi++)
-    {
-        int j = ovi->index_PARENT;
-        if (j)
-        {
-            ovi->index_PARENT = V3XScene_OVI_GetByName(pScene, pScene->ORI[j].name) - pScene->OVI;
-        }
-    }
-    MM_std.free(ovi97A);
+	}
+
+	MM_std.free(ovi97A);
 }
 
 static void ReadSceneNodes(V3XSCENE *pScene, SYS_FILEHANDLE in, int bFormat97)
