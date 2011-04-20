@@ -521,7 +521,7 @@ static void RLXAPI GL_DownloadSprite(GXSPRITE *sp, rgb24_t *colorTable, int bpp)
 		glPixelStorei(GL_UNPACK_CLIENT_STORAGE_APPLE, TRUE);
 	}
 
-#ifdef GL_VERSION_1_4
+#ifdef GL_GENERATE_MIPMAP
 	if (gl_SGIS_generate_mipmap)
 	{
 		glTexParameteri(pSprite->target, GL_GENERATE_MIPMAP, GL_FALSE);

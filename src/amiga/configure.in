@@ -66,18 +66,18 @@ then
 
   # Check for OpenGL 1.4 support.
   AC_CACHE_CHECK([for OpenGL 1.4 support], ac_cv_opengl_1_4_support, AC_TRY_RUN([
-#include <GL/gl.h>"
-#include <GL/glext.h>"
+#include <GL/gl.h>
+#include <GL/glext.h>
 int main (int argc, char *argv[])
 {
-#ifdef GL_VERSION_1_4
+#if defined(GL_VERSION_1_4) || defined(GL_GENERATE_MIPMAP)
   return 0;
 #else
   return 1;
 #endif
 }
 ], [AS_VAR_SET(ac_cv_opengl_1_4_support, yes)], [AS_VAR_SET(ac_cv_opengl_1_4_support, no)]))
-  AS_IF([test "AS_VAR_GET(ac_cv_opengl_1_4_support)" = "yes"], , AC_MSG_WARN([Some features will be disabled.]))
+  AS_IF([test "$ac_cv_opengl_1_4_support" = "yes"], , AC_MSG_WARN([Some features will be disabled.]))
 fi
 
 # Checks for OpenAL (optional).
