@@ -73,7 +73,7 @@ void timer_rdtsc( uint64_t *dest );
 
 #elif defined _MSC_VER && (!defined _WINCE)
 
-__inline void timer_rdtsc( uint64_t *dest )
+static inline void timer_rdtsc( uint64_t *dest )
 {
 	__asm {
 		rdtsc
@@ -83,7 +83,7 @@ __inline void timer_rdtsc( uint64_t *dest )
 	 }
 }
 #elif defined ( __DJGPP__ ) || (defined __BEOS__)
-extern __inline__ void timer_rdtsc( uint64_t *dest )
+extern inline void timer_rdtsc( uint64_t *dest )
 {
 	int dummy;
 	__asm__ __volatile__ (

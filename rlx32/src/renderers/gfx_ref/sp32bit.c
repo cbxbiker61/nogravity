@@ -40,7 +40,7 @@ extern struct RLXSYSTEM *g_pRLX;
 #define Tsize unsigned int
 
 
-static __inline Tsize RGB_ADD(Tsize r0, Tsize r1)
+static inline Tsize RGB_ADD(Tsize r0, Tsize r1)
 {
     Tsize __c, r;
     RGBENDIAN *a=(RGBENDIAN*)&r0, *b=(RGBENDIAN*)&r1, *c=(RGBENDIAN*)&__c;
@@ -50,7 +50,7 @@ static __inline Tsize RGB_ADD(Tsize r0, Tsize r1)
     return __c;
 }
 
-static __inline Tsize RGB_MUL(Tsize r0, Tsize r1)
+static inline Tsize RGB_MUL(Tsize r0, Tsize r1)
 {
     Tsize __c;
     RGBENDIAN *a=(RGBENDIAN*)&r0, *b=(RGBENDIAN*)&r1, *c=(RGBENDIAN*)&__c;
@@ -60,28 +60,28 @@ static __inline Tsize RGB_MUL(Tsize r0, Tsize r1)
     return __c;
 }
 
-static __inline Tsize RGB_ALPHA(Tsize r0, Tsize r1)
+static inline Tsize RGB_ALPHA(Tsize r0, Tsize r1)
 {
     return ((((r0)&g_pRLX->pGX->View.RGB_Magic)+
 		     ((r1)&g_pRLX->pGX->View.RGB_Magic))>>1);
 }
 
-static __inline void PUT(uint8_t *v, Tsize c)
+static inline void PUT(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_MUL(c, g_pRLX->pGX->csp_cfg.color);
 }
 
-static __inline void PSET(uint8_t *v, Tsize c)
+static inline void PSET(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_MUL(c, g_pRLX->pGX->csp_cfg.color);
 }
 
-static __inline void ADD(uint8_t *v, Tsize c)
+static inline void ADD(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_ADD(*(Tsize*)v, RGB_MUL(c, g_pRLX->pGX->csp_cfg.color));
 }
 
-static __inline void ALPHA(uint8_t *v, Tsize c)
+static inline void ALPHA(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_ALPHA(*(Tsize*)v, RGB_MUL(c, g_pRLX->pGX->csp_cfg.color));
 }

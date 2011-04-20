@@ -30,50 +30,50 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 
 #include "v3xtrig.h"
 
-static __inline V3XSCALAR V3XVector_DotProduct(const V3XVECTOR *a, const V3XVECTOR *b)
+static inline V3XSCALAR V3XVector_DotProduct(const V3XVECTOR *a, const V3XVECTOR *b)
 {
 	return MULF32(a->x, b->x) + MULF32(a->y, b->y) + MULF32(a->z, b->z);
 }
 
-static __inline V3XSCALAR V3XVector_LengthSq(const V3XVECTOR *a)
+static inline V3XSCALAR V3XVector_LengthSq(const V3XVECTOR *a)
 {
 	return V3XVector_DotProduct(a, a);
 }
 
-static __inline V3XSCALAR V3XVector_Length(const V3XVECTOR *a)
+static inline V3XSCALAR V3XVector_Length(const V3XVECTOR *a)
 {
 	return sqrtf(V3XVector_LengthSq(a));
 }
 
-static __inline void V3XVector_CrossProduct(V3XVECTOR *r, const V3XVECTOR *a, const V3XVECTOR *b)
+static inline void V3XVector_CrossProduct(V3XVECTOR *r, const V3XVECTOR *a, const V3XVECTOR *b)
 {
 	r->x = MULF32(a->y, b->z) - MULF32 (a->z, b->y);
     r->y = MULF32(a->z, b->x) - MULF32 (a->x, b->z);
     r->z = MULF32(a->x, b->y) - MULF32 (a->y, b->x);
 }
 
-static __inline void V3XVector_Set(V3XVECTOR *P, V3XSCALAR X, V3XSCALAR Y, V3XSCALAR Z)
+static inline void V3XVector_Set(V3XVECTOR *P, V3XSCALAR X, V3XSCALAR Y, V3XSCALAR Z)
 {
     P->x = X;
 	P->y = Y;
 	P->z = Z;
 }
 
-static __inline void  V3XMatrix_GetCol0(V3XVECTOR *P, const V3XMATRIX *M)
+static inline void  V3XMatrix_GetCol0(V3XVECTOR *P, const V3XMATRIX *M)
 {
     P->x = M->Matrix[0];
     P->y = M->Matrix[3];
     P->z = M->Matrix[6];
 }
 
-static __inline void  V3XMatrix_GetCol1(V3XVECTOR *P, const V3XMATRIX *M)
+static inline void  V3XMatrix_GetCol1(V3XVECTOR *P, const V3XMATRIX *M)
 {
     P->x = M->Matrix[1];
     P->y = M->Matrix[4];
     P->z = M->Matrix[7];
 }
 
-static __inline void  V3XMatrix_GetCol2(V3XVECTOR *P, const V3XMATRIX *M)
+static inline void  V3XMatrix_GetCol2(V3XVECTOR *P, const V3XMATRIX *M)
 {
     P->x = M->Matrix[2];
     P->y = M->Matrix[5];
@@ -85,42 +85,42 @@ static __inline void  V3XMatrix_GetCol2(V3XVECTOR *P, const V3XMATRIX *M)
     R.x = B.x; R.y = B.y; R.z = B.z;\
 }
 
-static __inline void V3XVector_Neg(V3XVECTOR *r)
+static inline void V3XVector_Neg(V3XVECTOR *r)
 {
     r->x = -r->x;
     r->y = -r->y;
     r->z = -r->z;
 }
 
-static __inline void V3XVector_Sum(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
+static inline void V3XVector_Sum(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
 {
     r->x = a->x + b->x;
     r->y = a->y + b->y;
     r->z = a->z + b->z;
 }
 
-static __inline void V3XVector_Dif(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
+static inline void V3XVector_Dif(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
 {
     r->x = a->x - b->x;
     r->y = a->y - b->y;
     r->z = a->z - b->z;
 }
 
-static __inline void V3XVector_Inc(V3XVECTOR *r, const V3XVECTOR* a)
+static inline void V3XVector_Inc(V3XVECTOR *r, const V3XVECTOR* a)
 {
     r->x += a->x ;
     r->y += a->y ;
     r->z += a->z ;
 }
 
-static __inline void V3XVector_Dec(V3XVECTOR *r, const V3XVECTOR* a)
+static inline void V3XVector_Dec(V3XVECTOR *r, const V3XVECTOR* a)
 {
     r->x -= a->x ;
     r->y -= a->y ;
     r->z -= a->z ;
 }
 
-static __inline void V3XVector_Avg(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
+static inline void V3XVector_Avg(V3XVECTOR *r, const V3XVECTOR* a, const V3XVECTOR *b)
 {
     r->x = (a->x + b->x)/2;
     r->y = (a->y + b->y)/2;
@@ -128,27 +128,27 @@ static __inline void V3XVector_Avg(V3XVECTOR *r, const V3XVECTOR* a, const V3XVE
 }
 
 
-static __inline void V3XVector_Scl(V3XVECTOR *r, const V3XVECTOR *a, V3XSCALAR k)
+static inline void V3XVector_Scl(V3XVECTOR *r, const V3XVECTOR *a, V3XSCALAR k)
 {
     r->x = MULF32(a->x, k);
     r->y = MULF32(a->y, k);
     r->z = MULF32(a->z, k);
 }
 
-static __inline void V3XVector_Div(V3XVECTOR *r, V3XSCALAR k)
+static inline void V3XVector_Div(V3XVECTOR *r, V3XSCALAR k)
 {
     V3XSCALAR xNor = DIVF32(CST_ONE, k);
     V3XVector_Scl(r, r, xNor);
 }
 
-static __inline void V3XVector_Madd(V3XVECTOR *r, const V3XVECTOR *a, const V3XVECTOR *b, V3XSCALAR k)
+static inline void V3XVector_Madd(V3XVECTOR *r, const V3XVECTOR *a, const V3XVECTOR *b, V3XSCALAR k)
 {
     r->x = MULF32(a->x, k) + b->x;
     r->y = MULF32(a->y, k) + b->y;
     r->z = MULF32(a->z, k) + b->z;
 }
 
-static __inline void V3XVector_PolarSet(V3XVECTOR *a, const V3XVECTOR *b, V3XSCALAR r, int32_t al, int32_t bl)
+static inline void V3XVector_PolarSet(V3XVECTOR *a, const V3XVECTOR *b, V3XSCALAR r, int32_t al, int32_t bl)
 {
     a->x = b->x + MULF32(MULF32(sin16(al), cos16(bl)), r);
     a->y = b->y + MULF32(MULF32(cos16(al), cos16(bl)), r);
@@ -161,33 +161,33 @@ static __inline void V3XVector_PolarSet(V3XVECTOR *a, const V3XVECTOR *b, V3XSCA
     (r) = (a) - MULF32((V3XSCALAR)((a) - (b)), delt);\
 }
 
-static __inline void V3XVector_Slerp(V3XVECTOR *r, const V3XVECTOR *a, const V3XVECTOR *b, V3XSCALAR k)
+static inline void V3XVector_Slerp(V3XVECTOR *r, const V3XVECTOR *a, const V3XVECTOR *b, V3XSCALAR k)
 {
     r->x = a->x - MULF32((V3XSCALAR)(a->x - b->x), k);
     r->y = a->y - MULF32((V3XSCALAR)(a->y - b->y), k);
     r->z = a->z - MULF32((V3XSCALAR)(a->z - b->z), k);
 }
 
-static __inline void V3XVector_ProjectOnVector(V3XVECTOR *r, const V3XVECTOR *V, const V3XVECTOR* N)
+static inline void V3XVector_ProjectOnVector(V3XVECTOR *r, const V3XVECTOR *V, const V3XVECTOR* N)
 {
     V3XVector_Madd(r, N, V, -V3XVector_DotProduct (V, N));
 }
 
-static __inline V3XSCALAR V3XVector_DistanceSq(const V3XVECTOR *a, const V3XVECTOR *b)
+static inline V3XSCALAR V3XVector_DistanceSq(const V3XVECTOR *a, const V3XVECTOR *b)
 {
     V3XVECTOR temp;
     V3XVector_Dif(&temp, a, b);
     return V3XVector_LengthSq(&temp);
 }
 
-static __inline V3XSCALAR V3XVector_Distance(const V3XVECTOR *a, const V3XVECTOR *b)
+static inline V3XSCALAR V3XVector_Distance(const V3XVECTOR *a, const V3XVECTOR *b)
 {
     V3XVECTOR temp;
     V3XVector_Dif(&temp, a, b);
     return V3XVector_Length(&temp);
 }
 
-static __inline V3XSCALAR V3XVector_Normalize(V3XVECTOR *a, const V3XVECTOR *b)
+static inline V3XSCALAR V3XVector_Normalize(V3XVECTOR *a, const V3XVECTOR *b)
 {
     V3XSCALAR N = V3XVector_LengthSq(b);
     if (N < CST_EPSILON)

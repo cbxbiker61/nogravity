@@ -252,7 +252,7 @@ uint32_t g_Gradient[64];
 uint32_t g_MixTable[64][256];
 V3XMATERIAL *pipe_pMat;
 
-static __inline uint32_t RGB_MUL32(uint32_t r0, uint32_t r1)
+static inline uint32_t RGB_MUL32(uint32_t r0, uint32_t r1)
 {
     uint32_t __c;
     RGBENDIAN *a=(RGBENDIAN*)&r0, *b=(RGBENDIAN*)&r1, *c=(RGBENDIAN*)&__c;
@@ -262,12 +262,12 @@ static __inline uint32_t RGB_MUL32(uint32_t r0, uint32_t r1)
     return __c;
 }
 
-static __inline uint32_t SetPixelFormat32(uint32_t r, uint32_t g, uint32_t b)
+static inline uint32_t SetPixelFormat32(uint32_t r, uint32_t g, uint32_t b)
 {
     return r|(g<<8)|(b<<16);
 }
 
-static __inline uint16_t SetPixelFormat16(uint32_t r, uint32_t g, uint32_t b)
+static inline uint16_t SetPixelFormat16(uint32_t r, uint32_t g, uint32_t b)
 {
     return (b>>3)|((g>>2)<<5)|((r>>3)<<11);
 }

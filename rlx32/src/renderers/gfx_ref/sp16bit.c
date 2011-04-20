@@ -47,7 +47,7 @@ static uint8_t m64[64][64];
 
 #define Tsize uint16_t
 
-static __inline Tsize RGB_ADD(Tsize a, Tsize b)
+static inline Tsize RGB_ADD(Tsize a, Tsize b)
 {
    uint32_t cR, cG, cB;
 	cB = a32[a&31][b&31]; a>>=5; b>>=5;
@@ -71,28 +71,28 @@ Tsize RGB_MUL16(Tsize a, Tsize b)
 
 #define RGB_MUL RGBMUL16
 
-static __inline Tsize RGB_ALPHA(Tsize r0, Tsize r1)
+static inline Tsize RGB_ALPHA(Tsize r0, Tsize r1)
 {
     return (Tsize)((((r0)&g_pRLX->pGX->View.RGB_Magic)+
 		     ((r1)&g_pRLX->pGX->View.RGB_Magic))>>1);
 }
 
-static __inline void PUT(uint8_t *v, Tsize c)
+static inline void PUT(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_MUL16(c, (Tsize)g_pRLX->pGX->csp_cfg.color);
 }
 
-static __inline void PSET(uint8_t *v, Tsize c)
+static inline void PSET(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_MUL16(c, (Tsize)g_pRLX->pGX->csp_cfg.color);
 }
 
-static __inline void ADD(uint8_t *v, Tsize c)
+static inline void ADD(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_ADD(*(Tsize*)v, RGB_MUL16(c, (Tsize)g_pRLX->pGX->csp_cfg.color));
 }
 
-static __inline void ALPHA(uint8_t *v, Tsize c)
+static inline void ALPHA(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = RGB_ALPHA(*(Tsize*)v, RGB_MUL16(c, (Tsize)g_pRLX->pGX->csp_cfg.color));
 }

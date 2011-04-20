@@ -46,7 +46,7 @@
 
 #endif
 
-__inline int __SYS_DXTRACE(const char *file, int line, HRESULT hr)
+static inline int __SYS_DXTRACE(const char *file, int line, HRESULT hr)
 {
 	if (hr)
 	{

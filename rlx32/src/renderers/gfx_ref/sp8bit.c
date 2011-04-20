@@ -39,22 +39,22 @@ extern struct RLXSYSTEM *g_pRLX;
 
 #define Tsize uint8_t
 
-static __inline void PUT(uint8_t *v, Tsize c)
+static inline void PUT(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = c;
 }
 
-static __inline void PSET(uint8_t *v, Tsize c)
+static inline void PSET(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = c;
 }
 
-static __inline void ADD(uint8_t *v, Tsize c)
+static inline void ADD(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = c;
 }
 
-static __inline void ALPHA(uint8_t *v, Tsize c)
+static inline void ALPHA(uint8_t *v, Tsize c)
 {
 	*(Tsize*)v = c;
 }

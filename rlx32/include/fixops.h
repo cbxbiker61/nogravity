@@ -44,7 +44,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #pragma warning(disable:4035)
 
 #if defined (_M_IX86)
-__inline int32_t VMUL ( int32_t a, int32_t b )
+inline int32_t VMUL ( int32_t a, int32_t b )
 {
     __asm    {
        mov    eax, a
@@ -53,7 +53,7 @@ __inline int32_t VMUL ( int32_t a, int32_t b )
        shrd   eax, edx, 16
     }
 }
-__inline int32_t VDIV ( int32_t a, int32_t b )
+inline int32_t VDIV ( int32_t a, int32_t b )
 {
     __asm    {
        mov    edx, a
@@ -110,7 +110,7 @@ int32_t VMUL_DIV (int32_t A, int32_t B, int32_t C);
 #define fDIV             VDIV
 
 #elif defined ( __DJGPP__ )
-extern __inline__ int32_t VMUL(int32_t x, int32_t y)
+extern inline int32_t VMUL(int32_t x, int32_t y)
 {
     int32_t rv;
     __asm__ __volatile__ (
@@ -124,7 +124,7 @@ extern __inline__ int32_t VMUL(int32_t x, int32_t y)
     );
     return rv;
 }
-extern __inline__ int32_t VMUL2(int32_t x)
+extern inline int32_t VMUL2(int32_t x)
 {
     int32_t rv;
     __asm__ __volatile__ (
@@ -137,7 +137,7 @@ extern __inline__ int32_t VMUL2(int32_t x)
     );
     return rv;
 }
-extern __inline__ int32_t VDIV(int32_t x, int32_t y)
+extern inline int32_t VDIV(int32_t x, int32_t y)
 {
     int32_t rv;
     __asm__ __volatile__ (
@@ -151,7 +151,7 @@ extern __inline__ int32_t VDIV(int32_t x, int32_t y)
     );
     return rv;
 }
-extern __inline__ int32_t VMUL_DIV (int32_t x, int32_t y, int32_t z)
+extern inline int32_t VMUL_DIV (int32_t x, int32_t y, int32_t z)
 {
     int32_t rv;
     __asm__ __volatile__ (
