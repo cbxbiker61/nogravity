@@ -163,7 +163,7 @@ void NG_HighScoresReset(void)
         for (j=0;j<MAX_SAVE_GAMES;j++)
 			g_pBestGames[i].level[j]=0;
         g_pBestGames[i].episode=0;
-		time(&g_pBestGames[i].last_time);
+		g_pBestGames[i].last_time = time(0);
 
     }
 }

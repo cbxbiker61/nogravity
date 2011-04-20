@@ -487,7 +487,7 @@ typedef struct {
 	uint32_t		score;
 	uint32_t		life;
 	uint32_t		rank;
-	time_t		last_time;
+	int32_t		last_time; // time_t, on 64bit linux is a 64bit int
 
 	uint16_t		active;
 	uint16_t		ship;

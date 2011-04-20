@@ -689,12 +689,16 @@ static int NG_RenderingMainMenu(RW_Interface *p, int mode)
 						b+=g_pGameItem->EI[k].numLevel;
 					}
 
-					sprintf(tex, "Score: ~%d~ Level: ~%s~ %s",
-						(int)g_pSaveGames[j].score,
-						g_pEpisodeMenu[g_pSaveGames[j].episode==7 ? 1 : g_pSaveGames[j].episode+2],
+					{
+						time_t t = g_pSaveGames[j].last_time;
 
-						asctime(localtime(&g_pSaveGames[j].last_time))
-					);
+						sprintf(tex, "Score: ~%d~ Level: ~%s~ %s",
+							(int)g_pSaveGames[j].score,
+							g_pEpisodeMenu[(g_pSaveGames[j].episode == 7)
+								? 1 : g_pSaveGames[j].episode+2],
+							asctime(localtime(&t))
+						);
+					}
 
 					CSP_DrawTextC(tex, g_SGMenuPos.XZoneMin, g_SGMenuPos.YZoneMax, COLOR_GRAY, COLOR_WHITE, g_SGMenuPos.Font, GX.csp_cfg.put);
 
@@ -1028,7 +1032,7 @@ static int NG_PlayerRosterMenu(void)
 						if (!(*s))
 							sysStrnCpy(s, RLX.App.UserName[0] ? RLX.App.UserName : "Pilot", 16);
 						g_pSaveGames[p].active=1;
-						time(&g_pSaveGames[p].last_time);
+						g_pSaveGames[p].last_time = time(0);
 						ok=0;
 						g_pCurrentGame = g_pSaveGames + p;
 					}
@@ -2221,7 +2225,7 @@ int NG_EndLevel(void)
 
 	// New level ...
 	g_pCurrentGame->level[g_pCurrentGame->episode]++;
-	time(&g_pCurrentGame->last_time);
+	g_pCurrentGame->last_time = time(0);
     if (g_pCurrentGame->level[g_pCurrentGame->episode] >= g_pGameItem->EI[g_pCurrentGame->episode].numLevel)
     {
         g_pCurrentGame->level[g_pCurrentGame->episode] = g_pGameItem->EI[g_pCurrentGame->episode].numLevel;
