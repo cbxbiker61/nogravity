@@ -714,12 +714,12 @@ static void NG_UpdatePowerUps(void)
                     case ART_STEALTH:
                     g_pPlayer->mode^=STEALTHMODE;
                     g_pPlayer->Notify+=SGNET_MODECHANGE;
-                    sysConPrint("stealth mode depleated");
+                    sysConPrint("stealth mode depleted");
                     break;
                     case ART_INVICIBLITY:
                     g_pPlayer->mode^=GODMODE;
                     g_pPlayer->Notify+=SGNET_MODECHANGE;
-                    sysConPrint("inviciblity mode depleated");
+                    sysConPrint("inviciblity mode depleted");
                     break;
                 }
             }
