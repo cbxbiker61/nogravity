@@ -226,9 +226,14 @@ typedef void* SYS_THREADHANDLE; /* Thread handle. */
 #define SYS_FAILED(condition) ((condition)!=0)
 
 __extern_c
-_RLXEXPORTFUNC void     RLXAPI   SYS_Msg(const char *fmt, ...);
-_RLXEXPORTFUNC void     RLXAPI   SYS_Debug(const char *fmt, ...);
-_RLXEXPORTFUNC void     RLXAPI   SYS_Error(const char *fmt, ...);
+#ifdef __GNUC__
+#define ATTRIBUTE_PRINTF __attribute__((__format__(__printf__, 1, 2)));
+#else
+#define ATTRIBUTE_PRINTF
+#endif
+_RLXEXPORTFUNC void     RLXAPI   SYS_Msg(const char *fmt, ...) ATTRIBUTE_PRINTF;
+_RLXEXPORTFUNC void     RLXAPI   SYS_Debug(const char *fmt, ...) ATTRIBUTE_PRINTF;
+_RLXEXPORTFUNC void     RLXAPI   SYS_Error(const char *fmt, ...) ATTRIBUTE_PRINTF;
 _RLXEXPORTFUNC int      RLXAPI   RLX_ErrorGetCodeString(int error_code);
 __end_extern_c
 
