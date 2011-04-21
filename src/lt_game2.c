@@ -629,12 +629,12 @@ void V3XTrack_Draw(V3XTRI *TRI, int f)
     int i;
     V3XVECTOR a, x;
     V3XVECTOR2 n, m;
-    V3XVector_Cpy(x, TRI->keys[TRI->numFrames-1].info.pos);
+    V3XVector_Cpy(&x, &TRI->keys[TRI->numFrames-1].info.pos);
     V3XVector_TransformProject_pts(&x, &a);
     m.x = a.x; m.y = a.y;
     for (i=0;i<TRI->numFrames;i++)
     {
-        V3XVector_Cpy(x, TRI->keys[i].info.pos);
+        V3XVector_Cpy(&x, &TRI->keys[i].info.pos);
         if (V3XVector_TransformProject_pts(&x, &a))
         {
             n.x = a.x;

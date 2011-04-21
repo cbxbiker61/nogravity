@@ -107,7 +107,7 @@ int NG_WeaponFire(SGActor *Jj, int type, V3XOVI *target)
             if (target)
             {
                 W->TargetLock = target;
-                V3XVector_Cpy(W->Target, target->Tk->vinfo.pos);
+                V3XVector_Cpy(&W->Target, &target->Tk->vinfo.pos);
             }
             else
             {
@@ -226,7 +226,7 @@ void NG_WeaponUpdate(void)
             J_Sh  = (SGActor*)Shooter->data;
             p_Sh  = &J_Sh->pInf;
             Tir = W->OVI->mesh;
-            V3XVector_Cpy(po, Tir->Tk.vinfo.pos);
+            V3XVector_Cpy(&po, &Tir->Tk.vinfo.pos);
             Mat = &Tir->matrix;
             if (W->fTime<=0)
             {
@@ -468,7 +468,7 @@ void NG_WeaponUpdate(void)
                 g_SGGame.Missile = NULL;
                 NG_HudLockTargetOff();
             }
-            V3XVector_Cpy(po, Tir->Tk.vinfo.pos);
+            V3XVector_Cpy(&po, &Tir->Tk.vinfo.pos);
 
         } else W->OVI->state |= V3XSTATE_HIDDEN;
     }

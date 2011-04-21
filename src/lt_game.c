@@ -143,7 +143,7 @@ static void NG_UpdateCamera(void)
 			vTgt = g_pPlayer->Mat->v.Pos;
 			if (g_SGObjects.NavCam)
 			{
-				V3XVector_Cpy(Pos, (V3XSCALAR)g_SGObjects.NavCam->Tk->vinfo.pos);
+				V3XVector_Cpy(&Pos, &g_SGObjects.NavCam->Tk->vinfo.pos);
 				g_SGObjects.NavCam->state|=V3XOCAPS_OUTOFFRUSTRUM;
 			}
 			mySHIP->state&=~V3XOCAPS_OUTOFFRUSTRUM;
@@ -254,8 +254,8 @@ static void NG_UpdateCamera(void)
                 if (g_SGObjects.NAV>=g_SGObjects.MaxNAV)
 					g_SGObjects.NAV=0;
                 NG_NAVReset(1);
-                V3XVector_Cpy(g_pPlayer->Mat->v.Pos, V3X.Camera.Tk.info.pos);
-                V3XVector_Cpy(g_pCamera->pos, V3X.Camera.Tk.info.pos);
+                V3XVector_Cpy(&g_pPlayer->Mat->v.Pos, &V3X.Camera.Tk.info.pos);
+                V3XVector_Cpy(&g_pCamera->pos, &V3X.Camera.Tk.info.pos);
                 return;
             }
         }
@@ -1307,7 +1307,7 @@ static void Demo_RecordA(void)
 
 	if (g_SGSettings.DemoMode <= 1)
 	{
-		V3XVector_Cpy(g_pPlayer->Mat->v.Pos, g_pPlayer->Rot->pos);
+		V3XVector_Cpy(&g_pPlayer->Mat->v.Pos, &g_pPlayer->Rot->pos);
 
 		if (g_pPlayer->Mv.inert < 1)
 			g_pPlayer->Mv.inert=1;
@@ -2982,7 +2982,7 @@ void NG_GamePlay(void)
                 NG_AudioStopSound(g_cFXTable.Alarm );
                 NG_InitGameShip();
                 if (g_SGObjects.NavCam)
-					V3XVector_Cpy(g_pPlayer->Rot->pos, g_SGObjects.NavCam->Tk->vinfo.pos);
+					V3XVector_Cpy(&g_pPlayer->Rot->pos, &g_SGObjects.NavCam->Tk->vinfo.pos);
                 g_pPlayer->Notify += SGNET_HASRESPAWN|SGNET_HASMOVED|SGNET_SHIELDCHANGE;
                 g_SGObjects.FinCode = 0;
                 g_SGObjects.quit = 0;

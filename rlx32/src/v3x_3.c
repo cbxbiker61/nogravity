@@ -551,13 +551,13 @@ void V3XMatrix_MeshTransform(V3XCAMERA *Cam)
         case V3XMATRIX_Vector:
         V3XVector_Dif(&Dir, &Cam->Tk.vinfo.pos, &Cam->Tk.vinfo.target);
         V3XMatrix_BuildFromVector(&Cam->M, &Dir, (int)Cam->Tk.vinfo.roll);
-        V3XVector_Cpy(Cam->M.v.Pos, Cam->Tk.vinfo.pos);
+        V3XVector_Cpy(&Cam->M.v.Pos, &Cam->Tk.vinfo.pos);
         // (Cam->M.Matrix);
         break;
         /* Calcul de la matrice avec les angles */
         case V3XMATRIX_Euler:
         V3XMatrix_Rot_XYZ(Cam->M.Matrix, Cam->Tk.info.angle);
-        V3XVector_Cpy(Cam->M.v.Pos, Cam->Tk.vinfo.pos);
+        V3XVector_Cpy(&Cam->M.v.Pos, &Cam->Tk.vinfo.pos);
         // (Cam->M.Matrix);
         break;
     }

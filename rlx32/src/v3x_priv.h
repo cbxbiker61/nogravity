@@ -28,7 +28,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define v3x_EvalMatrixEuler(Ob)\
 {\
     V3XMatrix_Rot_XYZ((Ob)->matrix.Matrix, (Ob)->Tk.info.angle);\
-    V3XVector_Cpy((Ob)->matrix.v.Pos, (V3XSCALAR)(Ob)->Tk.info.pos);\
+    V3XVector_Cpy(&(Ob)->matrix.v.Pos, &(Ob)->Tk.info.pos);\
 }
 
 #define v3x_EvalMatrixRotation2(Ob)\
@@ -38,14 +38,14 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
     V3XVector_Dif(&Dir, &(Ob)->Tk.vinfo.target, &(Ob)->Tk.vinfo.pos);\
     V3XMatrix_BuildFromVector(&M0, &Dir, (int)(Ob)->Tk.vinfo.roll);\
     V3XMatrix_Transpose((Ob)->matrix.Matrix, M0.Matrix);\
-    V3XVector_Cpy((Ob)->matrix.v.Pos, (V3XSCALAR) (Ob)->Tk.vinfo.pos);\
+    V3XVector_Cpy(&(Ob)->matrix.v.Pos, &(Ob)->Tk.vinfo.pos);\
 }
 #define v3x_EvalMatrixRotation3(Ob)\
 {\
     V3XMATRIX M0=(Ob)->matrix;\
     V3XMatrix_BuildFromNVector(&M0, &(Ob)->Tk.dinfo.vect, (int)(Ob)->Tk.dinfo.roll);\
     V3XMatrix_Transpose((Ob)->matrix.Matrix, M0.Matrix);\
-    V3XVector_Cpy((Ob)->matrix.v.Pos, (V3XSCALAR) (Ob)->Tk.dinfo.pos);\
+    V3XVector_Cpy(&(Ob)->matrix.v.Pos, &(Ob)->Tk.dinfo.pos);\
 }
 
 #define QuaternionToMatrix(qinfo, Mat)\
@@ -69,7 +69,7 @@ Prepared for public release: 02/24/2004 - Stephane Denis, realtech VR
 #define v3x_EvalMatrixRotation_q(Ob)\
 {\
     QuaternionToMatrix(&(*Ob).Tk.qinfo, &(*Ob).matrix);\
-    V3XVector_Cpy((*Ob).matrix.v.Pos, (V3XSCALAR)(*Ob).Tk.qinfo.pos);\
+    V3XVector_Cpy(&(*Ob).matrix.v.Pos, &(*Ob).Tk.qinfo.pos);\
 }
 
 #define V3XCLIP_SIDE(n) \

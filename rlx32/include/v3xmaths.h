@@ -80,9 +80,19 @@ static inline void  V3XMatrix_GetCol2(V3XVECTOR *P, const V3XMATRIX *M)
     P->z = M->Matrix[8];
 }
 
+#ifndef RESTRICT
+#if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
+#define RESTRICT restrict
+#else
+#define RESTRICT __restrict__
+#endif
+#endif
 
-#define V3XVector_Cpy(R, B) {\
-    R.x = B.x; R.y = B.y; R.z = B.z;\
+static inline void V3XVector_Cpy(V3XVECTOR * RESTRICT dst, const V3XVECTOR * RESTRICT src)
+{
+	dst->x = src->x;
+	dst->y = src->y;
+	dst->z = src->z;
 }
 
 static inline void V3XVector_Neg(V3XVECTOR *r)
