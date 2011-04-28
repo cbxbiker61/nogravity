@@ -103,8 +103,8 @@ void NG_StageReadFile(char *fin, int extrn)
     do
     {
 		char tex[256];
-		char tmp[1024];
-		FIO_cur->fgets(tmp, 1025, in);
+		char tmp[2048];
+		FIO_cur->fgets(tmp, sizeof(tmp), in);
 		if (strlen(tmp)<4)
 			continue;
 
